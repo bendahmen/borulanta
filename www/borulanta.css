@@ -1,0 +1,329 @@
+:root {
+  --pitch-950: #081412;
+  --pitch-900: #0d1f1b;
+  --pitch-850: #12302a;
+  --pitch-800: #174039;
+  --line-white: #f3efe4;
+  --grass-accent: #a7f04f;
+  --goal-gold: #ffd166;
+  --surface: rgba(255, 255, 255, 0.08);
+  --surface-strong: rgba(255, 255, 255, 0.14);
+  --border-soft: rgba(255, 255, 255, 0.12);
+  --text-main: #f7f4ec;
+  --text-muted: rgba(247, 244, 236, 0.72);
+  --shadow-deep: 0 20px 60px rgba(0, 0, 0, 0.28);
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(167, 240, 79, 0.18), transparent 24%),
+    linear-gradient(145deg, var(--pitch-950), var(--pitch-850) 55%, #1b4a3d 100%);
+  background-attachment: fixed;
+  color: var(--text-main);
+  font-family: "Avenir Next", Avenir, Montserrat, "Trebuchet MS", sans-serif;
+}
+
+.app-shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1.25rem 0.9rem 2rem;
+}
+
+.app-hero {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  padding: 1.35rem 1.25rem;
+  border: 1px solid var(--border-soft);
+  border-radius: 28px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)),
+    linear-gradient(180deg, rgba(167, 240, 79, 0.12), transparent 55%);
+  box-shadow: var(--shadow-deep);
+}
+
+.app-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -60px -95px auto;
+  width: 220px;
+  height: 220px;
+  border: 1px solid rgba(243, 239, 228, 0.12);
+  border-radius: 50%;
+}
+
+.hero-kicker {
+  margin-bottom: 0.45rem;
+  color: var(--grass-accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  margin: 0;
+  font-family: Futura, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+  font-size: clamp(2rem, 6vw, 4rem);
+  line-height: 0.95;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hero-copy {
+  max-width: 42rem;
+  margin: 0.7rem 0 0;
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+.hero-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 1rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--line-white);
+  font-size: 0.88rem;
+}
+
+.nav-pill-shell {
+  padding: 0.3rem;
+  margin-bottom: 1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+}
+
+.nav-pill-shell .nav {
+  gap: 0.35rem;
+}
+
+.nav-pill-shell .nav-pills .nav-link {
+  border-radius: 999px;
+  color: var(--text-main);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.nav-pill-shell .nav-pills .nav-link:hover,
+.nav-pill-shell .nav-pills .nav-link:focus {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-pill-shell .nav-pills .nav-link.active {
+  background: linear-gradient(135deg, var(--grass-accent), #d9ff87);
+  color: #0c201a;
+}
+
+.tab-pane {
+  padding-top: 0.35rem;
+}
+
+.fees-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.panel-card,
+.payment-card,
+.table-card {
+  border: 1px solid var(--border-soft);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.06));
+  box-shadow: var(--shadow-deep);
+  backdrop-filter: blur(18px);
+}
+
+.panel-card .card-body,
+.payment-card .card-body,
+.table-card .card-body {
+  padding: 1.15rem;
+}
+
+.section-tag {
+  display: inline-block;
+  margin-bottom: 0.7rem;
+  color: var(--goal-gold);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.fee-label {
+  margin-bottom: 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.fee-amount {
+  margin: 0.35rem 0 0.8rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.6rem, 9vw, 4.6rem);
+  line-height: 0.95;
+  color: var(--line-white);
+}
+
+.fee-footnote {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.payment-copy {
+  margin: 0 0 1rem;
+  color: var(--text-muted);
+}
+
+.payment-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 3.25rem;
+  border: 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--goal-gold), #fff0ad);
+  color: #162621;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  box-shadow: 0 12px 30px rgba(255, 209, 102, 0.24);
+}
+
+.payment-button:hover,
+.payment-button:focus {
+  color: #162621;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.account-panel {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.account-title {
+  margin-bottom: 0.35rem;
+  color: var(--grass-accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.account-detail {
+  margin: 0.18rem 0;
+  color: var(--line-white);
+  font-size: 0.95rem;
+}
+
+.selection-shell .form-label {
+  color: var(--text-main);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.selection-shell .form-select {
+  min-height: 3.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  background-color: rgba(8, 20, 18, 0.72);
+  color: var(--line-white);
+}
+
+.table-card .card-header {
+  padding: 1rem 1.15rem 0;
+  border: 0;
+  background: transparent;
+}
+
+.table-title {
+  margin: 0;
+  font-family: Futura, "Avenir Next Condensed", "Arial Narrow", sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.table-subtitle {
+  margin: 0.35rem 0 0;
+  color: var(--text-muted);
+}
+
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_info {
+  color: var(--text-muted) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  color: var(--line-white) !important;
+}
+
+table.dataTable {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 0.35rem !important;
+  color: var(--line-white);
+}
+
+table.dataTable thead th {
+  border-bottom: 0 !important;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+table.dataTable tbody tr {
+  background: rgba(7, 16, 14, 0.52);
+}
+
+table.dataTable tbody td {
+  border-top: 0 !important;
+  padding: 0.9rem 0.75rem !important;
+}
+
+table.dataTable tbody tr:hover {
+  background: rgba(167, 240, 79, 0.12) !important;
+}
+
+@media (max-width: 767px) {
+  .app-shell {
+    padding-left: 0.7rem;
+    padding-right: 0.7rem;
+  }
+
+  .hero-title {
+    max-width: 8ch;
+  }
+
+  .fees-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nav-pill-shell {
+    border-radius: 24px;
+  }
+
+  .nav-pill-shell .nav {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .nav-pill-shell .nav-pills .nav-link {
+    width: 100%;
+    text-align: center;
+    font-size: 0.92rem;
+  }
+}

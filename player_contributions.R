@@ -1,4 +1,8 @@
-create_player_contribution_table <- function(attendance, matches) {
+create_player_contribution_table <- function(attendance, matches, players) {
+  core_player_names <- players %>%
+    filter(regular) %>%
+    pull(player)
+
   contribution_data <- attendance %>% 
     mutate(present = 1) %>%
     pivot_wider(names_from = player, values_from = present, values_fill = 0) %>% 
@@ -11,7 +15,7 @@ create_player_contribution_table <- function(attendance, matches) {
         goals_scored == goals_conceded ~ 1,
         TRUE ~ 0
       ),
-      core_players = rowSums(across(Ben:Jasper))
+      core_players = rowSums(across(any_of(core_player_names)))
     )
   return(contribution_data)
 }
@@ -26,7 +30,7 @@ create_player_contribution_table <- function(attendance, matches) {
 
 
 avg_by_player <- function(attendance, matches, players) {
-  contribution_data <- create_player_contribution_table(attendance, matches)
+  contribution_data <- create_player_contribution_table(attendance, matches, players)
   avg_points_by_player <- data.frame()
   for (p in players$player) {
     player_matches <- attendance %>% 
