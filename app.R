@@ -42,7 +42,7 @@ fee_panel <- card(
         uiOutput("fees_owed"),
         div(
             class = "fee-footnote",
-            "Calculated from attendance, match thresholds, guest fees, and recorded payments."
+            "Calculated from attendance, match fee rules, core-player status, and recorded payments."
         )
     )
 )

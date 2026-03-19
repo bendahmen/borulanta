@@ -1,12 +1,16 @@
 create_player_contribution_table <- function(attendance, matches, players) {
   core_player_names <- players %>%
-    filter(regular) %>%
+    filter(core) %>%
     pull(player)
 
   contribution_data <- attendance %>% 
+    mutate(date = as.Date(date, format = "%d/%m/%Y")) %>%
     mutate(present = 1) %>%
     pivot_wider(names_from = player, values_from = present, values_fill = 0) %>% 
-    inner_join(matches, by = "date") %>% 
+    inner_join(
+      matches %>% mutate(date = as.Date(date, format = "%d/%m/%Y")),
+      by = "date"
+    ) %>% 
     mutate(
       goals_scored = str_extract(result, "^\\d+") %>% as.integer(),
       goals_conceded = str_extract(result, "\\d+$") %>% as.integer(),
@@ -30,6 +34,9 @@ create_player_contribution_table <- function(attendance, matches, players) {
 
 
 avg_by_player <- function(attendance, matches, players) {
+  attendance <- attendance %>%
+    mutate(date = as.Date(date, format = "%d/%m/%Y"))
+
   contribution_data <- create_player_contribution_table(attendance, matches, players)
   avg_points_by_player <- data.frame()
   for (p in players$player) {
