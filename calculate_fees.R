@@ -2,7 +2,7 @@ guest_fee <- 9.75
 min_players <- 7
 match_fee <- 75
 
-calculate_fees <- function(player) {
+calculate_fees <- function(player, matches, attendance, payments, players) {
   total_fees <- 0
   # How much does the player owe?
   for (match in unique(matches$date)) {
@@ -41,7 +41,7 @@ calculate_fees <- function(player) {
   return(total_fees)
 }
 
-create_attendance_list <- function() {
+create_attendance_list <- function(matches, attendance, avg_points_by_player) {
   n_matches <- length(unique(matches$date))
   attendance_ranking <- attendance %>% 
     group_by(player) %>% 

@@ -6,18 +6,8 @@ library(tidyverse)
 library(data.table)
 library(DT)
 library(glue)
-library(rsconnect)
 
-source("calculate_fees.R")
-source("player_contributions.R")
-
-# Read data
-matches <- read_csv("data/matches.csv")
 players <- read_csv("data/players.csv")
-attendance <- read_csv("data/attendance.csv")
-payments <- read_csv("data/payments.csv")
-
-avg_points_by_player <- avg_by_player()
 
 # User interface ----
 ui <- page_fluid(
@@ -61,13 +51,24 @@ ui <- page_fluid(
 
 # Server logic ----
 server <- function(input, output) {
-    attendance_list <- create_attendance_list()
+    
+    # Read data
+    matches <- read_csv("data/matches.csv")
+    attendance <- read_csv("data/attendance.csv")
+    payments <- read_csv("data/payments.csv")
+    
+    source("calculate_fees.R")
+    source("player_contributions.R")
+    
+    avg_points_by_player <- avg_by_player(attendance, matches, players)
+    
+    attendance_list <- create_attendance_list(matches, attendance, avg_points_by_player)
     output$matches <- 
         renderDT({datatable(matches)})
     output$attendance_list <- 
         renderDT({datatable(attendance_list)})
     output$fees_owed <- renderText({
-        glue("£{calculate_fees(input$fee_player)}")
+        glue("£{calculate_fees(input$fee_player, matches, attendance, payments, players)}")
     })
 }
 
