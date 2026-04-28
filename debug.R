@@ -1,1 +1,1 @@
-calculate_fees('Ben')
+calculate_fees('Pietro', matches, attendance, payments, players)

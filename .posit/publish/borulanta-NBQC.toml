@@ -20,7 +20,8 @@ files = [
   '/renv',
   '/.Rprofile',
   '/.gitignore',
-  '/testing.R'
+  '/testing.R',
+  '/www'
 ]
 title = 'borulanta'
 

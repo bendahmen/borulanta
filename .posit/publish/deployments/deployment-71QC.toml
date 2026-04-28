@@ -11,8 +11,8 @@ id = '019d06ee-2f70-e229-6928-8f4d0c987e63'
 dashboard_url = 'https://connect.posit.cloud/bendahmen/content/019d06ee-2f70-e229-6928-8f4d0c987e63'
 direct_url = 'https://019d06ee-2f70-e229-6928-8f4d0c987e63.share.connect.posit.cloud'
 logs_url = 'https://connect.posit.cloud/bendahmen/content/019d06ee-2f70-e229-6928-8f4d0c987e63/history'
-deployed_at = '2026-03-19T16:29:27Z'
-bundle_id = '019d06ee-2f74-ce47-0141-3081d3f54359'
+deployed_at = '2026-03-19T17:39:18Z'
+bundle_id = '019d072e-2315-534e-2806-243205405fcc'
 files = [
   '.Rprofile',
   '.gitignore',
@@ -31,7 +31,7 @@ files = [
   'renv/.gitignore',
   'renv/activate.R',
   'renv/settings.json',
-  'testing.R'
+  'www/borulanta.css'
 ]
 
 [connect_cloud]
@@ -57,7 +57,8 @@ files = [
   '/renv',
   '/.Rprofile',
   '/.gitignore',
-  '/testing.R'
+  '/testing.R',
+  '/www'
 ]
 title = 'borulanta'
 

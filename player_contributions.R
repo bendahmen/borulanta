@@ -3,14 +3,14 @@ create_player_contribution_table <- function(attendance, matches, players) {
     filter(core) %>%
     pull(player)
 
-  contribution_data <- attendance %>% 
+  contribution_data <- attendance %>%
     mutate(date = as.Date(date, format = "%d/%m/%Y")) %>%
     mutate(present = 1) %>%
-    pivot_wider(names_from = player, values_from = present, values_fill = 0) %>% 
+    pivot_wider(names_from = player, values_from = present, values_fill = 0) %>%
     inner_join(
       matches %>% mutate(date = as.Date(date, format = "%d/%m/%Y")),
       by = "date"
-    ) %>% 
+    ) %>%
     mutate(
       goals_scored = str_extract(result, "^\\d+") %>% as.integer(),
       goals_conceded = str_extract(result, "\\d+$") %>% as.integer(),
@@ -23,31 +23,56 @@ create_player_contribution_table <- function(attendance, matches, players) {
     )
   return(contribution_data)
 }
-  
-  # # Regressions
-  # reg_players <- names(contribution_data %>% select(-date, -result, -goals_scored, -goals_conceded, -points, -Langkun, -Yelong, -Pietro, -Jasper, -Oleg, -Benoit))
-  # reg_player_fml <- paste(reg_players, collapse = " + ")
-  # points_regression <- lm(
-  #   formula = as.formula(paste("goals_scored ~", reg_player_fml, ' + core_players + 0')),
-  #   data = contribution_data
-  # )
 
+# # Regressions
+# reg_players <- names(
+#   contribution_data %>%
+#     select(
+#       -date,
+#       -result,
+#       -goals_scored,
+#       -core_players,
+#       -goals_conceded,
+#       -points,
+#       -Langkun,
+#       -Yelong,
+#       -Seb,
+#       -Pietro,
+#       -Jasper,
+#       -Oleg,
+#       -Benoit,
+#       -Torge
+#     )
+# )
+# reg_player_fml <- paste(reg_players, collapse = " + ")
+# points_regression <- lm(
+#   formula = as.formula(paste(
+#     "points ~",
+#     reg_player_fml,
+#     ' + core_players + 0'
+#   )),
+#   data = contribution_data
+# )
 
 avg_by_player <- function(attendance, matches, players) {
   attendance <- attendance %>%
     mutate(date = as.Date(date, format = "%d/%m/%Y"))
 
-  contribution_data <- create_player_contribution_table(attendance, matches, players)
+  contribution_data <- create_player_contribution_table(
+    attendance,
+    matches,
+    players
+  )
   avg_points_by_player <- data.frame()
   for (p in players$player) {
-    player_matches <- attendance %>% 
-      filter(player == p) %>% 
+    player_matches <- attendance %>%
+      filter(player == p) %>%
       pull(date)
     if (length(player_matches) == 0) {
       next
     }
-    points <- contribution_data %>% 
-      filter(date %in% player_matches) %>% 
+    points <- contribution_data %>%
+      filter(date %in% player_matches) %>%
       summarise(
         avg_points = mean(points),
         avg_goals_scored = mean(goals_scored),
