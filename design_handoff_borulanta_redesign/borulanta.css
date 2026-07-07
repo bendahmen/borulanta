@@ -416,11 +416,7 @@ table.dataTable tbody tr:hover {
 }
 
 /* Top-3 attendance rows — see README */
-/* Bootstrap 5's .table paints an opaque background-color on each td (from
-   --bs-table-bg), which sits above a tr-level background — so the tint has
-   to be set on the td itself to actually show. */
-tr.rank-top3,
-tr.rank-top3 > td {
+tr.rank-top3 {
   background: var(--green-soft) !important;
 }
 

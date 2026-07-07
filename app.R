@@ -8,16 +8,17 @@ players <- read_csv("data/players.csv")
 
 app_theme <- bs_theme(
     version = 5,
-    bg = "#0d1f1b",
-    fg = "#f7f4ec",
-    primary = "#a7f04f",
-    secondary = "#ffd166",
-    success = "#8bd450",
-    info = "#7bdff2",
-    warning = "#ffd166",
-    danger = "#ff7b72",
-    base_font = font_collection("Avenir Next", "Trebuchet MS", "sans-serif"),
+    bg = "#f7f9f6",
+    fg = "#16241f",
+    primary = "#0850AB",   # navy blue (oklch(45% 0.16 258)) — was the lime green
+    secondary = "#AB4400", # amber (oklch(52% 0.15 45))
+    success = "#006D1E",   # green (oklch(46% 0.15 148))
+    info = "#0850AB",
+    warning = "#AB4400",
+    danger = "#AB4400",
+    base_font = font_collection("Barlow", "Avenir Next", "Trebuchet MS", "sans-serif"),
     heading_font = font_collection(
+        "Barlow Condensed",
         "Futura",
         "Avenir Next Condensed",
         "Arial Narrow",
@@ -100,16 +101,22 @@ ui <- page_fluid(
         class = "app-shell",
         div(
             class = "app-hero",
-            div(class = "hero-kicker", "Wednesday Football"),
-            h1(class = "hero-title", "Borulanta"),
-            p(
-                class = "hero-copy",
-                "Track what you owe, review recent match results, and see who keeps the squad going each week."
+            div(
+                class = "hero-crest",
+                tags$img(src = "borulanta-crest.png", alt = "Borulanta crest")
             ),
             div(
-                class = "hero-meta",
-                icon("futbol"),
-                span("Fees, attendance, and results in one place")
+                div(class = "hero-kicker", "Wednesday Football"),
+                h1(class = "hero-title", "Borulanta"),
+                p(
+                    class = "hero-copy",
+                    "Track what you owe, review recent match results, and see who keeps the squad going each week."
+                ),
+                div(
+                    class = "hero-meta",
+                    icon("futbol"),
+                    span("Fees, attendance, and results in one place")
+                )
             )
         ),
         div(
@@ -149,9 +156,22 @@ ui <- page_fluid(
 )
 
 match_table <- function(matches) {
+    matches <- matches %>%
+        mutate(
+            scored = as.integer(str_extract(result, "^\\d+")),
+            conceded = as.integer(str_extract(result, "\\d+$")),
+            outcome = case_when(
+                scored > conceded ~ "<span class='result-badge win'>WIN</span>",
+                scored == conceded ~ "<span class='result-badge draw'>DRAW</span>",
+                TRUE ~ "<span class='result-badge loss'>LOSS</span>"
+            )
+        ) %>%
+        select(date, result, outcome)
+
     datatable(
         matches,
         rownames = FALSE,
+        escape = FALSE, # required to render the badge span
         class = "nowrap",
         options = list(
             dom = "t",
@@ -173,7 +193,12 @@ attendance_table <- function(attendance_list) {
             pageLength = 15,
             order = list(list(1, "desc")),
             autoWidth = TRUE,
-            scrollX = TRUE
+            scrollX = TRUE,
+            rowCallback = JS(
+                "function(row, data, index) {",
+                "  if (index < 3) { $(row).addClass('rank-top3'); }",
+                "}"
+            )
         )
     )
 }
@@ -204,11 +229,10 @@ server <- function(input, output) {
     })
 
     output$fees_owed <- renderUI({
+        balance <- calculate_fees(input$fee_player, matches, attendance, payments, players)
         tags$div(
-            class = "fee-amount",
-            glue(
-                "£{calculate_fees(input$fee_player, matches, attendance, payments, players)}"
-            )
+            class = paste("fee-amount", if (balance > 0) "is-owed" else ""),
+            glue("£{balance}")
         )
     })
 }

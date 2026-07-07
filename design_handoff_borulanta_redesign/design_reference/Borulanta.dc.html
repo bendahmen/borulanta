@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: oklch(97.3% 0.007 150); font-family: 'Barlow', 'Helvetica Neue', Arial, sans-serif; }
+    a { color: oklch(45% 0.16 258); }
+    a:hover { color: oklch(38% 0.16 258); }
+    ::selection { background: oklch(85% 0.1 148); }
+  </style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; flex-direction: column;">
+
+  <!-- HERO -->
+  <div data-screen-label="Hero" style="position: relative; overflow: hidden; background: linear-gradient(155deg, oklch(24% 0.07 258) 0%, oklch(19% 0.05 250) 55%, oklch(27% 0.09 200) 100%); padding: 36px 28px 44px; display: flex; flex-wrap: wrap; align-items: center; gap: 28px;">
+    <div style="position:absolute; inset: auto -80px -120px auto; width: 320px; height: 320px; border-radius: 50%; border: 1px solid oklch(90% 0.02 150 / 0.14); pointer-events:none;"></div>
+    <div style="position:absolute; inset: -60px auto auto -60px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, oklch(65% 0.16 148 / 0.35), transparent 70%); pointer-events:none;"></div>
+
+    <div style="flex: 0 0 auto; width: 104px; height: 104px; border-radius: 50%; background: #fff; padding: 8px; box-shadow: 0 16px 40px rgba(0,0,0,0.35); position: relative; z-index:1;">
+      <img src="assets/borulanta-crest.png" alt="Borulanta FC crest" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;" />
+    </div>
+
+    <div style="flex: 1 1 320px; position: relative; z-index: 1; min-width: 240px;">
+      <div style="color: oklch(78% 0.15 148); font-size: 13px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 6px;">Wednesday Football</div>
+      <h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(2.4rem, 7vw, 4.2rem); line-height: 0.92; letter-spacing: 0.01em; text-transform: uppercase; color: #fdfdfb;">Borulanta</h1>
+      <p style="margin: 12px 0 0; max-width: 44ch; color: oklch(88% 0.02 150 / 0.82); font-size: 1rem; line-height: 1.5;">Track what you owe, check recent results, and see who keeps the squad going every week.</p>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div style="max-width: 1040px; width: 100%; margin: -22px auto 0; padding: 0 20px; position: relative; z-index: 2;">
+    <div style="display: flex; flex-wrap: wrap; gap: 6px; background: #fff; border-radius: 18px; padding: 6px; box-shadow: 0 14px 36px rgba(16,34,29,0.14); border: 1px solid oklch(92% 0.01 150);">
+      <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="3">
+        <button onClick="{{ tab.onSelect }}" style="{{ tab.style }}" style-hover="{{ tab.hoverStyle }}">
+          <span>{{ tab.emoji }}</span>
+          <span>{{ tab.label }}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div style="max-width: 1040px; width: 100%; margin: 24px auto 60px; padding: 0 20px; flex: 1;">
+
+    <!-- FEES TAB -->
+    <sc-if value="{{ isFees }}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: stretch;">
+
+        <div style="flex: 1 1 340px; min-width: 280px; background: #fff; border: 1px solid oklch(92% 0.01 150); border-radius: 22px; padding: 26px; box-shadow: 0 10px 28px rgba(16,34,29,0.06);">
+          <div style="display:inline-block; color: oklch(45% 0.16 258); font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 14px;">Fee Check</div>
+
+          <label style="display:block; font-size: 13px; font-weight: 700; color: oklch(30% 0.02 210); margin-bottom: 6px;">Choose your name</label>
+          <select value="{{ selectedPlayer }}" onChange="{{ onChangePlayer }}" style="width: 100%; min-height: 50px; border-radius: 14px; border: 1px solid oklch(88% 0.01 150); background: oklch(97% 0.005 150); padding: 0 14px; font-size: 1rem; font-family: inherit; color: oklch(20% 0.02 210); margin-bottom: 22px;">
+            <sc-for list="{{ playerNames }}" as="p" hint-placeholder-count="5">
+              <option value="{{ p }}">{{ p }}</option>
+            </sc-for>
+          </select>
+
+          <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: oklch(45% 0.02 210 / 0.7); margin-bottom: 4px;">{{ balanceInfo.label }}</div>
+          <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(2.6rem, 8vw, 3.6rem); line-height: 1; color: {{ balanceInfo.color }};">{{ balanceInfo.amountText }}</div>
+          <div style="display:inline-block; margin-top: 12px; padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; background: {{ balanceInfo.chipBg }}; color: {{ balanceInfo.color }};">{{ balanceInfo.chipText }}</div>
+
+          <p style="margin: 20px 0 0; color: oklch(40% 0.02 210 / 0.75); font-size: 0.92rem; line-height: 1.5;">Calculated from attendance, match fee rules, core-player status, and recorded payments.</p>
+        </div>
+
+        <div style="flex: 1 1 280px; min-width: 260px; background: linear-gradient(165deg, oklch(24% 0.07 258), oklch(19% 0.05 250)); border-radius: 22px; padding: 26px; box-shadow: 0 10px 28px rgba(16,34,29,0.12); color: #fdfdfb;">
+          <div style="display:inline-block; color: oklch(78% 0.15 148); font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 14px;">Settle Up</div>
+          <p style="margin: 0 0 18px; color: oklch(90% 0.02 150 / 0.82); font-size: 0.95rem; line-height: 1.5;">Use the payment link below — the balance updates once the transfer is recorded.</p>
+          <a href="https://monzo.me/benjamindahmen8?h=Njfjz9" target="_blank" style="display: flex; align-items: center; justify-content: center; width: 100%; box-sizing: border-box; min-height: 52px; border-radius: 14px; background: oklch(72% 0.15 148); color: oklch(16% 0.04 200); font-size: 1rem; font-weight: 800; letter-spacing: 0.02em; text-decoration: none;" style-hover="{{ monzoHover }}">Pay via Monzo</a>
+
+          <div style="margin-top: 18px; padding: 16px 18px; border-radius: 16px; background: rgba(255,255,255,0.08);">
+            <div style="color: oklch(78% 0.15 148); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px;">Bank transfer details</div>
+            <p style="margin: 3px 0; font-size: 0.92rem; color: oklch(94% 0.01 150 / 0.9);">Account Number: 94456363</p>
+            <p style="margin: 3px 0; font-size: 0.92rem; color: oklch(94% 0.01 150 / 0.9);">Sort Code: 04-00-03</p>
+            <p style="margin: 3px 0; font-size: 0.92rem; color: oklch(94% 0.01 150 / 0.9);">Name: Benjamin Dahmen</p>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- MATCHES TAB -->
+    <sc-if value="{{ isMatches }}" hint-placeholder-val="{{ false }}">
+      <div style="background: #fff; border: 1px solid oklch(92% 0.01 150); border-radius: 22px; padding: 26px 22px; box-shadow: 0 10px 28px rgba(16,34,29,0.06);">
+        <div style="display:inline-block; color: oklch(45% 0.16 258); font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 6px;">Matches</div>
+        <h2 style="margin: 0 0 2px; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.9rem; text-transform: uppercase; color: oklch(20% 0.02 210);">Recent Results</h2>
+        <p style="margin: 0 0 18px; color: oklch(40% 0.02 210 / 0.7); font-size: 0.94rem;">Most recent matches for the running season.</p>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <sc-for list="{{ matchRows }}" as="m" hint-placeholder-count="6">
+            <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 14px 16px; border-radius: 14px; background: oklch(97.3% 0.007 150);">
+              <div style="flex: 1 1 110px; font-size: 0.86rem; font-weight: 600; color: oklch(40% 0.02 210 / 0.75);">{{ m.dateText }}</div>
+              <div style="flex: 0 0 auto; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.6rem; color: oklch(18% 0.02 210); min-width: 64px; text-align: center;">{{ m.score }}</div>
+              <div style="flex: 0 0 auto; padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 800; letter-spacing: 0.04em; background: {{ m.badgeBg }}; color: {{ m.badgeColor }};">{{ m.outcomeText }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ATTENDANCE TAB -->
+    <sc-if value="{{ isAttendance }}" hint-placeholder-val="{{ false }}">
+      <div style="background: #fff; border: 1px solid oklch(92% 0.01 150); border-radius: 22px; padding: 26px 22px; box-shadow: 0 10px 28px rgba(16,34,29,0.06);">
+        <div style="display:inline-block; color: oklch(45% 0.16 258); font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 6px;">Attendance</div>
+        <h2 style="margin: 0 0 2px; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.9rem; text-transform: uppercase; color: oklch(20% 0.02 210);">Squad Leaderboard</h2>
+        <p style="margin: 0 0 18px; color: oklch(40% 0.02 210 / 0.7); font-size: 0.94rem;">Participation rate and on-pitch averages by player.</p>
+
+        <div style="overflow-x: auto;">
+          <div style="min-width: 560px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: grid; grid-template-columns: 40px 1.3fr 0.9fr 0.9fr 1.1fr; gap: 8px; padding: 0 14px 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: oklch(45% 0.02 210 / 0.55);">
+              <div>#</div>
+              <div onClick="{{ onSortPlayer }}" style="cursor: pointer; user-select: none;">{{ colHeaders.player }}</div>
+              <div onClick="{{ onSortRate }}" style="cursor: pointer; user-select: none;">{{ colHeaders.rate }}</div>
+              <div onClick="{{ onSortAvgPoints }}" style="cursor: pointer; user-select: none;">{{ colHeaders.avgPoints }}</div>
+              <div onClick="{{ onSortAvgGoals }}" style="cursor: pointer; user-select: none;">{{ colHeaders.avgGoals }}</div>
+            </div>
+            <sc-for list="{{ leaderboard }}" as="row" hint-placeholder-count="8">
+              <div style="display: grid; grid-template-columns: 40px 1.3fr 0.9fr 0.9fr 1.1fr; align-items: center; gap: 8px; padding: 12px 14px; border-radius: 14px; background: {{ row.rowBg }};">
+                <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.1rem; color: {{ row.rankColor }};">{{ row.rank }}</div>
+                <div style="font-weight: 700; color: oklch(18% 0.02 210);">{{ row.player }}</div>
+                <div style="font-size: 0.9rem; color: oklch(35% 0.02 210 / 0.85);">{{ row.rateText }}</div>
+                <div style="font-size: 0.9rem; color: oklch(35% 0.02 210 / 0.85);">{{ row.avgPointsText }}</div>
+                <div style="font-size: 0.9rem; color: oklch(35% 0.02 210 / 0.85);">{{ row.avgGoalsText }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+
+  <div style="text-align: center; padding: 0 20px 28px; color: oklch(45% 0.02 210 / 0.45); font-size: 0.82rem;">Borulanta · fees, attendance &amp; results in one place</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="&quot;&quot;">
+const BLUE = 'oklch(45% 0.16 258)';
+const BLUE_SOFT = 'oklch(93% 0.03 258)';
+const GREEN = 'oklch(46% 0.15 148)';
+const GREEN_SOFT = 'oklch(93% 0.05 148)';
+const AMBER = 'oklch(52% 0.15 45)';
+const AMBER_SOFT = 'oklch(93% 0.05 45)';
+const INK = 'oklch(20% 0.02 210)';
+
+const PLAYERS_RAW = `Ben,TRUE,TRUE
+Daniel,TRUE,TRUE
+Vitto,TRUE,TRUE
+Mateus,TRUE,TRUE
+Anton,FALSE,TRUE
+Langkun,FALSE,FALSE
+Boris,TRUE,TRUE
+Emiliano,TRUE,TRUE
+Jasper,FALSE,FALSE
+Pietro,FALSE,TRUE
+Seb,FALSE,FALSE
+Andreas,FALSE,FALSE
+Lienze,FALSE,FALSE
+Benoit,FALSE,FALSE
+Berghi,FALSE,TRUE
+Davi,FALSE,FALSE
+Max,TRUE,TRUE
+Michael,FALSE,FALSE
+Oleg,FALSE,TRUE
+Mahim,FALSE,FALSE
+Jacopo,FALSE,FALSE
+Yelong,FALSE,FALSE
+Torge,TRUE,FALSE
+Elia,TRUE,FALSE
+Luca,TRUE,FALSE`;
+
+const MATCHES_RAW = `10/09/2025,4-5
+17/09/2025,6-2
+24/09/2025,1-2
+01/10/2025,0-6
+08/10/2025,4-4
+15/10/2025,12-4
+22/10/2025,3-8
+05/11/2025,2-1
+12/11/2025,4-5
+19/11/2025,2-2
+26/11/2025,6-3
+03/12/2025,5-7
+10/12/2025,8-1
+17/12/2025,1-7
+07/01/2026,2-3
+21/01/2026,6-5
+28/01/2026,2-2
+04/02/2026,7-2
+11/02/2026,3-4
+18/02/2026,9-4
+25/02/2026,9-3
+04/03/2026,7-2
+11/03/2026,3-7
+18/03/2026,6-2
+25/03/2026,5-4
+01/04/2026,5-2
+08/04/2026,1-5
+15/04/2026,6-3
+22/04/2026,3-2
+29/04/2026,1-4
+06/05/2026,14-1
+13/05/2026,2-3
+20/05/2026,2-1
+27/05/2026,4-5
+03/06/2026,5-3
+10/06/2026,3-2
+17/06/2026,2-4
+24/06/2026,5-4`;
+
+const ATTENDANCE_RAW = `10/09/2025,Ben
+10/09/2025,Vitto
+10/09/2025,Daniel
+10/09/2025,Max
+10/09/2025,Boris
+10/09/2025,Anton
+10/09/2025,Langkun
+10/09/2025,Yelong
+17/09/2025,Ben
+17/09/2025,Vitto
+17/09/2025,Langkun
+17/09/2025,Anton
+17/09/2025,Boris
+17/09/2025,Pietro
+17/09/2025,Daniel
+17/09/2025,Max
+24/09/2025,Ben
+24/09/2025,Mateus
+24/09/2025,Boris
+24/09/2025,Vitto
+24/09/2025,Anton
+24/09/2025,Oleg
+24/09/2025,Max
+24/09/2025,Pietro
+01/10/2025,Ben
+01/10/2025,Oleg
+01/10/2025,Anton
+01/10/2025,Vitto
+01/10/2025,Boris
+01/10/2025,Seb
+01/10/2025,Berghi
+08/10/2025,Ben
+08/10/2025,Berghi
+08/10/2025,Max
+08/10/2025,Mateus
+08/10/2025,Vitto
+08/10/2025,Seb
+08/10/2025,Daniel
+08/10/2025,Boris
+15/10/2025,Vitto
+15/10/2025,Max
+15/10/2025,Boris
+15/10/2025,Berghi
+15/10/2025,Mateus
+15/10/2025,Daniel
+15/10/2025,Emiliano
+22/10/2025,Ben
+22/10/2025,Mateus
+22/10/2025,Boris
+22/10/2025,Max
+22/10/2025,Berghi
+05/11/2025,Ben
+05/11/2025,Vitto
+05/11/2025,Mateus
+05/11/2025,Emiliano
+05/11/2025,Boris
+05/11/2025,Daniel
+05/11/2025,Anton
+12/11/2025,Ben
+12/11/2025,Anton
+12/11/2025,Vitto
+12/11/2025,Emiliano
+12/11/2025,Daniel
+12/11/2025,Boris
+12/11/2025,Benoit
+19/11/2025,Ben
+19/11/2025,Max
+19/11/2025,Boris
+19/11/2025,Mateus
+19/11/2025,Daniel
+19/11/2025,Vitto
+19/11/2025,Emiliano
+19/11/2025,Berghi
+26/11/2025,Ben
+26/11/2025,Berghi
+26/11/2025,Seb
+26/11/2025,Vitto
+26/11/2025,Emiliano
+26/11/2025,Max
+26/11/2025,Mateus
+26/11/2025,Daniel
+03/12/2025,Berghi
+03/12/2025,Ben
+03/12/2025,Emiliano
+03/12/2025,Max
+03/12/2025,Vitto
+03/12/2025,Daniel
+03/12/2025,Boris
+10/12/2025,Ben
+10/12/2025,Seb
+10/12/2025,Boris
+10/12/2025,Daniel
+10/12/2025,Mateus
+10/12/2025,Max
+10/12/2025,Jasper
+17/12/2025,Max
+17/12/2025,Vitto
+17/12/2025,Berghi
+07/01/2026,Ben
+07/01/2026,Berghi
+07/01/2026,Oleg
+21/01/2026,Ben
+21/01/2026,Berghi
+21/01/2026,Max
+21/01/2026,Boris
+21/01/2026,Vitto
+21/01/2026,Mateus
+21/01/2026,Daniel
+21/01/2026,Emiliano
+28/01/2026,Ben
+28/01/2026,Seb
+28/01/2026,Emiliano
+28/01/2026,Anton
+28/01/2026,Boris
+28/01/2026,Mateus
+28/01/2026,Max
+28/01/2026,Vitto
+04/02/2026,Ben
+04/02/2026,Vitto
+04/02/2026,Boris
+04/02/2026,Berghi
+04/02/2026,Mateus
+04/02/2026,Emiliano
+04/02/2026,Max
+04/02/2026,Daniel
+11/02/2026,Ben
+11/02/2026,Anton
+11/02/2026,Mateus
+11/02/2026,Vitto
+11/02/2026,Boris
+11/02/2026,Emiliano
+11/02/2026,Max
+18/02/2026,Ben
+18/02/2026,Pietro
+18/02/2026,Boris
+18/02/2026,Mateus
+18/02/2026,Max
+18/02/2026,Berghi
+18/02/2026,Torge
+25/02/2026,Ben
+25/02/2026,Vitto
+25/02/2026,Boris
+25/02/2026,Mateus
+25/02/2026,Max
+25/02/2026,Emiliano
+04/03/2026,Ben
+04/03/2026,Mateus
+04/03/2026,Emiliano
+04/03/2026,Vitto
+04/03/2026,Boris
+04/03/2026,Berghi
+04/03/2026,Torge
+11/03/2026,Boris
+11/03/2026,Pietro
+11/03/2026,Torge
+11/03/2026,Max
+11/03/2026,Mateus
+11/03/2026,Daniel
+11/03/2026,Berghi
+18/03/2026,Pietro
+18/03/2026,Ben
+18/03/2026,Mateus
+18/03/2026,Max
+18/03/2026,Daniel
+18/03/2026,Boris
+18/03/2026,Berghi
+18/03/2026,Emiliano
+25/03/2026,Ben
+25/03/2026,Daniel
+25/03/2026,Emiliano
+25/03/2026,Max
+25/03/2026,Berghi
+25/03/2026,Torge
+25/03/2026,Boris
+01/04/2026,Boris
+01/04/2026,Max
+01/04/2026,Mateus
+01/04/2026,Berghi
+01/04/2026,Emiliano
+01/04/2026,Torge
+01/04/2026,Vitto
+08/04/2026,Ben
+08/04/2026,Mateus
+08/04/2026,Pietro
+08/04/2026,Max
+08/04/2026,Vitto
+08/04/2026,Berghi
+15/04/2026,Ben
+15/04/2026,Mateus
+15/04/2026,Berghi
+15/04/2026,Boris
+15/04/2026,Torge
+15/04/2026,Vitto
+15/04/2026,Luca
+15/04/2026,Elia
+22/04/2026,Ben
+22/04/2026,Mateus
+22/04/2026,Boris
+22/04/2026,Pietro
+22/04/2026,Daniel
+22/04/2026,Emiliano
+22/04/2026,Vitto
+22/04/2026,Elia
+29/04/2026,Ben
+29/04/2026,Pietro
+29/04/2026,Boris
+29/04/2026,Mateus
+29/04/2026,Max
+29/04/2026,Torge
+29/04/2026,Vitto
+29/04/2026,Berghi
+29/04/2026,Daniel
+29/04/2026,Emiliano
+06/05/2026,Ben
+06/05/2026,Daniel
+06/05/2026,Torge
+06/05/2026,Pietro
+06/05/2026,Boris
+06/05/2026,Elia
+06/05/2026,Luca
+13/05/2026,Ben
+13/05/2026,Torge
+13/05/2026,Vitto
+13/05/2026,Pietro
+13/05/2026,Boris
+13/05/2026,Elia
+20/05/2026,Ben
+20/05/2026,Daniel
+20/05/2026,Mateus
+20/05/2026,Berghi
+20/05/2026,Torge
+20/05/2026,Vitto
+20/05/2026,Elia
+20/05/2026,Luca
+27/05/2026,Torge
+27/05/2026,Emiliano
+27/05/2026,Boris
+27/05/2026,Daniel
+27/05/2026,Vitto
+27/05/2026,Luca
+03/06/2026,Elia
+03/06/2026,Pietro
+03/06/2026,Vitto
+03/06/2026,Boris
+03/06/2026,Mateus
+03/06/2026,Torge
+03/06/2026,Luca
+10/06/2026,Mateus
+10/06/2026,Luca
+10/06/2026,Daniel
+10/06/2026,Vitto
+10/06/2026,Elia
+10/06/2026,Boris
+17/06/2026,Daniel
+17/06/2026,Mateus
+17/06/2026,Pietro
+17/06/2026,Boris
+17/06/2026,Torge
+17/06/2026,Elia
+17/06/2026,Vitto
+24/06/2026,Mateus
+24/06/2026,Pietro
+24/06/2026,Vitto
+24/06/2026,Elia
+24/06/2026,Luca
+24/06/2026,Torge
+24/06/2026,Jasper`;
+
+const PAYMENTS_RAW = `23/01/2026,Vitto,116.25
+22/01/2026,Boris,118.08
+14/01/2026,Daniel,107.20
+23/01/2026,Emiliano,90.88
+23/01/2026,Max,117.31
+23/01/2026,Daniel,22.50
+23/01/2026,Mateus,98.65
+23/01/2026,Boris,22.37
+24/01/2026,Seb,59.97
+05/03/2026,Berghi,157.59
+24/03/2026,Pietro,57.12
+29/04/2026,Daniel,63.06
+29/04/2026,Emiliano,93.99
+29/04/2026,Max,95.33
+29/04/2026,Berghi,35.24
+30/04/2026,Pietro,16.19
+01/05/2026,Boris,124.80
+03/05/2026,Torge,62.95
+04/05/2026,Seb,9.37
+04/05/2026,Mateus,114.08
+15/05/2026,Daniel,64.00
+07/07/2026,Mateus,69.47
+07/07/2026,Torge,59.73
+07/07/2026,Luca,50.89`;
+
+function parseDate(s) {
+  const [d, m, y] = s.split('/').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+const GUEST_FEE = 9.75;
+const MIN_PLAYERS = 7;
+const MATCH_FEE = 75;
+const CUTOFF = new Date(2026, 1, 1);
+
+class Component extends DCLogic {
+  state = { tab: 'fees', selectedPlayer: null, sortBy: 'rate', sortDir: 'desc' };
+
+  constructor(props) {
+    super(props);
+    this.players = PLAYERS_RAW.trim().split('\n').map(line => {
+      const [player, coreOld, core] = line.split(',');
+      return { player, core_old: coreOld === 'TRUE', core: core === 'TRUE' };
+    });
+    this.playerMap = {};
+    this.players.forEach(p => { this.playerMap[p.player] = p; });
+
+    this.matches = MATCHES_RAW.trim().split('\n').map(line => {
+      const [date, result] = line.split(',');
+      const [scored, conceded] = result.split('-').map(Number);
+      return {
+        date, dateObj: parseDate(date), result, scored, conceded,
+        outcome: scored > conceded ? 'W' : (scored === conceded ? 'D' : 'L'),
+        points: scored > conceded ? 3 : (scored === conceded ? 1 : 0),
+      };
+    });
+
+    this.attendanceByDate = {};
+    ATTENDANCE_RAW.trim().split('\n').forEach(line => {
+      const [date, player] = line.split(',').map(s => s.trim());
+      if (!this.attendanceByDate[date]) this.attendanceByDate[date] = [];
+      this.attendanceByDate[date].push(player);
+    });
+
+    this.payments = PAYMENTS_RAW.trim().split('\n').map(line => {
+      const [date, player, amount] = line.split(',');
+      return { date, player, amount: parseFloat(amount) };
+    });
+
+    this.state.selectedPlayer = this.players[0].player;
+  }
+
+  legacyMatchFee(player, matchPlayers) {
+    const attended = matchPlayers.includes(player);
+    const isCoreOld = this.playerMap[player].core_old;
+    if (!isCoreOld) return attended ? GUEST_FEE : 0;
+
+    const guestPlayers = this.players.filter(p => !p.core_old).map(p => p.player);
+    const nGuests = matchPlayers.filter(p => guestPlayers.includes(p)).length;
+    const feeRemainder = MATCH_FEE - nGuests * GUEST_FEE;
+
+    if (matchPlayers.length >= MIN_PLAYERS) {
+      if (!attended) return 0;
+      return feeRemainder / (matchPlayers.length - nGuests);
+    }
+    const coreOldPlayers = this.players.filter(p => p.core_old).map(p => p.player);
+    return feeRemainder / coreOldPlayers.length;
+  }
+
+  currentMatchFee(player, matchPlayers) {
+    const n = matchPlayers.length;
+    if (n >= MIN_PLAYERS) {
+      return matchPlayers.includes(player) ? MATCH_FEE / n : 0;
+    }
+    const corePlayers = this.players.filter(p => p.core).map(p => p.player);
+    return corePlayers.includes(player) ? MATCH_FEE / corePlayers.length : 0;
+  }
+
+  calculateFees(player) {
+    let total = 0;
+    this.matches.forEach(m => {
+      const matchPlayers = this.attendanceByDate[m.date] || [];
+      total += m.dateObj < CUTOFF
+        ? this.legacyMatchFee(player, matchPlayers)
+        : this.currentMatchFee(player, matchPlayers);
+    });
+    const paid = this.payments.filter(p => p.player === player).reduce((s, p) => s + p.amount, 0);
+    return Math.round((total - paid) * 100) / 100;
+  }
+
+  setTab(tab) { this.setState({ tab }); }
+
+  renderVals() {
+    const selectedPlayer = this.state.selectedPlayer;
+    const balance = this.calculateFees(selectedPlayer);
+
+    let balanceInfo;
+    if (balance > 0.005) {
+      balanceInfo = {
+        label: 'Balance owed', amountText: `£${balance.toFixed(2)}`,
+        color: AMBER, chipBg: AMBER_SOFT, chipText: 'Payment due',
+      };
+    } else if (balance < -0.005) {
+      balanceInfo = {
+        label: 'Credit balance', amountText: `£${Math.abs(balance).toFixed(2)}`,
+        color: GREEN, chipBg: GREEN_SOFT, chipText: 'In credit',
+      };
+    } else {
+      balanceInfo = {
+        label: 'Current balance', amountText: '£0.00',
+        color: GREEN, chipBg: GREEN_SOFT, chipText: 'All settled',
+      };
+    }
+
+    const tabDefs = [
+      { key: 'fees', label: 'Fees', emoji: '💷' },
+      { key: 'matches', label: 'Matches', emoji: '⚽' },
+      { key: 'attendance', label: 'Attendance', emoji: '👥' },
+    ];
+    const tabs = tabDefs.map(t => {
+      const active = this.state.tab === t.key;
+      return {
+        label: t.label,
+        emoji: t.emoji,
+        onSelect: () => this.setTab(t.key),
+        style: {
+          flex: '1 1 140px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+          minHeight: '48px', border: 'none', borderRadius: '13px', cursor: 'pointer',
+          fontFamily: 'Barlow, sans-serif', fontWeight: 700, fontSize: '0.95rem', letterSpacing: '0.01em',
+          background: active ? 'linear-gradient(165deg, oklch(24% 0.07 258), oklch(19% 0.05 250))' : 'transparent',
+          color: active ? '#fdfdfb' : INK,
+          transition: 'background 0.15s ease',
+        },
+        hoverStyle: active ? {} : { background: 'oklch(96% 0.01 150)' },
+      };
+    });
+
+    const matchRows = [...this.matches].reverse().map(m => {
+      const badge = m.outcome === 'W'
+        ? { bg: GREEN_SOFT, color: GREEN, text: 'WIN' }
+        : m.outcome === 'D'
+          ? { bg: BLUE_SOFT, color: BLUE, text: 'DRAW' }
+          : { bg: AMBER_SOFT, color: AMBER, text: 'LOSS' };
+      return {
+        dateText: m.date,
+        score: m.result,
+        outcomeText: badge.text,
+        badgeBg: badge.bg,
+        badgeColor: badge.color,
+      };
+    });
+
+    const totalMatches = this.matches.length;
+    const leaderboard = this.players.map(p => {
+      const attendedDates = this.matches.filter(m => (this.attendanceByDate[m.date] || []).includes(p.player));
+      if (attendedDates.length === 0) return null;
+      const rate = (attendedDates.length / totalMatches) * 100;
+      const avgPoints = attendedDates.reduce((s, m) => s + m.points, 0) / attendedDates.length;
+      const avgScored = attendedDates.reduce((s, m) => s + m.scored, 0) / attendedDates.length;
+      const avgConceded = attendedDates.reduce((s, m) => s + m.conceded, 0) / attendedDates.length;
+      return { player: p.player, rate, avgPoints, avgScored, avgConceded };
+    }).filter(Boolean);
+
+    const sortBy = this.state.sortBy;
+    const sortDir = this.state.sortDir;
+    const dirMul = sortDir === 'asc' ? 1 : -1;
+    const sortKey = {
+      rate: (r) => r.rate,
+      player: (r) => r.player.toLowerCase(),
+      avgPoints: (r) => r.avgPoints,
+      avgGoals: (r) => r.avgScored - r.avgConceded,
+    }[sortBy] || ((r) => r.rate);
+    leaderboard.sort((a, b) => {
+      const ka = sortKey(a), kb = sortKey(b);
+      if (ka < kb) return -1 * dirMul;
+      if (ka > kb) return 1 * dirMul;
+      return 0;
+    });
+
+    const leaderboardRows = leaderboard.map((row, i) => ({
+      rank: i + 1,
+      player: row.player,
+      rateText: `${row.rate.toFixed(0)}%`,
+      avgPointsText: row.avgPoints.toFixed(2),
+      avgGoalsText: `${row.avgScored.toFixed(1)}–${row.avgConceded.toFixed(1)}`,
+      rankColor: i < 3 ? GREEN : 'oklch(55% 0.02 210 / 0.55)',
+      rowBg: i < 3 ? GREEN_SOFT : 'oklch(97.3% 0.007 150)',
+    }));
+
+    const sortArrow = sortDir === 'asc' ? '↑' : '↓';
+    const headerLabel = (key, label) => sortBy === key ? `${label} ${sortArrow}` : label;
+    const onSortClick = (key) => () => {
+      this.setState(s => ({
+        sortBy: key,
+        sortDir: s.sortBy === key && s.sortDir === 'desc' ? 'asc' : 'desc',
+      }));
+    };
+
+    return {
+      tabs,
+      isFees: this.state.tab === 'fees',
+      isMatches: this.state.tab === 'matches',
+      isAttendance: this.state.tab === 'attendance',
+      playerNames: this.players.map(p => p.player),
+      selectedPlayer,
+      onChangePlayer: (e) => this.setState({ selectedPlayer: e.target.value }),
+      balanceInfo,
+      monzoHover: { filter: 'brightness(0.95)' },
+      matchRows,
+      leaderboard: leaderboardRows,
+      colHeaders: {
+        player: headerLabel('player', 'Player'),
+        rate: headerLabel('rate', 'Played'),
+        avgPoints: headerLabel('avgPoints', 'Avg Pts'),
+        avgGoals: headerLabel('avgGoals', 'Avg Goals F–A'),
+      },
+      onSortPlayer: onSortClick('player'),
+      onSortRate: onSortClick('rate'),
+      onSortAvgPoints: onSortClick('avgPoints'),
+      onSortAvgGoals: onSortClick('avgGoals'),
+    };
+  }
+}
+
+</script>
+</body>
+</html>
