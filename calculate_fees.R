@@ -1,4 +1,5 @@
 guest_fee <- 9.75
+small_squad_guest_fee <- 6.50
 min_players <- 7
 match_fee <- 75
 fee_cutoff_date <- as.Date("2026-02-01")
@@ -46,7 +47,14 @@ current_match_fee <- function(player, match_players, players) {
 
   core_players <- players[players$core == TRUE, ]$player
   if (player %in% core_players) {
-    return(match_fee / length(core_players))
+    guest_players <- players[players$core == FALSE, ]$player
+    n_guests <- sum(match_players %in% guest_players)
+    fee_remainder <- match_fee - n_guests * small_squad_guest_fee
+    return(fee_remainder / length(core_players))
+  }
+
+  if (player %in% match_players) {
+    return(small_squad_guest_fee)
   }
 
   0
@@ -102,14 +110,22 @@ match_charge_detail <- function(player, match_date, match_players, players) {
     }
   } else if (player_record$core) {
     n_core <- sum(players$core)
-    charge <- match_fee / n_core
+    guest_players <- players[players$core == FALSE, ]$player
+    n_guests <- sum(match_players %in% guest_players)
+    fee_remainder <- match_fee - n_guests * small_squad_guest_fee
+    charge <- fee_remainder / n_core
     explanation <- paste0(
-      "Small squad: £75.00 was split across all ", n_core,
-      " core players, including those absent."
+      "Small squad: after £", formatC(n_guests * small_squad_guest_fee,
+        format = "f", digits = 2
+      ), " in guest fees, the remaining £", formatC(fee_remainder, format = "f", digits = 2),
+      " was split across all ", n_core, " core players, including those absent."
     )
+  } else if (played) {
+    charge <- small_squad_guest_fee
+    explanation <- "Small squad: played as a guest and paid the fixed £6.50 fee."
   } else {
     charge <- 0
-    explanation <- "Small squad: non-core players were not charged."
+    explanation <- "Small squad: guests were charged only when present."
   }
 
   tibble(
