@@ -86,6 +86,142 @@ table_card_ui <- function(title, subtitle, output_id) {
     )
 }
 
+regression_table <- function(regression_results) {
+    estimate_columns <- c(
+        "Points (beta)",
+        "Goals scored (beta)",
+        "Goals conceded (beta)",
+        "Goal difference (beta)"
+    )
+    p_value_columns <- c(
+        "Points (p)",
+        "Goals scored (p)",
+        "Goals conceded (p)",
+        "Goal difference (p)"
+    )
+
+    datatable(
+        regression_results,
+        rownames = FALSE,
+        class = "nowrap",
+        options = list(
+            dom = "tip",
+            pageLength = 25,
+            order = list(list(1, "desc")),
+            autoWidth = TRUE,
+            scrollX = TRUE
+        )
+    ) %>%
+        formatRound(columns = estimate_columns, digits = 2) %>%
+        formatRound(columns = p_value_columns, digits = 3)
+}
+
+attack_defence_plot <- function(regression_results) {
+    plot_data <- regression_results %>%
+        filter(outcome %in% c("goals_scored", "goals_conceded", "goal_difference")) %>%
+        select(player, appearances, outcome, estimate) %>%
+        pivot_wider(names_from = outcome, values_from = estimate) %>%
+        mutate(defensive_effect = -goals_conceded)
+
+    ggplot(
+        plot_data,
+        aes(x = goals_scored, y = defensive_effect, size = appearances, color = goal_difference)
+    ) +
+        geom_vline(xintercept = 0, color = "#8a938d", linewidth = 0.4) +
+        geom_hline(yintercept = 0, color = "#8a938d", linewidth = 0.4) +
+        geom_point(alpha = 0.8) +
+        geom_text(aes(label = player), nudge_y = 0.15, size = 3, check_overlap = TRUE) +
+        scale_color_gradient2(
+            low = "#AB4400",
+            mid = "#16241f",
+            high = "#006D1E",
+            midpoint = 0,
+            name = "Goal difference"
+        ) +
+        scale_size_area(max_size = 14, name = "Appearances") +
+        labs(
+            x = "Goals-scored coefficient (higher is better)",
+            y = "Defensive coefficient: minus goals conceded (higher is better)"
+        ) +
+        coord_equal() +
+        theme_minimal(base_size = 12) +
+        theme(
+            panel.grid.minor = element_blank(),
+            legend.position = "bottom"
+        )
+}
+
+coefficient_plot <- function(regression_results, selected_outcome) {
+    outcome_labels <- c(
+        points = "Points",
+        goals_scored = "Goals scored",
+        goals_conceded = "Goals conceded",
+        goal_difference = "Goal difference"
+    )
+
+    plot_data <- regression_results %>%
+        filter(outcome == selected_outcome) %>%
+        arrange(estimate) %>%
+        mutate(player = factor(player, levels = player))
+
+    ggplot(plot_data, aes(x = player, y = estimate)) +
+        geom_hline(yintercept = 0, color = "#8a938d", linewidth = 0.4) +
+        geom_errorbar(aes(ymin = conf_low, ymax = conf_high), width = 0) +
+        geom_point(color = "#0850AB", size = 2.6) +
+        coord_flip() +
+        labs(
+            x = NULL,
+            y = paste0(
+                outcome_labels[[selected_outcome]],
+                " coefficient with 95% confidence interval"
+            )
+        ) +
+        theme_minimal(base_size = 12) +
+        theme(
+            panel.grid.minor = element_blank(),
+            panel.grid.major.y = element_blank()
+        )
+}
+
+plot_card_ui <- function(title, subtitle, output_id, height) {
+    card(
+        class = "table-card",
+        card_header(
+            div(class = "section-tag", "Visualise"),
+            h2(class = "table-title", title),
+            p(class = "table-subtitle", subtitle)
+        ),
+        card_body(plotOutput(output_id, height = height))
+    )
+}
+
+regression_explanation <- card(
+    class = "table-card",
+    card_header(
+        div(class = "section-tag", "Method"),
+        h2(class = "table-title", "How to read the player effects")
+    ),
+    card_body(
+        p(
+            paste(
+                "Each result is a match-level regression on indicators for every player",
+                "present. The coefficient therefore describes the player's association",
+                "with that outcome, conditional on the rest of the lineup."
+            )
+        ),
+        p(
+            paste(
+                "Points are 3 for a win, 1 for a draw, and 0 for a loss; goals",
+                "scored and conceded use the first and second number in the recorded",
+                "score, and goal difference is scored minus conceded. The model does",
+                "not include a time trend. The p-values are conventional OLS p-values.",
+                "These are descriptive lineup-adjusted associations, not causal",
+                "measures of individual quality."
+            )
+        )
+    )
+)
+
 # User interface ----
 ui <- page_fluid(
     theme = app_theme,
@@ -149,6 +285,49 @@ ui <- page_fluid(
                         "Participation rate and on-pitch averages by player.",
                         "attendance_list"
                     )
+                ),
+                nav_panel(
+                    "Player effects",
+                    icon = icon("chart-line"),
+                    layout_columns(
+                        col_widths = c(6, 6),
+                        plot_card_ui(
+                            "Attack and defence",
+                            "Top-right players are associated with more scoring and fewer goals conceded.",
+                            "attack_defence_plot",
+                            "560px"
+                        ),
+                        card(
+                            class = "table-card",
+                            card_header(
+                                div(class = "section-tag", "Visualise"),
+                                h2(class = "table-title", "Coefficient plot"),
+                                p(
+                                    class = "table-subtitle",
+                                    "Dots are estimates and lines are 95% confidence intervals."
+                                )
+                            ),
+                            card_body(
+                                selectInput(
+                                    "regression_outcome",
+                                    "Outcome",
+                                    choices = c(
+                                        "Points" = "points",
+                                        "Goals scored" = "goals_scored",
+                                        "Goals conceded" = "goals_conceded",
+                                        "Goal difference" = "goal_difference"
+                                    )
+                                ),
+                                plotOutput("coefficient_plot", height = "560px")
+                            )
+                        )
+                    ),
+                    table_card_ui(
+                        "Player effects",
+                        "Lineup-adjusted associations with match outcomes.",
+                        "player_regressions"
+                    ),
+                    regression_explanation
                 )
             )
         )
@@ -213,6 +392,12 @@ server <- function(input, output) {
     source("player_contributions.R")
 
     avg_points_by_player <- avg_by_player(attendance, matches, players)
+    regression_results <- player_regression_results(
+        attendance,
+        matches,
+        players
+    )
+    player_regressions <- player_regression_table(regression_results)
 
     attendance_list <- create_attendance_list(
         matches,
@@ -226,6 +411,18 @@ server <- function(input, output) {
 
     output$attendance_list <- renderDT({
         attendance_table(attendance_list)
+    })
+
+    output$player_regressions <- renderDT({
+        regression_table(player_regressions)
+    })
+
+    output$attack_defence_plot <- renderPlot({
+        attack_defence_plot(regression_results)
+    })
+
+    output$coefficient_plot <- renderPlot({
+        coefficient_plot(regression_results, input$regression_outcome)
     })
 
     output$fees_owed <- renderUI({

@@ -24,35 +24,73 @@ create_player_contribution_table <- function(attendance, matches, players) {
   return(contribution_data)
 }
 
-# # Regressions
-# reg_players <- names(
-#   contribution_data %>%
-#     select(
-#       -date,
-#       -result,
-#       -goals_scored,
-#       -core_players,
-#       -goals_conceded,
-#       -points,
-#       -Langkun,
-#       -Yelong,
-#       -Seb,
-#       -Pietro,
-#       -Jasper,
-#       -Oleg,
-#       -Benoit,
-#       -Torge
-#     )
-# )
-# reg_player_fml <- paste(reg_players, collapse = " + ")
-# points_regression <- lm(
-#   formula = as.formula(paste(
-#     "points ~",
-#     reg_player_fml,
-#     ' + core_players + 0'
-#   )),
-#   data = contribution_data
-# )
+# Player-effect regressions ----
+player_regression_results <- function(attendance, matches, players) {
+  contribution_data <- create_player_contribution_table(
+    attendance,
+    matches,
+    players
+  ) %>%
+    mutate(goal_difference = goals_scored - goals_conceded)
+
+  player_names <- attendance %>%
+    distinct(player) %>%
+    pull(player) %>%
+    sort()
+
+  player_appearances <- attendance %>%
+    count(player, name = "appearances")
+
+  outcomes <- c(
+    "points",
+    "goals_scored",
+    "goals_conceded",
+    "goal_difference"
+  )
+
+  purrr::map_dfr(outcomes, function(outcome) {
+    fit <- lm(
+      reformulate(player_names, response = outcome, intercept = FALSE),
+      data = contribution_data
+    )
+    coefficients <- summary(fit)$coefficients
+    confidence_critical_value <- qt(0.975, df = df.residual(fit))
+
+    tibble(
+      player = rownames(coefficients),
+      outcome = outcome,
+      estimate = coefficients[, "Estimate"],
+      std_error = coefficients[, "Std. Error"],
+      conf_low = estimate - confidence_critical_value * std_error,
+      conf_high = estimate + confidence_critical_value * std_error,
+      p_value = coefficients[, "Pr(>|t|)"]
+    )
+  }) %>%
+    left_join(player_appearances, by = "player")
+}
+
+player_regression_table <- function(regression_results) {
+  regression_results %>%
+    select(player, appearances, outcome, estimate, p_value) %>%
+    pivot_wider(
+      names_from = outcome,
+      values_from = c(estimate, p_value),
+      names_sep = "_"
+    ) %>%
+    transmute(
+      Player = player,
+      Appearances = appearances,
+      `Points (beta)` = estimate_points,
+      `Points (p)` = p_value_points,
+      `Goals scored (beta)` = estimate_goals_scored,
+      `Goals scored (p)` = p_value_goals_scored,
+      `Goals conceded (beta)` = estimate_goals_conceded,
+      `Goals conceded (p)` = p_value_goals_conceded,
+      `Goal difference (beta)` = estimate_goal_difference,
+      `Goal difference (p)` = p_value_goal_difference
+    ) %>%
+    arrange(desc(Appearances), Player)
+}
 
 avg_by_player <- function(attendance, matches, players) {
   attendance <- attendance %>%
