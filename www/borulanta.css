@@ -345,6 +345,91 @@ a:hover {
   color: var(--ink-muted);
 }
 
+/* ---- Fee history ---- */
+.fee-overview-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.fee-overview-stat {
+  padding: 0.9rem;
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  background: oklch(97% 0.005 150);
+}
+
+.fee-overview-label {
+  color: var(--ink-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.fee-overview-value {
+  margin-top: 0.25rem;
+  color: var(--navy-1);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.fee-history-note {
+  margin: -0.3rem 0 0.75rem;
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+}
+
+/* ---- Match detail ---- */
+.match-detail-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0 1.25rem;
+}
+
+.match-detail-stat {
+  padding: 0.9rem;
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  background: oklch(97% 0.005 150);
+}
+
+.match-detail-label {
+  color: var(--ink-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.match-detail-value {
+  margin-top: 0.25rem;
+  color: var(--navy-1);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.match-detail-note {
+  margin-top: 0.35rem;
+  color: var(--ink-muted);
+  font-size: 0.86rem;
+}
+
+.match-lineup-title {
+  margin: 0 0 0.6rem;
+  color: var(--ink);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .dataTables_wrapper .dataTables_filter,
 .dataTables_wrapper .dataTables_length,
 .dataTables_wrapper .dataTables_info {
@@ -444,12 +529,20 @@ tr.rank-top3 > td {
 
   .nav-pill-shell .nav {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .nav-pill-shell .nav-pills .nav-link {
     width: 100%;
     text-align: center;
     font-size: 0.92rem;
+  }
+
+  .match-detail-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .fee-overview-summary {
+    grid-template-columns: 1fr;
   }
 }

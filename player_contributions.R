@@ -24,7 +24,72 @@ create_player_contribution_table <- function(attendance, matches, players) {
   return(contribution_data)
 }
 
+# Match analytics ----
+rolling_match_average <- function(values, window = 5L) {
+  vapply(seq_along(values), function(index) {
+    first_index <- max(1L, index - window + 1L)
+    mean(values[first_index:index])
+  }, numeric(1))
+}
+
+season_form_data <- function(attendance, matches) {
+  attendance_by_match <- attendance %>%
+    mutate(date = as.Date(date, format = "%d/%m/%Y")) %>%
+    count(date, name = "squad_size")
+
+  matches %>%
+    mutate(
+      date = as.Date(date, format = "%d/%m/%Y"),
+      goals_scored = str_extract(result, "^\\d+") %>% as.integer(),
+      goals_conceded = str_extract(result, "\\d+$") %>% as.integer(),
+      points = case_when(
+        goals_scored > goals_conceded ~ 3,
+        goals_scored == goals_conceded ~ 1,
+        TRUE ~ 0
+      ),
+      goal_difference = goals_scored - goals_conceded
+    ) %>%
+    left_join(attendance_by_match, by = "date") %>%
+    mutate(squad_size = coalesce(squad_size, 0L)) %>%
+    arrange(date) %>%
+    mutate(
+      rolling_points = rolling_match_average(points),
+      rolling_goals_scored = rolling_match_average(goals_scored),
+      rolling_goals_conceded = rolling_match_average(goals_conceded),
+      rolling_goal_difference = rolling_match_average(goal_difference),
+      rolling_squad_size = rolling_match_average(squad_size)
+    )
+}
+
+match_detail_data <- function(season_form, attendance, selected_date) {
+  selected_date <- as.Date(selected_date)
+  selected_match <- season_form %>%
+    filter(date == selected_date)
+
+  if (nrow(selected_match) != 1) {
+    stop("selected_date must identify exactly one match")
+  }
+
+  n_matches <- nrow(season_form)
+  player_attendance <- attendance %>%
+    mutate(date = as.Date(date, format = "%d/%m/%Y")) %>%
+    count(player, name = "season_appearances") %>%
+    mutate(attendance_rate = season_appearances / n_matches)
+
+  lineup <- attendance %>%
+    mutate(date = as.Date(date, format = "%d/%m/%Y")) %>%
+    filter(date == selected_date) %>%
+    distinct(player) %>%
+    left_join(player_attendance, by = "player") %>%
+    arrange(desc(season_appearances), player)
+
+  list(match = selected_match, lineup = lineup)
+}
+
 # Player-effect regressions ----
+# Retain these players in match attendance, but exclude them from every model.
+excluded_regression_players <- c("Yelong", "Langkun", "Benoit")
+
 player_regression_results <- function(attendance, matches, players) {
   contribution_data <- create_player_contribution_table(
     attendance,
@@ -35,6 +100,7 @@ player_regression_results <- function(attendance, matches, players) {
 
   player_names <- attendance %>%
     distinct(player) %>%
+    filter(!player %in% excluded_regression_players) %>%
     pull(player) %>%
     sort()
 

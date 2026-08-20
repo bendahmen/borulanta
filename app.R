@@ -72,6 +72,121 @@ payment_panel <- card(
     )
 )
 
+format_fee_amount <- function(amount) {
+    sign <- if (amount < 0) "-" else ""
+    paste0(sign, "£", formatC(abs(amount), format = "f", digits = 2))
+}
+
+fee_overview_summary <- function(overview) {
+    balance_label <- case_when(
+        overview$balance > 0 ~ "Still owed",
+        overview$balance < 0 ~ "Credit",
+        TRUE ~ "Settled"
+    )
+
+    div(
+        class = "fee-overview-summary",
+        div(
+            class = "fee-overview-stat",
+            div(class = "fee-overview-label", "Match charges"),
+            div(class = "fee-overview-value", format_fee_amount(overview$total_charges))
+        ),
+        div(
+            class = "fee-overview-stat",
+            div(class = "fee-overview-label", "Payments recorded"),
+            div(class = "fee-overview-value", format_fee_amount(overview$total_payments))
+        ),
+        div(
+            class = "fee-overview-stat",
+            div(class = "fee-overview-label", balance_label),
+            div(class = "fee-overview-value", format_fee_amount(overview$balance))
+        )
+    )
+}
+
+match_charge_table <- function(match_charges) {
+    table_data <- match_charges %>%
+        transmute(
+            Date = format(date, "%d %b %Y"),
+            Result = result,
+            `Played?` = if_else(played, "Yes", "No"),
+            `Squad size` = `Squad size`,
+            Charge = charge,
+            Explanation = explanation
+        )
+
+    datatable(
+        table_data,
+        rownames = FALSE,
+        class = "nowrap",
+        options = list(
+            dom = "tip",
+            pageLength = 12,
+            ordering = FALSE,
+            autoWidth = TRUE,
+            scrollX = TRUE
+        )
+    ) %>%
+        formatCurrency(columns = "Charge", currency = "£", digits = 2)
+}
+
+payment_history_table <- function(payment_history) {
+    table_data <- payment_history %>%
+        transmute(
+            Date = format(date, "%d %b %Y"),
+            Payment = amount
+        )
+
+    datatable(
+        table_data,
+        rownames = FALSE,
+        class = "nowrap",
+        options = list(
+            dom = "t",
+            ordering = FALSE,
+            autoWidth = TRUE,
+            scrollX = TRUE,
+            language = list(emptyTable = "No payments recorded yet.")
+        )
+    ) %>%
+        formatCurrency(columns = "Payment", currency = "£", digits = 2)
+}
+
+fee_history_panel <- tagList(
+    card(
+        class = "table-card",
+        card_header(
+            div(class = "section-tag", "Payment history"),
+            h2(class = "table-title", "How your balance is calculated"),
+            p(
+                class = "table-subtitle",
+                "Match charges follow the squad-size and core-player rules in force on each date."
+            )
+        ),
+        card_body(uiOutput("fee_overview_summary"))
+    ),
+    card(
+        class = "table-card",
+        card_header(
+            div(class = "section-tag", "Charges"),
+            h2(class = "table-title", "Match-by-match charges"),
+            p(
+                class = "fee-history-note",
+                "Individual shares are shown to the nearest penny; the summary keeps the exact split amounts."
+            )
+        ),
+        card_body(dataTableOutput("match_charges"))
+    ),
+    card(
+        class = "table-card",
+        card_header(
+            div(class = "section-tag", "Payments"),
+            h2(class = "table-title", "Payments made")
+        ),
+        card_body(dataTableOutput("payment_history"))
+    )
+)
+
 table_card_ui <- function(title, subtitle, output_id) {
     card(
         class = "table-card",
@@ -130,7 +245,20 @@ attack_defence_plot <- function(regression_results) {
         geom_vline(xintercept = 0, color = "#8a938d", linewidth = 0.4) +
         geom_hline(yintercept = 0, color = "#8a938d", linewidth = 0.4) +
         geom_point(alpha = 0.8) +
-        geom_text(aes(label = player), nudge_y = 0.15, size = 3, check_overlap = TRUE) +
+        ggrepel::geom_label_repel(
+            aes(label = player),
+            seed = 20260820,
+            size = 3.2,
+            fontface = "bold",
+            fill = "white",
+            color = "#16241f",
+            label.size = 0.2,
+            box.padding = 0.45,
+            point.padding = 0.3,
+            min.segment.length = 0,
+            max.overlaps = Inf,
+            show.legend = FALSE
+        ) +
         scale_color_gradient2(
             low = "#AB4400",
             mid = "#16241f",
@@ -139,15 +267,18 @@ attack_defence_plot <- function(regression_results) {
             name = "Goal difference"
         ) +
         scale_size_area(max_size = 14, name = "Appearances") +
+        scale_x_continuous(expand = expansion(mult = 0.2)) +
+        scale_y_continuous(expand = expansion(mult = 0.2)) +
         labs(
             x = "Goals-scored coefficient (higher is better)",
             y = "Defensive coefficient: minus goals conceded (higher is better)"
         ) +
-        coord_equal() +
+        coord_equal(clip = "off") +
         theme_minimal(base_size = 12) +
         theme(
             panel.grid.minor = element_blank(),
-            legend.position = "bottom"
+            legend.position = "bottom",
+            plot.margin = margin(12, 32, 12, 32)
         )
 }
 
@@ -204,9 +335,10 @@ regression_explanation <- card(
     card_body(
         p(
             paste(
-                "Each result is a match-level regression on indicators for every player",
-                "present. The coefficient therefore describes the player's association",
-                "with that outcome, conditional on the rest of the lineup."
+                "Each result is a match-level regression on indicators for the 17 included",
+                "players. Yelong, Langkun, and Benoit are excluded. The coefficient",
+                "therefore describes a player's association with that outcome, conditional",
+                "on the other included players."
             )
         ),
         p(
@@ -219,6 +351,178 @@ regression_explanation <- card(
                 "measures of individual quality."
             )
         )
+    )
+)
+
+match_plot_theme <- function() {
+    theme_minimal(base_size = 12) +
+        theme(
+            panel.grid.minor = element_blank(),
+            legend.position = "bottom"
+        )
+}
+
+season_form_plot <- function(season_form, selected_metric) {
+    if (selected_metric == "points") {
+        return(
+            ggplot(season_form, aes(x = date, y = rolling_points)) +
+                geom_line(color = "#0850AB", linewidth = 1) +
+                geom_point(color = "#0850AB", size = 2.4) +
+                scale_y_continuous(limits = c(0, 3)) +
+                labs(y = "Points per match", x = NULL) +
+                match_plot_theme()
+        )
+    }
+
+    if (selected_metric == "goals") {
+        plot_data <- season_form %>%
+            select(date, rolling_goals_scored, rolling_goals_conceded) %>%
+            pivot_longer(
+                cols = -date,
+                names_to = "metric",
+                values_to = "value"
+            ) %>%
+            mutate(
+                metric = recode(
+                    metric,
+                    rolling_goals_scored = "Goals scored",
+                    rolling_goals_conceded = "Goals conceded"
+                )
+            )
+
+        return(
+            ggplot(plot_data, aes(x = date, y = value, color = metric)) +
+                geom_line(linewidth = 1) +
+                geom_point(size = 2.2) +
+                scale_color_manual(
+                    values = c(
+                        "Goals scored" = "#0850AB",
+                        "Goals conceded" = "#AB4400"
+                    ),
+                    name = NULL
+                ) +
+                labs(y = "Goals per match", x = NULL) +
+                match_plot_theme()
+        )
+    }
+
+    if (selected_metric == "goal_difference") {
+        return(
+            ggplot(season_form, aes(x = date, y = rolling_goal_difference)) +
+                geom_hline(yintercept = 0, color = "#8a938d", linewidth = 0.4) +
+                geom_line(color = "#006D1E", linewidth = 1) +
+                geom_point(color = "#006D1E", size = 2.4) +
+                labs(y = "Goal difference per match", x = NULL) +
+                match_plot_theme()
+        )
+    }
+
+    ggplot(season_form, aes(x = date, y = rolling_squad_size)) +
+        geom_line(color = "#006D1E", linewidth = 1) +
+        geom_point(color = "#006D1E", size = 2.4) +
+        labs(y = "Players per match", x = NULL) +
+        match_plot_theme()
+}
+
+season_form_card <- card(
+    class = "table-card",
+    card_header(
+        div(class = "section-tag", "Season form"),
+        h2(class = "table-title", "How the season is trending"),
+        p(
+            class = "table-subtitle",
+            "Each point is the trailing five-match average; early matches use all results so far."
+        )
+    ),
+    card_body(
+        div(
+            class = "selection-shell",
+            selectInput(
+                "form_metric",
+                "Show",
+                choices = c(
+                    "Points per match" = "points",
+                    "Goals scored and conceded" = "goals",
+                    "Goal difference" = "goal_difference",
+                    "Squad size" = "squad_size"
+                )
+            )
+        ),
+        plotOutput("season_form_plot", height = "380px")
+    )
+)
+
+match_summary_ui <- function(selected_match) {
+    outcome <- case_when(
+        selected_match$points == 3 ~ "Win",
+        selected_match$points == 1 ~ "Draw",
+        TRUE ~ "Loss"
+    )
+
+    div(
+        class = "match-detail-summary",
+        div(
+            class = "match-detail-stat",
+            div(class = "match-detail-label", "Result"),
+            div(class = "match-detail-value", selected_match$result),
+            div(
+                class = "match-detail-note",
+                paste(format(selected_match$date, "%d %B %Y"), "—", outcome)
+            )
+        ),
+        div(
+            class = "match-detail-stat",
+            div(class = "match-detail-label", "Points"),
+            div(class = "match-detail-value", selected_match$points),
+            div(class = "match-detail-note", "3 for a win, 1 for a draw")
+        ),
+        div(
+            class = "match-detail-stat",
+            div(class = "match-detail-label", "Squad"),
+            div(class = "match-detail-value", selected_match$squad_size),
+            div(class = "match-detail-note", "Players recorded as present")
+        )
+    )
+}
+
+match_lineup_table <- function(lineup) {
+    datatable(
+        lineup %>%
+            transmute(
+                Player = player,
+                `Season appearances` = season_appearances,
+                `Attendance rate` = attendance_rate
+            ),
+        rownames = FALSE,
+        class = "nowrap",
+        options = list(
+            dom = "t",
+            ordering = FALSE,
+            autoWidth = TRUE,
+            scrollX = TRUE
+        )
+    ) %>%
+        formatPercentage(columns = "Attendance rate", digits = 0)
+}
+
+match_detail_card <- card(
+    class = "table-card",
+    card_header(
+        div(class = "section-tag", "Match detail"),
+        h2(class = "table-title", "Lineup and season context"),
+        p(
+            class = "table-subtitle",
+            "Choose a result to see the players who were there and their season attendance."
+        )
+    ),
+    card_body(
+        div(
+            class = "selection-shell",
+            selectInput("selected_match", "Match", choices = NULL)
+        ),
+        uiOutput("match_summary"),
+        h3(class = "match-lineup-title", "Lineup"),
+        dataTableOutput("match_lineup")
     )
 )
 
@@ -266,16 +570,19 @@ ui <- page_fluid(
                         class = "fees-grid",
                         fee_panel,
                         payment_panel
-                    )
+                    ),
+                    fee_history_panel
                 ),
                 nav_panel(
                     "Matches",
                     icon = icon("futbol"),
+                    season_form_card,
                     table_card_ui(
                         "Matches",
                         "Recent results for the running season.",
                         "matches"
-                    )
+                    ),
+                    match_detail_card
                 ),
                 nav_panel(
                     "Attendance",
@@ -295,7 +602,7 @@ ui <- page_fluid(
                             "Attack and defence",
                             "Top-right players are associated with more scoring and fewer goals conceded.",
                             "attack_defence_plot",
-                            "560px"
+                            "680px"
                         ),
                         card(
                             class = "table-card",
@@ -383,7 +690,7 @@ attendance_table <- function(attendance_list) {
 }
 
 # Server logic ----
-server <- function(input, output) {
+server <- function(input, output, session) {
     matches <- read_csv("data/matches.csv")
     attendance <- read_csv("data/attendance.csv")
     payments <- read_csv("data/payments.csv")
@@ -392,6 +699,7 @@ server <- function(input, output) {
     source("player_contributions.R")
 
     avg_points_by_player <- avg_by_player(attendance, matches, players)
+    season_form <- season_form_data(attendance, matches)
     regression_results <- player_regression_results(
         attendance,
         matches,
@@ -405,12 +713,65 @@ server <- function(input, output) {
         avg_points_by_player
     )
 
+    fee_overview <- reactive({
+        req(input$fee_player)
+        player_fee_overview(
+            input$fee_player,
+            matches,
+            attendance,
+            payments,
+            players
+        )
+    })
+
+    match_choices <- season_form %>%
+        arrange(desc(date)) %>%
+        transmute(
+            value = as.character(date),
+            label = paste(format(date, "%d %b %Y"), "—", result)
+        )
+    updateSelectInput(
+        session,
+        "selected_match",
+        choices = setNames(match_choices$value, match_choices$label),
+        selected = match_choices$value[[1]]
+    )
+
+    selected_match_details <- reactive({
+        req(input$selected_match)
+        match_detail_data(season_form, attendance, input$selected_match)
+    })
+
     output$matches <- renderDT({
         match_table(matches)
     })
 
+    output$season_form_plot <- renderPlot({
+        season_form_plot(season_form, input$form_metric)
+    })
+
+    output$match_summary <- renderUI({
+        match_summary_ui(selected_match_details()$match)
+    })
+
+    output$match_lineup <- renderDT({
+        match_lineup_table(selected_match_details()$lineup)
+    })
+
     output$attendance_list <- renderDT({
         attendance_table(attendance_list)
+    })
+
+    output$fee_overview_summary <- renderUI({
+        fee_overview_summary(fee_overview())
+    })
+
+    output$match_charges <- renderDT({
+        match_charge_table(fee_overview()$match_charges)
+    })
+
+    output$payment_history <- renderDT({
+        payment_history_table(fee_overview()$payment_history)
     })
 
     output$player_regressions <- renderDT({
@@ -426,10 +787,10 @@ server <- function(input, output) {
     })
 
     output$fees_owed <- renderUI({
-        balance <- calculate_fees(input$fee_player, matches, attendance, payments, players)
+        balance <- fee_overview()$balance
         tags$div(
             class = paste("fee-amount", if (balance > 0) "is-owed" else ""),
-            glue("£{balance}")
+            format_fee_amount(balance)
         )
     })
 }
