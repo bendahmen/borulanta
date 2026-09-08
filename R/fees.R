@@ -98,6 +98,57 @@ FEE_RULE_SETS <- list(
         )
       )
     }
+  ),
+
+  # The fee is always divided by at least `min_players`, so turning up never
+  # costs more than it would in a full squad. At or above that size this is a
+  # plain even split and nobody absent pays anything; below it the split leaves
+  # a shortfall, which falls on the core players who missed the match. In force
+  # from season 3.
+  min_denominator = list(
+    label = "Even split, with the fee divided by at least a full squad",
+    params = list(match_fee = 76, min_players = 8),
+    charge = function(squad, roster, params) {
+      squad_size <- length(squad)
+      played <- roster$player %in% squad
+      absent_core <- roster$core & !played
+      n_absent_core <- sum(absent_core)
+
+      # The floor only bites when somebody is absent to carry the shortfall.
+      # With the whole core present it would simply under-collect, so the rule
+      # falls back to the plain even split that it is a floor on.
+      floored <- squad_size < params$min_players && n_absent_core > 0
+      denominator <- if (floored) params$min_players else squad_size
+      share <- if (denominator > 0) params$match_fee / denominator else 0
+      shortfall <- if (floored) params$match_fee - share * squad_size else 0
+      absent_share <- if (floored) shortfall / n_absent_core else 0
+
+      tibble(
+        player = roster$player,
+        charge = case_when(
+          played ~ share,
+          absent_core ~ absent_share,
+          TRUE ~ 0
+        ),
+        explanation = case_when(
+          played & !floored ~ paste0(
+            "Played: £", money(params$match_fee), " split across ",
+            squad_size, " recorded players."
+          ),
+          played ~ paste0(
+            "Small squad: only ", squad_size, " played, so the fee was divided by the ",
+            "minimum of ", params$min_players, " — the same £", money(share),
+            " a full squad pays."
+          ),
+          absent_core & floored ~ paste0(
+            "Small squad: only ", squad_size, " played, so the remaining £",
+            money(shortfall), " was split across the ", n_absent_core,
+            " core players who missed it."
+          ),
+          TRUE ~ "Did not play: players were charged only when present."
+        )
+      )
+    }
   )
 )
 

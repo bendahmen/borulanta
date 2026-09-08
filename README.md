@@ -213,13 +213,17 @@ active players with their `core` flag. Because the function sees the whole
 match at once, rules that split a remainder across the core are natural to
 express, and the engine needs to know nothing about a rule's internals.
 
-Two are defined:
+Three are defined:
 
 - `even_split` — match fee divided by everyone present.
 - `core_backstop` — even split at or above `min_players`; below that, guests
   pay a fixed reduced fee and core players cover the rest whether or not they
-  played. This is what was in force at the end of 2025/26 and is what 2026/27
-  currently points at.
+  played. In force to the end of season 2.
+- `min_denominator` — the fee (£76) is divided by the squad or by
+  `min_players` (8), whichever is larger, so turning up never costs more than it
+  would in a full squad. At 8 or more this is a plain even split and nobody
+  absent pays anything; below 8 the split leaves a shortfall, which falls on the
+  core players who missed the match. In force from season 3.
 
 To change the rules for a season, add a rule set and point that season's
 `fee_rules` column at it. Nothing else changes.

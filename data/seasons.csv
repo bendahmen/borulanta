@@ -1,4 +1,4 @@
 season_id,label,start_date,fee_rules,status
 s1,Season 1,10/09/2025,archived,closed
 s2,Season 2,01/02/2026,archived,closed
-s3,Season 3,09/09/2026,core_backstop,open
+s3,Season 3,09/09/2026,min_denominator,open
