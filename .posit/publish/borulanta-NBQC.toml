@@ -8,19 +8,15 @@ entrypoint = 'app.R'
 validate = true
 files = [
   '/app.R',
+  '/R',
   '/renv.lock',
   '/.posit/publish/borulanta-NBQC.toml',
   '/.posit/publish/deployments/deployment-71QC.toml',
   '/.posit',
-  '/calculate_fees.R',
   '/data',
-  '/debug.R',
-  '/helpers.R',
-  '/player_contributions.R',
   '/renv',
   '/.Rprofile',
   '/.gitignore',
-  '/testing.R',
   '/www'
 ]
 title = 'borulanta'

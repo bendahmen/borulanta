@@ -10,22 +10,21 @@ id = "019d06ee-2f70-e229-6928-8f4d0c987e63"
 dashboard_url = "https://connect.posit.cloud/bendahmen/content/019d06ee-2f70-e229-6928-8f4d0c987e63"
 direct_url = "https://019d06ee-2f70-e229-6928-8f4d0c987e63.share.connect.posit.cloud"
 logs_url = "https://connect.posit.cloud/bendahmen/content/019d06ee-2f70-e229-6928-8f4d0c987e63/history"
-deployed_at = "2026-09-06T11:19:14.932Z"
-bundle_id = "01a07671-7d60-4c9c-8538-57da6c69004b"
+deployed_at = "2026-09-08T13:13:52.732Z"
+bundle_id = "01a08126-aacb-cac7-90ac-60e219c915fa"
 files = [
     ".Rprofile",
     ".gitignore",
     ".posit/publish/borulanta-NBQC.toml",
     ".posit/publish/deployments/deployment-71QC.toml",
     "app.R",
-    "calculate_fees.R",
+    "data/archive/charges_2025-26.csv",
     "data/attendance.csv",
     "data/matches.csv",
     "data/payments.csv",
+    "data/player_seasons.csv",
     "data/players.csv",
-    "debug.R",
-    "helpers.R",
-    "player_contributions.R",
+    "data/seasons.csv",
     "renv.lock",
     "renv/.gitignore",
     "renv/activate.R",
@@ -33,7 +32,6 @@ files = [
     "www/borulanta-crest.png",
     "www/borulanta.css",
 ]
-dismissed_at = "2026-09-06T11:19:14.932Z"
 
 [connect_cloud]
 account_name = "bendahmen"
@@ -4678,4 +4676,9 @@ needs_compilation = "yes"
 author = "Hadley Wickham [cre] (ORCID: <https://orcid.org/0000-0003-4757-117X>), Shawn Garbett [ctb] (ORCID: <https://orcid.org/0000-0003-4079-5621>), Jeremy Stephens [aut, ctb], Kirill Simonov [aut], Yihui Xie [ctb] (ORCID: <https://orcid.org/0000-0003-0645-5666>), Zhuoer Dong [ctb], Jeffrey Horner [ctb], reikoch [ctb], Will Beasley [ctb] (ORCID: <https://orcid.org/0000-0002-5613-5006>), Brendan O'Connor [ctb], Michael Quinn [ctb], Charlie Gao [ctb], Gregory R. Warnes [ctb], Zhian N. Kamvar [ctb]"
 maintainer = "Hadley Wickham <hadley@posit.co>"
 repository = "CRAN"
+
+[deployment_error]
+code = "deployFailed"
+message = "Runtime error: Unable to start the app due to a runtime error. Please check the logs for more information."
+operation = "publish"
 
