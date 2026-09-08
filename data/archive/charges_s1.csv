@@ -1,0 +1,341 @@
+season_id,date,player,played,squad_size,charge,explanation
+s1,10/09/2025,Anton,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,10/09/2025,Ben,TRUE,8,9.15,Played: the remaining £45.75 was split across 5 legacy core players.
+s1,10/09/2025,Benoit,FALSE,8,0,Did not play: guests were not charged.
+s1,10/09/2025,Berghi,FALSE,8,0,Did not play: guests were not charged.
+s1,10/09/2025,Boris,TRUE,8,9.15,Played: the remaining £45.75 was split across 5 legacy core players.
+s1,10/09/2025,Dadde,FALSE,8,0,Did not play: guests were not charged.
+s1,10/09/2025,Daniel,TRUE,8,9.15,Played: the remaining £45.75 was split across 5 legacy core players.
+s1,10/09/2025,Elia,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,10/09/2025,Emiliano,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,10/09/2025,Jasper,FALSE,8,0,Did not play: guests were not charged.
+s1,10/09/2025,Langkun,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,10/09/2025,Luca,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,10/09/2025,Mateus,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,10/09/2025,Max,TRUE,8,9.15,Played: the remaining £45.75 was split across 5 legacy core players.
+s1,10/09/2025,Oleg,FALSE,8,0,Did not play: guests were not charged.
+s1,10/09/2025,Pietro,FALSE,8,0,Did not play: guests were not charged.
+s1,10/09/2025,Seb,FALSE,8,0,Did not play: guests were not charged.
+s1,10/09/2025,Torge,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,10/09/2025,Vitto,TRUE,8,9.15,Played: the remaining £45.75 was split across 5 legacy core players.
+s1,10/09/2025,Yelong,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,17/09/2025,Anton,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,17/09/2025,Ben,TRUE,8,9.15,Played: the remaining £45.75 was split across 5 legacy core players.
+s1,17/09/2025,Benoit,FALSE,8,0,Did not play: guests were not charged.
+s1,17/09/2025,Berghi,FALSE,8,0,Did not play: guests were not charged.
+s1,17/09/2025,Boris,TRUE,8,9.15,Played: the remaining £45.75 was split across 5 legacy core players.
+s1,17/09/2025,Dadde,FALSE,8,0,Did not play: guests were not charged.
+s1,17/09/2025,Daniel,TRUE,8,9.15,Played: the remaining £45.75 was split across 5 legacy core players.
+s1,17/09/2025,Elia,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,17/09/2025,Emiliano,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,17/09/2025,Jasper,FALSE,8,0,Did not play: guests were not charged.
+s1,17/09/2025,Langkun,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,17/09/2025,Luca,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,17/09/2025,Mateus,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,17/09/2025,Max,TRUE,8,9.15,Played: the remaining £45.75 was split across 5 legacy core players.
+s1,17/09/2025,Oleg,FALSE,8,0,Did not play: guests were not charged.
+s1,17/09/2025,Pietro,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,17/09/2025,Seb,FALSE,8,0,Did not play: guests were not charged.
+s1,17/09/2025,Torge,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,17/09/2025,Vitto,TRUE,8,9.15,Played: the remaining £45.75 was split across 5 legacy core players.
+s1,17/09/2025,Yelong,FALSE,8,0,Did not play: guests were not charged.
+s1,24/09/2025,Anton,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,24/09/2025,Ben,TRUE,8,9.15,Played: the remaining £45.75 was split across 5 legacy core players.
+s1,24/09/2025,Benoit,FALSE,8,0,Did not play: guests were not charged.
+s1,24/09/2025,Berghi,FALSE,8,0,Did not play: guests were not charged.
+s1,24/09/2025,Boris,TRUE,8,9.15,Played: the remaining £45.75 was split across 5 legacy core players.
+s1,24/09/2025,Dadde,FALSE,8,0,Did not play: guests were not charged.
+s1,24/09/2025,Daniel,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,24/09/2025,Elia,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,24/09/2025,Emiliano,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,24/09/2025,Jasper,FALSE,8,0,Did not play: guests were not charged.
+s1,24/09/2025,Langkun,FALSE,8,0,Did not play: guests were not charged.
+s1,24/09/2025,Luca,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,24/09/2025,Mateus,TRUE,8,9.15,Played: the remaining £45.75 was split across 5 legacy core players.
+s1,24/09/2025,Max,TRUE,8,9.15,Played: the remaining £45.75 was split across 5 legacy core players.
+s1,24/09/2025,Oleg,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,24/09/2025,Pietro,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,24/09/2025,Seb,FALSE,8,0,Did not play: guests were not charged.
+s1,24/09/2025,Torge,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,24/09/2025,Vitto,TRUE,8,9.15,Played: the remaining £45.75 was split across 5 legacy core players.
+s1,24/09/2025,Yelong,FALSE,8,0,Did not play: guests were not charged.
+s1,01/10/2025,Anton,TRUE,7,9.75,Played as a guest: fixed guest fee.
+s1,01/10/2025,Ben,TRUE,7,12,Played: the remaining £36.00 was split across 3 legacy core players.
+s1,01/10/2025,Benoit,FALSE,7,0,Did not play: guests were not charged.
+s1,01/10/2025,Berghi,TRUE,7,9.75,Played as a guest: fixed guest fee.
+s1,01/10/2025,Boris,TRUE,7,12,Played: the remaining £36.00 was split across 3 legacy core players.
+s1,01/10/2025,Dadde,FALSE,7,0,Did not play: guests were not charged.
+s1,01/10/2025,Daniel,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,01/10/2025,Elia,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,01/10/2025,Emiliano,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,01/10/2025,Jasper,FALSE,7,0,Did not play: guests were not charged.
+s1,01/10/2025,Langkun,FALSE,7,0,Did not play: guests were not charged.
+s1,01/10/2025,Luca,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,01/10/2025,Mateus,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,01/10/2025,Max,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,01/10/2025,Oleg,TRUE,7,9.75,Played as a guest: fixed guest fee.
+s1,01/10/2025,Pietro,FALSE,7,0,Did not play: guests were not charged.
+s1,01/10/2025,Seb,TRUE,7,9.75,Played as a guest: fixed guest fee.
+s1,01/10/2025,Torge,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,01/10/2025,Vitto,TRUE,7,12,Played: the remaining £36.00 was split across 3 legacy core players.
+s1,01/10/2025,Yelong,FALSE,7,0,Did not play: guests were not charged.
+s1,08/10/2025,Anton,FALSE,8,0,Did not play: guests were not charged.
+s1,08/10/2025,Ben,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,08/10/2025,Benoit,FALSE,8,0,Did not play: guests were not charged.
+s1,08/10/2025,Berghi,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,08/10/2025,Boris,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,08/10/2025,Dadde,FALSE,8,0,Did not play: guests were not charged.
+s1,08/10/2025,Daniel,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,08/10/2025,Elia,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,08/10/2025,Emiliano,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,08/10/2025,Jasper,FALSE,8,0,Did not play: guests were not charged.
+s1,08/10/2025,Langkun,FALSE,8,0,Did not play: guests were not charged.
+s1,08/10/2025,Luca,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,08/10/2025,Mateus,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,08/10/2025,Max,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,08/10/2025,Oleg,FALSE,8,0,Did not play: guests were not charged.
+s1,08/10/2025,Pietro,FALSE,8,0,Did not play: guests were not charged.
+s1,08/10/2025,Seb,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,08/10/2025,Torge,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,08/10/2025,Vitto,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,08/10/2025,Yelong,FALSE,8,0,Did not play: guests were not charged.
+s1,15/10/2025,Anton,FALSE,7,0,Did not play: guests were not charged.
+s1,15/10/2025,Ben,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,15/10/2025,Benoit,FALSE,7,0,Did not play: guests were not charged.
+s1,15/10/2025,Berghi,TRUE,7,9.75,Played as a guest: fixed guest fee.
+s1,15/10/2025,Boris,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,15/10/2025,Dadde,FALSE,7,0,Did not play: guests were not charged.
+s1,15/10/2025,Daniel,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,15/10/2025,Elia,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,15/10/2025,Emiliano,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,15/10/2025,Jasper,FALSE,7,0,Did not play: guests were not charged.
+s1,15/10/2025,Langkun,FALSE,7,0,Did not play: guests were not charged.
+s1,15/10/2025,Luca,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,15/10/2025,Mateus,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,15/10/2025,Max,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,15/10/2025,Oleg,FALSE,7,0,Did not play: guests were not charged.
+s1,15/10/2025,Pietro,FALSE,7,0,Did not play: guests were not charged.
+s1,15/10/2025,Seb,FALSE,7,0,Did not play: guests were not charged.
+s1,15/10/2025,Torge,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,15/10/2025,Vitto,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,15/10/2025,Yelong,FALSE,7,0,Did not play: guests were not charged.
+s1,22/10/2025,Anton,FALSE,5,0,Did not play: guests were not charged.
+s1,22/10/2025,Ben,TRUE,5,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,22/10/2025,Benoit,FALSE,5,0,Did not play: guests were not charged.
+s1,22/10/2025,Berghi,TRUE,5,9.75,Played as a guest: fixed guest fee.
+s1,22/10/2025,Boris,TRUE,5,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,22/10/2025,Dadde,FALSE,5,0,Did not play: guests were not charged.
+s1,22/10/2025,Daniel,FALSE,5,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,22/10/2025,Elia,FALSE,5,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,22/10/2025,Emiliano,FALSE,5,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,22/10/2025,Jasper,FALSE,5,0,Did not play: guests were not charged.
+s1,22/10/2025,Langkun,FALSE,5,0,Did not play: guests were not charged.
+s1,22/10/2025,Luca,FALSE,5,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,22/10/2025,Mateus,TRUE,5,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,22/10/2025,Max,TRUE,5,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,22/10/2025,Oleg,FALSE,5,0,Did not play: guests were not charged.
+s1,22/10/2025,Pietro,FALSE,5,0,Did not play: guests were not charged.
+s1,22/10/2025,Seb,FALSE,5,0,Did not play: guests were not charged.
+s1,22/10/2025,Torge,FALSE,5,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,22/10/2025,Vitto,FALSE,5,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,22/10/2025,Yelong,FALSE,5,0,Did not play: guests were not charged.
+s1,05/11/2025,Anton,TRUE,7,9.75,Played as a guest: fixed guest fee.
+s1,05/11/2025,Ben,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,05/11/2025,Benoit,FALSE,7,0,Did not play: guests were not charged.
+s1,05/11/2025,Berghi,FALSE,7,0,Did not play: guests were not charged.
+s1,05/11/2025,Boris,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,05/11/2025,Dadde,FALSE,7,0,Did not play: guests were not charged.
+s1,05/11/2025,Daniel,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,05/11/2025,Elia,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,05/11/2025,Emiliano,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,05/11/2025,Jasper,FALSE,7,0,Did not play: guests were not charged.
+s1,05/11/2025,Langkun,FALSE,7,0,Did not play: guests were not charged.
+s1,05/11/2025,Luca,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,05/11/2025,Mateus,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,05/11/2025,Max,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,05/11/2025,Oleg,FALSE,7,0,Did not play: guests were not charged.
+s1,05/11/2025,Pietro,FALSE,7,0,Did not play: guests were not charged.
+s1,05/11/2025,Seb,FALSE,7,0,Did not play: guests were not charged.
+s1,05/11/2025,Torge,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,05/11/2025,Vitto,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,05/11/2025,Yelong,FALSE,7,0,Did not play: guests were not charged.
+s1,12/11/2025,Anton,TRUE,7,9.75,Played as a guest: fixed guest fee.
+s1,12/11/2025,Ben,TRUE,7,11.1,Played: the remaining £55.50 was split across 5 legacy core players.
+s1,12/11/2025,Benoit,TRUE,7,9.75,Played as a guest: fixed guest fee.
+s1,12/11/2025,Berghi,FALSE,7,0,Did not play: guests were not charged.
+s1,12/11/2025,Boris,TRUE,7,11.1,Played: the remaining £55.50 was split across 5 legacy core players.
+s1,12/11/2025,Dadde,FALSE,7,0,Did not play: guests were not charged.
+s1,12/11/2025,Daniel,TRUE,7,11.1,Played: the remaining £55.50 was split across 5 legacy core players.
+s1,12/11/2025,Elia,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,12/11/2025,Emiliano,TRUE,7,11.1,Played: the remaining £55.50 was split across 5 legacy core players.
+s1,12/11/2025,Jasper,FALSE,7,0,Did not play: guests were not charged.
+s1,12/11/2025,Langkun,FALSE,7,0,Did not play: guests were not charged.
+s1,12/11/2025,Luca,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,12/11/2025,Mateus,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,12/11/2025,Max,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,12/11/2025,Oleg,FALSE,7,0,Did not play: guests were not charged.
+s1,12/11/2025,Pietro,FALSE,7,0,Did not play: guests were not charged.
+s1,12/11/2025,Seb,FALSE,7,0,Did not play: guests were not charged.
+s1,12/11/2025,Torge,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,12/11/2025,Vitto,TRUE,7,11.1,Played: the remaining £55.50 was split across 5 legacy core players.
+s1,12/11/2025,Yelong,FALSE,7,0,Did not play: guests were not charged.
+s1,19/11/2025,Anton,FALSE,8,0,Did not play: guests were not charged.
+s1,19/11/2025,Ben,TRUE,8,9.321428571428571,Played: the remaining £65.25 was split across 7 legacy core players.
+s1,19/11/2025,Benoit,FALSE,8,0,Did not play: guests were not charged.
+s1,19/11/2025,Berghi,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,19/11/2025,Boris,TRUE,8,9.321428571428571,Played: the remaining £65.25 was split across 7 legacy core players.
+s1,19/11/2025,Dadde,FALSE,8,0,Did not play: guests were not charged.
+s1,19/11/2025,Daniel,TRUE,8,9.321428571428571,Played: the remaining £65.25 was split across 7 legacy core players.
+s1,19/11/2025,Elia,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,19/11/2025,Emiliano,TRUE,8,9.321428571428571,Played: the remaining £65.25 was split across 7 legacy core players.
+s1,19/11/2025,Jasper,FALSE,8,0,Did not play: guests were not charged.
+s1,19/11/2025,Langkun,FALSE,8,0,Did not play: guests were not charged.
+s1,19/11/2025,Luca,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,19/11/2025,Mateus,TRUE,8,9.321428571428571,Played: the remaining £65.25 was split across 7 legacy core players.
+s1,19/11/2025,Max,TRUE,8,9.321428571428571,Played: the remaining £65.25 was split across 7 legacy core players.
+s1,19/11/2025,Oleg,FALSE,8,0,Did not play: guests were not charged.
+s1,19/11/2025,Pietro,FALSE,8,0,Did not play: guests were not charged.
+s1,19/11/2025,Seb,FALSE,8,0,Did not play: guests were not charged.
+s1,19/11/2025,Torge,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,19/11/2025,Vitto,TRUE,8,9.321428571428571,Played: the remaining £65.25 was split across 7 legacy core players.
+s1,19/11/2025,Yelong,FALSE,8,0,Did not play: guests were not charged.
+s1,26/11/2025,Anton,FALSE,8,0,Did not play: guests were not charged.
+s1,26/11/2025,Ben,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,26/11/2025,Benoit,FALSE,8,0,Did not play: guests were not charged.
+s1,26/11/2025,Berghi,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,26/11/2025,Boris,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,26/11/2025,Dadde,FALSE,8,0,Did not play: guests were not charged.
+s1,26/11/2025,Daniel,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,26/11/2025,Elia,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,26/11/2025,Emiliano,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,26/11/2025,Jasper,FALSE,8,0,Did not play: guests were not charged.
+s1,26/11/2025,Langkun,FALSE,8,0,Did not play: guests were not charged.
+s1,26/11/2025,Luca,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,26/11/2025,Mateus,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,26/11/2025,Max,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,26/11/2025,Oleg,FALSE,8,0,Did not play: guests were not charged.
+s1,26/11/2025,Pietro,FALSE,8,0,Did not play: guests were not charged.
+s1,26/11/2025,Seb,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,26/11/2025,Torge,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,26/11/2025,Vitto,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,26/11/2025,Yelong,FALSE,8,0,Did not play: guests were not charged.
+s1,03/12/2025,Anton,FALSE,7,0,Did not play: guests were not charged.
+s1,03/12/2025,Ben,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,03/12/2025,Benoit,FALSE,7,0,Did not play: guests were not charged.
+s1,03/12/2025,Berghi,TRUE,7,9.75,Played as a guest: fixed guest fee.
+s1,03/12/2025,Boris,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,03/12/2025,Dadde,FALSE,7,0,Did not play: guests were not charged.
+s1,03/12/2025,Daniel,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,03/12/2025,Elia,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,03/12/2025,Emiliano,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,03/12/2025,Jasper,FALSE,7,0,Did not play: guests were not charged.
+s1,03/12/2025,Langkun,FALSE,7,0,Did not play: guests were not charged.
+s1,03/12/2025,Luca,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,03/12/2025,Mateus,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,03/12/2025,Max,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,03/12/2025,Oleg,FALSE,7,0,Did not play: guests were not charged.
+s1,03/12/2025,Pietro,FALSE,7,0,Did not play: guests were not charged.
+s1,03/12/2025,Seb,FALSE,7,0,Did not play: guests were not charged.
+s1,03/12/2025,Torge,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,03/12/2025,Vitto,TRUE,7,10.875,Played: the remaining £65.25 was split across 6 legacy core players.
+s1,03/12/2025,Yelong,FALSE,7,0,Did not play: guests were not charged.
+s1,10/12/2025,Anton,FALSE,7,0,Did not play: guests were not charged.
+s1,10/12/2025,Ben,TRUE,7,11.1,Played: the remaining £55.50 was split across 5 legacy core players.
+s1,10/12/2025,Benoit,FALSE,7,0,Did not play: guests were not charged.
+s1,10/12/2025,Berghi,FALSE,7,0,Did not play: guests were not charged.
+s1,10/12/2025,Boris,TRUE,7,11.1,Played: the remaining £55.50 was split across 5 legacy core players.
+s1,10/12/2025,Dadde,FALSE,7,0,Did not play: guests were not charged.
+s1,10/12/2025,Daniel,TRUE,7,11.1,Played: the remaining £55.50 was split across 5 legacy core players.
+s1,10/12/2025,Elia,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,10/12/2025,Emiliano,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,10/12/2025,Jasper,TRUE,7,9.75,Played as a guest: fixed guest fee.
+s1,10/12/2025,Langkun,FALSE,7,0,Did not play: guests were not charged.
+s1,10/12/2025,Luca,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,10/12/2025,Mateus,TRUE,7,11.1,Played: the remaining £55.50 was split across 5 legacy core players.
+s1,10/12/2025,Max,TRUE,7,11.1,Played: the remaining £55.50 was split across 5 legacy core players.
+s1,10/12/2025,Oleg,FALSE,7,0,Did not play: guests were not charged.
+s1,10/12/2025,Pietro,FALSE,7,0,Did not play: guests were not charged.
+s1,10/12/2025,Seb,TRUE,7,9.75,Played as a guest: fixed guest fee.
+s1,10/12/2025,Torge,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,10/12/2025,Vitto,FALSE,7,0,Did not play: legacy core players were charged only when present.
+s1,10/12/2025,Yelong,FALSE,7,0,Did not play: guests were not charged.
+s1,17/12/2025,Anton,FALSE,3,0,Did not play: guests were not charged.
+s1,17/12/2025,Ben,FALSE,3,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,17/12/2025,Benoit,FALSE,3,0,Did not play: guests were not charged.
+s1,17/12/2025,Berghi,TRUE,3,9.75,Played as a guest: fixed guest fee.
+s1,17/12/2025,Boris,FALSE,3,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,17/12/2025,Dadde,FALSE,3,0,Did not play: guests were not charged.
+s1,17/12/2025,Daniel,FALSE,3,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,17/12/2025,Elia,FALSE,3,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,17/12/2025,Emiliano,FALSE,3,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,17/12/2025,Jasper,FALSE,3,0,Did not play: guests were not charged.
+s1,17/12/2025,Langkun,FALSE,3,0,Did not play: guests were not charged.
+s1,17/12/2025,Luca,FALSE,3,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,17/12/2025,Mateus,FALSE,3,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,17/12/2025,Max,TRUE,3,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,17/12/2025,Oleg,FALSE,3,0,Did not play: guests were not charged.
+s1,17/12/2025,Pietro,FALSE,3,0,Did not play: guests were not charged.
+s1,17/12/2025,Seb,FALSE,3,0,Did not play: guests were not charged.
+s1,17/12/2025,Torge,FALSE,3,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,17/12/2025,Vitto,TRUE,3,6.525,Small squad: the remaining £65.25 was split across all 10 legacy core players.
+s1,17/12/2025,Yelong,FALSE,3,0,Did not play: guests were not charged.
+s1,07/01/2026,Anton,FALSE,3,0,Did not play: guests were not charged.
+s1,07/01/2026,Ben,TRUE,3,5.55,Small squad: the remaining £55.50 was split across all 10 legacy core players.
+s1,07/01/2026,Benoit,FALSE,3,0,Did not play: guests were not charged.
+s1,07/01/2026,Berghi,TRUE,3,9.75,Played as a guest: fixed guest fee.
+s1,07/01/2026,Boris,FALSE,3,5.55,Small squad: the remaining £55.50 was split across all 10 legacy core players.
+s1,07/01/2026,Dadde,FALSE,3,0,Did not play: guests were not charged.
+s1,07/01/2026,Daniel,FALSE,3,5.55,Small squad: the remaining £55.50 was split across all 10 legacy core players.
+s1,07/01/2026,Elia,FALSE,3,5.55,Small squad: the remaining £55.50 was split across all 10 legacy core players.
+s1,07/01/2026,Emiliano,FALSE,3,5.55,Small squad: the remaining £55.50 was split across all 10 legacy core players.
+s1,07/01/2026,Jasper,FALSE,3,0,Did not play: guests were not charged.
+s1,07/01/2026,Langkun,FALSE,3,0,Did not play: guests were not charged.
+s1,07/01/2026,Luca,FALSE,3,5.55,Small squad: the remaining £55.50 was split across all 10 legacy core players.
+s1,07/01/2026,Mateus,FALSE,3,5.55,Small squad: the remaining £55.50 was split across all 10 legacy core players.
+s1,07/01/2026,Max,FALSE,3,5.55,Small squad: the remaining £55.50 was split across all 10 legacy core players.
+s1,07/01/2026,Oleg,TRUE,3,9.75,Played as a guest: fixed guest fee.
+s1,07/01/2026,Pietro,FALSE,3,0,Did not play: guests were not charged.
+s1,07/01/2026,Seb,FALSE,3,0,Did not play: guests were not charged.
+s1,07/01/2026,Torge,FALSE,3,5.55,Small squad: the remaining £55.50 was split across all 10 legacy core players.
+s1,07/01/2026,Vitto,FALSE,3,5.55,Small squad: the remaining £55.50 was split across all 10 legacy core players.
+s1,07/01/2026,Yelong,FALSE,3,0,Did not play: guests were not charged.
+s1,21/01/2026,Anton,FALSE,8,0,Did not play: guests were not charged.
+s1,21/01/2026,Ben,TRUE,8,9.321428571428571,Played: the remaining £65.25 was split across 7 legacy core players.
+s1,21/01/2026,Benoit,FALSE,8,0,Did not play: guests were not charged.
+s1,21/01/2026,Berghi,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,21/01/2026,Boris,TRUE,8,9.321428571428571,Played: the remaining £65.25 was split across 7 legacy core players.
+s1,21/01/2026,Dadde,FALSE,8,0,Did not play: guests were not charged.
+s1,21/01/2026,Daniel,TRUE,8,9.321428571428571,Played: the remaining £65.25 was split across 7 legacy core players.
+s1,21/01/2026,Elia,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,21/01/2026,Emiliano,TRUE,8,9.321428571428571,Played: the remaining £65.25 was split across 7 legacy core players.
+s1,21/01/2026,Jasper,FALSE,8,0,Did not play: guests were not charged.
+s1,21/01/2026,Langkun,FALSE,8,0,Did not play: guests were not charged.
+s1,21/01/2026,Luca,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,21/01/2026,Mateus,TRUE,8,9.321428571428571,Played: the remaining £65.25 was split across 7 legacy core players.
+s1,21/01/2026,Max,TRUE,8,9.321428571428571,Played: the remaining £65.25 was split across 7 legacy core players.
+s1,21/01/2026,Oleg,FALSE,8,0,Did not play: guests were not charged.
+s1,21/01/2026,Pietro,FALSE,8,0,Did not play: guests were not charged.
+s1,21/01/2026,Seb,FALSE,8,0,Did not play: guests were not charged.
+s1,21/01/2026,Torge,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,21/01/2026,Vitto,TRUE,8,9.321428571428571,Played: the remaining £65.25 was split across 7 legacy core players.
+s1,21/01/2026,Yelong,FALSE,8,0,Did not play: guests were not charged.
+s1,28/01/2026,Anton,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,28/01/2026,Ben,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,28/01/2026,Benoit,FALSE,8,0,Did not play: guests were not charged.
+s1,28/01/2026,Berghi,FALSE,8,0,Did not play: guests were not charged.
+s1,28/01/2026,Boris,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,28/01/2026,Dadde,FALSE,8,0,Did not play: guests were not charged.
+s1,28/01/2026,Daniel,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,28/01/2026,Elia,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,28/01/2026,Emiliano,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,28/01/2026,Jasper,FALSE,8,0,Did not play: guests were not charged.
+s1,28/01/2026,Langkun,FALSE,8,0,Did not play: guests were not charged.
+s1,28/01/2026,Luca,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,28/01/2026,Mateus,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,28/01/2026,Max,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,28/01/2026,Oleg,FALSE,8,0,Did not play: guests were not charged.
+s1,28/01/2026,Pietro,FALSE,8,0,Did not play: guests were not charged.
+s1,28/01/2026,Seb,TRUE,8,9.75,Played as a guest: fixed guest fee.
+s1,28/01/2026,Torge,FALSE,8,0,Did not play: legacy core players were charged only when present.
+s1,28/01/2026,Vitto,TRUE,8,9.25,Played: the remaining £55.50 was split across 6 legacy core players.
+s1,28/01/2026,Yelong,FALSE,8,0,Did not play: guests were not charged.

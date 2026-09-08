@@ -183,12 +183,22 @@ all_charges <- function(seasons, matches, attendance, rosters) {
 
 # Per-player views ----
 
-player_match_charges <- function(player, charges) {
-  charges %>%
+player_match_charges <- function(player, charges, seasons = NULL) {
+  charges <- charges %>%
     filter(.data$player == .env$player) %>%
-    arrange(desc(date)) %>%
+    arrange(desc(date))
+
+  # The charge history spans every season, so say which one each match was in.
+  season_label <- if (is.null(seasons)) {
+    charges$season_id
+  } else {
+    seasons$label[match(charges$season_id, seasons$season_id)]
+  }
+
+  charges %>%
     transmute(
       date,
+      season = season_label,
       result,
       played,
       `Squad size` = squad_size,
@@ -204,8 +214,8 @@ player_payment_history <- function(player, payments) {
     transmute(date, amount)
 }
 
-player_fee_overview <- function(player, charges, payments) {
-  match_charges <- player_match_charges(player, charges)
+player_fee_overview <- function(player, charges, payments, seasons = NULL) {
+  match_charges <- player_match_charges(player, charges, seasons)
   payment_history <- player_payment_history(player, payments)
   total_charges <- sum(match_charges$charge)
   total_payments <- sum(payment_history$amount)

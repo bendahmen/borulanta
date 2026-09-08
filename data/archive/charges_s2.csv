@@ -1,0 +1,541 @@
+season_id,date,player,played,squad_size,charge,explanation
+s2,04/02/2026,Anton,FALSE,8,0,Did not play: players were charged only when present.
+s2,04/02/2026,Ben,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,04/02/2026,Benoit,FALSE,8,0,Did not play: players were charged only when present.
+s2,04/02/2026,Berghi,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,04/02/2026,Boris,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,04/02/2026,Dadde,FALSE,8,0,Did not play: players were charged only when present.
+s2,04/02/2026,Daniel,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,04/02/2026,Elia,FALSE,8,0,Did not play: players were charged only when present.
+s2,04/02/2026,Emiliano,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,04/02/2026,Jasper,FALSE,8,0,Did not play: players were charged only when present.
+s2,04/02/2026,Langkun,FALSE,8,0,Did not play: players were charged only when present.
+s2,04/02/2026,Luca,FALSE,8,0,Did not play: players were charged only when present.
+s2,04/02/2026,Mateus,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,04/02/2026,Max,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,04/02/2026,Oleg,FALSE,8,0,Did not play: players were charged only when present.
+s2,04/02/2026,Pietro,FALSE,8,0,Did not play: players were charged only when present.
+s2,04/02/2026,Seb,FALSE,8,0,Did not play: players were charged only when present.
+s2,04/02/2026,Torge,FALSE,8,0,Did not play: players were charged only when present.
+s2,04/02/2026,Vitto,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,04/02/2026,Yelong,FALSE,8,0,Did not play: players were charged only when present.
+s2,11/02/2026,Anton,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,11/02/2026,Ben,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,11/02/2026,Benoit,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/02/2026,Berghi,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/02/2026,Boris,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,11/02/2026,Dadde,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/02/2026,Daniel,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/02/2026,Elia,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/02/2026,Emiliano,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,11/02/2026,Jasper,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/02/2026,Langkun,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/02/2026,Luca,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/02/2026,Mateus,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,11/02/2026,Max,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,11/02/2026,Oleg,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/02/2026,Pietro,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/02/2026,Seb,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/02/2026,Torge,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/02/2026,Vitto,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,11/02/2026,Yelong,FALSE,7,0,Did not play: players were charged only when present.
+s2,18/02/2026,Anton,FALSE,7,0,Did not play: players were charged only when present.
+s2,18/02/2026,Ben,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,18/02/2026,Benoit,FALSE,7,0,Did not play: players were charged only when present.
+s2,18/02/2026,Berghi,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,18/02/2026,Boris,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,18/02/2026,Dadde,FALSE,7,0,Did not play: players were charged only when present.
+s2,18/02/2026,Daniel,FALSE,7,0,Did not play: players were charged only when present.
+s2,18/02/2026,Elia,FALSE,7,0,Did not play: players were charged only when present.
+s2,18/02/2026,Emiliano,FALSE,7,0,Did not play: players were charged only when present.
+s2,18/02/2026,Jasper,FALSE,7,0,Did not play: players were charged only when present.
+s2,18/02/2026,Langkun,FALSE,7,0,Did not play: players were charged only when present.
+s2,18/02/2026,Luca,FALSE,7,0,Did not play: players were charged only when present.
+s2,18/02/2026,Mateus,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,18/02/2026,Max,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,18/02/2026,Oleg,FALSE,7,0,Did not play: players were charged only when present.
+s2,18/02/2026,Pietro,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,18/02/2026,Seb,FALSE,7,0,Did not play: players were charged only when present.
+s2,18/02/2026,Torge,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,18/02/2026,Vitto,FALSE,7,0,Did not play: players were charged only when present.
+s2,18/02/2026,Yelong,FALSE,7,0,Did not play: players were charged only when present.
+s2,25/02/2026,Anton,FALSE,6,0,Small squad: guests were charged only when present.
+s2,25/02/2026,Ben,TRUE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,25/02/2026,Benoit,FALSE,6,0,Small squad: guests were charged only when present.
+s2,25/02/2026,Berghi,FALSE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,25/02/2026,Boris,TRUE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,25/02/2026,Dadde,FALSE,6,0,Small squad: guests were charged only when present.
+s2,25/02/2026,Daniel,FALSE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,25/02/2026,Elia,FALSE,6,0,Small squad: guests were charged only when present.
+s2,25/02/2026,Emiliano,TRUE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,25/02/2026,Jasper,FALSE,6,0,Small squad: guests were charged only when present.
+s2,25/02/2026,Langkun,FALSE,6,0,Small squad: guests were charged only when present.
+s2,25/02/2026,Luca,FALSE,6,0,Small squad: guests were charged only when present.
+s2,25/02/2026,Mateus,TRUE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,25/02/2026,Max,TRUE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,25/02/2026,Oleg,FALSE,6,0,Small squad: guests were charged only when present.
+s2,25/02/2026,Pietro,FALSE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,25/02/2026,Seb,FALSE,6,0,Small squad: guests were charged only when present.
+s2,25/02/2026,Torge,FALSE,6,0,Small squad: guests were charged only when present.
+s2,25/02/2026,Vitto,TRUE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,25/02/2026,Yelong,FALSE,6,0,Small squad: guests were charged only when present.
+s2,04/03/2026,Anton,FALSE,7,0,Did not play: players were charged only when present.
+s2,04/03/2026,Ben,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,04/03/2026,Benoit,FALSE,7,0,Did not play: players were charged only when present.
+s2,04/03/2026,Berghi,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,04/03/2026,Boris,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,04/03/2026,Dadde,FALSE,7,0,Did not play: players were charged only when present.
+s2,04/03/2026,Daniel,FALSE,7,0,Did not play: players were charged only when present.
+s2,04/03/2026,Elia,FALSE,7,0,Did not play: players were charged only when present.
+s2,04/03/2026,Emiliano,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,04/03/2026,Jasper,FALSE,7,0,Did not play: players were charged only when present.
+s2,04/03/2026,Langkun,FALSE,7,0,Did not play: players were charged only when present.
+s2,04/03/2026,Luca,FALSE,7,0,Did not play: players were charged only when present.
+s2,04/03/2026,Mateus,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,04/03/2026,Max,FALSE,7,0,Did not play: players were charged only when present.
+s2,04/03/2026,Oleg,FALSE,7,0,Did not play: players were charged only when present.
+s2,04/03/2026,Pietro,FALSE,7,0,Did not play: players were charged only when present.
+s2,04/03/2026,Seb,FALSE,7,0,Did not play: players were charged only when present.
+s2,04/03/2026,Torge,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,04/03/2026,Vitto,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,04/03/2026,Yelong,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/03/2026,Anton,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/03/2026,Ben,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/03/2026,Benoit,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/03/2026,Berghi,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,11/03/2026,Boris,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,11/03/2026,Dadde,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/03/2026,Daniel,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,11/03/2026,Elia,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/03/2026,Emiliano,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/03/2026,Jasper,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/03/2026,Langkun,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/03/2026,Luca,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/03/2026,Mateus,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,11/03/2026,Max,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,11/03/2026,Oleg,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/03/2026,Pietro,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,11/03/2026,Seb,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/03/2026,Torge,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,11/03/2026,Vitto,FALSE,7,0,Did not play: players were charged only when present.
+s2,11/03/2026,Yelong,FALSE,7,0,Did not play: players were charged only when present.
+s2,18/03/2026,Anton,FALSE,8,0,Did not play: players were charged only when present.
+s2,18/03/2026,Ben,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,18/03/2026,Benoit,FALSE,8,0,Did not play: players were charged only when present.
+s2,18/03/2026,Berghi,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,18/03/2026,Boris,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,18/03/2026,Dadde,FALSE,8,0,Did not play: players were charged only when present.
+s2,18/03/2026,Daniel,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,18/03/2026,Elia,FALSE,8,0,Did not play: players were charged only when present.
+s2,18/03/2026,Emiliano,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,18/03/2026,Jasper,FALSE,8,0,Did not play: players were charged only when present.
+s2,18/03/2026,Langkun,FALSE,8,0,Did not play: players were charged only when present.
+s2,18/03/2026,Luca,FALSE,8,0,Did not play: players were charged only when present.
+s2,18/03/2026,Mateus,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,18/03/2026,Max,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,18/03/2026,Oleg,FALSE,8,0,Did not play: players were charged only when present.
+s2,18/03/2026,Pietro,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,18/03/2026,Seb,FALSE,8,0,Did not play: players were charged only when present.
+s2,18/03/2026,Torge,FALSE,8,0,Did not play: players were charged only when present.
+s2,18/03/2026,Vitto,FALSE,8,0,Did not play: players were charged only when present.
+s2,18/03/2026,Yelong,FALSE,8,0,Did not play: players were charged only when present.
+s2,25/03/2026,Anton,FALSE,7,0,Did not play: players were charged only when present.
+s2,25/03/2026,Ben,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,25/03/2026,Benoit,FALSE,7,0,Did not play: players were charged only when present.
+s2,25/03/2026,Berghi,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,25/03/2026,Boris,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,25/03/2026,Dadde,FALSE,7,0,Did not play: players were charged only when present.
+s2,25/03/2026,Daniel,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,25/03/2026,Elia,FALSE,7,0,Did not play: players were charged only when present.
+s2,25/03/2026,Emiliano,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,25/03/2026,Jasper,FALSE,7,0,Did not play: players were charged only when present.
+s2,25/03/2026,Langkun,FALSE,7,0,Did not play: players were charged only when present.
+s2,25/03/2026,Luca,FALSE,7,0,Did not play: players were charged only when present.
+s2,25/03/2026,Mateus,FALSE,7,0,Did not play: players were charged only when present.
+s2,25/03/2026,Max,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,25/03/2026,Oleg,FALSE,7,0,Did not play: players were charged only when present.
+s2,25/03/2026,Pietro,FALSE,7,0,Did not play: players were charged only when present.
+s2,25/03/2026,Seb,FALSE,7,0,Did not play: players were charged only when present.
+s2,25/03/2026,Torge,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,25/03/2026,Vitto,FALSE,7,0,Did not play: players were charged only when present.
+s2,25/03/2026,Yelong,FALSE,7,0,Did not play: players were charged only when present.
+s2,01/04/2026,Anton,FALSE,7,0,Did not play: players were charged only when present.
+s2,01/04/2026,Ben,FALSE,7,0,Did not play: players were charged only when present.
+s2,01/04/2026,Benoit,FALSE,7,0,Did not play: players were charged only when present.
+s2,01/04/2026,Berghi,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,01/04/2026,Boris,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,01/04/2026,Dadde,FALSE,7,0,Did not play: players were charged only when present.
+s2,01/04/2026,Daniel,FALSE,7,0,Did not play: players were charged only when present.
+s2,01/04/2026,Elia,FALSE,7,0,Did not play: players were charged only when present.
+s2,01/04/2026,Emiliano,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,01/04/2026,Jasper,FALSE,7,0,Did not play: players were charged only when present.
+s2,01/04/2026,Langkun,FALSE,7,0,Did not play: players were charged only when present.
+s2,01/04/2026,Luca,FALSE,7,0,Did not play: players were charged only when present.
+s2,01/04/2026,Mateus,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,01/04/2026,Max,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,01/04/2026,Oleg,FALSE,7,0,Did not play: players were charged only when present.
+s2,01/04/2026,Pietro,FALSE,7,0,Did not play: players were charged only when present.
+s2,01/04/2026,Seb,FALSE,7,0,Did not play: players were charged only when present.
+s2,01/04/2026,Torge,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,01/04/2026,Vitto,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,01/04/2026,Yelong,FALSE,7,0,Did not play: players were charged only when present.
+s2,08/04/2026,Anton,FALSE,6,0,Small squad: guests were charged only when present.
+s2,08/04/2026,Ben,TRUE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,08/04/2026,Benoit,FALSE,6,0,Small squad: guests were charged only when present.
+s2,08/04/2026,Berghi,TRUE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,08/04/2026,Boris,FALSE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,08/04/2026,Dadde,FALSE,6,0,Small squad: guests were charged only when present.
+s2,08/04/2026,Daniel,FALSE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,08/04/2026,Elia,FALSE,6,0,Small squad: guests were charged only when present.
+s2,08/04/2026,Emiliano,FALSE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,08/04/2026,Jasper,FALSE,6,0,Small squad: guests were charged only when present.
+s2,08/04/2026,Langkun,FALSE,6,0,Small squad: guests were charged only when present.
+s2,08/04/2026,Luca,FALSE,6,0,Small squad: guests were charged only when present.
+s2,08/04/2026,Mateus,TRUE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,08/04/2026,Max,TRUE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,08/04/2026,Oleg,FALSE,6,0,Small squad: guests were charged only when present.
+s2,08/04/2026,Pietro,TRUE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,08/04/2026,Seb,FALSE,6,0,Small squad: guests were charged only when present.
+s2,08/04/2026,Torge,FALSE,6,0,Small squad: guests were charged only when present.
+s2,08/04/2026,Vitto,TRUE,6,8.333333333333334,"Small squad: after £0.00 in guest fees, the remaining £75.00 was split across all 9 core players, including those absent."
+s2,08/04/2026,Yelong,FALSE,6,0,Small squad: guests were charged only when present.
+s2,15/04/2026,Anton,FALSE,8,0,Did not play: players were charged only when present.
+s2,15/04/2026,Ben,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,15/04/2026,Benoit,FALSE,8,0,Did not play: players were charged only when present.
+s2,15/04/2026,Berghi,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,15/04/2026,Boris,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,15/04/2026,Dadde,FALSE,8,0,Did not play: players were charged only when present.
+s2,15/04/2026,Daniel,FALSE,8,0,Did not play: players were charged only when present.
+s2,15/04/2026,Elia,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,15/04/2026,Emiliano,FALSE,8,0,Did not play: players were charged only when present.
+s2,15/04/2026,Jasper,FALSE,8,0,Did not play: players were charged only when present.
+s2,15/04/2026,Langkun,FALSE,8,0,Did not play: players were charged only when present.
+s2,15/04/2026,Luca,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,15/04/2026,Mateus,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,15/04/2026,Max,FALSE,8,0,Did not play: players were charged only when present.
+s2,15/04/2026,Oleg,FALSE,8,0,Did not play: players were charged only when present.
+s2,15/04/2026,Pietro,FALSE,8,0,Did not play: players were charged only when present.
+s2,15/04/2026,Seb,FALSE,8,0,Did not play: players were charged only when present.
+s2,15/04/2026,Torge,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,15/04/2026,Vitto,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,15/04/2026,Yelong,FALSE,8,0,Did not play: players were charged only when present.
+s2,22/04/2026,Anton,FALSE,8,0,Did not play: players were charged only when present.
+s2,22/04/2026,Ben,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,22/04/2026,Benoit,FALSE,8,0,Did not play: players were charged only when present.
+s2,22/04/2026,Berghi,FALSE,8,0,Did not play: players were charged only when present.
+s2,22/04/2026,Boris,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,22/04/2026,Dadde,FALSE,8,0,Did not play: players were charged only when present.
+s2,22/04/2026,Daniel,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,22/04/2026,Elia,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,22/04/2026,Emiliano,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,22/04/2026,Jasper,FALSE,8,0,Did not play: players were charged only when present.
+s2,22/04/2026,Langkun,FALSE,8,0,Did not play: players were charged only when present.
+s2,22/04/2026,Luca,FALSE,8,0,Did not play: players were charged only when present.
+s2,22/04/2026,Mateus,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,22/04/2026,Max,FALSE,8,0,Did not play: players were charged only when present.
+s2,22/04/2026,Oleg,FALSE,8,0,Did not play: players were charged only when present.
+s2,22/04/2026,Pietro,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,22/04/2026,Seb,FALSE,8,0,Did not play: players were charged only when present.
+s2,22/04/2026,Torge,FALSE,8,0,Did not play: players were charged only when present.
+s2,22/04/2026,Vitto,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,22/04/2026,Yelong,FALSE,8,0,Did not play: players were charged only when present.
+s2,29/04/2026,Anton,FALSE,10,0,Did not play: players were charged only when present.
+s2,29/04/2026,Ben,TRUE,10,7.5,Played: £75.00 was split across 10 recorded players.
+s2,29/04/2026,Benoit,FALSE,10,0,Did not play: players were charged only when present.
+s2,29/04/2026,Berghi,TRUE,10,7.5,Played: £75.00 was split across 10 recorded players.
+s2,29/04/2026,Boris,TRUE,10,7.5,Played: £75.00 was split across 10 recorded players.
+s2,29/04/2026,Dadde,FALSE,10,0,Did not play: players were charged only when present.
+s2,29/04/2026,Daniel,TRUE,10,7.5,Played: £75.00 was split across 10 recorded players.
+s2,29/04/2026,Elia,FALSE,10,0,Did not play: players were charged only when present.
+s2,29/04/2026,Emiliano,TRUE,10,7.5,Played: £75.00 was split across 10 recorded players.
+s2,29/04/2026,Jasper,FALSE,10,0,Did not play: players were charged only when present.
+s2,29/04/2026,Langkun,FALSE,10,0,Did not play: players were charged only when present.
+s2,29/04/2026,Luca,FALSE,10,0,Did not play: players were charged only when present.
+s2,29/04/2026,Mateus,TRUE,10,7.5,Played: £75.00 was split across 10 recorded players.
+s2,29/04/2026,Max,TRUE,10,7.5,Played: £75.00 was split across 10 recorded players.
+s2,29/04/2026,Oleg,FALSE,10,0,Did not play: players were charged only when present.
+s2,29/04/2026,Pietro,TRUE,10,7.5,Played: £75.00 was split across 10 recorded players.
+s2,29/04/2026,Seb,FALSE,10,0,Did not play: players were charged only when present.
+s2,29/04/2026,Torge,TRUE,10,7.5,Played: £75.00 was split across 10 recorded players.
+s2,29/04/2026,Vitto,TRUE,10,7.5,Played: £75.00 was split across 10 recorded players.
+s2,29/04/2026,Yelong,FALSE,10,0,Did not play: players were charged only when present.
+s2,06/05/2026,Anton,FALSE,7,0,Did not play: players were charged only when present.
+s2,06/05/2026,Ben,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,06/05/2026,Benoit,FALSE,7,0,Did not play: players were charged only when present.
+s2,06/05/2026,Berghi,FALSE,7,0,Did not play: players were charged only when present.
+s2,06/05/2026,Boris,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,06/05/2026,Dadde,FALSE,7,0,Did not play: players were charged only when present.
+s2,06/05/2026,Daniel,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,06/05/2026,Elia,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,06/05/2026,Emiliano,FALSE,7,0,Did not play: players were charged only when present.
+s2,06/05/2026,Jasper,FALSE,7,0,Did not play: players were charged only when present.
+s2,06/05/2026,Langkun,FALSE,7,0,Did not play: players were charged only when present.
+s2,06/05/2026,Luca,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,06/05/2026,Mateus,FALSE,7,0,Did not play: players were charged only when present.
+s2,06/05/2026,Max,FALSE,7,0,Did not play: players were charged only when present.
+s2,06/05/2026,Oleg,FALSE,7,0,Did not play: players were charged only when present.
+s2,06/05/2026,Pietro,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,06/05/2026,Seb,FALSE,7,0,Did not play: players were charged only when present.
+s2,06/05/2026,Torge,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,06/05/2026,Vitto,FALSE,7,0,Did not play: players were charged only when present.
+s2,06/05/2026,Yelong,FALSE,7,0,Did not play: players were charged only when present.
+s2,13/05/2026,Anton,FALSE,6,0,Small squad: guests were charged only when present.
+s2,13/05/2026,Ben,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,13/05/2026,Benoit,FALSE,6,0,Small squad: guests were charged only when present.
+s2,13/05/2026,Berghi,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,13/05/2026,Boris,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,13/05/2026,Dadde,FALSE,6,0,Small squad: guests were charged only when present.
+s2,13/05/2026,Daniel,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,13/05/2026,Elia,TRUE,6,6.5,Small squad: played as a guest and paid the fixed £6.50 fee.
+s2,13/05/2026,Emiliano,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,13/05/2026,Jasper,FALSE,6,0,Small squad: guests were charged only when present.
+s2,13/05/2026,Langkun,FALSE,6,0,Small squad: guests were charged only when present.
+s2,13/05/2026,Luca,FALSE,6,0,Small squad: guests were charged only when present.
+s2,13/05/2026,Mateus,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,13/05/2026,Max,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,13/05/2026,Oleg,FALSE,6,0,Small squad: guests were charged only when present.
+s2,13/05/2026,Pietro,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,13/05/2026,Seb,FALSE,6,0,Small squad: guests were charged only when present.
+s2,13/05/2026,Torge,TRUE,6,6.5,Small squad: played as a guest and paid the fixed £6.50 fee.
+s2,13/05/2026,Vitto,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,13/05/2026,Yelong,FALSE,6,0,Small squad: guests were charged only when present.
+s2,20/05/2026,Anton,FALSE,8,0,Did not play: players were charged only when present.
+s2,20/05/2026,Ben,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,20/05/2026,Benoit,FALSE,8,0,Did not play: players were charged only when present.
+s2,20/05/2026,Berghi,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,20/05/2026,Boris,FALSE,8,0,Did not play: players were charged only when present.
+s2,20/05/2026,Dadde,FALSE,8,0,Did not play: players were charged only when present.
+s2,20/05/2026,Daniel,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,20/05/2026,Elia,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,20/05/2026,Emiliano,FALSE,8,0,Did not play: players were charged only when present.
+s2,20/05/2026,Jasper,FALSE,8,0,Did not play: players were charged only when present.
+s2,20/05/2026,Langkun,FALSE,8,0,Did not play: players were charged only when present.
+s2,20/05/2026,Luca,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,20/05/2026,Mateus,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,20/05/2026,Max,FALSE,8,0,Did not play: players were charged only when present.
+s2,20/05/2026,Oleg,FALSE,8,0,Did not play: players were charged only when present.
+s2,20/05/2026,Pietro,FALSE,8,0,Did not play: players were charged only when present.
+s2,20/05/2026,Seb,FALSE,8,0,Did not play: players were charged only when present.
+s2,20/05/2026,Torge,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,20/05/2026,Vitto,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,20/05/2026,Yelong,FALSE,8,0,Did not play: players were charged only when present.
+s2,27/05/2026,Anton,FALSE,6,0,Small squad: guests were charged only when present.
+s2,27/05/2026,Ben,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,27/05/2026,Benoit,FALSE,6,0,Small squad: guests were charged only when present.
+s2,27/05/2026,Berghi,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,27/05/2026,Boris,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,27/05/2026,Dadde,FALSE,6,0,Small squad: guests were charged only when present.
+s2,27/05/2026,Daniel,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,27/05/2026,Elia,FALSE,6,0,Small squad: guests were charged only when present.
+s2,27/05/2026,Emiliano,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,27/05/2026,Jasper,FALSE,6,0,Small squad: guests were charged only when present.
+s2,27/05/2026,Langkun,FALSE,6,0,Small squad: guests were charged only when present.
+s2,27/05/2026,Luca,TRUE,6,6.5,Small squad: played as a guest and paid the fixed £6.50 fee.
+s2,27/05/2026,Mateus,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,27/05/2026,Max,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,27/05/2026,Oleg,FALSE,6,0,Small squad: guests were charged only when present.
+s2,27/05/2026,Pietro,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,27/05/2026,Seb,FALSE,6,0,Small squad: guests were charged only when present.
+s2,27/05/2026,Torge,TRUE,6,6.5,Small squad: played as a guest and paid the fixed £6.50 fee.
+s2,27/05/2026,Vitto,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,27/05/2026,Yelong,FALSE,6,0,Small squad: guests were charged only when present.
+s2,03/06/2026,Anton,FALSE,7,0,Did not play: players were charged only when present.
+s2,03/06/2026,Ben,FALSE,7,0,Did not play: players were charged only when present.
+s2,03/06/2026,Benoit,FALSE,7,0,Did not play: players were charged only when present.
+s2,03/06/2026,Berghi,FALSE,7,0,Did not play: players were charged only when present.
+s2,03/06/2026,Boris,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,03/06/2026,Dadde,FALSE,7,0,Did not play: players were charged only when present.
+s2,03/06/2026,Daniel,FALSE,7,0,Did not play: players were charged only when present.
+s2,03/06/2026,Elia,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,03/06/2026,Emiliano,FALSE,7,0,Did not play: players were charged only when present.
+s2,03/06/2026,Jasper,FALSE,7,0,Did not play: players were charged only when present.
+s2,03/06/2026,Langkun,FALSE,7,0,Did not play: players were charged only when present.
+s2,03/06/2026,Luca,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,03/06/2026,Mateus,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,03/06/2026,Max,FALSE,7,0,Did not play: players were charged only when present.
+s2,03/06/2026,Oleg,FALSE,7,0,Did not play: players were charged only when present.
+s2,03/06/2026,Pietro,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,03/06/2026,Seb,FALSE,7,0,Did not play: players were charged only when present.
+s2,03/06/2026,Torge,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,03/06/2026,Vitto,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,03/06/2026,Yelong,FALSE,7,0,Did not play: players were charged only when present.
+s2,10/06/2026,Anton,FALSE,6,0,Small squad: guests were charged only when present.
+s2,10/06/2026,Ben,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,10/06/2026,Benoit,FALSE,6,0,Small squad: guests were charged only when present.
+s2,10/06/2026,Berghi,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,10/06/2026,Boris,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,10/06/2026,Dadde,FALSE,6,0,Small squad: guests were charged only when present.
+s2,10/06/2026,Daniel,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,10/06/2026,Elia,TRUE,6,6.5,Small squad: played as a guest and paid the fixed £6.50 fee.
+s2,10/06/2026,Emiliano,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,10/06/2026,Jasper,FALSE,6,0,Small squad: guests were charged only when present.
+s2,10/06/2026,Langkun,FALSE,6,0,Small squad: guests were charged only when present.
+s2,10/06/2026,Luca,TRUE,6,6.5,Small squad: played as a guest and paid the fixed £6.50 fee.
+s2,10/06/2026,Mateus,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,10/06/2026,Max,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,10/06/2026,Oleg,FALSE,6,0,Small squad: guests were charged only when present.
+s2,10/06/2026,Pietro,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,10/06/2026,Seb,FALSE,6,0,Small squad: guests were charged only when present.
+s2,10/06/2026,Torge,FALSE,6,0,Small squad: guests were charged only when present.
+s2,10/06/2026,Vitto,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,10/06/2026,Yelong,FALSE,6,0,Small squad: guests were charged only when present.
+s2,17/06/2026,Anton,FALSE,7,0,Did not play: players were charged only when present.
+s2,17/06/2026,Ben,FALSE,7,0,Did not play: players were charged only when present.
+s2,17/06/2026,Benoit,FALSE,7,0,Did not play: players were charged only when present.
+s2,17/06/2026,Berghi,FALSE,7,0,Did not play: players were charged only when present.
+s2,17/06/2026,Boris,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,17/06/2026,Dadde,FALSE,7,0,Did not play: players were charged only when present.
+s2,17/06/2026,Daniel,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,17/06/2026,Elia,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,17/06/2026,Emiliano,FALSE,7,0,Did not play: players were charged only when present.
+s2,17/06/2026,Jasper,FALSE,7,0,Did not play: players were charged only when present.
+s2,17/06/2026,Langkun,FALSE,7,0,Did not play: players were charged only when present.
+s2,17/06/2026,Luca,FALSE,7,0,Did not play: players were charged only when present.
+s2,17/06/2026,Mateus,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,17/06/2026,Max,FALSE,7,0,Did not play: players were charged only when present.
+s2,17/06/2026,Oleg,FALSE,7,0,Did not play: players were charged only when present.
+s2,17/06/2026,Pietro,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,17/06/2026,Seb,FALSE,7,0,Did not play: players were charged only when present.
+s2,17/06/2026,Torge,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,17/06/2026,Vitto,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,17/06/2026,Yelong,FALSE,7,0,Did not play: players were charged only when present.
+s2,24/06/2026,Anton,FALSE,7,0,Did not play: players were charged only when present.
+s2,24/06/2026,Ben,FALSE,7,0,Did not play: players were charged only when present.
+s2,24/06/2026,Benoit,FALSE,7,0,Did not play: players were charged only when present.
+s2,24/06/2026,Berghi,FALSE,7,0,Did not play: players were charged only when present.
+s2,24/06/2026,Boris,FALSE,7,0,Did not play: players were charged only when present.
+s2,24/06/2026,Dadde,FALSE,7,0,Did not play: players were charged only when present.
+s2,24/06/2026,Daniel,FALSE,7,0,Did not play: players were charged only when present.
+s2,24/06/2026,Elia,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,24/06/2026,Emiliano,FALSE,7,0,Did not play: players were charged only when present.
+s2,24/06/2026,Jasper,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,24/06/2026,Langkun,FALSE,7,0,Did not play: players were charged only when present.
+s2,24/06/2026,Luca,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,24/06/2026,Mateus,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,24/06/2026,Max,FALSE,7,0,Did not play: players were charged only when present.
+s2,24/06/2026,Oleg,FALSE,7,0,Did not play: players were charged only when present.
+s2,24/06/2026,Pietro,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,24/06/2026,Seb,FALSE,7,0,Did not play: players were charged only when present.
+s2,24/06/2026,Torge,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,24/06/2026,Vitto,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,24/06/2026,Yelong,FALSE,7,0,Did not play: players were charged only when present.
+s2,08/07/2026,Anton,FALSE,7,0,Did not play: players were charged only when present.
+s2,08/07/2026,Ben,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,08/07/2026,Benoit,FALSE,7,0,Did not play: players were charged only when present.
+s2,08/07/2026,Berghi,FALSE,7,0,Did not play: players were charged only when present.
+s2,08/07/2026,Boris,FALSE,7,0,Did not play: players were charged only when present.
+s2,08/07/2026,Dadde,FALSE,7,0,Did not play: players were charged only when present.
+s2,08/07/2026,Daniel,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,08/07/2026,Elia,FALSE,7,0,Did not play: players were charged only when present.
+s2,08/07/2026,Emiliano,FALSE,7,0,Did not play: players were charged only when present.
+s2,08/07/2026,Jasper,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,08/07/2026,Langkun,FALSE,7,0,Did not play: players were charged only when present.
+s2,08/07/2026,Luca,FALSE,7,0,Did not play: players were charged only when present.
+s2,08/07/2026,Mateus,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,08/07/2026,Max,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,08/07/2026,Oleg,FALSE,7,0,Did not play: players were charged only when present.
+s2,08/07/2026,Pietro,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,08/07/2026,Seb,FALSE,7,0,Did not play: players were charged only when present.
+s2,08/07/2026,Torge,FALSE,7,0,Did not play: players were charged only when present.
+s2,08/07/2026,Vitto,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,08/07/2026,Yelong,FALSE,7,0,Did not play: players were charged only when present.
+s2,22/07/2026,Anton,FALSE,7,0,Did not play: players were charged only when present.
+s2,22/07/2026,Ben,FALSE,7,0,Did not play: players were charged only when present.
+s2,22/07/2026,Benoit,FALSE,7,0,Did not play: players were charged only when present.
+s2,22/07/2026,Berghi,FALSE,7,0,Did not play: players were charged only when present.
+s2,22/07/2026,Boris,FALSE,7,0,Did not play: players were charged only when present.
+s2,22/07/2026,Dadde,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,22/07/2026,Daniel,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,22/07/2026,Elia,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,22/07/2026,Emiliano,FALSE,7,0,Did not play: players were charged only when present.
+s2,22/07/2026,Jasper,FALSE,7,0,Did not play: players were charged only when present.
+s2,22/07/2026,Langkun,FALSE,7,0,Did not play: players were charged only when present.
+s2,22/07/2026,Luca,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,22/07/2026,Mateus,FALSE,7,0,Did not play: players were charged only when present.
+s2,22/07/2026,Max,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,22/07/2026,Oleg,FALSE,7,0,Did not play: players were charged only when present.
+s2,22/07/2026,Pietro,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,22/07/2026,Seb,FALSE,7,0,Did not play: players were charged only when present.
+s2,22/07/2026,Torge,FALSE,7,0,Did not play: players were charged only when present.
+s2,22/07/2026,Vitto,TRUE,7,10.714285714285714,Played: £75.00 was split across 7 recorded players.
+s2,22/07/2026,Yelong,FALSE,7,0,Did not play: players were charged only when present.
+s2,29/07/2026,Anton,FALSE,6,0,Small squad: guests were charged only when present.
+s2,29/07/2026,Ben,TRUE,6,6.166666666666667,"Small squad: after £19.50 in guest fees, the remaining £55.50 was split across all 9 core players, including those absent."
+s2,29/07/2026,Benoit,FALSE,6,0,Small squad: guests were charged only when present.
+s2,29/07/2026,Berghi,FALSE,6,6.166666666666667,"Small squad: after £19.50 in guest fees, the remaining £55.50 was split across all 9 core players, including those absent."
+s2,29/07/2026,Boris,FALSE,6,6.166666666666667,"Small squad: after £19.50 in guest fees, the remaining £55.50 was split across all 9 core players, including those absent."
+s2,29/07/2026,Dadde,TRUE,6,6.5,Small squad: played as a guest and paid the fixed £6.50 fee.
+s2,29/07/2026,Daniel,FALSE,6,6.166666666666667,"Small squad: after £19.50 in guest fees, the remaining £55.50 was split across all 9 core players, including those absent."
+s2,29/07/2026,Elia,TRUE,6,6.5,Small squad: played as a guest and paid the fixed £6.50 fee.
+s2,29/07/2026,Emiliano,FALSE,6,6.166666666666667,"Small squad: after £19.50 in guest fees, the remaining £55.50 was split across all 9 core players, including those absent."
+s2,29/07/2026,Jasper,FALSE,6,0,Small squad: guests were charged only when present.
+s2,29/07/2026,Langkun,FALSE,6,0,Small squad: guests were charged only when present.
+s2,29/07/2026,Luca,TRUE,6,6.5,Small squad: played as a guest and paid the fixed £6.50 fee.
+s2,29/07/2026,Mateus,FALSE,6,6.166666666666667,"Small squad: after £19.50 in guest fees, the remaining £55.50 was split across all 9 core players, including those absent."
+s2,29/07/2026,Max,TRUE,6,6.166666666666667,"Small squad: after £19.50 in guest fees, the remaining £55.50 was split across all 9 core players, including those absent."
+s2,29/07/2026,Oleg,FALSE,6,0,Small squad: guests were charged only when present.
+s2,29/07/2026,Pietro,TRUE,6,6.166666666666667,"Small squad: after £19.50 in guest fees, the remaining £55.50 was split across all 9 core players, including those absent."
+s2,29/07/2026,Seb,FALSE,6,0,Small squad: guests were charged only when present.
+s2,29/07/2026,Torge,FALSE,6,0,Small squad: guests were charged only when present.
+s2,29/07/2026,Vitto,FALSE,6,6.166666666666667,"Small squad: after £19.50 in guest fees, the remaining £55.50 was split across all 9 core players, including those absent."
+s2,29/07/2026,Yelong,FALSE,6,0,Small squad: guests were charged only when present.
+s2,05/08/2026,Anton,FALSE,8,0,Did not play: players were charged only when present.
+s2,05/08/2026,Ben,FALSE,8,0,Did not play: players were charged only when present.
+s2,05/08/2026,Benoit,FALSE,8,0,Did not play: players were charged only when present.
+s2,05/08/2026,Berghi,FALSE,8,0,Did not play: players were charged only when present.
+s2,05/08/2026,Boris,FALSE,8,0,Did not play: players were charged only when present.
+s2,05/08/2026,Dadde,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,05/08/2026,Daniel,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,05/08/2026,Elia,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,05/08/2026,Emiliano,FALSE,8,0,Did not play: players were charged only when present.
+s2,05/08/2026,Jasper,FALSE,8,0,Did not play: players were charged only when present.
+s2,05/08/2026,Langkun,FALSE,8,0,Did not play: players were charged only when present.
+s2,05/08/2026,Luca,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,05/08/2026,Mateus,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,05/08/2026,Max,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,05/08/2026,Oleg,FALSE,8,0,Did not play: players were charged only when present.
+s2,05/08/2026,Pietro,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,05/08/2026,Seb,FALSE,8,0,Did not play: players were charged only when present.
+s2,05/08/2026,Torge,TRUE,8,9.375,Played: £75.00 was split across 8 recorded players.
+s2,05/08/2026,Vitto,FALSE,8,0,Did not play: players were charged only when present.
+s2,05/08/2026,Yelong,FALSE,8,0,Did not play: players were charged only when present.
+s2,12/08/2026,Anton,FALSE,6,0,Small squad: guests were charged only when present.
+s2,12/08/2026,Ben,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,12/08/2026,Benoit,FALSE,6,0,Small squad: guests were charged only when present.
+s2,12/08/2026,Berghi,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,12/08/2026,Boris,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,12/08/2026,Dadde,TRUE,6,6.5,Small squad: played as a guest and paid the fixed £6.50 fee.
+s2,12/08/2026,Daniel,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,12/08/2026,Elia,FALSE,6,0,Small squad: guests were charged only when present.
+s2,12/08/2026,Emiliano,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,12/08/2026,Jasper,FALSE,6,0,Small squad: guests were charged only when present.
+s2,12/08/2026,Langkun,FALSE,6,0,Small squad: guests were charged only when present.
+s2,12/08/2026,Luca,FALSE,6,0,Small squad: guests were charged only when present.
+s2,12/08/2026,Mateus,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,12/08/2026,Max,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,12/08/2026,Oleg,FALSE,6,0,Small squad: guests were charged only when present.
+s2,12/08/2026,Pietro,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,12/08/2026,Seb,FALSE,6,0,Small squad: guests were charged only when present.
+s2,12/08/2026,Torge,TRUE,6,6.5,Small squad: played as a guest and paid the fixed £6.50 fee.
+s2,12/08/2026,Vitto,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,12/08/2026,Yelong,FALSE,6,0,Small squad: guests were charged only when present.
+s2,19/08/2026,Anton,FALSE,6,0,Small squad: guests were charged only when present.
+s2,19/08/2026,Ben,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,19/08/2026,Benoit,FALSE,6,0,Small squad: guests were charged only when present.
+s2,19/08/2026,Berghi,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,19/08/2026,Boris,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,19/08/2026,Dadde,TRUE,6,6.5,Small squad: played as a guest and paid the fixed £6.50 fee.
+s2,19/08/2026,Daniel,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,19/08/2026,Elia,FALSE,6,0,Small squad: guests were charged only when present.
+s2,19/08/2026,Emiliano,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,19/08/2026,Jasper,FALSE,6,0,Small squad: guests were charged only when present.
+s2,19/08/2026,Langkun,FALSE,6,0,Small squad: guests were charged only when present.
+s2,19/08/2026,Luca,FALSE,6,0,Small squad: guests were charged only when present.
+s2,19/08/2026,Mateus,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,19/08/2026,Max,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,19/08/2026,Oleg,FALSE,6,0,Small squad: guests were charged only when present.
+s2,19/08/2026,Pietro,TRUE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,19/08/2026,Seb,FALSE,6,0,Small squad: guests were charged only when present.
+s2,19/08/2026,Torge,TRUE,6,6.5,Small squad: played as a guest and paid the fixed £6.50 fee.
+s2,19/08/2026,Vitto,FALSE,6,6.888888888888889,"Small squad: after £13.00 in guest fees, the remaining £62.00 was split across all 9 core players, including those absent."
+s2,19/08/2026,Yelong,FALSE,6,0,Small squad: guests were charged only when present.

@@ -67,6 +67,7 @@ a:hover {
 
 .app-hero::after {
   content: "";
+  pointer-events: none;
   position: absolute;
   inset: auto -80px -120px auto;
   width: 320px;
@@ -77,6 +78,7 @@ a:hover {
 
 .app-hero::before {
   content: "";
+  pointer-events: none;
   position: absolute;
   inset: -60px auto auto -60px;
   width: 200px;
@@ -548,15 +550,22 @@ tr.rank-top3 > td {
 }
 
 /* ---- Season picker (sits in the hero, on the dark gradient) ---- */
-/* Shiny renders selectInput through selectize.js, so the styling hooks are
-   .control-label and .selectize-*, not Bootstrap's .form-label/.form-select. */
+/* Tick boxes rather than a select: several seasons can be in scope at once,
+   and there is no popup to be clipped by the hero's overflow: hidden. The
+   native checkbox is hidden and the pill itself carries the state, so nothing
+   sits outside the rounded frame. */
 .season-shell {
+  position: relative;
+  z-index: 1;
   margin-left: auto;
-  min-width: 12.5rem;
+  max-width: 34rem;
 }
 
 .season-shell .control-label {
-  margin-bottom: 0.4rem;
+  display: block;
+  /* Sits over the pills, which are flush right. */
+  text-align: right;
+  margin-bottom: 0.55rem;
   color: rgba(255, 255, 255, 0.72);
   font-family: "Barlow Condensed", sans-serif;
   font-size: 0.85rem;
@@ -565,49 +574,181 @@ tr.rank-top3 > td {
   text-transform: uppercase;
 }
 
-.season-shell .selectize-input {
-  padding: 0.7rem 0.9rem;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: none;
-  color: #ffffff;
-  font-weight: 600;
+.season-shell .shiny-options-group {
+  display: flex;
+  flex-wrap: wrap;
+  /* Right-aligned so wrapped rows stay flush with the block, not ragged. */
+  justify-content: flex-end;
+  gap: 0.5rem;
 }
 
-.season-shell .selectize-input.focus,
-.season-shell .selectize-input.dropdown-active {
+.season-shell .checkbox-inline,
+.season-shell .form-check {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.15;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.season-shell .checkbox-inline:hover,
+.season-shell .form-check:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* The state marker: a hollow ring that becomes a filled tick when selected. */
+.season-shell .checkbox-inline::before,
+.season-shell .form-check::before {
+  content: "";
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.05rem;
+  height: 1.05rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  border-radius: 50%;
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.season-shell .checkbox-inline:has(input:checked),
+.season-shell .form-check:has(input:checked) {
+  border-color: rgba(124, 214, 154, 0.75);
+  background: rgba(124, 214, 154, 0.2);
+  color: #ffffff;
+}
+
+.season-shell .checkbox-inline:has(input:checked)::before,
+.season-shell .form-check:has(input:checked)::before {
+  content: "\2713";
   border-color: var(--green-bright);
-  background: rgba(255, 255, 255, 0.16);
-  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.12);
+  background: var(--green-bright);
+  color: var(--navy-2);
 }
 
-.season-shell .selectize-input .item {
-  color: #ffffff;
+/* Hidden but still focusable, so the pill stays keyboard-operable. */
+.season-shell input[type="checkbox"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.season-shell .selectize-input::after {
-  border-top-color: rgba(255, 255, 255, 0.7) !important;
+.season-shell .checkbox-inline:has(input:focus-visible),
+.season-shell .form-check:has(input:focus-visible) {
+  outline: 2px solid var(--green-bright);
+  outline-offset: 2px;
 }
 
-/* The open menu sits over the page, so it goes back to dark-on-light. */
-.season-shell .selectize-dropdown {
-  border: 1px solid var(--border-soft);
-  border-radius: 14px;
-  background: var(--surface);
-  box-shadow: var(--shadow-deep);
-  color: var(--ink);
+.season-shell .season-name {
+  display: block;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.15;
+  text-transform: uppercase;
 }
 
-.season-shell .selectize-dropdown .option.active {
-  background: var(--blue-soft);
-  color: var(--ink);
+.season-shell .season-span {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+  opacity: 0.72;
+  white-space: nowrap;
 }
 
+/* On a phone the header has to earn its space: crest beside the title, no
+   strapline, and the seasons in one horizontally scrolling row so the header
+   stays the same height no matter how many seasons accumulate. */
 @media (max-width: 640px) {
+  .app-hero {
+    gap: 0.85rem 1rem;
+    padding: 1.1rem;
+    border-radius: 22px;
+  }
+
+  .hero-crest {
+    width: 58px;
+    height: 58px;
+    padding: 5px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero-text {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .hero-kicker {
+    margin-bottom: 0.15rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+  }
+
+  .hero-title {
+    max-width: none;
+    font-size: 2.1rem;
+  }
+
+  /* The strapline explains the app to a first-time visitor on a big screen.
+     On a phone the picker and the tabs are what people came for. */
+  .hero-copy,
+  .hero-meta {
+    display: none;
+  }
+
   .season-shell {
+    flex: 1 0 100%;
+    /* Without this a flex item refuses to shrink below its content width, so
+       the row would overflow the hero and be clipped instead of scrolling. */
+    min-width: 0;
     margin-left: 0;
-    width: 100%;
+    max-width: none;
+  }
+
+  .season-shell .control-label {
+    text-align: left;
+    margin-bottom: 0.4rem;
+  }
+
+  .season-shell .shiny-options-group {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    /* Bleed to the card edges so a part-scrolled chip reads as scrollable. */
+    margin: 0 -1.1rem;
+    padding: 0 1.1rem 0.15rem;
+    scrollbar-width: none;
+  }
+
+  .season-shell .shiny-options-group::-webkit-scrollbar {
+    display: none;
+  }
+
+  .season-shell .checkbox-inline,
+  .season-shell .form-check {
+    flex: 0 0 auto;
   }
 }
 

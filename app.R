@@ -47,8 +47,8 @@ fee_panel <- card(
         div(
             class = "fee-footnote",
             paste(
-                "Calculated from attendance, the fee rules in force, and recorded",
-                "payments, for the season selected above."
+                "Your running total across every season, from attendance, the fee",
+                "rules in force at the time, and recorded payments."
             )
         )
     )
@@ -114,6 +114,7 @@ match_charge_table <- function(match_charges) {
     table_data <- match_charges %>%
         transmute(
             Date = format(date, "%d %b %Y"),
+            Season = season,
             Result = result,
             `Played?` = if_else(played, "Yes", "No"),
             `Squad size` = `Squad size`,
@@ -166,7 +167,7 @@ fee_history_panel <- tagList(
             h2(class = "table-title", "How your balance is calculated"),
             p(
                 class = "table-subtitle",
-                "Match charges follow the fee rules in force for the selected season."
+                "Every season is included: each match is charged under the rules in force at the time."
             )
         ),
         card_body(uiOutput("fee_overview_summary"))
@@ -366,6 +367,29 @@ regression_explanation <- card(
     ),
     uiOutput("regression_explanation")
 )
+
+#' Season tick boxes, newest first, each captioned with when that season ran.
+season_picker <- function(app_data) {
+    spans <- season_span(app_data$seasons, app_data$matches) %>%
+        arrange(desc(start_date))
+
+    checkboxGroupInput(
+        "seasons",
+        "Seasons",
+        choiceNames = purrr::map2(
+            spans$label,
+            spans$span,
+            ~ tagList(
+                span(class = "season-name", .x),
+                span(class = "season-span", .y)
+            )
+        ),
+        choiceValues = spans$season_id,
+        # Everything is in scope until you narrow it.
+        selected = spans$season_id,
+        inline = TRUE
+    )
+}
 
 #' Placeholder shown when the selected season has no matches recorded yet.
 empty_season_card <- function(message) {
@@ -567,13 +591,14 @@ ui <- page_fluid(
                 tags$img(src = "borulanta-crest.png", alt = "Borulanta crest")
             ),
             div(
+                class = "hero-text",
                 div(class = "hero-kicker", "Wednesday Football"),
                 h1(class = "hero-title", "Borulanta"),
                 p(
                     class = "hero-copy",
                     paste(
                 "Track what you owe, review match results, and see who keeps the squad",
-                "going each week. Every tab follows the season picker."
+                "going each week. The season picker scopes the results and statistics."
             )
                 ),
                 div(
@@ -584,12 +609,7 @@ ui <- page_fluid(
             ),
             div(
                 class = "season-shell",
-                selectInput(
-                    "season",
-                    "Season",
-                    choices = season_choices(app_data$seasons),
-                    selected = current_season(app_data$seasons)
-                )
+                season_picker(app_data)
             )
         ),
         div(
@@ -611,7 +631,7 @@ ui <- page_fluid(
                     icon = icon("futbol"),
                     conditionalPanel(
                         "!output.season_has_matches",
-                        empty_season_card("No matches recorded for this season yet.")
+                        empty_season_card("No matches in the selected seasons yet.")
                     ),
                     conditionalPanel(
                         "output.season_has_matches",
@@ -629,7 +649,7 @@ ui <- page_fluid(
                     icon = icon("users"),
                     conditionalPanel(
                         "!output.season_has_matches",
-                        empty_season_card("No matches recorded for this season yet.")
+                        empty_season_card("No matches in the selected seasons yet.")
                     ),
                     conditionalPanel(
                         "output.season_has_matches",
@@ -647,8 +667,8 @@ ui <- page_fluid(
                         "!output.season_has_regression",
                         empty_season_card(
                             paste(
-                                "Not enough matches in this season yet to estimate",
-                                "player effects. Try selecting all seasons."
+                                "Not enough matches in the selected seasons to",
+                                "estimate player effects. Try ticking more seasons."
                             )
                         )
                     ),
@@ -752,13 +772,16 @@ attendance_table <- function(attendance_list) {
 server <- function(input, output, session) {
     # Everything downstream reads from this one filtered view of the data, so a
     # statistic is scoped to a season purely by what the picker is set to.
+    # No tick boxes checked is a legitimate state, not an error: every filter
+    # below simply yields nothing, and the tabs show their empty states.
+    selected_seasons <- reactive(input$seasons)
+
     scoped <- reactive({
-        req(input$season)
         list(
-            matches = filter_season(app_data$matches, input$season),
-            attendance = filter_season(app_data$attendance, input$season),
-            payments = filter_season(app_data$payments, input$season),
-            charges = filter_season(app_data$charges, input$season)
+            matches = filter_season(app_data$matches, selected_seasons()),
+            attendance = filter_season(app_data$attendance, selected_seasons()),
+            payments = filter_season(app_data$payments, selected_seasons()),
+            charges = filter_season(app_data$charges, selected_seasons())
         )
     })
 
@@ -776,32 +799,35 @@ server <- function(input, output, session) {
 
     has_regression <- reactive(nrow(regression_results()) > 0)
 
-    # The fee picker lists whoever is on the selected season's active roster.
+    # A balance is a running total, not a per-season statistic: people settle up
+    # when they settle up, not season by season, so splitting payments by date
+    # would show a debt in one season and the mirror-image credit in the next.
+    # The Fees tab therefore always covers all time, and the season picker
+    # scopes the results and statistics tabs only.
     fee_players <- reactive({
-        rostered <- app_data$rosters %>%
-            filter_season(input$season) %>%
+        app_data$rosters %>%
             filter(active) %>%
-            pull(player)
-        sort(unique(rostered))
+            pull(player) %>%
+            unique() %>%
+            sort()
     })
 
     observeEvent(fee_players(), {
+        players <- fee_players()
+        keep <- isTruthy(input$fee_player) && input$fee_player %in% players
         updateSelectInput(
             session,
             "fee_player",
-            choices = fee_players(),
-            selected = if (isTruthy(input$fee_player) &&
-                           input$fee_player %in% fee_players()) {
-                input$fee_player
-            } else {
-                fee_players()[[1]]
-            }
+            choices = players,
+            selected = if (keep) input$fee_player else players[1]
         )
-    })
+    }, ignoreNULL = FALSE)
 
     fee_overview <- reactive({
         req(input$fee_player)
-        player_fee_overview(input$fee_player, scoped()$charges, scoped()$payments)
+        player_fee_overview(
+            input$fee_player, app_data$charges, app_data$payments, app_data$seasons
+        )
     })
 
     # Keyed on the fixture list rather than has_matches(), which stays TRUE

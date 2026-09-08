@@ -10,8 +10,6 @@
 # means charges are read from a frozen ledger in data/archive/ rather than
 # recomputed, which is how a season stays reproducible after its rules retire.
 
-ALL_SEASONS <- "all"
-
 load_seasons <- function(path = "data/seasons.csv") {
   read_csv(path, show_col_types = FALSE) %>%
     mutate(start_date = parse_match_date(start_date)) %>%
@@ -34,32 +32,47 @@ with_season <- function(data, seasons) {
   data %>% mutate(season_id = assign_season(.data$date, seasons))
 }
 
-#' Filter a season-tagged table. `ALL_SEASONS` keeps everything.
-filter_season <- function(data, season_id) {
-  if (identical(season_id, ALL_SEASONS)) {
-    return(data)
-  }
-  data %>% filter(.data$season_id %in% .env$season_id)
+#' Filter a season-tagged table to any set of seasons.
+#'
+#' Takes a character vector, so one season, several, or all of them are the same
+#' operation. An empty selection yields no rows, which is what the caller wants:
+#' nothing is selected, so nothing is in scope.
+filter_season <- function(data, season_ids) {
+  data %>% filter(.data$season_id %in% .env$season_ids)
 }
 
-#' Choices for a season picker: newest season first, then an all-time option.
-season_choices <- function(seasons, include_all = TRUE) {
-  choices <- seasons %>%
+#' Choices for the season picker, newest first.
+season_choices <- function(seasons) {
+  seasons %>%
     arrange(desc(start_date)) %>%
     { setNames(.$season_id, .$label) }
-
-  if (include_all) {
-    choices <- c(choices, setNames(ALL_SEASONS, "All seasons"))
-  }
-  choices
 }
 
-current_season <- function(seasons, today = Sys.Date()) {
-  open <- seasons %>% filter(start_date <= today, end_date >= today)
-  if (nrow(open) > 0) {
-    return(open$season_id[[nrow(open)]])
-  }
-  # Between seasons: the one about to start, else the most recent.
-  upcoming <- seasons %>% filter(start_date > today) %>% arrange(start_date)
-  if (nrow(upcoming) > 0) upcoming$season_id[[1]] else seasons$season_id[[nrow(seasons)]]
+#' When a season actually ran, as a short caption for the picker.
+#'
+#' Seasons here are a few months long and irregular, so the useful caption is
+#' the span of matches actually played rather than the nominal boundaries. A
+#' season with no matches yet is described by its start date instead.
+season_span <- function(seasons, matches) {
+  month <- function(date) format(date, "%b")
+  month_year <- function(date) format(date, "%b %Y")
+
+  played <- matches %>%
+    filter(!is.na(season_id)) %>%
+    group_by(season_id) %>%
+    summarise(first_match = min(date), last_match = max(date), .groups = "drop")
+
+  seasons %>%
+    left_join(played, by = "season_id") %>%
+    mutate(
+      span = case_when(
+        is.na(first_match) ~ paste("from", month_year(start_date)),
+        month_year(first_match) == month_year(last_match) ~ month_year(first_match),
+        # Within one calendar year the year only needs saying once.
+        format(first_match, "%Y") == format(last_match, "%Y") ~
+          paste0(month(first_match), "\u2013", month_year(last_match)),
+        TRUE ~ paste(month_year(first_match), "\u2013", month_year(last_match))
+      )
+    ) %>%
+    select(season_id, label, start_date, span)
 }
