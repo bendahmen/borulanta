@@ -1,0 +1,88 @@
+name: Sync results
+
+# Friday morning, giving the league a day and a half after Wednesday's game to
+# put the score up. Nothing is lost by being late: the sync is idempotent and
+# reads the whole season each time, so a week the site fills in slowly is
+# picked up by the next run.
+#
+# GitHub disables scheduled workflows after 60 days with no activity in the
+# repository, and a push made by this job does not count as activity. Adding
+# attendance each week does, so in normal use it stays awake.
+on:
+  schedule:
+    - cron: "0 8 * * 5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-results
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-renv@v2
+
+      # The parser is the part that breaks when the site is restyled, and it
+      # breaks silently — a page that no longer matches the selectors parses to
+      # nothing. Running the tests first means the sync only ever writes from a
+      # parser that still reads two known pages correctly.
+      - name: Test the parser
+        run: Rscript -e 'testthat::test_dir("tests/testthat", stop_on_failure = TRUE)'
+
+      - name: Sync
+        run: |
+          set -o pipefail
+          Rscript scripts/sync.R --write | tee sync-report.txt
+
+      # A run can exit green having written nothing — every fixture still
+      # awaiting a scoreline, a score that conflicts with the one on file, a
+      # season nobody has opened in seasons.csv yet. Putting the report on the
+      # run's summary page means that shows up at a glance instead of being
+      # buried in a step log nobody opens.
+      - name: Report
+        if: always()
+        run: |
+          {
+            echo '```'
+            cat sync-report.txt 2>/dev/null || echo "The sync produced no output."
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Without this the page a broken parse was parsed from is gone, which is
+      # the one thing that makes the break diagnosable.
+      - name: Keep the page it parsed
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: league-page
+          path: raw/
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Commit any new results
+        run: |
+          git add data/matches.csv data/match_events.csv
+          if git diff --cached --quiet; then
+            echo "No new results this week."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Sync results from Dream Leagues
+
+          Attendance for any new match still needs adding by hand.
+
+          Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
+          # Somebody may have pushed while this was running.
+          git pull --rebase --autostash
+          git push

@@ -10,15 +10,119 @@ R/seasons.R             season definitions and filtering
 R/fees.R                fee rule sets and the charge engine
 R/analysis.R            match/player statistics (season-agnostic)
 R/data.R                CSV loading, season tagging, validation
+R/scrape.R              reading the league page
+R/sync.R                reconciling a scrape with the files
+scripts/sync.R          the sync runner
+tests/testthat/         parser and sync tests, run against saved pages
 data/                   the source of truth, all hand-editable CSVs
 data/archive/           frozen ledgers for closed seasons
 ```
 
 ## Weekly routine
 
-After a game, append one row to `data/matches.csv` and one row per player who
-turned up to `data/attendance.csv`. Record transfers in `data/payments.csv`.
-Nothing else needs touching — the season is worked out from the date.
+Results, opponents and goalscorers arrive on their own: a GitHub Action runs
+every Friday morning, reads the league page and commits anything new. **All
+that is left by hand is attendance** — one row per player who turned up in
+`data/attendance.csv`. Record transfers in `data/payments.csv`.
+
+Nothing else needs touching: the season is worked out from the date, and the
+sync will not write a result it is not sure about.
+
+## The sync
+
+`scripts/sync.R` reads the Dream Leagues page for the league, keeps our
+fixtures and writes them into `data/matches.csv` and `data/match_events.csv`.
+
+```
+Rscript scripts/sync.R          # dry run: say what would change
+Rscript scripts/sync.R --write  # actually change it
+Rscript scripts/sync.R --from saved-page.html --write
+```
+
+`.github/workflows/sync.yml` runs the same script on a Friday-morning cron,
+after the tests, and commits the result. It can also be run from the Actions tab
+at any time. Each run saves the page it parsed to `raw/` (gitignored locally,
+uploaded as a run artifact in CI) so a broken parse can be reproduced offline,
+and prints its report onto the run's summary page — worth a look, because a run
+that writes nothing is green and quiet whether that is because there was nothing
+new or because every fixture was refused.
+
+Two things to know about the schedule. GitHub disables a cron workflow after 60
+days with no activity in the repository, and a push made by the job itself does
+not count — adding attendance each week does, so in normal use it stays awake.
+And a run only ever writes what the page shows: if a new season has not been
+added to `data/seasons.csv`, every fixture is refused as belonging to no season
+and the run says so rather than inventing one.
+
+The page is plain server-rendered HTML with no API behind it, so one request
+returns the whole season: every fixture, and inside each one the goals with
+scorer and minute, plus man of the match. What it does not carry is who turned
+up, which is why attendance stays manual.
+
+### What the sync refuses to do
+
+Two things about the site can silently corrupt the record, and most of the sync
+is about not being caught by them.
+
+**The whole season is listed at `0 : 0` from day one.** An unplayed fixture, a
+cancelled one and a genuine goalless draw are identical on the page. A match is
+only written when its date has passed **and** either the score is not 0-0 or
+goals are logged against it; anything else is reported as awaiting a scoreline
+and left for you. A real 0-0 gets added by hand, once.
+
+**The page is wiped when a league season rolls over,** and fixture ids start
+again from scratch. So matches are keyed on their **date**, which is unique
+across every season and is already what attendance joins on; `dl_match_id` is
+kept for provenance only. A wiped page full of fresh fixtures reads as a page
+full of unplayed matches and changes nothing.
+
+On top of that the sync never deletes a match, never touches a season whose
+`status` is `closed`, reports a score that disagrees with the one on file
+instead of overwriting it, and writes nothing at all if the page fails to parse
+or we do not appear in it. A scheduled run that hits one of those exits
+non-zero, so it fails visibly rather than reporting success over an empty
+scrape.
+
+### What it writes
+
+`data/matches.csv` is one row per match:
+
+| column | meaning |
+| --- | --- |
+| `date` | the key everything else joins on, `dd/mm/yyyy` |
+| `opponent` | blank for matches played before the sync existed |
+| `goals_for` / `goals_against` | already oriented to us |
+| `dl_match_id` | the site's fixture id, for provenance |
+
+The score is two integers rather than a `4-5` string because that is what it is;
+the hyphenated form is built for display in `with_result()` and stored nowhere.
+Every match is played on neutral ground, so which side the league listed us on
+is not recorded — it is only used to work out which end of the scoreline is ours.
+
+`data/match_events.csv` is one row per thing that happened in a match:
+
+| column | meaning |
+| --- | --- |
+| `date` | which match |
+| `dl_match_id` | the site's fixture id, for provenance |
+| `team` | `us` or `them` |
+| `minute` | when, where the site records it |
+| `event_type` | `goal` or `mom` today |
+| `player` | our players by their roster name, theirs as the site has them |
+
+It is long rather than wide so that recording something new later — assists,
+cards, own goals — is a new `event_type`, not a schema change.
+
+The sync owns `goal` and `mom` rows for any date it is looking at and rewrites
+them on every run, which is what makes a correction on the site, or a newly
+added name mapping, take effect on a re-run rather than appending a second copy.
+Rows of any other kind are yours and are left alone.
+
+`data/name_map.csv` maps the site's first names onto ours, since the league
+records `Felix` where the roster says something else. Only our side is mapped;
+the opposition's names are kept as they came, because they are not our players
+and exist only so a goal tally reconciles with the score. An unmapped name is
+left as it came and reported, so adding the mapping and re-running fixes it.
 
 ## Seasons
 
@@ -128,6 +232,8 @@ in attendance and every other statistic.
 ## Data checks
 
 `validate_app_data()` runs at startup and warns about attendance on a date with
-no match, unknown players, rows dated before the first season, and players who
-appeared without being on that season's active roster. Warnings appear in the
-console or the shinyapps.io log.
+no match, unknown players, rows dated before the first season, players who
+appeared without being on that season's active roster, events on a date with no
+match, and goals that do not add up to the scoreline they belong to. That last
+one matters because a partial event list looks exactly like a complete one to
+anything that counts it. Warnings appear in the console or the deployment log.
