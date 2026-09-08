@@ -546,3 +546,75 @@ tr.rank-top3 > td {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---- Season picker (sits in the hero, on the dark gradient) ---- */
+/* Shiny renders selectInput through selectize.js, so the styling hooks are
+   .control-label and .selectize-*, not Bootstrap's .form-label/.form-select. */
+.season-shell {
+  margin-left: auto;
+  min-width: 12.5rem;
+}
+
+.season-shell .control-label {
+  margin-bottom: 0.4rem;
+  color: rgba(255, 255, 255, 0.72);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.season-shell .selectize-input {
+  padding: 0.7rem 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.season-shell .selectize-input.focus,
+.season-shell .selectize-input.dropdown-active {
+  border-color: var(--green-bright);
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.12);
+}
+
+.season-shell .selectize-input .item {
+  color: #ffffff;
+}
+
+.season-shell .selectize-input::after {
+  border-top-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* The open menu sits over the page, so it goes back to dark-on-light. */
+.season-shell .selectize-dropdown {
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow-deep);
+  color: var(--ink);
+}
+
+.season-shell .selectize-dropdown .option.active {
+  background: var(--blue-soft);
+  color: var(--ink);
+}
+
+@media (max-width: 640px) {
+  .season-shell {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* ---- Empty state ---- */
+.empty-state {
+  padding: 2.5rem 1rem;
+  text-align: center;
+  color: var(--ink-muted);
+  font-size: 1.05rem;
+}

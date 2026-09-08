@@ -4,7 +4,14 @@ library(tidyverse)
 library(DT)
 library(glue)
 
-players <- read_csv("data/players.csv")
+# R/fees.R defines parse_match_date(), which R/seasons.R needs at load time.
+source("R/fees.R")
+source("R/seasons.R")
+source("R/analysis.R")
+source("R/data.R")
+
+# Read and validate every CSV once per process, not once per visitor.
+app_data <- load_app_data()
 
 app_theme <- bs_theme(
     version = 5,
@@ -33,17 +40,16 @@ fee_panel <- card(
         div(class = "section-tag", "Fee Check"),
         div(
             class = "selection-shell",
-            selectInput(
-                "fee_player",
-                "Choose your name",
-                choices = as.list(players$player)
-            )
+            selectInput("fee_player", "Choose your name", choices = NULL)
         ),
         div(class = "fee-label", "Current balance"),
         uiOutput("fees_owed"),
         div(
             class = "fee-footnote",
-            "Calculated from attendance, match fee rules, core-player status, and recorded payments."
+            paste(
+                "Calculated from attendance, the fee rules in force, and recorded",
+                "payments, for the season selected above."
+            )
         )
     )
 )
@@ -160,7 +166,7 @@ fee_history_panel <- tagList(
             h2(class = "table-title", "How your balance is calculated"),
             p(
                 class = "table-subtitle",
-                "Match charges follow the squad-size and core-player rules in force on each date."
+                "Match charges follow the fee rules in force for the selected season."
             )
         ),
         card_body(uiOutput("fee_overview_summary"))
@@ -326,18 +332,16 @@ plot_card_ui <- function(title, subtitle, output_id, height) {
     )
 }
 
-regression_explanation <- card(
-    class = "table-card",
-    card_header(
-        div(class = "section-tag", "Method"),
-        h2(class = "table-title", "How to read the player effects")
-    ),
+regression_explanation_ui <- function(regression_results, min_appearances) {
+    included <- unique(regression_results$player)
+
     card_body(
         p(
-            paste(
-                "Each result is a match-level regression on indicators for the 17 included",
-                "players. Yelong, Langkun, and Benoit are excluded. The coefficient",
-                "therefore describes a player's association with that outcome, conditional",
+            paste0(
+                "Each result is a match-level regression on indicators for the ",
+                length(included), " included players \u2014 everyone with at least ",
+                min_appearances, " appearances in the selected window. The coefficient ",
+                "describes a player's association with that outcome, conditional ",
                 "on the other included players."
             )
         ),
@@ -352,7 +356,24 @@ regression_explanation <- card(
             )
         )
     )
+}
+
+regression_explanation <- card(
+    class = "table-card",
+    card_header(
+        div(class = "section-tag", "Method"),
+        h2(class = "table-title", "How to read the player effects")
+    ),
+    uiOutput("regression_explanation")
 )
+
+#' Placeholder shown when the selected season has no matches recorded yet.
+empty_season_card <- function(message) {
+    card(
+        class = "table-card",
+        card_body(div(class = "empty-state", message))
+    )
+}
 
 match_plot_theme <- function() {
     theme_minimal(base_size = 12) +
@@ -550,12 +571,24 @@ ui <- page_fluid(
                 h1(class = "hero-title", "Borulanta"),
                 p(
                     class = "hero-copy",
-                    "Track what you owe, review recent match results, and see who keeps the squad going each week."
+                    paste(
+                "Track what you owe, review match results, and see who keeps the squad",
+                "going each week. Every tab follows the season picker."
+            )
                 ),
                 div(
                     class = "hero-meta",
                     icon("futbol"),
                     span("Fees, attendance, and results in one place")
+                )
+            ),
+            div(
+                class = "season-shell",
+                selectInput(
+                    "season",
+                    "Season",
+                    choices = season_choices(app_data$seasons),
+                    selected = current_season(app_data$seasons)
                 )
             )
         ),
@@ -576,26 +609,51 @@ ui <- page_fluid(
                 nav_panel(
                     "Matches",
                     icon = icon("futbol"),
-                    season_form_card,
-                    table_card_ui(
-                        "Matches",
-                        "Recent results for the running season.",
-                        "matches"
+                    conditionalPanel(
+                        "!output.season_has_matches",
+                        empty_season_card("No matches recorded for this season yet.")
                     ),
-                    match_detail_card
+                    conditionalPanel(
+                        "output.season_has_matches",
+                        season_form_card,
+                        table_card_ui(
+                            "Matches",
+                            "Results for the selected season.",
+                            "matches"
+                        ),
+                        match_detail_card
+                    )
                 ),
                 nav_panel(
                     "Attendance",
                     icon = icon("users"),
-                    table_card_ui(
-                        "Attendance",
-                        "Participation rate and on-pitch averages by player.",
-                        "attendance_list"
+                    conditionalPanel(
+                        "!output.season_has_matches",
+                        empty_season_card("No matches recorded for this season yet.")
+                    ),
+                    conditionalPanel(
+                        "output.season_has_matches",
+                        table_card_ui(
+                            "Attendance",
+                            "Participation rate and on-pitch averages by player.",
+                            "attendance_list"
+                        )
                     )
                 ),
                 nav_panel(
                     "Player effects",
                     icon = icon("chart-line"),
+                    conditionalPanel(
+                        "!output.season_has_regression",
+                        empty_season_card(
+                            paste(
+                                "Not enough matches in this season yet to estimate",
+                                "player effects. Try selecting all seasons."
+                            )
+                        )
+                    ),
+                    conditionalPanel(
+                    "output.season_has_regression",
                     layout_columns(
                         col_widths = c(6, 6),
                         plot_card_ui(
@@ -635,6 +693,7 @@ ui <- page_fluid(
                         "player_regressions"
                     ),
                     regression_explanation
+                    )
                 )
             )
         )
@@ -652,7 +711,7 @@ match_table <- function(matches) {
                 TRUE ~ "<span class='result-badge loss'>LOSS</span>"
             )
         ) %>%
-        select(date, result, outcome)
+        transmute(Date = format(date, "%d %b %Y"), Result = result, Outcome = outcome)
 
     datatable(
         matches,
@@ -691,77 +750,89 @@ attendance_table <- function(attendance_list) {
 
 # Server logic ----
 server <- function(input, output, session) {
-    matches <- read_csv("data/matches.csv")
-    attendance <- read_csv("data/attendance.csv")
-    payments <- read_csv("data/payments.csv")
+    # Everything downstream reads from this one filtered view of the data, so a
+    # statistic is scoped to a season purely by what the picker is set to.
+    scoped <- reactive({
+        req(input$season)
+        list(
+            matches = filter_season(app_data$matches, input$season),
+            attendance = filter_season(app_data$attendance, input$season),
+            payments = filter_season(app_data$payments, input$season),
+            charges = filter_season(app_data$charges, input$season)
+        )
+    })
 
-    source("calculate_fees.R")
-    source("player_contributions.R")
+    has_matches <- reactive(nrow(scoped()$matches) > 0)
 
-    avg_points_by_player <- avg_by_player(attendance, matches, players)
-    season_form <- season_form_data(attendance, matches)
-    regression_results <- player_regression_results(
-        attendance,
-        matches,
-        players
-    )
-    player_regressions <- player_regression_table(regression_results)
+    # These stay callable on an empty season: they return zero-row results
+    # rather than aborting, so has_regression() below is always answerable.
+    season_form <- reactive({
+        season_form_data(scoped()$attendance, scoped()$matches)
+    })
 
-    attendance_list <- create_attendance_list(
-        matches,
-        attendance,
-        avg_points_by_player
-    )
+    regression_results <- reactive({
+        player_regression_results(scoped()$attendance, scoped()$matches)
+    })
+
+    has_regression <- reactive(nrow(regression_results()) > 0)
+
+    # The fee picker lists whoever is on the selected season's active roster.
+    fee_players <- reactive({
+        rostered <- app_data$rosters %>%
+            filter_season(input$season) %>%
+            filter(active) %>%
+            pull(player)
+        sort(unique(rostered))
+    })
+
+    observeEvent(fee_players(), {
+        updateSelectInput(
+            session,
+            "fee_player",
+            choices = fee_players(),
+            selected = if (isTruthy(input$fee_player) &&
+                           input$fee_player %in% fee_players()) {
+                input$fee_player
+            } else {
+                fee_players()[[1]]
+            }
+        )
+    })
 
     fee_overview <- reactive({
         req(input$fee_player)
-        player_fee_overview(
-            input$fee_player,
-            matches,
-            attendance,
-            payments,
-            players
-        )
+        player_fee_overview(input$fee_player, scoped()$charges, scoped()$payments)
     })
 
-    match_choices <- season_form %>%
-        arrange(desc(date)) %>%
-        transmute(
-            value = as.character(date),
-            label = paste(format(date, "%d %b %Y"), "—", result)
+    # Keyed on the fixture list rather than has_matches(), which stays TRUE
+    # across two seasons that both have matches and so would not re-fire.
+    observeEvent(season_form(), {
+        if (!has_matches()) {
+            updateSelectInput(session, "selected_match", choices = character(0))
+            return()
+        }
+
+        match_choices <- season_form() %>%
+            arrange(desc(date)) %>%
+            transmute(
+                value = as.character(date),
+                label = paste(format(date, "%d %b %Y"), "\u2014", result)
+            )
+
+        updateSelectInput(
+            session,
+            "selected_match",
+            choices = setNames(match_choices$value, match_choices$label),
+            selected = match_choices$value[[1]]
         )
-    updateSelectInput(
-        session,
-        "selected_match",
-        choices = setNames(match_choices$value, match_choices$label),
-        selected = match_choices$value[[1]]
-    )
+    })
 
     selected_match_details <- reactive({
-        req(input$selected_match)
-        match_detail_data(season_form, attendance, input$selected_match)
+        req(has_matches(), input$selected_match)
+        match_detail_data(season_form(), scoped()$attendance, input$selected_match)
     })
 
-    output$matches <- renderDT({
-        match_table(matches)
-    })
-
-    output$season_form_plot <- renderPlot({
-        season_form_plot(season_form, input$form_metric)
-    })
-
-    output$match_summary <- renderUI({
-        match_summary_ui(selected_match_details()$match)
-    })
-
-    output$match_lineup <- renderDT({
-        match_lineup_table(selected_match_details()$lineup)
-    })
-
-    output$attendance_list <- renderDT({
-        attendance_table(attendance_list)
-    })
-
+    # Fees ----
     output$fee_overview_summary <- renderUI({
         fee_overview_summary(fee_overview())
     })
@@ -774,18 +845,6 @@ server <- function(input, output, session) {
         payment_history_table(fee_overview()$payment_history)
     })
 
-    output$player_regressions <- renderDT({
-        regression_table(player_regressions)
-    })
-
-    output$attack_defence_plot <- renderPlot({
-        attack_defence_plot(regression_results)
-    })
-
-    output$coefficient_plot <- renderPlot({
-        coefficient_plot(regression_results, input$regression_outcome)
-    })
-
     output$fees_owed <- renderUI({
         balance <- fee_overview()$balance
         tags$div(
@@ -793,6 +852,56 @@ server <- function(input, output, session) {
             format_fee_amount(balance)
         )
     })
+
+    # Matches ----
+    output$matches <- renderDT({
+        match_table(scoped()$matches)
+    })
+
+    output$season_form_plot <- renderPlot({
+        season_form_plot(season_form(), input$form_metric)
+    })
+
+    output$match_summary <- renderUI({
+        match_summary_ui(selected_match_details()$match)
+    })
+
+    output$match_lineup <- renderDT({
+        match_lineup_table(selected_match_details()$lineup)
+    })
+
+    # Attendance ----
+    output$attendance_list <- renderDT({
+        req(has_matches())
+        attendance_table(create_attendance_list(scoped()$attendance, scoped()$matches))
+    })
+
+    # Player effects ----
+    output$player_regressions <- renderDT({
+        req(has_regression())
+        regression_table(player_regression_table(regression_results()))
+    })
+
+    output$attack_defence_plot <- renderPlot({
+        req(has_regression())
+        attack_defence_plot(regression_results())
+    })
+
+    output$coefficient_plot <- renderPlot({
+        req(has_regression())
+        coefficient_plot(regression_results(), input$regression_outcome)
+    })
+
+    output$regression_explanation <- renderUI({
+        req(has_regression())
+        regression_explanation_ui(regression_results(), MIN_REGRESSION_APPEARANCES)
+    })
+
+    # Empty states ----
+    output$season_has_matches <- reactive(has_matches())
+    output$season_has_regression <- reactive(has_regression())
+    outputOptions(output, "season_has_matches", suspendWhenHidden = FALSE)
+    outputOptions(output, "season_has_regression", suspendWhenHidden = FALSE)
 }
 
 # Run app ----
