@@ -5,12 +5,12 @@
 # this file needs to know what a season is. Rates and averages are computed
 # from whatever is passed in.
 
-#' Results with points, goals and goal difference parsed out of the score.
+#' Results with points and goal difference derived from the score.
 match_outcomes <- function(matches) {
   matches %>%
     mutate(
-      goals_scored = as.integer(str_extract(result, "^\\d+")),
-      goals_conceded = as.integer(str_extract(result, "\\d+$")),
+      goals_scored = as.integer(goals_for),
+      goals_conceded = as.integer(goals_against),
       points = case_when(
         goals_scored > goals_conceded ~ 3,
         goals_scored == goals_conceded ~ 1,

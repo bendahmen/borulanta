@@ -512,7 +512,14 @@ match_summary_ui <- function(selected_match) {
             div(class = "match-detail-value", selected_match$result),
             div(
                 class = "match-detail-note",
-                paste(format(selected_match$date, "%d %B %Y"), "—", outcome)
+                paste(
+                    c(
+                        format(selected_match$date, "%d %B %Y"),
+                        na.omit(selected_match$opponent),
+                        outcome
+                    ),
+                    collapse = " — "
+                )
             )
         ),
         div(
@@ -723,15 +730,18 @@ ui <- page_fluid(
 match_table <- function(matches) {
     matches <- matches %>%
         mutate(
-            scored = as.integer(str_extract(result, "^\\d+")),
-            conceded = as.integer(str_extract(result, "\\d+$")),
             outcome = case_when(
-                scored > conceded ~ "<span class='result-badge win'>WIN</span>",
-                scored == conceded ~ "<span class='result-badge draw'>DRAW</span>",
+                goals_for > goals_against ~ "<span class='result-badge win'>WIN</span>",
+                goals_for == goals_against ~ "<span class='result-badge draw'>DRAW</span>",
                 TRUE ~ "<span class='result-badge loss'>LOSS</span>"
             )
         ) %>%
-        transmute(Date = format(date, "%d %b %Y"), Result = result, Outcome = outcome)
+        transmute(
+            Date = format(date, "%d %b %Y"),
+            Opponent = coalesce(opponent, "\u2014"),
+            Result = result,
+            Outcome = outcome
+        )
 
     datatable(
         matches,
@@ -842,7 +852,11 @@ server <- function(input, output, session) {
             arrange(desc(date)) %>%
             transmute(
                 value = as.character(date),
-                label = paste(format(date, "%d %b %Y"), "\u2014", result)
+                label = paste(
+                    format(date, "%d %b %Y"),
+                    "\u2014",
+                    if_else(is.na(opponent), result, paste(result, "v", opponent))
+                )
             )
 
         updateSelectInput(
