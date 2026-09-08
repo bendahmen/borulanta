@@ -1,25 +1,28 @@
 #!/bin/bash
 #
-# The weekly run: sync, commit, push. Driven by the launchd agent beside this
-# file, and safe to run by hand.
+# The weekly run in one command: sync, commit, push. Run it by hand, from a
+# terminal, when you sit down to add the week's attendance.
 #
-# This exists rather than a GitHub Action because the league site sits behind
-# Cloudflare, which returns 403 to datacentre addresses — the identical request
-# succeeds from a home connection and fails from a hosted runner. So the sync
-# runs where a browser would.
+# It is not scheduled, and both of the obvious ways to schedule it are closed.
+# A GitHub Action cannot fetch the page: the league site sits behind Cloudflare,
+# which returns 403 to datacentre addresses while serving the identical request
+# happily to a home connection. And a launchd agent on this Mac cannot reach the
+# repository: it lives under ~/Library/CloudStorage, which macOS shields from
+# scheduled jobs, so bash cannot so much as read this file from one.
 
 set -uo pipefail
 
 repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo" || exit 1
 
-# launchd starts with almost no PATH, so git and R have to be findable.
-export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+# Not inherited when this is invoked from anywhere with a thin environment.
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 
 log="$repo/raw/sync.log"
 mkdir -p "$(dirname "$log")"
 
-# A cron nobody watches fails silently, which is the same as not running.
+# Worth a nudge even when run by hand: the interesting output is in the log,
+# and the run is quiet either way.
 notify() {
   osascript -e "display notification \"$2\" with title \"$1\"" >/dev/null 2>&1 || true
 }

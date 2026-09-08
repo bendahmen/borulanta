@@ -12,7 +12,7 @@ R/analysis.R            match/player statistics (season-agnostic)
 R/data.R                CSV loading, season tagging, validation
 R/scrape.R              reading the league page
 R/sync.R                reconciling a scrape with the files
-scripts/                the sync runner, its weekly wrapper and launchd agent
+scripts/                the sync runner and its commit-and-push wrapper
 tests/testthat/         parser and sync tests, run against saved pages
 data/                   the source of truth, all hand-editable CSVs
 data/archive/           frozen ledgers for closed seasons
@@ -20,10 +20,16 @@ data/archive/           frozen ledgers for closed seasons
 
 ## Weekly routine
 
-Results, opponents and goalscorers arrive on their own: a scheduled job runs
-every Friday morning, reads the league page and commits anything new. **All
-that is left by hand is attendance** — one row per player who turned up in
-`data/attendance.csv`. Record transfers in `data/payments.csv`.
+After a game, run the sync and add the week's attendance:
+
+```
+bash scripts/sync-and-commit.sh
+```
+
+That reads the league page and records the result, the opponent and the
+goalscorers. **Attendance is the only thing left by hand** — one row per player
+who turned up in `data/attendance.csv`. Record transfers in
+`data/payments.csv`.
 
 Nothing else needs touching: the season is worked out from the date, and the
 sync will not write a result it is not sure about.
@@ -40,31 +46,35 @@ Rscript scripts/sync.R --from saved-page.html --write
 ```
 
 `scripts/sync-and-commit.sh` wraps that: it runs the sync, commits the two
-files it owns and pushes. `scripts/com.bendahmen.borulanta-sync.plist` is the
-launchd agent that fires it on Friday at eight, and installing it is one
-command:
+files it owns — by pathspec, so it cannot sweep up anything else you have
+staged — pushes, and appends to `raw/sync.log`.
 
-```
-cp scripts/com.bendahmen.borulanta-sync.plist ~/Library/LaunchAgents/
-launchctl bootstrap gui/$UID ~/Library/LaunchAgents/com.bendahmen.borulanta-sync.plist
-```
+Nothing is lost by running it late, or by skipping a week: the sync reads the
+whole season every time and is idempotent, so it catches up on its own.
 
-If the Mac is asleep at eight, launchd runs the job when it next wakes. Each
-run appends to `raw/sync.log` and raises a notification if the sync or the push
-fails, because a scheduled job nobody watches failing quietly is the same as it
-not running. Nothing is lost by a missed week either: the sync reads the whole
-season each time and is idempotent.
+### Why it is not scheduled
 
-### Why it does not run in CI
+Both of the obvious ways to schedule it are closed, and it is worth writing
+down so neither gets attempted again.
 
-It should, and it cannot. The league site sits behind Cloudflare, which returns
-403 to datacentre addresses: the identical request that succeeds from a home
-connection fails from a GitHub Actions runner. The site's own `robots.txt`
-allows the default user agent, so this is an edge rule about where the request
-comes from rather than a policy about the request — but the only ways around it
-are to lie about the user agent or to proxy, and neither is worth doing to a
-site that is happy to serve the same page to the same person from their own
-machine. So the job runs where a browser would.
+**A GitHub Action cannot fetch the page.** The league site sits behind
+Cloudflare, which returns 403 to datacentre addresses: the identical request
+that succeeds from a home connection fails from a hosted runner. Its
+`robots.txt` allows the default user agent, so this is an edge rule about where
+a request comes from rather than a policy about the request — but the only ways
+around it are to lie about the user agent or to proxy, and neither is worth
+doing to a site that will happily serve the same page to the same person from
+their own machine.
+
+**A launchd agent on the Mac cannot reach the repository.** It lives under
+`~/Library/CloudStorage`, which macOS shields from scheduled jobs, so a launchd
+job cannot so much as read the script — `Operation not permitted` before it
+runs a line. Granting Full Disk Access to `/bin/bash` would lift that, at the
+cost of handing every script bash ever runs the same access; moving the
+repository out of Dropbox would too.
+
+So it is a command you run, which is no great imposition given attendance has
+to be typed in the same sitting anyway.
 
 The page is plain server-rendered HTML with no API behind it, so one request
 returns the whole season: every fixture, and inside each one the goals with
