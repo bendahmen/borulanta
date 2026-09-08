@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+
+# Snapshots of the pages a sync parsed, kept for debugging a broken parse.
+# Outside data/ so the Posit publish config does not ship them with the app.
+raw/

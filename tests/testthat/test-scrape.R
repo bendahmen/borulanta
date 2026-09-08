@@ -1,0 +1,164 @@
+# Parsing the league page.
+#
+# Both fixtures are real pages, trimmed to the weeks needed: hoxton-played is a
+# league mid-season with actual results in it, and shoreditch-unplayed is ours
+# on the day the season opened — every fixture still 0 : 0, which is also
+# exactly what the page looks like after a season rolls over and is wiped.
+
+test_that("every fixture in a played league parses", {
+  fixtures <- parse_fixtures(fixture_html("hoxton-played.html"))
+
+  expect_equal(nrow(fixtures), 12) # four weeks, three fixtures a week
+  expect_false(anyNA(fixtures$date))
+  expect_false(anyNA(fixtures$home_goals))
+  expect_false(anyNA(fixtures$away_goals))
+  expect_true(all(nzchar(fixtures$home_team) & nzchar(fixtures$away_team)))
+  expect_true(all(str_detect(fixtures$dl_match_id, "^\\d+$")))
+})
+
+test_that("goals logged reconcile with every scoreline", {
+  # The strongest check available without a second source: the site records
+  # each goal separately from the score it displays, so if the parser is
+  # picking up the wrong rows the two will not agree.
+  fixtures <- parse_fixtures(fixture_html("hoxton-played.html"))
+
+  tallies <- fixtures %>%
+    mutate(logged = map_int(events, ~ sum(.x$event_type == "goal")))
+
+  expect_equal(tallies$logged, tallies$home_goals + tallies$away_goals)
+})
+
+test_that("man of the match is picked up and empty rows are not", {
+  fixtures <- parse_fixtures(fixture_html("hoxton-played.html"))
+  events <- bind_rows(fixtures$events)
+
+  expect_setequal(unique(events$event_type), c("goal", "mom"))
+  # Every fixture renders a CARDS heading whether or not a card was shown, and
+  # an unawarded MOM renders an empty medal row; neither should become an event.
+  expect_false(any(is.na(events$player)))
+  expect_true(all(nzchar(events$player)))
+  expect_true(all(is.na(events$minute[events$event_type == "mom"])))
+  expect_false(any(is.na(events$minute[events$event_type == "goal"])))
+})
+
+test_that("a fixture list with nothing played yet parses to zero-zero", {
+  fixtures <- parse_fixtures(fixture_html("shoreditch-unplayed.html"))
+
+  expect_equal(nrow(fixtures), 24) # six weeks, four fixtures a week
+  expect_true(all(fixtures$home_goals == 0 & fixtures$away_goals == 0))
+  expect_equal(sum(map_int(fixtures$events, nrow)), 0)
+})
+
+test_that("our fixtures are oriented to us whichever side we were listed on", {
+  fixtures <- parse_fixtures(fixture_html("hoxton-played.html"))
+  ours <- our_fixtures(fixtures, team = "Hackney Hedgehogs")
+
+  expect_equal(nrow(ours), 4)
+  expect_false(any(ours$opponent == "Hackney Hedgehogs"))
+
+  # 22 Jul: listed at home, won 8-1. 29 Jul: listed away, lost 2-3. The score
+  # has to follow us across the fixture, not stay with the home column.
+  home_match <- ours %>% filter(date == as.Date("2026-07-22"))
+  expect_equal(home_match$goals_for, 8L)
+  expect_equal(home_match$goals_against, 1L)
+
+  away_match <- ours %>% filter(date == as.Date("2026-07-29"))
+  expect_equal(away_match$opponent, "AFC Cognizant")
+  expect_equal(away_match$goals_for, 2L)
+  expect_equal(away_match$goals_against, 3L)
+
+  # ...and so do the goals inside it.
+  away_goals <- away_match$events[[1]] %>% filter(event_type == "goal")
+  expect_equal(sum(away_goals$team == "us"), 2L)
+  expect_equal(sum(away_goals$team == "them"), 3L)
+})
+
+test_that("a bye week produces no fixture rather than an empty one", {
+  # Nine teams and four pitches means one team sits out each week; ours is out
+  # in week 3 of the fixture list.
+  ours <- our_fixtures(parse_fixtures(fixture_html("shoreditch-unplayed.html")))
+
+  expect_equal(nrow(ours), 5) # six weeks, one of them a bye
+  expect_false(as.Date("2026-09-23") %in% ours$date)
+})
+
+test_that("we are found in our own league page", {
+  ours <- our_fixtures(parse_fixtures(fixture_html("shoreditch-unplayed.html")))
+
+  expect_gt(nrow(ours), 0)
+  expect_setequal(
+    ours$opponent,
+    c("Shamrock Posers", "Brother Man FC", "Ball FC", "Finessin FC", "Dynamo Mickey CF")
+  )
+})
+
+test_that("a team that is not in the league yields no fixtures, not an error", {
+  fixtures <- parse_fixtures(fixture_html("hoxton-played.html"))
+
+  expect_equal(nrow(our_fixtures(fixtures, team = "Borulanta")), 0)
+})
+
+# A page assembled by hand, so a shape neither saved fixture happens to contain
+# can be exercised: an icon rendered without a src.
+minimal_page <- function(mom_icon = '<img src="/content/images/icons/icon-medal-blue.svg">') {
+  paste0('
+<div class="tab-content section-fixtures">
+  <div class="accordion-leagues">
+    <p class="accordion-date">22 July 2026 - Week 1</p>
+    <div class="panel collapse-section">
+      <div class="accordion-title">
+        <div class="team-info">
+          <div class="team-1-wrapper">Borulanta</div>
+          <div class="team-wrapper-blue">1 : 0</div>
+          <div class="team-2-wrapper">Ball FC</div>
+        </div>
+        <div class="plus-info" data-toggle="collapse" href="#info-42"></div>
+      </div>
+      <div id="info-42" class="accordion-content collapse">
+        <div class="row-info">
+          <div class="date-info">
+            <div class="time-info"><p>20&#39;</p></div>
+            <div class="icon-info"><i><img src="/content/images/icons/icon-ball-blue.svg"></i></div>
+          </div>
+          <div class="team-info">
+            <div class="team-1-wrapper">Ben</div>
+            <div class="team-wrapper">-</div>
+            <div class="team-2-wrapper"></div>
+          </div>
+        </div>
+        <div class="row-info info-medal">
+          <div class="date-info">
+            <div class="time-info"><p>MOM</p></div>
+            <div class="icon-info"><i>', mom_icon, '</i></div>
+          </div>
+          <div class="team-info">
+            <div class="team-1-wrapper">Ben</div>
+            <div class="team-wrapper"></div>
+            <div class="team-2-wrapper"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>')
+}
+
+test_that("the hand-built page parses the same way the saved ones do", {
+  fixtures <- parse_fixtures(minimal_page())
+
+  expect_equal(nrow(fixtures), 1)
+  expect_equal(fixtures$home_goals, 1L)
+  expect_setequal(fixtures$events[[1]]$event_type, c("goal", "mom"))
+})
+
+test_that("an icon rendered without a src does not kill the parse", {
+  # html_attr("src") gives NA, and an NA reaching an if() is an error rather
+  # than a FALSE, so one malformed row would take the whole page down with it.
+  fixtures <- parse_fixtures(minimal_page(mom_icon = "<img>"))
+
+  expect_equal(nrow(fixtures), 1)
+  events <- fixtures$events[[1]]
+  expect_equal(sum(events$event_type == "goal"), 1L)
+  # The medal icon is gone, so the row is recognised by its label instead.
+  expect_equal(sum(events$event_type == "mom"), 1L)
+})
