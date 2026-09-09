@@ -12,7 +12,8 @@ R/analysis.R            match/player statistics (season-agnostic)
 R/data.R                CSV loading, season tagging, validation
 R/scrape.R              reading the league page
 R/sync.R                reconciling a scrape with the files
-scripts/                the sync runner and its commit-and-push wrapper
+scripts/                the sync runner, its commit-and-push wrapper, and the manifest writer
+manifest.json           what Connect Cloud installs and ships; generated, not hand-edited
 tests/testthat/         parser and sync tests, run against saved pages
 data/                   the source of truth, all hand-editable CSVs
 data/fixtures.csv       ⤷ except these two, which the sync replaces wholesale
@@ -236,6 +237,42 @@ is the one the countdown depends on, because the hero is held to a fixed height
 there. And when the league page has not been read for more than a match week,
 the next-match card says so outright: the countdown is computed from today, so
 it goes on being confident long after it has stopped being right.
+
+## Deploying
+
+The app runs on Posit Connect Cloud, published from this repository rather than
+from the Mac: **a push to `main` redeploys it.** So `scripts/sync-and-commit.sh`
+now closes its own loop — it syncs, commits, pushes, and the site follows a
+minute or two later without anyone opening the publisher.
+
+Nothing about that contradicts the sync not being scheduled. That is blocked
+because a hosted runner cannot fetch the league page, and a deploy never looks
+at the league page at all — only at this repository. They are unrelated
+problems, and only one of them is closed.
+
+`manifest.json` is what makes it work: it tells Connect Cloud which R version
+and which package versions to install, and which files to ship. Regenerate it
+whenever `renv.lock` changes, and commit the two together:
+
+```
+Rscript scripts/write-manifest.R
+```
+
+Nothing checks that the two agree. A lockfile updated without a matching
+manifest deploys the packages the manifest last remembered, which is a
+divergence that shows up as an app behaving like an older checkout rather than
+as an error.
+
+`renv/` and the `.Rprofile` that activates it are deliberately kept **out** of
+the bundle. On Connect the packages come from the manifest, and an activated
+renv would point `.libPaths()` at a project library that does not exist there,
+hiding every one of them. Locally that `.Rprofile` is exactly what we want,
+which is why it stays in the repository and out of the deployment.
+
+`renv.lock` itself does ship, though nothing reads it at run time. Its presence
+in the file list is what makes `writeManifest()` pin every version from the
+lockfile instead of scanning the code and resolving against whatever is
+installed on the machine that generated it.
 
 ## Seasons
 
