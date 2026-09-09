@@ -861,6 +861,76 @@ match_lineup_table <- function(lineup) {
         formatPercentage(columns = "Attendance rate", digits = 0)
 }
 
+scorer_display_table <- function(scorers) {
+    datatable(
+        scorers %>%
+            transmute(
+                Player = player,
+                Goals = goals,
+                MOM = mom,
+                Appearances = appearances,
+                `Goals per game` = round(goals_per_appearance, 2)
+            ),
+        rownames = FALSE,
+        class = "nowrap",
+        options = list(
+            dom = "tip",
+            pageLength = 15,
+            order = list(list(1, "desc")),
+            autoWidth = TRUE,
+            scrollX = TRUE,
+            language = list(
+                emptyTable = "No goals on file yet \u2014 they arrive with the sync."
+            )
+        )
+    )
+}
+
+#' What the leaderboard above it actually covers.
+#'
+#' Stated rather than assumed, because for anything played before the sync it
+#' is not all-time and a table that does not say so invites being read as if it
+#' were. Appearances are counted over the same matches as the goals, so the
+#' rate divides like by like.
+scorer_coverage_ui <- function(coverage) {
+    if (coverage$observed == 0) {
+        return(p(
+            class = "table-subtitle",
+            paste(
+                "No match in the selected seasons has its goals on file.",
+                "They start with the sync."
+            )
+        ))
+    }
+
+    p(
+        class = "table-subtitle",
+        if (coverage$observed == coverage$total) {
+            paste0(
+                "All ", coverage$total, " matches in the selected seasons have ",
+                "their goals on file."
+            )
+        } else {
+            paste0(
+                coverage$observed, " of the ", coverage$total, " matches in the ",
+                "selected seasons have their goals on file. The rest were played ",
+                "before the sync existed and are left out, appearances included."
+            )
+        }
+    )
+}
+
+#' Goals and man of the match, with the window they cover stated on the card.
+scorer_card <- card(
+    class = "table-card",
+    card_header(
+        div(class = "section-tag", "Scorers"),
+        h2(class = "table-title", "Goals and man of the match"),
+        uiOutput("scorer_coverage")
+    ),
+    card_body(dataTableOutput("scorers"))
+)
+
 match_detail_card <- card(
     class = "table-card",
     card_header(
@@ -973,6 +1043,7 @@ ui <- page_fluid(
                             "Newest first, for the seasons you have ticked.",
                             "matches"
                         ),
+                        scorer_card,
                         match_detail_card
                     )
                 ),
@@ -1121,6 +1192,7 @@ server <- function(input, output, session) {
         list(
             matches = filter_season(app_data$matches, selected_seasons()),
             attendance = filter_season(app_data$attendance, selected_seasons()),
+            events = filter_season(app_data$events, selected_seasons()),
             payments = filter_season(app_data$payments, selected_seasons()),
             charges = filter_season(app_data$charges, selected_seasons())
         )
@@ -1296,6 +1368,17 @@ server <- function(input, output, session) {
 
     output$match_lineup <- renderDT({
         match_lineup_table(selected_match_details()$lineup)
+    })
+
+    output$scorers <- renderDT({
+        req(has_matches())
+        scorer_display_table(
+            scorer_table(scoped()$events, scoped()$attendance, scoped()$matches)
+        )
+    })
+
+    output$scorer_coverage <- renderUI({
+        scorer_coverage_ui(event_coverage(scoped()$matches))
     })
 
     # Attendance ----

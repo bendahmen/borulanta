@@ -379,6 +379,21 @@ the window of interest and computes rates from what it is given, so the same
 code serves one season, several, or all time. `filter_season()` takes a vector
 of season ids, so those three cases are the same operation rather than three.
 
+Goals and man of the match are the exception to that, because they arrived
+with the sync and attendance did not. A player's goals per game would otherwise
+divide by every appearance they have ever made, understating each of them by a
+different amount depending on how much of the archive they played in. So the
+scorer table is computed over the **covered** matches alone — the ones the sync
+wrote — and both the goals and the appearances underneath them are counted over
+the same set. The card says how many matches that is, because for anything
+before the sync the table is not all-time and one that does not say so invites
+being read as though it were.
+
+A match counts as covered when it carries the site's fixture id, which the sync
+stamps on everything it writes. Keying on whether it has any event on file
+would be wrong in the direction that matters: a synced goalless draw with no
+man of the match has no events and is nonetheless completely recorded.
+
 Player-effect regressions drop anyone below `MIN_REGRESSION_APPEARANCES`
 (default 3) in the selected window — with only a handful of appearances a
 player cannot be separated from the matches they happened to play in. They stay

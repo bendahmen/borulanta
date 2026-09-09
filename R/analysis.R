@@ -110,6 +110,71 @@ create_attendance_list <- function(attendance, matches) {
     mutate(across(where(is.numeric), ~ round(.x, 2)))
 }
 
+# Goals and man of the match ----
+#
+# Both arrived with the sync, so they exist only for the matches the sync
+# wrote. Attendance goes back further, and dividing a player's goals by every
+# appearance they have ever made would understate each of them by a different
+# amount depending on how much of the archive they played in. So the whole
+# table is computed over the covered matches alone, and the card says how many
+# those are.
+#
+# A match is covered when it carries the site's fixture id, which the sync
+# stamps on everything it writes. Keying on "has an event on file" instead
+# would be wrong in the direction that matters: a synced goalless draw with no
+# man of the match has no events and is nonetheless completely recorded.
+
+#' Which matches in the window have their events on file.
+event_coverage <- function(matches) {
+  covered <- !is.na(matches$dl_match_id)
+  list(
+    dates = matches$date[covered],
+    observed = sum(covered),
+    total = nrow(matches)
+  )
+}
+
+#' Goals and man of the match per player, over the matches we have events for.
+#'
+#' Everyone who appeared in a covered match is listed, scorer or not: a
+#' leaderboard that drops the players on nought is not the squad. A player with
+#' events but no attendance row is listed too, on no appearances, rather than
+#' having their goals quietly left out of the tally — that is a data problem
+#' validate_app_data() reports, and a total that no longer reconciles with the
+#' scorelines would otherwise be the only sign of it.
+scorer_table <- function(events, attendance, matches) {
+  coverage <- event_coverage(matches)
+
+  if (coverage$observed == 0 || nrow(events) == 0) {
+    return(tibble(
+      player = character(), goals = integer(), mom = integer(),
+      appearances = integer(), goals_per_appearance = numeric()
+    ))
+  }
+
+  ours <- events %>%
+    filter(team == "us", date %in% coverage$dates)
+
+  tally <- function(type, name) {
+    ours %>%
+      filter(event_type == type) %>%
+      count(player, name = name)
+  }
+
+  attendance %>%
+    filter(date %in% coverage$dates) %>%
+    count(player, name = "appearances") %>%
+    full_join(tally("goal", "goals"), by = "player") %>%
+    full_join(tally("mom", "mom"), by = "player") %>%
+    mutate(
+      across(c(appearances, goals, mom), ~ coalesce(.x, 0L)),
+      # Nought from nothing is not a rate. A player with events but no
+      # appearance on file would otherwise divide by zero and sort to the top.
+      goals_per_appearance = if_else(appearances > 0, goals / appearances, NA_real_)
+    ) %>%
+    arrange(desc(goals), desc(mom), player)
+}
+
 # Opponent strength ----
 #
 # The player regressions below compare matches with one another, and a match
