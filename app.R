@@ -98,6 +98,97 @@ format_fee_amount <- function(amount) {
 #' on a Wednesday, because a fixture that is not is worth noticing.
 format_match_date <- function(date) format(date, "%a %d %b %Y")
 
+# Freshness ----
+#
+# The CSVs are bundled into the deployment, so the app is only ever as fresh as
+# the last sync that was committed and deployed. Nothing on the page shows that:
+# a stale countdown looks exactly like a live one, and reads more confidently
+# than the results tabs it sits above. So the dates that bound the data are
+# stated outright rather than left to be inferred from it.
+
+#' Where the numbers came from and when, as one line under the strapline.
+#'
+#' Either half is dropped rather than rendered empty, so a checkout with no
+#' league table on file says only what it knows.
+#'
+#' Both a full and a short wording are emitted and the stylesheet picks one.
+#' The full line wraps to two on a phone, and the hero is the one part of this
+#' layout that is held to a fixed height there; the scrape date alone is the
+#' half worth keeping, because it is what the countdown beneath it depends on.
+#' Whichever is hidden is display:none, so it leaves the accessibility tree too
+#' and nothing is read out twice.
+freshness_note <- function(matches, league_table) {
+    last_result <- if (nrow(matches) > 0) {
+        paste("Results to", format(max(matches$date), "%d %b %Y"))
+    }
+    last_read <- if (nrow(league_table) > 0) {
+        format(max(league_table$scraped_on), "%d %b %Y")
+    }
+
+    if (is.null(last_result) && is.null(last_read)) {
+        return(NULL)
+    }
+
+    full <- paste(
+        c(last_result, if (!is.null(last_read)) paste("league page read", last_read)),
+        collapse = " \u00b7 "
+    )
+    short <- if (!is.null(last_read)) paste("Page read", last_read) else last_result
+
+    div(
+        class = "hero-freshness",
+        span(class = "freshness-full", full),
+        span(class = "freshness-short", short)
+    )
+}
+
+# A match week without a sync. The game is weekly and the sync runs after it,
+# so a fixture list older than this has missed at least one.
+STALE_FIXTURES_DAYS <- 8L
+
+#' A warning on the countdown when the fixture list behind it has gone stale.
+#'
+#' Only when it has: a provenance line on every visit is noise, and this is the
+#' one card that keeps counting down confidently while going wrong. The league
+#' table's scrape date stands in for the fixture list's own, which it does not
+#' have — both are snapshot files the same sync run replaces wholesale.
+stale_fixture_note <- function(scraped_on, today) {
+    if (length(scraped_on) == 0) {
+        return(NULL)
+    }
+
+    last_read <- max(scraped_on)
+    if (is.na(last_read) || as.integer(today - last_read) <= STALE_FIXTURES_DAYS) {
+        return(NULL)
+    }
+
+    div(
+        class = "home-stale",
+        paste0(
+            "The fixture list was last read on ", format(last_read, "%d %b"),
+            ", so this may be out of date."
+        )
+    )
+}
+
+#' Data problems on the page, rather than in a log nobody opens.
+#'
+#' validate_app_data() warns at startup, which reaches the console or the
+#' deployment log — exactly where it will not be seen. Quiet by design: these
+#' are notes to whoever maintains the CSVs rather than errors a reader can act
+#' on, and the panel is absent entirely when there is nothing wrong.
+data_health_banner <- function(problems) {
+    if (length(problems) == 0) {
+        return(NULL)
+    }
+
+    div(
+        class = "data-health",
+        div(class = "data-health-title", "Data check"),
+        tags$ul(class = "data-health-list", lapply(problems, tags$li))
+    )
+}
+
 result_badge <- function(points) {
     label <- case_when(points == 3 ~ "WIN", points == 1 ~ "DRAW", TRUE ~ "LOSS")
     class <- case_when(points == 3 ~ "win", points == 1 ~ "draw", TRUE ~ "loss")
@@ -173,7 +264,8 @@ last_match_card_ui <- function(summary, seasons) {
 #' The two empty cases are different and worth separating: a fixture list that
 #' has run out means the season is done or the sync is overdue, while no file at
 #' all means the sync has not run since fixtures started being recorded.
-next_match_card_ui <- function(fixture, have_fixtures, today = Sys.Date()) {
+next_match_card_ui <- function(fixture, have_fixtures, scraped_on = NULL,
+                               today = Sys.Date()) {
     if (is.null(fixture)) {
         return(card(
             class = "home-card",
@@ -204,7 +296,8 @@ next_match_card_ui <- function(fixture, have_fixtures, today = Sys.Date()) {
             div(class = "section-tag", "Next match"),
             div(class = if (days_away == 0) "home-when is-today" else "home-when", when),
             div(class = "home-opponent", coalesce(fixture$opponent, "Opponent to be confirmed")),
-            div(class = "home-card-meta", format_match_date(fixture$date))
+            div(class = "home-card-meta", format_match_date(fixture$date)),
+            stale_fixture_note(scraped_on, today)
         )
     )
 }
@@ -819,13 +912,18 @@ ui <- page_fluid(
                         "The season picker applies to matches, attendance and",
                         "player effects."
                     )
-                )
+                ),
+                # Kept out of .hero-copy, which the phone layout hides: a
+                # countdown is read on a phone more than anywhere else, so how
+                # old it is has to survive that.
+                freshness_note(app_data$matches, app_data$league_table)
             ),
             div(
                 class = "season-shell",
                 season_picker(app_data)
             )
         ),
+        data_health_banner(app_data$problems),
         div(
             class = "nav-pill-shell",
             navset_pill(
@@ -1171,7 +1269,8 @@ server <- function(input, output, session) {
     output$next_match_card <- renderUI({
         next_match_card_ui(
             next_fixture(app_data$fixtures, app_data$matches),
-            have_fixtures = nrow(app_data$fixtures) > 0
+            have_fixtures = nrow(app_data$fixtures) > 0,
+            scraped_on = app_data$league_table$scraped_on
         )
     })
 

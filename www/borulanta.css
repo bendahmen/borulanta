@@ -141,6 +141,23 @@ a:hover {
   font-size: 1rem;
 }
 
+/* How old the data is. Deliberately quiet — it is provenance, not news — but
+   it survives the phone layout that hides .hero-copy, because that is where
+   the countdown is read. */
+.hero-freshness {
+  position: relative;
+  z-index: 1;
+  margin-top: 0.55rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+}
+
+/* The wide wording by default; the phone block below swaps in the short one. */
+.freshness-short {
+  display: none;
+}
+
 /* ---- Nav pills ---- */
 .nav-pill-shell {
   padding: 0.3rem;
@@ -826,6 +843,22 @@ tr.is-us > td {
     display: none;
   }
 
+  /* How old the data is does survive, unlike the strapline: the countdown is
+     read on a phone more than anywhere else. But only the short wording, so it
+     costs one line rather than two. */
+  .hero-freshness {
+    margin-top: 0.3rem;
+    font-size: 0.75rem;
+  }
+
+  .freshness-full {
+    display: none;
+  }
+
+  .freshness-short {
+    display: inline;
+  }
+
   .season-shell {
     flex: 1 0 100%;
     /* Without this a flex item refuses to shrink below its content width, so
@@ -860,6 +893,46 @@ tr.is-us > td {
   .season-shell .form-check {
     flex: 0 0 auto;
   }
+}
+
+/* ---- Staleness and data checks ---- */
+
+/* On the countdown card, and only when the fixture list behind it has aged
+   past a match week. */
+.home-stale {
+  margin-top: 0.7rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--border-soft);
+  color: var(--amber);
+  font-size: 0.85rem;
+  line-height: 1.35;
+}
+
+/* Notes to whoever keeps the CSVs, not errors the reader can act on, so this
+   sits above the tabs without shouting. Absent entirely when all is well. */
+.data-health {
+  margin-bottom: 1rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 14px;
+  border: 1px solid var(--amber);
+  background: var(--amber-soft);
+  color: var(--ink);
+}
+
+.data-health-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+
+.data-health-list {
+  margin: 0.4rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
 }
 
 /* ---- Empty state ---- */

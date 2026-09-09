@@ -182,17 +182,24 @@ load_app_data <- function(dir = "data") {
     league_results = league_results
   )
 
-  validate_app_data(data)
+  data$problems <- validate_app_data(data)
   data$charges <- all_charges(seasons, matches, attendance, rosters)
   data$opponent_strength <- opponent_strength(league_results, seasons)
   data
 }
 
 #' Warn loudly about data that will silently produce wrong numbers.
+#'
+#' The problems are returned as well as warned about. A warning reaches the
+#' console or the deployment log, which is exactly where nobody looks; the
+#' returned vector is what the app puts on the page.
 validate_app_data <- function(data) {
+  problems <- character()
   complain <- function(problem, offenders) {
     if (length(offenders) > 0) {
-      warning(problem, ": ", paste(unique(offenders), collapse = ", "), call. = FALSE)
+      note <- paste0(problem, ": ", paste(unique(offenders), collapse = ", "))
+      problems <<- c(problems, note)
+      warning(note, call. = FALSE)
     }
   }
 
@@ -260,7 +267,7 @@ validate_app_data <- function(data) {
   # Not fatal — the table is only context — but if we have dropped out of it
   # the page has changed shape or we have been renamed on the site.
   if (nrow(data$league_table) > 0 && !OUR_TEAM %in% data$league_table$team) {
-    warning("no ", OUR_TEAM, " row in data/league_table.csv", call. = FALSE)
+    complain("missing from data/league_table.csv", OUR_TEAM)
   }
 
   # The sync keys league results on date and the two teams, so a duplicate can
@@ -284,5 +291,5 @@ validate_app_data <- function(data) {
     pull(player)
   complain("players in attendance but not on that season's active roster", unrostered)
 
-  invisible(data)
+  invisible(problems)
 }

@@ -229,6 +229,14 @@ the deployed app until it is redeployed. The results tabs have always had this
 property and it did not much matter; a countdown to the next match is the first
 thing on the site that looks wrong when it is stale.
 
+So the page says how old it is. Under the strapline sits the date of the last
+result on file and the date the league page was last read — provenance, stated
+quietly, on every visit. The phone layout keeps only the second of those, which
+is the one the countdown depends on, because the hero is held to a fixed height
+there. And when the league page has not been read for more than a match week,
+the next-match card says so outright: the countdown is computed from today, so
+it goes on being confident long after it has stopped being right.
+
 ## Seasons
 
 `data/seasons.csv` defines a season by its **start date** only. A season runs
@@ -348,4 +356,11 @@ match, goals that do not add up to the scoreline they belong to, a fixture dated
 on a match already recorded (a fixture list the sync has not caught up with),
 and our own row going missing from the league table. That last
 one matters because a partial event list looks exactly like a complete one to
-anything that counts it. Warnings appear in the console or the deployment log.
+anything that counts it.
+
+It warns, as it always did, and it now returns what it found as well. The
+warnings go to the console or the deployment log, which is where nobody reads
+them; the returned vector is put on the page, above the tabs, whenever it is not
+empty. These are notes to whoever keeps the CSVs rather than errors a reader can
+act on, so the panel is quiet and is absent entirely when there is nothing
+wrong.
