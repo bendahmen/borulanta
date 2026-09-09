@@ -525,8 +525,29 @@ plot_card_ui <- function(title, subtitle, output_id, height) {
     )
 }
 
-regression_explanation_ui <- function(regression_results, min_appearances) {
+regression_explanation_ui <- function(regression_results, min_appearances, coverage) {
     included <- unique(regression_results$player)
+
+    opponent_paragraph <- if (coverage$observed == 0) {
+        p(
+            paste(
+                "No match in this window has its opponent on file, so the model",
+                "does not adjust for who we played."
+            )
+        )
+    } else {
+        p(
+            paste0(
+                "The opponent is on file for ", coverage$observed, " of ", coverage$total,
+                " matches in this window. For those the model also controls for ",
+                "opponent strength: their goal difference per game against every ",
+                "other team that season, centred so that 0 is an average opponent. ",
+                "Matches whose opponent is not recorded take the average value and ",
+                "an indicator, so they keep their own level. The player ",
+                "coefficients read as contributions against an average opponent."
+            )
+        )
+    }
 
     card_body(
         p(
@@ -547,7 +568,8 @@ regression_explanation_ui <- function(regression_results, min_appearances) {
                 "These are descriptive lineup-adjusted associations, not causal",
                 "measures of individual quality."
             )
-        )
+        ),
+        opponent_paragraph
     )
 }
 
@@ -1022,7 +1044,9 @@ server <- function(input, output, session) {
     })
 
     regression_results <- reactive({
-        player_regression_results(scoped()$attendance, scoped()$matches)
+        player_regression_results(
+            scoped()$attendance, scoped()$matches, app_data$opponent_strength
+        )
     })
 
     has_regression <- reactive(nrow(regression_results()) > 0)
@@ -1206,7 +1230,10 @@ server <- function(input, output, session) {
 
     output$regression_explanation <- renderUI({
         req(has_regression())
-        regression_explanation_ui(regression_results(), MIN_REGRESSION_APPEARANCES)
+        regression_explanation_ui(
+            regression_results(), MIN_REGRESSION_APPEARANCES,
+            opponent_coverage(scoped()$matches, app_data$opponent_strength)
+        )
     })
 
     # Empty states ----

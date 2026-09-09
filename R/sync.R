@@ -421,3 +421,93 @@ write_snapshot_files <- function(snapshot, fixture_path, table_path) {
   readr::write_csv(as_written(snapshot$league_table, scraped_on), table_path, na = "")
   invisible(snapshot)
 }
+
+# League results ----
+#
+# Every result in the league, not just ours. The page carries all of them and
+# the scrape parses all of them; until this file existed everything but our own
+# fixtures was thrown away. They are kept so that an opponent's strength can be
+# measured from how it fared against everyone else — see `opponent_strength()`
+# in R/analysis.R.
+#
+# Unlike the two snapshots above, this is history: the page is wiped when the
+# league season rolls over, so a result that has dropped off it has to survive
+# in the file. Unlike matches.csv, nobody hand-edits it and nobody is going to
+# resolve a conflict about a match between two other teams, so for any fixture
+# that is on the page the page wins. That makes it a projection accumulated
+# across seasons: fixtures on the page are rewritten from it, and fixtures that
+# are not are kept exactly as they were.
+
+#' Reconcile every played fixture on the page with the league results file.
+#'
+#' Pure, like `sync_results()`. A fixture counts as played by the same test as
+#' our own: its date has passed and it is not the site's default 0 : 0 with
+#' nothing logged. A genuine goalless draw between two other teams is therefore
+#' never recorded, because nothing distinguishes it from a cancelled one and
+#' there is nobody to ask. That drops a data point which says almost nothing
+#' about either side's strength anyway.
+#'
+#' A fixture is keyed on its date and the two teams. A score that has changed on
+#' the site since it was recorded is taken as a correction and applied; one that
+#' has gone back to 0 : 0 fails the played test and leaves the file alone.
+#'
+#' @param all_fixtures from `parse_fixtures()`, the whole league, events nested
+#' @param league_results existing `data/league_results.csv`, dates parsed
+#' @param today anything dated today or later is treated as not yet played
+#' @return a list with `league_results`, `added`, `corrected` and `changed`
+sync_league_results <- function(all_fixtures, league_results, today = Sys.Date()) {
+  league_results <- as_league_result_table(league_results)
+  key <- c("date", "home_team", "away_team")
+
+  played <- all_fixtures %>%
+    mutate(
+      date = as_date_column(date),
+      goal_events = purrr::map_int(events, ~ sum(.x$event_type == "goal"))
+    ) %>%
+    filter(date < today, home_goals + away_goals > 0 | goal_events > 0) %>%
+    select(date, home_team, away_team, home_goals, away_goals, dl_match_id) %>%
+    as_league_result_table()
+
+  added <- played %>% anti_join(league_results, by = key)
+  corrected <- played %>%
+    inner_join(
+      league_results %>% select(all_of(key), old_home = home_goals, old_away = away_goals),
+      by = key
+    ) %>%
+    filter(old_home != home_goals | old_away != away_goals)
+
+  # A file nobody is changing comes back identical rather than merely
+  # equivalent, so a run that finds nothing new does not rewrite it.
+  if (nrow(added) == 0 && nrow(corrected) == 0) {
+    return(list(
+      league_results = league_results, added = added, corrected = corrected,
+      changed = FALSE
+    ))
+  }
+
+  updated <- league_results %>%
+    anti_join(played, by = key) %>%
+    bind_rows(played) %>%
+    arrange(date, home_team, away_team)
+
+  list(league_results = updated, added = added, corrected = corrected, changed = TRUE)
+}
+
+as_league_result_table <- function(results) {
+  results %>%
+    mutate(
+      date = as_date_column(date),
+      home_team = as.character(home_team),
+      away_team = as.character(away_team),
+      home_goals = as.integer(home_goals),
+      away_goals = as.integer(away_goals),
+      dl_match_id = as_id(dl_match_id)
+    )
+}
+
+write_league_result_file <- function(league_results, path) {
+  readr::write_csv(
+    league_results %>% mutate(date = format(date, "%d/%m/%Y")), path, na = ""
+  )
+  invisible(league_results)
+}

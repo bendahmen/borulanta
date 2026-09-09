@@ -153,6 +153,27 @@ if (write_changes) {
   cat("Dry run — re-run with --write to replace them.\n")
 }
 
+# The league's results, ours and everyone else's, kept across seasons so an
+# opponent's strength can be read off its record against the rest of the
+# league. The page wins for any fixture it lists; fixtures it no longer lists
+# are kept.
+league <- sync_league_results(all_fixtures, read_league_result_file("data/league_results.csv"))
+
+rule("League results")
+describe("New league results", league$added,
+         c("date", "home_team", "home_goals", "away_goals", "away_team"))
+describe("Corrected on the site", league$corrected,
+         c("date", "home_team", "old_home", "old_away", "home_goals", "away_goals", "away_team"))
+if (!league$changed) {
+  cat("Every played fixture on the page is already recorded.\n")
+} else if (write_changes) {
+  write_league_result_file(league$league_results, "data/league_results.csv")
+  cat("data/league_results.csv updated: ", nrow(league$league_results),
+      " results on file.\n", sep = "")
+} else {
+  cat("Dry run — re-run with --write to record them.\n")
+}
+
 outstanding <- nrow(report$conflicting) + nrow(report$pending)
 
 if (!result$changed) {

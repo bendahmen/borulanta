@@ -60,6 +60,19 @@ LEAGUE_TABLE_COLUMNS <- readr::cols(
   scraped_on = readr::col_character()
 )
 
+# Every league result the sync has seen, ours included, accumulated across
+# seasons. History rather than a snapshot, but read tolerantly for the same
+# reason as the two above: it does not exist until the first sync writes it.
+
+LEAGUE_RESULT_COLUMNS <- readr::cols(
+  date = readr::col_character(),
+  home_team = readr::col_character(),
+  away_team = readr::col_character(),
+  home_goals = readr::col_integer(),
+  away_goals = readr::col_integer(),
+  dl_match_id = readr::col_character()
+)
+
 read_match_file <- function(path) {
   readr::read_csv(path, col_types = MATCH_COLUMNS) %>%
     mutate(date = parse_match_date(date))
@@ -95,6 +108,19 @@ read_league_table_file <- function(path) {
   readr::read_csv(path, col_types = LEAGUE_TABLE_COLUMNS) %>%
     mutate(scraped_on = parse_match_date(scraped_on)) %>%
     arrange(position)
+}
+
+read_league_result_file <- function(path) {
+  if (!file.exists(path)) {
+    return(tibble(
+      date = as.Date(character()),
+      home_team = character(), away_team = character(),
+      home_goals = integer(), away_goals = integer(),
+      dl_match_id = character()
+    ))
+  }
+  readr::read_csv(path, col_types = LEAGUE_RESULT_COLUMNS) %>%
+    mutate(date = parse_match_date(date))
 }
 
 #' Add the "4-5" display string derived from the two goal columns.
@@ -139,6 +165,10 @@ load_app_data <- function(dir = "data") {
 
   league_table <- read_league_table_file(path("league_table.csv"))
 
+  # Season-tagged inside opponent_strength(), which is where the tagging is
+  # explained; here it is just the file.
+  league_results <- read_league_result_file(path("league_results.csv"))
+
   data <- list(
     seasons = seasons,
     players = players,
@@ -148,11 +178,13 @@ load_app_data <- function(dir = "data") {
     attendance = attendance,
     payments = payments,
     fixtures = fixtures,
-    league_table = league_table
+    league_table = league_table,
+    league_results = league_results
   )
 
   validate_app_data(data)
   data$charges <- all_charges(seasons, matches, attendance, rosters)
+  data$opponent_strength <- opponent_strength(league_results, seasons)
   data
 }
 
@@ -230,6 +262,17 @@ validate_app_data <- function(data) {
   if (nrow(data$league_table) > 0 && !OUR_TEAM %in% data$league_table$team) {
     warning("no ", OUR_TEAM, " row in data/league_table.csv", call. = FALSE)
   }
+
+  # The sync keys league results on date and the two teams, so a duplicate can
+  # only come from a hand edit. It would count a match twice in the opponent
+  # strength index.
+  duplicated_results <- data$league_results %>%
+    count(date, home_team, away_team) %>%
+    filter(n > 1)
+  complain(
+    "league results recorded more than once",
+    format(duplicated_results$date, "%d/%m/%Y")
+  )
 
   # Someone who played but was not on that season's active roster is charged
   # nothing, which is almost always a missing roster row rather than a freebie.

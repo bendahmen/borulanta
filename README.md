@@ -17,6 +17,7 @@ tests/testthat/         parser and sync tests, run against saved pages
 data/                   the source of truth, all hand-editable CSVs
 data/fixtures.csv       ⤷ except these two, which the sync replaces wholesale
 data/league_table.csv   ⤷ and which describe only the current league season
+data/league_results.csv ⤷ and this one, every league result, which the sync accumulates
 data/archive/           frozen ledgers for closed seasons
 ```
 
@@ -165,6 +166,35 @@ in the scores.
 `data/fixtures.csv` carries no score on purpose. `matches.csv` is the only
 source of truth for a result; this is a list of dates and who we are down to
 play on them.
+
+And it **accumulates** one more file, `data/league_results.csv`: every played
+fixture in the league, ours included, one row per match as the site lists it
+(`date`, `home_team`, `away_team`, `home_goals`, `away_goals`, `dl_match_id`).
+It exists so an opponent's strength can be read off its record against the rest
+of the league — see below. It is history like `matches.csv`, because the page
+is wiped at rollover, but nobody hand-edits it and nobody is going to arbitrate
+a score between two other teams, so for any fixture the page lists the page
+wins: a changed score is taken as a correction, and fixtures that have dropped
+off the page are kept. A fixture is played by the same test as our own, so a
+genuine 0-0 between two other teams is never recorded.
+
+### Opponent strength in the player effects
+
+The player-effect regressions compare matches with one another, and a match
+against the league's best side is not the same test as one against its worst.
+Opponent fixed effects are out of reach — eight other teams, each met about
+twice a season — so the opponent enters as one number: its goal difference per
+game that season, measured over its matches against everybody **except us**.
+Leaving our own matches out stops our result from feeding back into the control
+through the opponent's record. The whole season's record is used, games after
+ours included, because the aim is to measure how good they were rather than to
+forecast.
+
+The index is centred within season so 0 is an average opponent. That is also
+the value a match takes when its opponent is not on file — every match from
+before the sync existed — together with an indicator saying so, which lets
+those matches keep their own level. Seasons for this purpose are the fee
+seasons in `seasons.csv`, which are the windows the app scopes a regression to.
 
 `data/name_map.csv` maps the site's first names onto ours, since the league
 records `Felix` where the roster says something else. Only our side is mapped;

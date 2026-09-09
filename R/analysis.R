@@ -110,6 +110,94 @@ create_attendance_list <- function(attendance, matches) {
     mutate(across(where(is.numeric), ~ round(.x, 2)))
 }
 
+# Opponent strength ----
+#
+# The player regressions below compare matches with one another, and a match
+# against the league's best side is not the same test as one against its worst.
+# Opponent fixed effects are out of reach — eight other teams, each met about
+# twice a season, on a design that already spends a column per player — so the
+# opponent enters as one number: its goal difference per game over the season,
+# measured on its matches against everybody except us.
+#
+# Leaving our own matches out matters. Our result is a seventh of an opponent's
+# record, so a heavy defeat to them would raise their measured strength and put
+# part of our own residual into the control. The whole season's record is used,
+# games played after ours included: the aim is to measure how good they were,
+# not to forecast, and a table two weeks into a season says nearly nothing.
+#
+# The index is centred within season so that 0 is an average opponent. That is
+# also the value a match takes when its opponent is not on file — every match
+# from before the sync existed — alongside an indicator saying so, which lets
+# those matches keep their own level instead of forcing it through the player
+# indicators. The strength coefficient is identified only off matches whose
+# opponent is known, so the old matches cost it nothing either way.
+
+#' Goal difference per game against third parties, one row per season and team.
+#'
+#' Seasons are the fee seasons from seasons.csv rather than the league's own:
+#' they are the windows the app scopes a regression to, and the league's season
+#' is not recorded anywhere. A team that met nobody but us in a season has no
+#' row, and a result outside every season is ignored.
+opponent_strength <- function(league_results, seasons, team = OUR_TEAM) {
+  if (nrow(league_results) == 0) {
+    return(tibble(
+      season_id = character(), opponent = character(),
+      games = integer(), strength = numeric()
+    ))
+  }
+
+  third_party <- league_results %>%
+    filter(home_team != team, away_team != team) %>%
+    with_season(seasons) %>%
+    filter(!is.na(season_id))
+
+  # Each result is one game for each of its two sides.
+  bind_rows(
+    third_party %>%
+      transmute(season_id, opponent = home_team, goal_difference = home_goals - away_goals),
+    third_party %>%
+      transmute(season_id, opponent = away_team, goal_difference = away_goals - home_goals)
+  ) %>%
+    group_by(season_id, opponent) %>%
+    summarise(games = n(), per_game = mean(goal_difference), .groups = "drop") %>%
+    group_by(season_id) %>%
+    mutate(strength = per_game - mean(per_game)) %>%
+    ungroup() %>%
+    select(season_id, opponent, games, strength)
+}
+
+#' Attach the control columns the regression uses to a season-tagged match table.
+#'
+#' `opponent_strength` is 0 and `opponent_unobserved` is 1 wherever the opponent
+#' is blank or has no row in `strength` for that season. With no strength table
+#' at all every match is unobserved, which is what the regression ran on before
+#' the league results existed.
+with_opponent_strength <- function(matches, strength = NULL) {
+  if (is.null(strength) || nrow(strength) == 0) {
+    return(matches %>% mutate(opponent_strength = 0, opponent_unobserved = 1L))
+  }
+
+  matches %>%
+    left_join(
+      strength %>% select(season_id, opponent, strength),
+      by = c("season_id", "opponent")
+    ) %>%
+    mutate(
+      opponent_unobserved = as.integer(is.na(strength)),
+      opponent_strength = coalesce(strength, 0)
+    ) %>%
+    select(-strength)
+}
+
+#' How many of the matches in a window have a measured opponent.
+opponent_coverage <- function(matches, strength = NULL) {
+  controls <- with_opponent_strength(matches, strength)
+  list(
+    observed = sum(controls$opponent_unobserved == 0L),
+    total = nrow(controls)
+  )
+}
+
 # Player-effect regressions ----
 #
 # Players with only a handful of appearances cannot be separated from the
@@ -125,7 +213,12 @@ REGRESSION_OUTCOMES <- c(
   "goal_difference"
 )
 
-player_regression_results <- function(attendance, matches,
+#' Match-level regressions of each outcome on player indicators.
+#'
+#' `strength` is the table from `opponent_strength()`; when it is given,
+#' `matches` must carry a `season_id`. Only the player coefficients are
+#' returned — the opponent controls are there to be conditioned on, not read.
+player_regression_results <- function(attendance, matches, strength = NULL,
                                       min_appearances = MIN_REGRESSION_APPEARANCES) {
   empty_results <- function() {
     tibble(
@@ -139,22 +232,25 @@ player_regression_results <- function(attendance, matches,
     return(empty_results())
   }
 
-  contribution_data <- create_player_contribution_table(attendance, matches)
+  contribution_data <- create_player_contribution_table(
+    attendance, with_opponent_strength(matches, strength)
+  )
   player_appearances <- attendance %>% count(player, name = "appearances")
   player_names <- player_appearances %>%
     filter(appearances >= min_appearances) %>%
     pull(player) %>%
     sort()
+  regressors <- c(player_names, opponent_controls(contribution_data))
 
-  # With no more matches than players the design matrix has no residual degrees
-  # of freedom, so there is nothing to estimate.
-  if (length(player_names) == 0 || nrow(contribution_data) <= length(player_names)) {
+  # With no more matches than regressors the design matrix has no residual
+  # degrees of freedom, so there is nothing to estimate.
+  if (length(player_names) == 0 || nrow(contribution_data) <= length(regressors)) {
     return(empty_results())
   }
 
   purrr::map_dfr(REGRESSION_OUTCOMES, function(outcome) {
     fit <- lm(
-      reformulate(player_names, response = outcome, intercept = FALSE),
+      reformulate(regressors, response = outcome, intercept = FALSE),
       data = contribution_data
     )
     coefficients <- summary(fit)$coefficients
@@ -168,9 +264,29 @@ player_regression_results <- function(attendance, matches,
       conf_low = estimate - confidence_critical_value * std_error,
       conf_high = estimate + confidence_critical_value * std_error,
       p_value = coefficients[, "Pr(>|t|)"]
-    )
+    ) %>%
+      filter(player %in% player_names)
   }) %>%
     left_join(player_appearances, by = "player")
+}
+
+#' Which opponent controls the window can actually identify.
+#'
+#' A control with no variation in the window is left out rather than handed to
+#' lm() to alias: the strength index needs at least two different measured
+#' values, and the unobserved indicator needs both observed and unobserved
+#' matches. A window with no opponent on file — every one before the sync
+#' existed — gets neither, and the regression is exactly the one it always was.
+opponent_controls <- function(contribution_data) {
+  observed <- contribution_data$opponent_unobserved == 0L
+  controls <- character()
+  if (n_distinct(contribution_data$opponent_strength[observed]) > 1) {
+    controls <- c(controls, "opponent_strength")
+  }
+  if (any(observed) && !all(observed)) {
+    controls <- c(controls, "opponent_unobserved")
+  }
+  controls
 }
 
 player_regression_table <- function(regression_results) {
