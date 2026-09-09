@@ -289,6 +289,23 @@ opponent_controls <- function(contribution_data) {
   controls
 }
 
+#' The coefficient with its p-value in brackets, as one string.
+#'
+#' One column per outcome rather than two: the p-value is a footnote to the
+#' coefficient, not a number anyone reads on its own.
+format_estimate <- function(estimate, p_value) {
+  paste0(
+    formatC(estimate, format = "f", digits = 2),
+    " [",
+    if_else(
+      p_value < 0.001,
+      "<0.001",
+      formatC(p_value, format = "f", digits = 3)
+    ),
+    "]"
+  )
+}
+
 player_regression_table <- function(regression_results) {
   regression_results %>%
     select(player, appearances, outcome, estimate, p_value) %>%
@@ -300,17 +317,29 @@ player_regression_table <- function(regression_results) {
     transmute(
       Player = player,
       Appearances = appearances,
-      `Points (beta)` = estimate_points,
-      `Points (p)` = p_value_points,
-      `Goals scored (beta)` = estimate_goals_scored,
-      `Goals scored (p)` = p_value_goals_scored,
-      `Goals conceded (beta)` = estimate_goals_conceded,
-      `Goals conceded (p)` = p_value_goals_conceded,
-      `Goal difference (beta)` = estimate_goal_difference,
-      `Goal difference (p)` = p_value_goal_difference
+      Points = format_estimate(estimate_points, p_value_points),
+      `Goals scored` = format_estimate(estimate_goals_scored, p_value_goals_scored),
+      `Goals conceded` = format_estimate(estimate_goals_conceded, p_value_goals_conceded),
+      `Goal difference` = format_estimate(
+        estimate_goal_difference, p_value_goal_difference
+      ),
+      # Hidden in the table, and there only so that clicking a column sorts on
+      # the coefficient rather than on the string that displays it.
+      sort_points = estimate_points,
+      sort_goals_scored = estimate_goals_scored,
+      sort_goals_conceded = estimate_goals_conceded,
+      sort_goal_difference = estimate_goal_difference
     ) %>%
     arrange(desc(Appearances), Player)
 }
+
+# The columns above, paired: the one you see and the one it sorts on.
+REGRESSION_TABLE_COLUMNS <- c(
+  Points = "sort_points",
+  `Goals scored` = "sort_goals_scored",
+  `Goals conceded` = "sort_goals_conceded",
+  `Goal difference` = "sort_goal_difference"
+)
 
 # The home page ----
 #

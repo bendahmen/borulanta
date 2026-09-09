@@ -53,8 +53,8 @@ fee_panel_ui <- function(input_id, output_id) {
             div(
                 class = "fee-footnote",
                 paste(
-                    "Your running total across every season, from attendance, the fee",
-                    "rules in force at the time, and recorded payments."
+                    "Every season you have played, charged under the fee rules in",
+                    "force at the time, less what you have paid."
                 )
             )
         )
@@ -68,7 +68,7 @@ payment_panel_ui <- function() {
             div(class = "section-tag", "Settle Up"),
             p(
                 class = "payment-copy",
-                "Use the payment link below, then the balance will drop once the transfer is recorded in the sheet."
+                "Balances move when I record the transfer, not when you send it."
             ),
             tags$a(
                 href = "https://monzo.me/benjamindahmen8?h=Njfjz9",
@@ -234,9 +234,8 @@ league_table_ui <- function(league_table) {
             p(
                 class = "table-subtitle",
                 paste(
-                    "Taken from the league's own table as it stood on",
-                    format(max(league_table$scraped_on), "%d %B %Y."),
-                    "It moves whenever anyone plays, not just us."
+                    "From the league's own page, as it stood on",
+                    format(max(league_table$scraped_on), "%d %B %Y.")
                 )
             )
         ),
@@ -355,7 +354,7 @@ fee_history_panel <- tagList(
             h2(class = "table-title", "How your balance is calculated"),
             p(
                 class = "table-subtitle",
-                "Every season is included: each match is charged under the rules in force at the time."
+                "All seasons, each match charged under the rules in force at the time."
             )
         ),
         card_body(uiOutput("fee_overview_summary"))
@@ -367,7 +366,7 @@ fee_history_panel <- tagList(
             h2(class = "table-title", "Match-by-match charges"),
             p(
                 class = "fee-history-note",
-                "Individual shares are shown to the nearest penny; the summary keeps the exact split amounts."
+                "Shares are rounded to the penny here. The totals above are not."
             )
         ),
         card_body(dataTableOutput("match_charges"))
@@ -401,18 +400,12 @@ table_card_ui <- function(tag, title, subtitle, output_id) {
 }
 
 regression_table <- function(regression_results) {
-    estimate_columns <- c(
-        "Points (beta)",
-        "Goals scored (beta)",
-        "Goals conceded (beta)",
-        "Goal difference (beta)"
-    )
-    p_value_columns <- c(
-        "Points (p)",
-        "Goals scored (p)",
-        "Goals conceded (p)",
-        "Goal difference (p)"
-    )
+    # DT counts from zero, and only over the data columns because rownames are
+    # off. Each visible outcome column is told to sort on its hidden partner.
+    column_index <- function(name) match(name, names(regression_results)) - 1L
+    # unname(), because a named columnDefs list is not valid DataTables options.
+    visible <- unname(vapply(names(REGRESSION_TABLE_COLUMNS), column_index, integer(1)))
+    hidden <- unname(vapply(unname(REGRESSION_TABLE_COLUMNS), column_index, integer(1)))
 
     datatable(
         regression_results,
@@ -423,11 +416,16 @@ regression_table <- function(regression_results) {
             pageLength = 25,
             order = list(list(1, "desc")),
             autoWidth = TRUE,
-            scrollX = TRUE
+            scrollX = TRUE,
+            columnDefs = c(
+                list(list(targets = hidden, visible = FALSE)),
+                purrr::map2(
+                    visible, hidden,
+                    ~ list(targets = .x, orderData = .y, className = "dt-right")
+                )
+            )
         )
-    ) %>%
-        formatRound(columns = estimate_columns, digits = 2) %>%
-        formatRound(columns = p_value_columns, digits = 3)
+    )
 }
 
 attack_defence_plot <- function(regression_results) {
@@ -469,8 +467,8 @@ attack_defence_plot <- function(regression_results) {
         scale_x_continuous(expand = expansion(mult = 0.2)) +
         scale_y_continuous(expand = expansion(mult = 0.2)) +
         labs(
-            x = "Goals-scored coefficient (higher is better)",
-            y = "Defensive coefficient: minus goals conceded (higher is better)"
+            x = "Goals scored: coefficient",
+            y = "Goals conceded: coefficient, sign flipped"
         ) +
         coord_equal(clip = "off") +
         theme_minimal(base_size = 12) +
@@ -531,20 +529,20 @@ regression_explanation_ui <- function(regression_results, min_appearances, cover
     opponent_paragraph <- if (coverage$observed == 0) {
         p(
             paste(
-                "No match in this window has its opponent on file, so the model",
-                "does not adjust for who we played."
+                "No match in this window has its opponent on file, so nothing",
+                "adjusts for who we played."
             )
         )
     } else {
         p(
             paste0(
-                "The opponent is on file for ", coverage$observed, " of ", coverage$total,
-                " matches in this window. For those the model also controls for ",
-                "opponent strength: their goal difference per game against every ",
-                "other team that season, centred so that 0 is an average opponent. ",
-                "Matches whose opponent is not recorded take the average value and ",
-                "an indicator, so they keep their own level. The player ",
-                "coefficients read as contributions against an average opponent."
+                "The opponent is on file for ", coverage$observed, " of ",
+                coverage$total, " matches here. Those matches also control for ",
+                "opponent strength: the other side's goal difference per game ",
+                "against everyone except us that season, centred so that 0 is an ",
+                "average opponent. Matches with no opponent recorded take the ",
+                "average and an indicator, which keeps their own level out of the ",
+                "player coefficients."
             )
         )
     }
@@ -552,21 +550,20 @@ regression_explanation_ui <- function(regression_results, min_appearances, cover
     card_body(
         p(
             paste0(
-                "Each result is a match-level regression on indicators for the ",
-                length(included), " included players \u2014 everyone with at least ",
-                min_appearances, " appearances in the selected window. The coefficient ",
-                "describes a player's association with that outcome, conditional ",
-                "on the other included players."
+                "Each column is a separate match-level regression of that outcome ",
+                "on indicators for the ", length(included), " players with at ",
+                "least ", min_appearances, " appearances in the selected seasons. ",
+                "The coefficient says how the outcome moves when that player is on ",
+                "the pitch, holding the rest of the lineup fixed. The number in ",
+                "brackets is the OLS p-value."
             )
         ),
         p(
             paste(
-                "Points are 3 for a win, 1 for a draw, and 0 for a loss; goals",
-                "scored and conceded use the first and second number in the recorded",
-                "score, and goal difference is scored minus conceded. The model does",
-                "not include a time trend. The p-values are conventional OLS p-values.",
-                "These are descriptive lineup-adjusted associations, not causal",
-                "measures of individual quality."
+                "Anyone below the appearance threshold has no indicator of their",
+                "own and sits in the residual. There is no time trend. These are",
+                "descriptive: nothing here separates a good player from one who",
+                "happens to play in good teams."
             )
         ),
         opponent_paragraph
@@ -690,7 +687,7 @@ season_form_card <- card(
         h2(class = "table-title", "How the season is trending"),
         p(
             class = "table-subtitle",
-            "Each point is the trailing five-match average; early matches use all results so far."
+            "Each point averages the last five matches. The first four average what there is."
         )
     ),
     card_body(
@@ -740,13 +737,13 @@ match_summary_ui <- function(selected_match) {
             class = "match-detail-stat",
             div(class = "match-detail-label", "Points"),
             div(class = "match-detail-value", selected_match$points),
-            div(class = "match-detail-note", "3 for a win, 1 for a draw")
+            div(class = "match-detail-note", "Out of 3")
         ),
         div(
             class = "match-detail-stat",
             div(class = "match-detail-label", "Squad"),
             div(class = "match-detail-value", selected_match$squad_size),
-            div(class = "match-detail-note", "Players recorded as present")
+            div(class = "match-detail-note", "On the sheet that night")
         )
     )
 }
@@ -778,7 +775,7 @@ match_detail_card <- card(
         h2(class = "table-title", "Lineup and season context"),
         p(
             class = "table-subtitle",
-            "Choose a result to see the players who were there and their season attendance."
+            "Who played, and how much of that season they turned up for."
         )
     ),
     card_body(
@@ -818,14 +815,10 @@ ui <- page_fluid(
                 p(
                     class = "hero-copy",
                     paste(
-                "Where the last game left us, who is next, and what you owe.",
-                "The season picker scopes the results and statistics tabs."
-            )
-                ),
-                div(
-                    class = "hero-meta",
-                    icon("futbol"),
-                    span("Fees, attendance, and results in one place")
+                        "Where we left off, who is next, and what you owe.",
+                        "The season picker applies to matches, attendance and",
+                        "player effects."
+                    )
                 )
             ),
             div(
@@ -879,7 +872,7 @@ ui <- page_fluid(
                         table_card_ui(
                             "Matches",
                             "Every result",
-                            "Results for the selected season.",
+                            "Newest first, for the seasons you have ticked.",
                             "matches"
                         ),
                         match_detail_card
@@ -897,7 +890,7 @@ ui <- page_fluid(
                         table_card_ui(
                             "Attendance",
                             "Who turns up",
-                            "Participation rate and on-pitch averages by player.",
+                            "Share of matches played, and how those matches went.",
                             "attendance_list"
                         )
                     )
@@ -910,7 +903,7 @@ ui <- page_fluid(
                         empty_season_card(
                             paste(
                                 "Not enough matches in the selected seasons to",
-                                "estimate player effects. Try ticking more seasons."
+                                "estimate player effects. Tick more seasons."
                             )
                         )
                     ),
@@ -920,7 +913,7 @@ ui <- page_fluid(
                         col_widths = c(6, 6),
                         plot_card_ui(
                             "Attack and defence",
-                            "Top-right players are associated with more scoring and fewer goals conceded.",
+                            "Top right is more goals scored and fewer conceded, holding the rest of the lineup fixed.",
                             "attack_defence_plot",
                             "680px"
                         ),
@@ -952,7 +945,7 @@ ui <- page_fluid(
                     table_card_ui(
                         "Player effects",
                         "Player by player",
-                        "Lineup-adjusted associations with match outcomes.",
+                        "Coefficient on each outcome, with its p-value in brackets.",
                         "player_regressions"
                     ),
                     regression_explanation

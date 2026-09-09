@@ -141,20 +141,6 @@ a:hover {
   font-size: 1rem;
 }
 
-.hero-meta {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  margin-top: 1rem;
-  padding: 0.45rem 0.8rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fdfdfb;
-  font-size: 0.88rem;
-}
-
 /* ---- Nav pills ---- */
 .nav-pill-shell {
   padding: 0.3rem;
@@ -836,8 +822,7 @@ tr.is-us > td {
 
   /* The strapline explains the app to a first-time visitor on a big screen.
      On a phone the picker and the tabs are what people came for. */
-  .hero-copy,
-  .hero-meta {
+  .hero-copy {
     display: none;
   }
 
