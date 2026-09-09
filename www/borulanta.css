@@ -511,6 +511,124 @@ tr.rank-top3 > td {
   background: var(--green-soft) !important;
 }
 
+/* ---- Home page ---- */
+/* The landing page: what just happened, what is next, where that leaves us.
+   Both cards are built from the same .home-card shell so a result and a
+   fixture read as a matched pair rather than two unrelated boxes. */
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.home-card {
+  border: 1px solid var(--border-soft);
+  border-radius: 22px;
+  background: var(--surface);
+  box-shadow: var(--shadow-deep);
+}
+
+.home-card .card-body {
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  /* bslib puts a 24px gap between every child of a card body. The spacing
+     here is set per element instead, and both together leave the score
+     stranded in the middle of the card. */
+  gap: 0;
+}
+
+.home-scoreline {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.home-score {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.4rem, 8vw, 3.4rem);
+  line-height: 1;
+  color: var(--ink);
+  /* Figures line up between the two cards despite different digit widths. */
+  font-variant-numeric: tabular-nums;
+}
+
+/* The counterpart to .home-score in the fixture card: there is no score to
+   show yet, so the countdown takes the same visual weight. */
+.home-when {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.4rem, 8vw, 3.4rem);
+  line-height: 1;
+  color: var(--blue);
+  text-transform: uppercase;
+}
+
+.home-when.is-today {
+  color: var(--green);
+}
+
+.home-opponent {
+  margin-top: 0.35rem;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.home-card-meta {
+  margin-top: 0.5rem;
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+}
+
+.home-details {
+  margin-top: 0.9rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--border-soft);
+  display: grid;
+  gap: 0.35rem;
+}
+
+.home-detail {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  /* Long scorer lists wrap under their own label rather than pushing the
+     card wider than its neighbour. */
+  flex-wrap: wrap;
+}
+
+.home-detail-label {
+  flex: 0 0 auto;
+  color: var(--ink-muted);
+  font-weight: 600;
+}
+
+/* The league table is shown whole — nine rows, no paging — so the card has to
+   grow to fit it. bslib makes a card body a flex item with overflow:auto, and
+   DT's scrollX wraps the table in its own scroll container, whose height a
+   flex parent reads as zero: the card settles on an arbitrary height and
+   scrolls the rest out of sight. Taking this one body out of the flex context
+   lets it size to its content again. The other tables page, so they fit
+   whatever height they are given and never hit this. */
+.league-table-card > .card-body {
+  display: block;
+  overflow: visible;
+  flex: 0 0 auto;
+}
+
+/* Our row in the league table. Same trick as .rank-top3 above: Bootstrap 5
+   paints an opaque background on every td, so a tr-level tint never shows. */
+tr.is-us,
+tr.is-us > td {
+  background: var(--blue-soft) !important;
+  font-weight: 700;
+}
+
 @media (max-width: 767px) {
   .app-shell {
     padding-left: 0.7rem;
@@ -521,7 +639,8 @@ tr.rank-top3 > td {
     max-width: 8ch;
   }
 
-  .fees-grid {
+  .fees-grid,
+  .home-grid {
     grid-template-columns: 1fr;
   }
 
@@ -531,7 +650,12 @@ tr.rank-top3 > td {
 
   .nav-pill-shell .nav {
     display: grid;
+    /* Five tabs: two columns would strand one on a row of its own. */
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .nav-pill-shell .nav .nav-item:first-child {
+    grid-column: 1 / -1;
   }
 
   .nav-pill-shell .nav-pills .nav-link {
@@ -548,6 +672,7 @@ tr.rank-top3 > td {
     grid-template-columns: 1fr;
   }
 }
+
 
 /* ---- Season picker (sits in the hero, on the dark gradient) ---- */
 /* Tick boxes rather than a select: several seasons can be in scope at once,

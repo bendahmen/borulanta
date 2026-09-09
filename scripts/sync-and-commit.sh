@@ -40,13 +40,13 @@ fi
 # Named paths throughout, and no `git add`: an unattended job must not sweep up
 # whatever else happens to be staged or dirty and push it under this message.
 # `git commit -- <paths>` commits those paths and leaves the index alone.
-synced=(data/matches.csv data/match_events.csv)
+synced=(data/matches.csv data/match_events.csv data/fixtures.csv data/league_table.csv)
 if git diff --quiet HEAD -- "${synced[@]}"; then
   echo "Nothing new to commit."
   exit 0
 fi
 
-git commit -m "Sync results from Dream Leagues
+git commit -m "Sync results, fixtures and the league table from Dream Leagues
 
 Attendance for any new match still needs adding by hand." -- "${synced[@]}" || exit 1
 

@@ -10,7 +10,10 @@
 # hand-entered file and the fee engine still depends on it.
 
 DREAMLEAGUES_URL <- "https://dreamleagues.co.uk/leagues/shoreditch-weds-7-a-side"
-OUR_TEAM <- "Borulanta"
+
+# OUR_TEAM is defined in R/data.R, which both the app and the sync load and this
+# file does not: the app needs to know which row of the league table is ours
+# without dragging in a scraper it never runs.
 
 # Identify honestly rather than borrowing a browser's string. The site's
 # robots.txt allows the default user agent; this is one page a week.
@@ -191,4 +194,63 @@ orient_events <- function(events, we_are_home) {
   events %>%
     mutate(team = if_else(side == our_side, "us", "them")) %>%
     select(team, minute, event_type, player)
+}
+
+#' The league's own standings table, as the page renders it.
+#'
+#' Taken from the site rather than totted up from the fixtures we already parse,
+#' because the two can legitimately disagree: a points deduction, a forfeit or a
+#' tiebreak rule we do not model is visible in this table and invisible in the
+#' scores. The site is the authority on where everyone sits, so read it.
+#'
+#' The table is wiped and rebuilt when the league season rolls over, so this is
+#' a snapshot of right now and nothing more — see `write_snapshot_files()`.
+parse_league_table <- function(html) {
+  page <- rvest::read_html(html)
+  table <- rvest::html_element(page, ".table-team-leagues")
+  if (length(table) == 0 || inherits(table, "xml_missing")) {
+    stop("no league table in the page", call. = FALSE)
+  }
+
+  rows <- rvest::html_elements(table, "tbody tr")
+  if (length(rows) == 0) {
+    stop("the league table has no rows", call. = FALSE)
+  }
+
+  standings <- purrr::map_dfr(rows, parse_standings_row)
+  if (anyNA(standings$position) || any(!nzchar(standings$team))) {
+    stop("could not read a position and team from every league table row", call. = FALSE)
+  }
+  standings
+}
+
+#' One team's row. Read by position, since the header carries no keys.
+#'
+#' The narrow columns are hidden on small screens with a class rather than
+#' dropped from the markup, so every row has all ten cells whatever the viewport
+#' the page was fetched for.
+parse_standings_row <- function(row) {
+  cells <- str_trim(rvest::html_text2(rvest::html_elements(row, "td")))
+  if (length(cells) != 10) {
+    stop(
+      "expected 10 cells in a league table row, got ", length(cells),
+      " — the table's columns have changed",
+      call. = FALSE
+    )
+  }
+
+  number <- function(index) suppressWarnings(as.integer(cells[[index]]))
+
+  tibble(
+    position = number(1),
+    team = cells[[2]],
+    played = number(3),
+    won = number(4),
+    drawn = number(5),
+    lost = number(6),
+    goals_for = number(7),
+    goals_against = number(8),
+    goal_difference = number(9),
+    points = number(10)
+  )
 }

@@ -195,3 +195,95 @@ player_regression_table <- function(regression_results) {
     ) %>%
     arrange(desc(Appearances), Player)
 }
+
+# The home page ----
+#
+# Three summaries of where things stand right now. Unlike everything above,
+# these are deliberately not scoped by the season picker: the home page answers
+# "what just happened and what is next", and a question phrased in the present
+# tense does not take a season argument. They are still pure functions of what
+# they are handed, so a caller that wants a season can filter first.
+
+#' The most recent match played, with who was there and what they did.
+#'
+#' Returns NULL when there is no match at all, which is a real state on a fresh
+#' season rather than an error. `scorers` and `mom` come from the event log,
+#' which is thin for anything predating the sync and empty for everything
+#' before it existed — so both come back empty rather than absent, and the
+#' caller renders what it has.
+last_match_summary <- function(matches, attendance, events) {
+  if (nrow(matches) == 0) {
+    return(NULL)
+  }
+
+  match <- matches %>%
+    filter(date == max(date)) %>%
+    slice(1) %>%
+    match_outcomes()
+
+  lineup <- attendance %>%
+    filter(date == match$date) %>%
+    distinct(player) %>%
+    arrange(player)
+
+  match_events <- events %>% filter(date == match$date)
+
+  # One row per scorer with a tally, since a hat-trick should read as a
+  # hat-trick rather than three identical lines.
+  scorers <- match_events %>%
+    filter(event_type == "goal", team == "us", !is.na(player)) %>%
+    count(player, name = "goals") %>%
+    arrange(desc(goals), player)
+
+  mom <- match_events %>%
+    filter(event_type == "mom", team == "us", !is.na(player)) %>%
+    pull(player)
+
+  list(
+    match = match,
+    lineup = lineup,
+    squad_size = nrow(lineup),
+    scorers = scorers,
+    mom = if (length(mom) == 0) NA_character_ else mom[[1]]
+  )
+}
+
+#' The next fixture we are down to play, or NULL if the list has run out.
+#'
+#' Two things are filtered out, not one. A fixture in the past is obviously
+#' gone; so is a fixture whose date already carries a result, which is what a
+#' fixture list looks like between a match being played and the next sync
+#' replacing the file. Without that second filter the home page would spend
+#' every Wednesday evening offering that afternoon's game as the one to come.
+#'
+#' A fixture dated today counts as still to come, matching the sync: the game is
+#' in the evening and the page is read during the day.
+next_fixture <- function(fixtures, matches, today = Sys.Date()) {
+  upcoming <- fixtures %>%
+    filter(date >= today, !date %in% matches$date) %>%
+    arrange(date)
+
+  if (nrow(upcoming) == 0) {
+    return(NULL)
+  }
+  upcoming %>% slice(1)
+}
+
+#' Played, won, drawn, lost and goals over whatever matches are handed in.
+#'
+#' Always one row, zeroes included, so a caller can print it without checking
+#' whether a season has started.
+season_record <- function(matches) {
+  outcomes <- match_outcomes(matches)
+
+  tibble(
+    played = nrow(outcomes),
+    won = sum(outcomes$points == 3),
+    drawn = sum(outcomes$points == 1),
+    lost = sum(outcomes$points == 0),
+    goals_for = sum(outcomes$goals_scored),
+    goals_against = sum(outcomes$goals_conceded),
+    goal_difference = goals_for - goals_against,
+    points = sum(outcomes$points)
+  )
+}

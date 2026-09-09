@@ -15,6 +15,8 @@ R/sync.R                reconciling a scrape with the files
 scripts/                the sync runner and its commit-and-push wrapper
 tests/testthat/         parser and sync tests, run against saved pages
 data/                   the source of truth, all hand-editable CSVs
+data/fixtures.csv       ⤷ except these two, which the sync replaces wholesale
+data/league_table.csv   ⤷ and which describe only the current league season
 data/archive/           frozen ledgers for closed seasons
 ```
 
@@ -140,11 +142,62 @@ them on every run, which is what makes a correction on the site, or a newly
 added name mapping, take effect on a re-run rather than appending a second copy.
 Rows of any other kind are yours and are left alone.
 
+It also replaces two **snapshot** files outright on every run:
+
+| file | what it holds |
+| --- | --- |
+| `data/fixtures.csv` | every fixture of ours on the page, played or not: `date`, `opponent`, `dl_match_id` |
+| `data/league_table.csv` | the league's own standings, plus the `scraped_on` date |
+
+Neither is part of the permanent record, and the rules above deliberately do not
+apply to them. They describe **the current league season only**, they are wiped
+and rebuilt on the site when it rolls over, and a sync that replaces them
+wholesale with next season's is doing the right thing. So they bypass the
+reconciliation entirely — the one guarantee they keep is the important one, that
+a page which fails to parse writes nothing at all. They are also rewritten when
+no result changed, because the standings move whenever *any* team plays.
+
+The standings are read off the site's own table rather than totted up from the
+fixtures, because the two can legitimately disagree: a points deduction, a
+forfeit or a tiebreak rule we do not model is visible in the table and invisible
+in the scores.
+
+`data/fixtures.csv` carries no score on purpose. `matches.csv` is the only
+source of truth for a result; this is a list of dates and who we are down to
+play on them.
+
 `data/name_map.csv` maps the site's first names onto ours, since the league
 records `Felix` where the roster says something else. Only our side is mapped;
 the opposition's names are kept as they came, because they are not our players
 and exist only so a goal tally reconciles with the score. An unmapped name is
 left as it came and reported, so adding the mapping and re-running fixes it.
+
+## The home page
+
+The tab the app opens on, and the only one that answers a question in the
+present tense: the last result with who was there and what they did, the next
+fixture with a countdown, and the league table for context. Under those sit the
+Fee check and Settle up cards, so the two things anyone actually opens the app
+for are on the first screen.
+
+The Fee check card is on both Home and Fees. Shiny needs a unique id per input,
+so the card is built by a function rather than stored, and the two pickers get
+different ids; the server keeps them on the same person, so switching tabs never
+shows you somebody else's balance.
+
+Like the Fees tab, and for the same reason, the home page **ignores the season
+picker**. What just happened and what is next are not per-season questions.
+
+Both cards degrade rather than break. Opponent, scorers and man of the match all
+arrived with the sync, so nothing played before it existed has any of them —
+each is dropped from the card rather than rendered blank, because a line reading
+`Scorers: —` on every match in the archive is worse than no line at all.
+
+**The live app is only as fresh as the last deploy.** The CSVs are bundled into
+the deployment, so a fixture list synced and committed on the Mac does not reach
+the deployed app until it is redeployed. The results tabs have always had this
+property and it did not much matter; a countdown to the next match is the first
+thing on the site that looks wrong when it is stale.
 
 ## Seasons
 
@@ -174,7 +227,8 @@ to pool them. Every season starts ticked, so the default view is all-time.
 Ticking nothing puts nothing in scope, and each tab says so rather than showing
 zeros.
 
-The Fees tab deliberately ignores the picker and always covers all time. A
+The Fees tab and the home page deliberately ignore the picker; Fees always
+covers all time. A
 balance is a running total, not a per-season statistic: people settle up when
 they settle up, not season by season, so scoping payments by date would show a
 debt in one season and the mirror-image credit in the next even when everyone is
@@ -260,6 +314,8 @@ in attendance and every other statistic.
 `validate_app_data()` runs at startup and warns about attendance on a date with
 no match, unknown players, rows dated before the first season, players who
 appeared without being on that season's active roster, events on a date with no
-match, and goals that do not add up to the scoreline they belong to. That last
+match, goals that do not add up to the scoreline they belong to, a fixture dated
+on a match already recorded (a fixture list the sync has not caught up with),
+and our own row going missing from the league table. That last
 one matters because a partial event list looks exactly like a complete one to
 anything that counts it. Warnings appear in the console or the deployment log.

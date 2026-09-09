@@ -374,3 +374,50 @@ empty_report <- function() {
     pending = blank, refused = blank, miscounted = blank
   )
 }
+
+# Snapshots ----
+#
+# Two files that are not part of the permanent record: the fixture list and the
+# league table. Everything above this point exists to protect history — never
+# delete, never touch a closed season, never overwrite a score we already hold.
+# None of that applies here, because neither file is history. Both describe the
+# current league season only, both are wiped and rebuilt on the site when it
+# rolls over, and a sync that replaced them wholesale with next season's is
+# doing exactly the right thing.
+#
+# So they are rewritten outright on every run, and they go nowhere near
+# `sync_results()`. The one guarantee they keep from it is the important one:
+# the caller writes nothing at all if the page failed to parse.
+
+#' Build both snapshot tables from a parsed page.
+#'
+#' Pure, like `sync_results()`: the shaping is testable without a filesystem.
+#'
+#' @param fixtures our fixtures from `our_fixtures()`, played and unplayed alike
+#' @param league_table from `parse_league_table()`
+#' @param scraped_on the date the page was fetched, recorded so the app can say
+#'   how stale the standings are — they age between syncs, and a table nobody
+#'   can date is a table nobody can distrust
+snapshot_tables <- function(fixtures, league_table, scraped_on = Sys.Date()) {
+  list(
+    # No score here, deliberately. matches.csv is the only source of truth for
+    # results; this is a list of dates and who we are down to play on them.
+    fixtures = fixtures %>%
+      as_fixture_table() %>%
+      transmute(date, opponent, dl_match_id) %>%
+      arrange(date),
+    league_table = league_table %>%
+      mutate(scraped_on = as.Date(scraped_on)) %>%
+      arrange(position)
+  )
+}
+
+#' Replace both snapshot files.
+write_snapshot_files <- function(snapshot, fixture_path, table_path) {
+  as_written <- function(data, ...) {
+    data %>% mutate(across(c(...), ~ format(.x, "%d/%m/%Y")))
+  }
+  readr::write_csv(as_written(snapshot$fixtures, date), fixture_path, na = "")
+  readr::write_csv(as_written(snapshot$league_table, scraped_on), table_path, na = "")
+  invisible(snapshot)
+}

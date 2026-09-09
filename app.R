@@ -34,53 +34,241 @@ app_theme <- bs_theme(
     code_font = font_collection("SFMono-Regular", "Menlo", "monospace")
 )
 
-fee_panel <- card(
-    class = "panel-card",
-    card_body(
-        div(class = "section-tag", "Fee Check"),
-        div(
-            class = "selection-shell",
-            selectInput("fee_player", "Choose your name", choices = NULL)
-        ),
-        div(class = "fee-label", "Current balance"),
-        uiOutput("fees_owed"),
-        div(
-            class = "fee-footnote",
-            paste(
-                "Your running total across every season, from attendance, the fee",
-                "rules in force at the time, and recorded payments."
+# The fee cards appear on both Home and Fees, so they are built rather than
+# stored: Shiny needs a unique id per input, and the same card in two places
+# would give two selectInputs the same one. The Fees tab keeps the original ids
+# and the home page gets its own; the server keeps the two pickers on the same
+# person, so switching on one tab carries to the other.
+fee_panel_ui <- function(input_id, output_id) {
+    card(
+        class = "panel-card",
+        card_body(
+            div(class = "section-tag", "Fee Check"),
+            div(
+                class = "selection-shell",
+                selectInput(input_id, "Choose your name", choices = NULL)
+            ),
+            div(class = "fee-label", "Current balance"),
+            uiOutput(output_id),
+            div(
+                class = "fee-footnote",
+                paste(
+                    "Your running total across every season, from attendance, the fee",
+                    "rules in force at the time, and recorded payments."
+                )
             )
         )
     )
-)
+}
 
-payment_panel <- card(
-    class = "payment-card",
-    card_body(
-        div(class = "section-tag", "Settle Up"),
-        p(
-            class = "payment-copy",
-            "Use the payment link below, then the balance will drop once the transfer is recorded in the sheet."
-        ),
-        tags$a(
-            href = "https://monzo.me/benjamindahmen8?h=Njfjz9",
-            target = "_blank",
-            class = "payment-button",
-            "Pay via Monzo"
-        ),
-        div(
-            class = "account-panel",
-            div(class = "account-title", "Bank transfer details"),
-            p(class = "account-detail", "Account Number: 94456363"),
-            p(class = "account-detail", "Sort Code: 04-00-03"),
-            p(class = "account-detail", "Name: Benjamin Dahmen")
+payment_panel_ui <- function() {
+    card(
+        class = "payment-card",
+        card_body(
+            div(class = "section-tag", "Settle Up"),
+            p(
+                class = "payment-copy",
+                "Use the payment link below, then the balance will drop once the transfer is recorded in the sheet."
+            ),
+            tags$a(
+                href = "https://monzo.me/benjamindahmen8?h=Njfjz9",
+                target = "_blank",
+                class = "payment-button",
+                "Pay via Monzo"
+            ),
+            div(
+                class = "account-panel",
+                div(class = "account-title", "Bank transfer details"),
+                p(class = "account-detail", "Account Number: 94456363"),
+                p(class = "account-detail", "Sort Code: 04-00-03"),
+                p(class = "account-detail", "Name: Benjamin Dahmen")
+            )
         )
     )
-)
+}
 
 format_fee_amount <- function(amount) {
     sign <- if (amount < 0) "-" else ""
     paste0(sign, "£", formatC(abs(amount), format = "f", digits = 2))
+}
+
+# Home page cards ----
+
+#' "Wed 19 Aug 2026" — the weekday earns its place on a game that is always
+#' on a Wednesday, because a fixture that is not is worth noticing.
+format_match_date <- function(date) format(date, "%a %d %b %Y")
+
+result_badge <- function(points) {
+    label <- case_when(points == 3 ~ "WIN", points == 1 ~ "DRAW", TRUE ~ "LOSS")
+    class <- case_when(points == 3 ~ "win", points == 1 ~ "draw", TRUE ~ "loss")
+    span(class = paste("result-badge", class), label)
+}
+
+#' A comma list that reads like a sentence, with a tally where there is one.
+listed_scorers <- function(scorers) {
+    paste(
+        if_else(scorers$goals > 1, paste0(scorers$player, " (", scorers$goals, ")"), scorers$player),
+        collapse = ", "
+    )
+}
+
+#' The last result, with as much of the detail as we happen to hold.
+#'
+#' Opponent, scorers and man of the match all came in with the sync, so nothing
+#' played before it exists has any of them. Each is therefore dropped from the
+#' card rather than rendered blank: a line reading "Scorers: —" on every match
+#' in the archive is worse than no line.
+last_match_card_ui <- function(summary, seasons) {
+    if (is.null(summary)) {
+        return(card(
+            class = "home-card",
+            card_body(
+                div(class = "section-tag", "Last match"),
+                div(class = "empty-state", "No matches recorded yet.")
+            )
+        ))
+    }
+
+    played <- summary$match
+    season_label <- seasons$label[match(played$season_id, seasons$season_id)]
+
+    detail_line <- function(label, value) {
+        div(class = "home-detail", span(class = "home-detail-label", label), span(value))
+    }
+
+    card(
+        class = "home-card",
+        card_body(
+            div(class = "section-tag", "Last match"),
+            div(
+                class = "home-scoreline",
+                span(class = "home-score", played$result),
+                result_badge(played$points)
+            ),
+            div(
+                class = "home-card-meta",
+                paste(
+                    c(
+                        format_match_date(played$date),
+                        if (!is.na(played$opponent)) paste("v", played$opponent),
+                        if (!is.na(season_label)) season_label
+                    ),
+                    collapse = " \u00b7 "
+                )
+            ),
+            div(
+                class = "home-details",
+                detail_line("Squad", paste(summary$squad_size, "players")),
+                if (nrow(summary$scorers) > 0) {
+                    detail_line("Scorers", listed_scorers(summary$scorers))
+                },
+                if (!is.na(summary$mom)) detail_line("Man of the match", summary$mom)
+            )
+        )
+    )
+}
+
+#' The next fixture, or an honest note about why there is not one.
+#'
+#' The two empty cases are different and worth separating: a fixture list that
+#' has run out means the season is done or the sync is overdue, while no file at
+#' all means the sync has not run since fixtures started being recorded.
+next_match_card_ui <- function(fixture, have_fixtures, today = Sys.Date()) {
+    if (is.null(fixture)) {
+        return(card(
+            class = "home-card",
+            card_body(
+                div(class = "section-tag", "Next match"),
+                div(
+                    class = "empty-state",
+                    if (have_fixtures) {
+                        "No fixtures left on the league page. Run the sync once the new season is up."
+                    } else {
+                        "No fixture list yet — run the sync to pull one in."
+                    }
+                )
+            )
+        ))
+    }
+
+    days_away <- as.integer(fixture$date - today)
+    when <- case_when(
+        days_away == 0 ~ "Tonight",
+        days_away == 1 ~ "Tomorrow",
+        TRUE ~ paste("In", days_away, "days")
+    )
+
+    card(
+        class = "home-card",
+        card_body(
+            div(class = "section-tag", "Next match"),
+            div(class = if (days_away == 0) "home-when is-today" else "home-when", when),
+            div(class = "home-opponent", coalesce(fixture$opponent, "Opponent to be confirmed")),
+            div(class = "home-card-meta", format_match_date(fixture$date))
+        )
+    )
+}
+
+#' The league standings, trimmed to what fits and with our row picked out.
+#'
+#' Goals for and against are dropped: this is context on a landing page, not
+#' the Matches tab, and goal difference carries the same information in one
+#' column. The scrape date is on the card because the table ages between syncs
+#' and a stale table that cannot be dated is a stale table nobody questions.
+league_table_ui <- function(league_table) {
+    if (nrow(league_table) == 0) {
+        return(card(
+            class = "table-card league-table-card",
+            card_body(
+                div(class = "section-tag", "League table"),
+                div(class = "empty-state", "No league table yet — run the sync to pull one in.")
+            )
+        ))
+    }
+
+    card(
+        class = "table-card league-table-card",
+        card_header(
+            div(class = "section-tag", "League table"),
+            h2(class = "table-title", "Where we sit"),
+            p(
+                class = "table-subtitle",
+                paste(
+                    "Taken from the league's own table as it stood on",
+                    format(max(league_table$scraped_on), "%d %B %Y."),
+                    "It moves whenever anyone plays, not just us."
+                )
+            )
+        ),
+        card_body(dataTableOutput("league_table"))
+    )
+}
+
+league_table_table <- function(league_table) {
+    datatable(
+        league_table %>%
+            transmute(
+                Pos = position,
+                Team = team,
+                P = played, W = won, D = drawn, L = lost,
+                GD = goal_difference,
+                Pts = points
+            ),
+        rownames = FALSE,
+        class = "nowrap",
+        options = list(
+            dom = "t",
+            pageLength = nrow(league_table),
+            ordering = FALSE,
+            autoWidth = TRUE,
+            scrollX = TRUE,
+            rowCallback = JS(
+                "function(row, data) {",
+                sprintf("  if (data[1] === %s) { $(row).addClass('is-us'); }", jsonlite::toJSON(OUR_TEAM, auto_unbox = TRUE)),
+                "}"
+            )
+        )
+    )
 }
 
 fee_overview_summary <- function(overview) {
@@ -194,11 +382,15 @@ fee_history_panel <- tagList(
     )
 )
 
-table_card_ui <- function(title, subtitle, output_id) {
+#' A table in a card, headed the way every other card here is headed: a short
+#' category kicker above a descriptive title. They are separate arguments
+#' because they say different things — passing one value for both prints it
+#' twice, stacked.
+table_card_ui <- function(tag, title, subtitle, output_id) {
     card(
         class = "table-card",
         card_header(
-            div(class = "section-tag", title),
+            div(class = "section-tag", tag),
             h2(class = "table-title", title),
             p(class = "table-subtitle", subtitle)
         ),
@@ -604,8 +796,8 @@ ui <- page_fluid(
                 p(
                     class = "hero-copy",
                     paste(
-                "Track what you owe, review match results, and see who keeps the squad",
-                "going each week. The season picker scopes the results and statistics."
+                "Where the last game left us, who is next, and what you owe.",
+                "The season picker scopes the results and statistics tabs."
             )
                 ),
                 div(
@@ -623,13 +815,32 @@ ui <- page_fluid(
             class = "nav-pill-shell",
             navset_pill(
                 id = "app_tabs",
+                # First, so it is where the app opens. Like the Fees tab, and
+                # for the same reason, it ignores the season picker: it answers
+                # what just happened and what is next, and a question in the
+                # present tense does not take a season.
+                nav_panel(
+                    "Home",
+                    icon = icon("house"),
+                    div(
+                        class = "home-grid",
+                        uiOutput("last_match_card"),
+                        uiOutput("next_match_card")
+                    ),
+                    uiOutput("league_table_card"),
+                    div(
+                        class = "fees-grid",
+                        fee_panel_ui("home_fee_player", "home_fees_owed"),
+                        payment_panel_ui()
+                    )
+                ),
                 nav_panel(
                     "Fees",
                     icon = icon("dollar-sign"),
                     div(
                         class = "fees-grid",
-                        fee_panel,
-                        payment_panel
+                        fee_panel_ui("fee_player", "fees_owed"),
+                        payment_panel_ui()
                     ),
                     fee_history_panel
                 ),
@@ -645,6 +856,7 @@ ui <- page_fluid(
                         season_form_card,
                         table_card_ui(
                             "Matches",
+                            "Every result",
                             "Results for the selected season.",
                             "matches"
                         ),
@@ -662,6 +874,7 @@ ui <- page_fluid(
                         "output.season_has_matches",
                         table_card_ui(
                             "Attendance",
+                            "Who turns up",
                             "Participation rate and on-pitch averages by player.",
                             "attendance_list"
                         )
@@ -716,6 +929,7 @@ ui <- page_fluid(
                     ),
                     table_card_ui(
                         "Player effects",
+                        "Player by player",
                         "Lineup-adjusted associations with match outcomes.",
                         "player_regressions"
                     ),
@@ -778,6 +992,10 @@ attendance_table <- function(attendance_list) {
     )
 }
 
+# The two Fee check cards, one per tab. Named once so the server can keep them
+# in step without either tab knowing the other exists.
+FEE_PLAYER_INPUTS <- c("fee_player", "home_fee_player")
+
 # Server logic ----
 server <- function(input, output, session) {
     # Everything downstream reads from this one filtered view of the data, so a
@@ -822,21 +1040,45 @@ server <- function(input, output, session) {
             sort()
     })
 
+    # The same card is on Home and on Fees, so there are two pickers for one
+    # question. This is the answer, and each picker follows it: whichever one
+    # you touch, the other catches up, so switching tabs never shows you
+    # somebody else's balance.
+    selected_fee_player <- reactiveVal(NULL)
+
     observeEvent(fee_players(), {
         players <- fee_players()
-        keep <- isTruthy(input$fee_player) && input$fee_player %in% players
-        updateSelectInput(
-            session,
-            "fee_player",
-            choices = players,
-            selected = if (keep) input$fee_player else players[1]
-        )
+        current <- selected_fee_player()
+        chosen <- if (isTruthy(current) && current %in% players) current else players[[1]]
+
+        selected_fee_player(chosen)
+        for (id in FEE_PLAYER_INPUTS) {
+            updateSelectInput(session, id, choices = players, selected = chosen)
+        }
     }, ignoreNULL = FALSE)
 
+    # Guarded on equality in both directions: without it each picker would
+    # answer the other's update with one of its own, indefinitely.
+    for (id in FEE_PLAYER_INPUTS) {
+        local({
+            this <- id
+            others <- setdiff(FEE_PLAYER_INPUTS, this)
+            observeEvent(input[[this]], {
+                if (identical(input[[this]], selected_fee_player())) {
+                    return()
+                }
+                selected_fee_player(input[[this]])
+                for (other in others) {
+                    updateSelectInput(session, other, selected = input[[this]])
+                }
+            })
+        })
+    }
+
     fee_overview <- reactive({
-        req(input$fee_player)
+        req(selected_fee_player())
         player_fee_overview(
-            input$fee_player, app_data$charges, app_data$payments, app_data$seasons
+            selected_fee_player(), app_data$charges, app_data$payments, app_data$seasons
         )
     })
 
@@ -885,12 +1127,42 @@ server <- function(input, output, session) {
         payment_history_table(fee_overview()$payment_history)
     })
 
-    output$fees_owed <- renderUI({
+    fees_owed_ui <- reactive({
         balance <- fee_overview()$balance
         tags$div(
             class = paste("fee-amount", if (balance > 0) "is-owed" else ""),
             format_fee_amount(balance)
         )
+    })
+
+    output$fees_owed <- renderUI(fees_owed_ui())
+    output$home_fees_owed <- renderUI(fees_owed_ui())
+
+    # Home ----
+    #
+    # Rendered rather than built once at startup because both cards say
+    # something about today — "Tonight", "In 5 days" — and a process that has
+    # been up for a week would otherwise still be counting down from the day it
+    # started.
+    output$last_match_card <- renderUI({
+        last_match_card_ui(
+            last_match_summary(app_data$matches, app_data$attendance, app_data$events),
+            app_data$seasons
+        )
+    })
+
+    output$next_match_card <- renderUI({
+        next_match_card_ui(
+            next_fixture(app_data$fixtures, app_data$matches),
+            have_fixtures = nrow(app_data$fixtures) > 0
+        )
+    })
+
+    output$league_table_card <- renderUI(league_table_ui(app_data$league_table))
+
+    output$league_table <- renderDT({
+        req(nrow(app_data$league_table) > 0)
+        league_table_table(app_data$league_table)
     })
 
     # Matches ----

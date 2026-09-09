@@ -60,8 +60,9 @@ html <- if (is.null(from_file)) {
 
 all_fixtures <- parse_fixtures(html)
 fixtures <- our_fixtures(all_fixtures)
+league_table <- parse_league_table(html)
 cat("Parsed", nrow(all_fixtures), "league fixtures,",
-    nrow(fixtures), "of them ours.\n")
+    nrow(fixtures), "of them ours, and a", nrow(league_table), "team table.\n")
 
 # A page that parses to nothing is a changed page, not an empty league.
 if (nrow(all_fixtures) == 0) {
@@ -121,6 +122,36 @@ if (length(unrecognised) > 0) {
 }
 
 # Write ----
+
+# The snapshot files first, and on their own terms. They are not part of the
+# record the reconciliation above is protecting: they describe the current
+# league season only, so they are replaced wholesale every run. That is also
+# why they are written even when no result changed — the standings move when
+# any team plays, not just when we do.
+snapshot <- snapshot_tables(fixtures, league_table, scraped_on = Sys.Date())
+upcoming <- snapshot$fixtures %>% filter(date >= Sys.Date())
+
+rule("Fixtures and league table")
+cat(nrow(snapshot$fixtures), " fixtures of ours on the page, ",
+    nrow(upcoming), " still to play.\n", sep = "")
+if (nrow(upcoming) > 0) {
+  cat("Next: ", format(upcoming$date[[1]], "%d/%m/%Y"), " v ",
+      coalesce(upcoming$opponent[[1]], "?"), "\n", sep = "")
+}
+if (!OUR_TEAM %in% league_table$team) {
+  cat("NOTE: ", OUR_TEAM, " is not in the league table on this page.\n", sep = "")
+} else {
+  us <- league_table %>% filter(team == OUR_TEAM)
+  cat("League position: ", us$position, " of ", nrow(league_table),
+      " on ", us$points, " points.\n", sep = "")
+}
+
+if (write_changes) {
+  write_snapshot_files(snapshot, "data/fixtures.csv", "data/league_table.csv")
+  cat("data/fixtures.csv and data/league_table.csv replaced.\n")
+} else {
+  cat("Dry run — re-run with --write to replace them.\n")
+}
 
 outstanding <- nrow(report$conflicting) + nrow(report$pending)
 

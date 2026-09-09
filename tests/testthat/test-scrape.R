@@ -162,3 +162,82 @@ test_that("an icon rendered without a src does not kill the parse", {
   # The medal icon is gone, so the row is recognised by its label instead.
   expect_equal(sum(events$event_type == "mom"), 1L)
 })
+
+# The league table ----
+#
+# The fixture is the real LEAGUE TABLE block, trimmed off our own page as it
+# stood at the start of a season: nine teams, nothing played. That is the state
+# the table spends the least time in and the one most likely to be got wrong,
+# since every number in it is zero.
+
+test_that("every team in the league table parses", {
+  standings <- parse_league_table(fixture_html("league-table.html"))
+
+  expect_equal(nrow(standings), 9)
+  expect_false(anyNA(standings$position))
+  expect_true(all(nzchar(standings$team)))
+  expect_equal(standings$position, 1:9)
+  expect_true(OUR_TEAM %in% standings$team)
+})
+
+test_that("the table's numbers come back as numbers, not strings", {
+  standings <- parse_league_table(fixture_html("league-table.html"))
+
+  counts <- c("played", "won", "drawn", "lost", "goals_for",
+              "goals_against", "goal_difference", "points")
+  for (column in counts) {
+    expect_type(standings[[column]], "integer")
+  }
+  # Nothing played yet, so the whole grid is zero. A parser reading the wrong
+  # cells would still produce integers, but not these.
+  expect_true(all(standings$played == 0))
+  expect_true(all(standings$points == 0))
+})
+
+# Hand-built so the values differ per column and per row: against an all-zero
+# table a parser that read the columns in the wrong order would still pass.
+standings_page <- function(rows) {
+  cell <- function(value) paste0("<td>", value, "</td>")
+  row <- function(r) paste0("<tr>", paste0(vapply(r, cell, character(1)), collapse = ""), "</tr>")
+  paste0(
+    '<table class="table-leagues table-team-leagues"><tbody>',
+    paste0(vapply(rows, row, character(1)), collapse = ""),
+    "</tbody></table>"
+  )
+}
+
+test_that("each column lands in the field it belongs to", {
+  standings <- parse_league_table(standings_page(list(
+    #  pos team      P  W  D  L  GF GA GD PTS
+    list(1, "Ball FC", 5, 4, 1, 0, 22, 7, 15, 13),
+    list(2, OUR_TEAM,  5, 3, 0, 2, 19, 14, 5, 9)
+  )))
+
+  us <- standings %>% filter(team == OUR_TEAM)
+  expect_equal(us$position, 2L)
+  expect_equal(us$played, 5L)
+  expect_equal(us$won, 3L)
+  expect_equal(us$drawn, 0L)
+  expect_equal(us$lost, 2L)
+  expect_equal(us$goals_for, 19L)
+  expect_equal(us$goals_against, 14L)
+  expect_equal(us$goal_difference, 5L)
+  expect_equal(us$points, 9L)
+})
+
+test_that("a page with no league table is an error, not an empty table", {
+  # Silently returning nothing would put an empty card on the home page and
+  # give no clue that the markup had moved.
+  expect_error(parse_league_table("<html><body></body></html>"), "no league table")
+  expect_error(
+    parse_league_table('<table class="table-leagues table-team-leagues"><tbody></tbody></table>'),
+    "no rows"
+  )
+})
+
+test_that("a table with columns added or removed is refused", {
+  expect_error(
+    parse_league_table(standings_page(list(list(1, "Ball FC", 5, 4, 1)))),
+    "columns have changed"
+  )
+})

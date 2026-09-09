@@ -18,3 +18,20 @@ fixture_html <- function(name) {
     collapse = "\n"
   )
 }
+
+# Zero-row tables in the shape the loaders return them, for the cases where a
+# function has to cope with a file that has nothing in it yet.
+empty_events <- function() {
+  tibble(
+    date = as.Date(character()), dl_match_id = character(), team = character(),
+    minute = integer(), event_type = character(), player = character()
+  )
+}
+
+empty_standings <- function() {
+  tibble(
+    position = integer(), team = character(), played = integer(), won = integer(),
+    drawn = integer(), lost = integer(), goals_for = integer(),
+    goals_against = integer(), goal_difference = integer(), points = integer()
+  )
+}

@@ -5,6 +5,12 @@
 # at app level rather than inside server(), so the work is done once per process
 # rather than once per visitor.
 
+# Who we are on the league site, and so which row of the league table is ours.
+# It lives here rather than in R/scrape.R because the app reads it and never
+# loads the scraper — sourcing that would pull rvest and httr into a process
+# that only ever reads CSVs.
+OUR_TEAM <- "Borulanta"
+
 # Column types ----
 #
 # Pinned rather than guessed, and shared with the sync so the two never disagree
@@ -29,6 +35,31 @@ EVENT_COLUMNS <- readr::cols(
   player = readr::col_character()
 )
 
+# The two snapshot files the sync replaces wholesale each run. Neither is part
+# of the permanent record, and neither exists on a fresh clone until the first
+# sync — so both are read tolerantly and both come back empty rather than
+# stopping the app from starting.
+
+FIXTURE_COLUMNS <- readr::cols(
+  date = readr::col_character(),
+  opponent = readr::col_character(),
+  dl_match_id = readr::col_character()
+)
+
+LEAGUE_TABLE_COLUMNS <- readr::cols(
+  position = readr::col_integer(),
+  team = readr::col_character(),
+  played = readr::col_integer(),
+  won = readr::col_integer(),
+  drawn = readr::col_integer(),
+  lost = readr::col_integer(),
+  goals_for = readr::col_integer(),
+  goals_against = readr::col_integer(),
+  goal_difference = readr::col_integer(),
+  points = readr::col_integer(),
+  scraped_on = readr::col_character()
+)
+
 read_match_file <- function(path) {
   readr::read_csv(path, col_types = MATCH_COLUMNS) %>%
     mutate(date = parse_match_date(date))
@@ -37,6 +68,33 @@ read_match_file <- function(path) {
 read_event_file <- function(path) {
   readr::read_csv(path, col_types = EVENT_COLUMNS) %>%
     mutate(date = parse_match_date(date))
+}
+
+read_fixture_file <- function(path) {
+  if (!file.exists(path)) {
+    return(tibble(
+      date = as.Date(character()),
+      opponent = character(),
+      dl_match_id = character()
+    ))
+  }
+  readr::read_csv(path, col_types = FIXTURE_COLUMNS) %>%
+    mutate(date = parse_match_date(date))
+}
+
+read_league_table_file <- function(path) {
+  if (!file.exists(path)) {
+    return(tibble(
+      position = integer(), team = character(),
+      played = integer(), won = integer(), drawn = integer(), lost = integer(),
+      goals_for = integer(), goals_against = integer(),
+      goal_difference = integer(), points = integer(),
+      scraped_on = as.Date(character())
+    ))
+  }
+  readr::read_csv(path, col_types = LEAGUE_TABLE_COLUMNS) %>%
+    mutate(scraped_on = parse_match_date(scraped_on)) %>%
+    arrange(position)
 }
 
 #' Add the "4-5" display string derived from the two goal columns.
@@ -72,6 +130,15 @@ load_app_data <- function(dir = "data") {
     mutate(date = parse_match_date(date)) %>%
     with_season(seasons)
 
+  # Fixtures are season-tagged so the home page can say which season the next
+  # match falls in; the league table is not, because its season is the league's
+  # own and has nothing to do with the fee seasons the rest of the app counts in.
+  fixtures <- read_fixture_file(path("fixtures.csv")) %>%
+    with_season(seasons) %>%
+    arrange(date)
+
+  league_table <- read_league_table_file(path("league_table.csv"))
+
   data <- list(
     seasons = seasons,
     players = players,
@@ -79,7 +146,9 @@ load_app_data <- function(dir = "data") {
     matches = matches,
     events = events,
     attendance = attendance,
-    payments = payments
+    payments = payments,
+    fixtures = fixtures,
+    league_table = league_table
   )
 
   validate_app_data(data)
@@ -148,6 +217,19 @@ validate_app_data <- function(data) {
     "goal events that do not add up to the scoreline",
     format(mismatched$date, "%d/%m/%Y")
   )
+
+  # A fixture whose date already has a result is a snapshot the sync has not
+  # caught up with. Harmless to the record, but the home page would offer a
+  # played match as the next one, so say so.
+  complain(
+    "fixtures dated on a match already recorded — the fixture list is stale",
+    format(intersect(data$fixtures$date, data$matches$date), "%d/%m/%Y")
+  )
+  # Not fatal — the table is only context — but if we have dropped out of it
+  # the page has changed shape or we have been renamed on the site.
+  if (nrow(data$league_table) > 0 && !OUR_TEAM %in% data$league_table$team) {
+    warning("no ", OUR_TEAM, " row in data/league_table.csv", call. = FALSE)
+  }
 
   # Someone who played but was not on that season's active roster is charged
   # nothing, which is almost always a missing roster row rather than a freebie.
