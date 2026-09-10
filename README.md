@@ -309,6 +309,15 @@ they settle up, not season by season, so scoping payments by date would show a
 debt in one season and the mirror-image credit in the next even when everyone is
 square. The charge table carries a season column instead.
 
+The Fees tab shows everyone's balance as well as your own, because "who owes
+me" is the question the person collecting the money actually has and the picker
+made you click through the whole roster to answer it. That table lists anyone
+with a charge or a payment on file rather than the current active roster —
+somebody who has left still owing is exactly the row worth keeping. Outstanding
+and credit are totalled apart rather than netted: the net is what the pot is
+short, but a credit belongs to somebody who cannot be asked for money they have
+already paid.
+
 Starting a new season is two steps: add a row to `data/seasons.csv`, and add
 that season's players to `data/player_seasons.csv`.
 

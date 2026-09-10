@@ -232,6 +232,56 @@ all_charges <- function(seasons, matches, attendance, rosters) {
     left_join(matches %>% select(date, result), by = "date")
 }
 
+# Everyone at once ----
+
+#' Every player's balance in one table: charges, payments, and the difference.
+#'
+#' The per-player card answers "what do I owe"; this answers "who owes me",
+#' which is the question the person collecting the money actually has and which
+#' the picker made you click through the whole roster to assemble.
+#'
+#' The population is anyone with a charge or a payment on file rather than the
+#' current active roster. Someone who has left still owing is exactly the row
+#' worth keeping, and dropping them would quietly change the total.
+#'
+#' Rounded per player rather than at the end, so the column adds up to the
+#' total printed beside it. The underlying ledger stays at full precision.
+all_player_balances <- function(charges, payments) {
+  charged <- charges %>%
+    group_by(player) %>%
+    summarise(charges = sum(charge), .groups = "drop")
+
+  paid <- payments %>%
+    group_by(player) %>%
+    summarise(
+      payments = sum(amount),
+      last_payment = max(date),
+      .groups = "drop"
+    )
+
+  full_join(charged, paid, by = "player") %>%
+    mutate(
+      across(c(charges, payments), ~ round(coalesce(.x, 0), 2)),
+      balance = round(charges - payments, 2)
+    ) %>%
+    arrange(desc(balance), player)
+}
+
+#' What the balances add up to, kept separate from the table that lists them.
+#'
+#' Outstanding and credit are reported apart rather than netted. The net is what
+#' the pot is short overall; the outstanding figure is what is actually owed,
+#' and a credit sitting against it belongs to somebody who cannot be asked for
+#' money they have already paid.
+balance_totals <- function(balances) {
+  list(
+    outstanding = round(sum(balances$balance[balances$balance > 0]), 2),
+    credit = round(-sum(balances$balance[balances$balance < 0]), 2),
+    net = round(sum(balances$balance), 2),
+    settled = sum(balances$balance == 0)
+  )
+}
+
 # Per-player views ----
 
 player_match_charges <- function(player, charges, seasons = NULL) {

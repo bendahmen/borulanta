@@ -895,6 +895,21 @@ tr.is-us > td {
   }
 }
 
+/* ---- Everyone's balances ---- */
+
+/* The row, not the cell: it is the person who owes or is owed. */
+table.dataTable tbody tr.is-owed {
+  background: var(--amber-soft);
+}
+
+table.dataTable tbody tr.is-owed td {
+  font-weight: 600;
+}
+
+table.dataTable tbody tr.is-credit {
+  background: var(--green-soft);
+}
+
 /* ---- Staleness and data checks ---- */
 
 /* On the countdown card, and only when the fixture list behind it has aged

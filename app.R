@@ -439,6 +439,88 @@ payment_history_table <- function(payment_history) {
         formatCurrency(columns = "Payment", currency = "£", digits = 2)
 }
 
+#' Everyone's balance at once, for the person actually chasing the money.
+#'
+#' Outstanding and credit are shown apart rather than netted: the net is what
+#' the pot is short, but a credit belongs to somebody who cannot be asked for
+#' money they have already paid, so it is not an offset against what is owed.
+balance_totals_ui <- function(totals) {
+    div(
+        class = "fee-overview-summary",
+        div(
+            class = "fee-overview-stat",
+            div(class = "fee-overview-label", "Still owed"),
+            div(class = "fee-overview-value", format_fee_amount(totals$outstanding))
+        ),
+        div(
+            class = "fee-overview-stat",
+            div(class = "fee-overview-label", "In credit"),
+            div(class = "fee-overview-value", format_fee_amount(totals$credit))
+        ),
+        div(
+            class = "fee-overview-stat",
+            div(class = "fee-overview-label", "Settled up"),
+            div(class = "fee-overview-value", totals$settled)
+        )
+    )
+}
+
+balance_table <- function(balances) {
+    table_data <- balances %>%
+        transmute(
+            Player = player,
+            Charges = charges,
+            Payments = payments,
+            `Last payment` = if_else(
+                is.na(last_payment), "\u2014", format(last_payment, "%d %b %Y")
+            ),
+            Balance = balance
+        )
+
+    datatable(
+        table_data,
+        rownames = FALSE,
+        class = "nowrap",
+        options = list(
+            dom = "t",
+            pageLength = nrow(table_data),
+            ordering = FALSE,
+            autoWidth = TRUE,
+            scrollX = TRUE,
+            language = list(emptyTable = "Nobody has been charged anything yet."),
+            # Picked out by row rather than by a badge in the cell: it is the
+            # person that is owed or owing, not the number.
+            rowCallback = JS(
+                "function(row, data) {",
+                "  var balance = parseFloat(data[4]);",
+                "  if (balance > 0) { $(row).addClass('is-owed'); }",
+                "  if (balance < 0) { $(row).addClass('is-credit'); }",
+                "}"
+            )
+        )
+    ) %>%
+        formatCurrency(columns = c("Charges", "Payments", "Balance"), currency = "\u00a3", digits = 2)
+}
+
+everyone_panel <- card(
+    class = "table-card",
+    card_header(
+        div(class = "section-tag", "Everyone"),
+        h2(class = "table-title", "Who is square and who is not"),
+        p(
+            class = "table-subtitle",
+            paste(
+                "All seasons, same rules as your own balance. Rows in amber owe",
+                "something; rows in green are owed."
+            )
+        )
+    ),
+    card_body(
+        uiOutput("balance_totals"),
+        dataTableOutput("all_balances")
+    )
+)
+
 fee_history_panel <- tagList(
     card(
         class = "table-card",
@@ -1025,6 +1107,7 @@ ui <- page_fluid(
                         fee_panel_ui("fee_player", "fees_owed"),
                         payment_panel_ui()
                     ),
+                    everyone_panel,
                     fee_history_panel
                 ),
                 nav_panel(
@@ -1305,6 +1388,17 @@ server <- function(input, output, session) {
     output$fee_overview_summary <- renderUI({
         fee_overview_summary(fee_overview())
     })
+
+    # Like every other fee output, all time rather than the picked seasons: a
+    # balance is a running total and scoping it by date would show a debt in one
+    # season and its mirror image in the next.
+    all_balances <- reactive({
+        all_player_balances(app_data$charges, app_data$payments)
+    })
+
+    output$balance_totals <- renderUI(balance_totals_ui(balance_totals(all_balances())))
+
+    output$all_balances <- renderDT(balance_table(all_balances()))
 
     output$match_charges <- renderDT({
         match_charge_table(fee_overview()$match_charges)
