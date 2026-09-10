@@ -197,6 +197,25 @@ before the sync existed — together with an indicator saying so, which lets
 those matches keep their own level. Seasons for this purpose are the fee
 seasons in `seasons.csv`, which are the windows the app scopes a regression to.
 
+### Opponents
+
+The Matches tab carries two views built on the opponent. **Head to head** is
+our record against each side, ranked on points per match rather than total
+points because we have met some of them twice as often as others and the totals
+would rank on that instead of on how the games went. Matches from before the
+sync have no opponent recorded and are dropped rather than pooled into an
+"unknown" row: each is a different side, and one row averaging all of them
+describes nobody. A window made only of those says so instead of showing an
+empty table.
+
+**Run-in** is every fixture still to come with where that side sits in the
+standings. Like the home page it ignores the season picker, and for the same
+reason the snapshot files exist at all: the fixture list and the standings
+describe the current *league* season, which is not a fee season and has no
+business being filtered by one. An opponent the standings do not carry keeps
+its row with those columns empty, because the fixture is still a fixture and
+dropping it would quietly shorten the run-in.
+
 `data/name_map.csv` maps the site's first names onto ours, since the league
 records `Felix` where the roster says something else. Only our side is mapped;
 the opposition's names are kept as they came, because they are not our players

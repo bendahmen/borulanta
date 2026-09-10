@@ -479,6 +479,85 @@ next_fixture <- function(fixtures, matches, today = Sys.Date()) {
   upcoming %>% slice(1)
 }
 
+# Opponents ----
+
+#' Our record against each side we have played, one row per opponent.
+#'
+#' Matches from before the sync have no opponent recorded and are dropped
+#' rather than pooled into an "unknown" row: they are a different opponent each
+#' time, and a row averaging all of them says nothing about anybody.
+#'
+#' Points per match rather than total points, because we have met some sides
+#' twice as often as others and the totals would rank on that instead of on how
+#' the games went.
+opponent_record <- function(matches) {
+  played <- matches %>% filter(!is.na(opponent))
+
+  if (nrow(played) == 0) {
+    return(tibble(
+      opponent = character(), played = integer(), won = integer(),
+      drawn = integer(), lost = integer(), goals_for = integer(),
+      goals_against = integer(), goal_difference = integer(),
+      points_per_match = numeric()
+    ))
+  }
+
+  match_outcomes(played) %>%
+    group_by(opponent) %>%
+    summarise(
+      played = n(),
+      won = sum(points == 3),
+      drawn = sum(points == 1),
+      lost = sum(points == 0),
+      goals_for = sum(goals_scored),
+      goals_against = sum(goals_conceded),
+      .groups = "drop"
+    ) %>%
+    mutate(
+      goal_difference = goals_for - goals_against,
+      points_per_match = (won * 3 + drawn) / played
+    ) %>%
+    arrange(desc(points_per_match), desc(goal_difference), opponent)
+}
+
+#' The fixtures still to come, with what the table says about who we are facing.
+#'
+#' Deliberately not season-scoped. Fixtures and the standings both describe the
+#' current league season only — they are wiped and rebuilt on the site when it
+#' rolls over — so scoping them by a fee season would be filtering one thing by
+#' the boundaries of another.
+#'
+#' An opponent the standings do not carry keeps its row with the league columns
+#' empty. The fixture is still a fixture, and dropping it would silently
+#' shorten the run-in.
+run_in <- function(fixtures, matches, league_table, today = Sys.Date()) {
+  upcoming <- fixtures %>%
+    filter(date >= today, !date %in% matches$date) %>%
+    arrange(date)
+
+  if (nrow(upcoming) == 0) {
+    return(tibble(
+      date = as.Date(character()), opponent = character(),
+      position = integer(), played = integer(), goal_difference = integer(),
+      points = integer()
+    ))
+  }
+
+  standings <- if (nrow(league_table) == 0) {
+    tibble(
+      team = character(), position = integer(), played = integer(),
+      goal_difference = integer(), points = integer()
+    )
+  } else {
+    league_table %>%
+      select(team, position, played, goal_difference, points)
+  }
+
+  upcoming %>%
+    select(date, opponent) %>%
+    left_join(standings, by = c("opponent" = "team"))
+}
+
 #' Played, won, drawn, lost and goals over whatever matches are handed in.
 #'
 #' Always one row, zeroes included, so a caller can print it without checking

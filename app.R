@@ -1013,6 +1013,95 @@ scorer_card <- card(
     card_body(dataTableOutput("scorers"))
 )
 
+opponent_record_table <- function(record) {
+    datatable(
+        record %>%
+            transmute(
+                Opponent = opponent,
+                P = played, W = won, D = drawn, L = lost,
+                GF = goals_for, GA = goals_against, GD = goal_difference,
+                `Pts/match` = round(points_per_match, 2)
+            ),
+        rownames = FALSE,
+        class = "nowrap",
+        options = list(
+            dom = "t",
+            pageLength = nrow(record),
+            ordering = FALSE,
+            autoWidth = TRUE,
+            scrollX = TRUE
+        )
+    )
+}
+
+#' Our record against each side, or an honest note about why there is not one.
+#'
+#' The opponent arrived with the sync, so a window made only of older matches
+#' has nobody to group by. That is a different thing from having played nobody
+#' and is worth saying, rather than showing an empty table.
+opponent_record_card <- card(
+    class = "table-card",
+    card_header(
+        div(class = "section-tag", "Head to head"),
+        h2(class = "table-title", "How we do against each side"),
+        p(
+            class = "table-subtitle",
+            paste(
+                "Points per match rather than total points: we have met some",
+                "sides twice as often as others."
+            )
+        )
+    ),
+    card_body(uiOutput("opponent_record"))
+)
+
+run_in_table <- function(fixtures) {
+    datatable(
+        fixtures %>%
+            transmute(
+                Date = format(date, "%d %b %Y"),
+                Opponent = opponent,
+                Pos = position,
+                P = played,
+                GD = goal_difference,
+                Pts = points
+            ),
+        rownames = FALSE,
+        class = "nowrap",
+        options = list(
+            dom = "t",
+            pageLength = nrow(fixtures),
+            ordering = FALSE,
+            autoWidth = TRUE,
+            scrollX = TRUE,
+            language = list(emptyTable = "No fixtures left on the league page.")
+        )
+    )
+}
+
+#' What is left to play, and what the standings say about it.
+#'
+#' Like the home page and for the same reason, this ignores the season picker:
+#' the fixture list and the standings describe the current league season only,
+#' and scoping them by a fee season would filter one thing by the boundaries of
+#' another.
+run_in_card <- card(
+    class = "table-card",
+    card_header(
+        div(class = "section-tag", "Run-in"),
+        h2(class = "table-title", "Who is left"),
+        p(
+            class = "table-subtitle",
+            paste(
+                "Every fixture still to come, with where that side sits in the",
+                "league. All of the current league season, whatever the season",
+                "picker says."
+            )
+        )
+    ),
+    card_body(dataTableOutput("run_in"))
+)
+
 match_detail_card <- card(
     class = "table-card",
     card_header(
@@ -1120,13 +1209,15 @@ ui <- page_fluid(
                     conditionalPanel(
                         "output.season_has_matches",
                         season_form_card,
+                        scorer_card,
+                        opponent_record_card,
+                        run_in_card,
                         table_card_ui(
                             "Matches",
                             "Every result",
                             "Newest first, for the seasons you have ticked.",
                             "matches"
                         ),
-                        scorer_card,
                         match_detail_card
                     )
                 ),
@@ -1469,6 +1560,28 @@ server <- function(input, output, session) {
         scorer_display_table(
             scorer_table(scoped()$events, scoped()$attendance, scoped()$matches)
         )
+    })
+
+    output$opponent_record <- renderUI({
+        record <- opponent_record(scoped()$matches)
+        if (nrow(record) == 0) {
+            return(div(
+                class = "empty-state",
+                paste(
+                    "No match in the selected seasons has its opponent on file.",
+                    "They start with the sync."
+                )
+            ))
+        }
+        dataTableOutput("opponent_record_table")
+    })
+
+    output$opponent_record_table <- renderDT({
+        opponent_record_table(opponent_record(scoped()$matches))
+    })
+
+    output$run_in <- renderDT({
+        run_in_table(run_in(app_data$fixtures, app_data$matches, app_data$league_table))
     })
 
     output$scorer_coverage <- renderUI({
