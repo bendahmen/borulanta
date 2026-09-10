@@ -1,10 +1,10 @@
 position,team,played,won,drawn,lost,goals_for,goals_against,goal_difference,points,scraped_on
-1,Shamrock Posers,0,0,0,0,0,0,0,0,09/09/2026
-2,Saffron Rangers,0,0,0,0,0,0,0,0,09/09/2026
-3,Foireann Peile,0,0,0,0,0,0,0,0,09/09/2026
-4,Brother Man FC,0,0,0,0,0,0,0,0,09/09/2026
-5,Dynamo Mickey CF,0,0,0,0,0,0,0,0,09/09/2026
-6,The Dirty Boys,0,0,0,0,0,0,0,0,09/09/2026
-7,Ball FC,0,0,0,0,0,0,0,0,09/09/2026
-8,Finessin FC,0,0,0,0,0,0,0,0,09/09/2026
-9,Borulanta,0,0,0,0,0,0,0,0,09/09/2026
+1,Foireann Peile,1,1,0,0,7,3,4,3,10/09/2026
+2,Saffron Rangers,1,1,0,0,3,1,2,3,10/09/2026
+3,Shamrock Posers,1,1,0,0,3,2,1,3,10/09/2026
+4,The Dirty Boys,1,1,0,0,1,0,1,3,10/09/2026
+5,Brother Man FC,0,0,0,0,0,0,0,0,10/09/2026
+6,Borulanta,1,0,0,1,2,3,-1,0,10/09/2026
+7,Finessin FC,1,0,0,1,0,1,-1,0,10/09/2026
+8,Ball FC,1,0,0,1,1,3,-2,0,10/09/2026
+9,Dynamo Mickey CF,1,0,0,1,3,7,-4,0,10/09/2026
