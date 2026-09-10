@@ -422,6 +422,35 @@ stamps on everything it writes. Keying on whether it has any event on file
 would be wrong in the direction that matters: a synced goalless draw with no
 man of the match has no events and is nonetheless completely recorded.
 
+## The player page
+
+One player at a time, scoped by the season picker: appearances and turnout,
+points per match when playing, goals and man of the match where they are on
+file, a strip showing which matches they played, and the side's record with and
+without them.
+
+That last one is the reason the page exists rather than being a filtered row of
+the attendance table, and it is also the number most likely to be over-read. It
+is shown as two records side by side rather than as one effect, with the gap
+stated in a sentence that says what it is not: a description of how those nights
+went, holding nothing else about the match fixed. The player effects tab is the
+one that holds the rest of the lineup fixed, and the page says so.
+
+An ever-present has no comparison rather than a zero one. `NaN` would print as a
+number and read as "no difference", which is a claim about a player rather than
+an absence of evidence.
+
+Its picker is deliberately not the fee picker. That one offers the active roster
+and ignores seasons, because a balance is a running total; this is a page about
+matches that happened, so it offers whoever turned out in the ticked seasons — a
+player who has left still has a page, and a new signing who has not played yet
+does not. It is seeded from the fee picker when that person is in scope, so
+arriving here usually lands on you, but the two do not track each other
+afterwards: they are answering different questions and are not always offering
+the same names.
+
+## Statistics, continued
+
 Player-effect regressions drop anyone below `MIN_REGRESSION_APPEARANCES`
 (default 3) in the selected window — with only a handful of appearances a
 player cannot be separated from the matches they happened to play in. They stay

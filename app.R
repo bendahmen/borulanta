@@ -1013,6 +1013,152 @@ scorer_card <- card(
     card_body(dataTableOutput("scorers"))
 )
 
+# Player page ----
+
+#' A player's season at a glance: four numbers, then the record behind them.
+player_headline_ui <- function(profile) {
+    stat <- function(label, value, note) {
+        div(
+            class = "match-detail-stat",
+            div(class = "match-detail-label", label),
+            div(class = "match-detail-value", value),
+            div(class = "match-detail-note", note)
+        )
+    }
+
+    div(
+        class = "match-detail-summary",
+        stat(
+            "Appearances", profile$appearances,
+            paste0("of ", profile$matches, " matches")
+        ),
+        stat(
+            "Turnout",
+            if (is.na(profile$attendance_rate)) "\u2014" else paste0(round(profile$attendance_rate * 100), "%"),
+            "share of matches played"
+        ),
+        stat(
+            "Points per match",
+            if (is.na(profile$present$points_per_match)) "\u2014" else format(round(profile$present$points_per_match, 2), nsmall = 2),
+            "when playing"
+        ),
+        # Goals only earn a tile once there is a match they could have been
+        # scored in. Before that the sync has simply not run yet, and a zero
+        # would read as a barren season rather than an empty file.
+        if (profile$covered > 0) {
+            stat(
+                "Goals", profile$goals,
+                paste0(
+                    profile$mom, " man of the match, over ", profile$covered,
+                    " recorded"
+                )
+            )
+        }
+    )
+}
+
+#' The two records side by side, and the gap between them with its caveat.
+#'
+#' Presented as two rows rather than one difference because the difference is
+#' the part that invites over-reading: it compares the nights they turned up
+#' with the nights they did not, and nothing about that holds the rest of the
+#' lineup, the opponent or the squad size fixed.
+with_without_table <- function(profile) {
+    rows <- bind_rows(
+        profile$present %>% mutate(when = "Played"),
+        profile$absent %>% mutate(when = "Missed")
+    )
+
+    datatable(
+        rows %>%
+            transmute(
+                ` ` = when,
+                P = played, W = won, D = drawn, L = lost,
+                GF = goals_for, GA = goals_against,
+                `Pts/match` = round(points_per_match, 2)
+            ),
+        rownames = FALSE,
+        class = "nowrap",
+        options = list(
+            dom = "t", ordering = FALSE, autoWidth = TRUE, scrollX = TRUE
+        )
+    )
+}
+
+differential_note <- function(profile) {
+    if (is.na(profile$differential)) {
+        return(p(
+            class = "table-subtitle",
+            paste(
+                "No comparison to draw: there is no match in the selected",
+                "seasons on the other side of it."
+            )
+        ))
+    }
+
+    direction <- if (profile$differential >= 0) "better" else "worse"
+    p(
+        class = "table-subtitle",
+        paste0(
+            "The side takes ", format(round(abs(profile$differential), 2), nsmall = 2),
+            " points a match ", direction, " with ", profile$player,
+            " than without. That is a description of how those nights went, not ",
+            "of what they did: it holds nothing else about the match fixed. The ",
+            "player effects tab does hold the rest of the lineup fixed."
+        )
+    )
+}
+
+appearance_timeline_plot <- function(profile) {
+    ggplot(profile$timeline, aes(x = date, y = 1, fill = played)) +
+        geom_tile(height = 0.6, width = 5) +
+        scale_fill_manual(
+            values = c(`TRUE` = "#0850AB", `FALSE` = "#dfe3e0"),
+            labels = c(`TRUE` = "Played", `FALSE` = "Missed"),
+            name = NULL
+        ) +
+        scale_y_continuous(breaks = NULL) +
+        labs(x = NULL, y = NULL) +
+        theme_minimal(base_size = 12) +
+        theme(
+            panel.grid = element_blank(),
+            legend.position = "bottom",
+            axis.text.y = element_blank()
+        )
+}
+
+player_page <- tagList(
+    card(
+        class = "table-card",
+        card_header(
+            div(class = "section-tag", "Player"),
+            h2(class = "table-title", "One player at a time"),
+            p(
+                class = "table-subtitle",
+                "Anyone who has turned out in the seasons you have ticked."
+            )
+        ),
+        card_body(
+            div(
+                class = "selection-shell",
+                selectInput("profile_player", "Choose a player", choices = NULL)
+            ),
+            uiOutput("player_headline"),
+            h3(class = "match-lineup-title", "Appearances"),
+            plotOutput("appearance_timeline", height = "140px")
+        )
+    ),
+    card(
+        class = "table-card",
+        card_header(
+            div(class = "section-tag", "With and without"),
+            h2(class = "table-title", "How the side does either way"),
+            uiOutput("differential_note")
+        ),
+        card_body(dataTableOutput("with_without"))
+    )
+)
+
 opponent_record_table <- function(record) {
     datatable(
         record %>%
@@ -1237,6 +1383,15 @@ ui <- page_fluid(
                             "attendance_list"
                         )
                     )
+                ),
+                nav_panel(
+                    "Players",
+                    icon = icon("user"),
+                    conditionalPanel(
+                        "!output.season_has_matches",
+                        empty_season_card("No matches in the selected seasons yet.")
+                    ),
+                    conditionalPanel("output.season_has_matches", player_page)
                 ),
                 nav_panel(
                     "Player effects",
@@ -1587,6 +1742,47 @@ server <- function(input, output, session) {
     output$scorer_coverage <- renderUI({
         scorer_coverage_ui(event_coverage(scoped()$matches))
     })
+
+    # Players ----
+    #
+    # A separate picker from the fee one on purpose. That one offers the active
+    # roster and ignores seasons, because a balance is a running total; this is
+    # a page about matches that happened, so it offers whoever turned out in the
+    # ticked seasons. It is seeded from the fee picker when that person is in
+    # scope, so arriving here usually lands on you, but the two do not track
+    # each other afterwards — they are answering different questions and are not
+    # always even offering the same names.
+    observeEvent(list(scoped()$attendance, selected_fee_player()), {
+        players <- players_in_scope(scoped()$attendance)
+        if (length(players) == 0) {
+            updateSelectInput(session, "profile_player", choices = character(0))
+            return()
+        }
+
+        current <- input$profile_player
+        chosen <- if (isTruthy(current) && current %in% players) {
+            current
+        } else if (isTruthy(selected_fee_player()) && selected_fee_player() %in% players) {
+            selected_fee_player()
+        } else {
+            players[[1]]
+        }
+
+        updateSelectInput(session, "profile_player", choices = players, selected = chosen)
+    }, ignoreNULL = FALSE)
+
+    profile <- reactive({
+        req(has_matches(), input$profile_player)
+        req(input$profile_player %in% players_in_scope(scoped()$attendance))
+        player_profile(
+            input$profile_player, scoped()$attendance, scoped()$matches, scoped()$events
+        )
+    })
+
+    output$player_headline <- renderUI(player_headline_ui(profile()))
+    output$with_without <- renderDT(with_without_table(profile()))
+    output$differential_note <- renderUI(differential_note(profile()))
+    output$appearance_timeline <- renderPlot(appearance_timeline_plot(profile()))
 
     # Attendance ----
     output$attendance_list <- renderDT({

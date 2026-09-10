@@ -479,6 +479,73 @@ next_fixture <- function(fixtures, matches, today = Sys.Date()) {
   upcoming %>% slice(1)
 }
 
+# One player at a time ----
+
+#' Everything the app knows about one player, over the matches in scope.
+#'
+#' The with/without comparison is the reason this exists rather than a filtered
+#' row of the attendance table. It is also the number most likely to be
+#' over-read, so it is reported as two records side by side rather than as a
+#' single effect: the difference between them is not an estimate of anything a
+#' player did, only of how the nights they turned up happened to go.
+#'
+#' Goals and man of the match are counted over the covered matches only, the
+#' same rule the scorer table uses, and the coverage comes back with them so
+#' the card can say what it is out of.
+player_profile <- function(player, attendance, matches, events) {
+  outcomes <- match_outcomes(matches)
+  appearances <- attendance %>% filter(.data$player == .env$player)
+  played_dates <- appearances$date
+
+  record_over <- function(dates) {
+    subset <- outcomes %>% filter(date %in% dates)
+    tibble(
+      played = nrow(subset),
+      won = sum(subset$points == 3),
+      drawn = sum(subset$points == 1),
+      lost = sum(subset$points == 0),
+      goals_for = sum(subset$goals_scored),
+      goals_against = sum(subset$goals_conceded),
+      # NA rather than NaN on an empty set: there is no rate, and NaN prints
+      # as a number that looks like one.
+      points_per_match = if (nrow(subset) > 0) mean(subset$points) else NA_real_
+    )
+  }
+
+  present <- record_over(played_dates)
+  absent <- record_over(setdiff(outcomes$date, played_dates))
+
+  coverage <- event_coverage(matches)
+  ours <- events %>%
+    filter(team == "us", .data$player == .env$player, date %in% coverage$dates)
+
+  list(
+    player = player,
+    matches = nrow(outcomes),
+    appearances = present$played,
+    attendance_rate = if (nrow(outcomes) > 0) present$played / nrow(outcomes) else NA_real_,
+    last_appearance = if (length(played_dates) > 0) max(played_dates) else NA,
+    present = present,
+    absent = absent,
+    differential = present$points_per_match - absent$points_per_match,
+    goals = sum(ours$event_type == "goal"),
+    mom = sum(ours$event_type == "mom"),
+    covered = coverage$observed,
+    timeline = outcomes %>%
+      transmute(date, points, played = date %in% played_dates) %>%
+      arrange(date)
+  )
+}
+
+#' Who the player picker can offer: anyone who turned out in the window.
+#'
+#' Deliberately not the active roster, which is what the fee picker uses. This
+#' is a page about matches that happened, so a player who has since left still
+#' has one and a new signing who has not played yet does not.
+players_in_scope <- function(attendance) {
+  sort(unique(attendance$player))
+}
+
 # Opponents ----
 
 #' Our record against each side we have played, one row per opponent.
