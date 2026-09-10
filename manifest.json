@@ -74,6 +74,39 @@
         "Built": "R 4.5.0; ; 2026-06-17 19:14:16 UTC; unix"
       }
     },
+    "Matrix": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "Matrix",
+        "Version": "1.7-3",
+        "VersionNote": "do also bump src/version.h, inst/include/Matrix/version.h",
+        "Date": "2025-03-05",
+        "Priority": "recommended",
+        "Title": "Sparse and Dense Matrix Classes and Methods",
+        "Description": "A rich hierarchy of sparse and dense matrix classes,\n\tincluding general, symmetric, triangular, and diagonal matrices\n\twith numeric, logical, or pattern entries.  Efficient methods for\n\toperating on such matrices, often wrapping the 'BLAS', 'LAPACK',\n\tand 'SuiteSparse' libraries.",
+        "License": "GPL (>= 2) | file LICENCE",
+        "URL": "https://Matrix.R-forge.R-project.org",
+        "BugReports": "https://R-forge.R-project.org/tracker/?atid=294&group_id=61",
+        "Contact": "Matrix-authors@R-project.org",
+        "Authors@R": "\n\tc(person(\"Douglas\", \"Bates\", role = \"aut\",\n\t         comment = c(ORCID = \"0000-0001-8316-9503\")),\n\t  person(\"Martin\", \"Maechler\", role = c(\"aut\", \"cre\"),\n\t         email = \"mmaechler+Matrix@gmail.com\",\n\t         comment = c(ORCID = \"0000-0002-8685-9910\")),\n\t  person(\"Mikael\", \"Jagan\", role = \"aut\",\n\t         comment = c(ORCID = \"0000-0002-3542-2938\")),\n\t  person(\"Timothy A.\", \"Davis\", role = \"ctb\",\n\t         comment = c(ORCID = \"0000-0001-7614-6899\",\n\t                     \"SuiteSparse libraries\",\n\t                     \"collaborators listed in dir(system.file(\\\"doc\\\", \\\"SuiteSparse\\\", package=\\\"Matrix\\\"), pattern=\\\"License\\\", full.names=TRUE, recursive=TRUE)\")),\n\t  person(\"George\", \"Karypis\", role = \"ctb\",\n\t         comment = c(ORCID = \"0000-0003-2753-1437\",\n\t                     \"METIS library\",\n\t                     \"Copyright: Regents of the University of Minnesota\")),\n\t  person(\"Jason\", \"Riedy\", role = \"ctb\",\n\t         comment = c(ORCID = \"0000-0002-4345-4200\",\n\t                     \"GNU Octave's condest() and onenormest()\",\n\t                     \"Copyright: Regents of the University of California\")),\n\t  person(\"Jens\", \"Oehlschlägel\", role = \"ctb\",\n\t         comment = \"initial nearPD()\"),\n\t  person(\"R Core Team\", role = \"ctb\",\n\t         comment = c(ROR = \"02zz1nj61\", \"base R's matrix implementation\")))",
+        "Depends": "R (>= 4.4), methods",
+        "Imports": "grDevices, graphics, grid, lattice, stats, utils",
+        "Suggests": "MASS, datasets, sfsmisc, tools",
+        "Enhances": "SparseM, graph",
+        "LazyData": "no",
+        "LazyDataNote": "not possible, since we use data/*.R and our S4 classes",
+        "BuildResaveData": "no",
+        "Encoding": "UTF-8",
+        "NeedsCompilation": "yes",
+        "Packaged": "2025-03-05 09:59:22 UTC; maechler",
+        "Author": "Douglas Bates [aut] (<https://orcid.org/0000-0001-8316-9503>),\n  Martin Maechler [aut, cre] (<https://orcid.org/0000-0002-8685-9910>),\n  Mikael Jagan [aut] (<https://orcid.org/0000-0002-3542-2938>),\n  Timothy A. Davis [ctb] (<https://orcid.org/0000-0001-7614-6899>,\n    SuiteSparse libraries, collaborators listed in\n    dir(system.file(\"doc\", \"SuiteSparse\", package=\"Matrix\"),\n    pattern=\"License\", full.names=TRUE, recursive=TRUE)),\n  George Karypis [ctb] (<https://orcid.org/0000-0003-2753-1437>, METIS\n    library, Copyright: Regents of the University of Minnesota),\n  Jason Riedy [ctb] (<https://orcid.org/0000-0002-4345-4200>, GNU\n    Octave's condest() and onenormest(), Copyright: Regents of the\n    University of California),\n  Jens Oehlschlägel [ctb] (initial nearPD()),\n  R Core Team [ctb] (02zz1nj61, base R's matrix implementation)",
+        "Maintainer": "Martin Maechler <mmaechler+Matrix@gmail.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-03-11 07:20:02 UTC",
+        "Built": "R 4.5.1; aarch64-apple-darwin20; 2025-06-14 01:29:52 UTC; unix"
+      }
+    },
     "PKI": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -173,6 +206,43 @@
         "Repository": "RSPM",
         "Date/Publication": "2026-01-10 09:50:02 UTC",
         "Built": "R 4.5.0; x86_64-pc-linux-gnu; 2026-01-31 01:36:13 UTC; unix"
+      }
+    },
+    "RcppEigen": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "RcppEigen",
+        "Type": "Package",
+        "Title": "'Rcpp' Integration for the 'Eigen' Templated Linear Algebra\nLibrary",
+        "Version": "0.3.4.0.2",
+        "Date": "2024-08-23",
+        "Authors@R": "c(person(\"Doug\", \"Bates\", role = \"aut\",\n                    comment = c(ORCID = \"0000-0001-8316-9503\")),\n             person(\"Dirk\", \"Eddelbuettel\", role = c(\"aut\", \"cre\"), email = \"edd@debian.org\",\n                    comment = c(ORCID = \"0000-0001-6419-907X\")),\n             person(\"Romain\", \"Francois\", role = \"aut\",\n                    comment = c(ORCID = \"0000-0002-2444-4226\")),\n             person(\"Yixuan\", \"Qiu\", role = \"aut\",\n                    comment = c(ORCID = \"0000-0003-0109-6692\")),\n             person(\"Authors of\", \"Eigen\", role = \"cph\",\n                    comment = \"Authorship and copyright in included Eigen library as detailed in inst/COPYRIGHTS\"))",
+        "Copyright": "See the file COPYRIGHTS for various Eigen copyright details",
+        "Description": "R and 'Eigen' integration using 'Rcpp'.\n 'Eigen' is a C++ template library for linear algebra: matrices, vectors,\n numerical solvers and related algorithms.  It supports dense and sparse\n matrices on integer, floating point and complex numbers, decompositions of\n such matrices, and solutions of linear systems. Its performance on many\n algorithms is comparable with some of the best implementations based on\n 'Lapack' and level-3 'BLAS'. The 'RcppEigen' package includes the header\n files from the 'Eigen' C++ template library. Thus users do not need to\n install 'Eigen' itself in order to use 'RcppEigen'. Since version 3.1.1,\n 'Eigen' is licensed under the Mozilla Public License (version 2); earlier\n version were licensed under the GNU LGPL version 3 or later. 'RcppEigen'\n (the 'Rcpp' bindings/bridge to 'Eigen') is licensed under the GNU GPL\n version 2 or later, as is the rest of 'Rcpp'.",
+        "License": "GPL (>= 2) | file LICENSE",
+        "LazyLoad": "yes",
+        "Depends": "R (>= 3.6.0)",
+        "LinkingTo": "Rcpp",
+        "Imports": "Rcpp (>= 0.11.0), stats, utils",
+        "Suggests": "Matrix, inline, tinytest, pkgKitten, microbenchmark",
+        "URL": "https://github.com/RcppCore/RcppEigen,\nhttps://dirk.eddelbuettel.com/code/rcpp.eigen.html",
+        "BugReports": "https://github.com/RcppCore/RcppEigen/issues",
+        "NeedsCompilation": "yes",
+        "Packaged": "2024-08-23 18:11:22 UTC; edd",
+        "Author": "Doug Bates [aut] (<https://orcid.org/0000-0001-8316-9503>),\n  Dirk Eddelbuettel [aut, cre] (<https://orcid.org/0000-0001-6419-907X>),\n  Romain Francois [aut] (<https://orcid.org/0000-0002-2444-4226>),\n  Yixuan Qiu [aut] (<https://orcid.org/0000-0003-0109-6692>),\n  Authors of Eigen [cph] (Authorship and copyright in included Eigen\n    library as detailed in inst/COPYRIGHTS)",
+        "Maintainer": "Dirk Eddelbuettel <edd@debian.org>",
+        "Repository": "CRAN",
+        "Date/Publication": "2024-08-24 06:30:02 UTC",
+        "Built": "R 4.5.0; aarch64-apple-darwin20; 2025-03-31 21:46:11 UTC; unix",
+        "Archs": "RcppEigen.so.dSYM",
+        "RemoteType": "standard",
+        "RemoteRef": "RcppEigen",
+        "RemotePkgRef": "RcppEigen",
+        "RemoteRepos": "https://cran.rstudio.com",
+        "RemoteReposName": "CRAN",
+        "RemotePkgPlatform": "aarch64-apple-darwin20",
+        "RemoteSha": "0.3.4.0.2"
       }
     },
     "RcppTOML": {
@@ -631,6 +701,27 @@
         "Repository": "RSPM",
         "Date/Publication": "2022-02-22 00:58:45 UTC",
         "Built": "R 4.5.0; ; 2025-04-06 04:42:33 UTC; unix"
+      }
+    },
+    "codetools": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "codetools",
+        "Version": "0.2-20",
+        "Priority": "recommended",
+        "Author": "Luke Tierney <luke-tierney@uiowa.edu>",
+        "Description": "Code analysis tools for R.",
+        "Title": "Code Analysis Tools for R",
+        "Depends": "R (>= 2.1)",
+        "Maintainer": "Luke Tierney <luke-tierney@uiowa.edu>",
+        "URL": "https://gitlab.com/luke-tierney/codetools",
+        "License": "GPL",
+        "NeedsCompilation": "no",
+        "Packaged": "2024-03-31 18:18:09 UTC; luke",
+        "Repository": "CRAN",
+        "Date/Publication": "2024-03-31 20:10:06 UTC",
+        "Built": "R 4.5.1; ; 2025-06-14 01:29:47 UTC; unix"
       }
     },
     "commonmark": {
@@ -1145,6 +1236,41 @@
         "Built": "R 4.5.0; ; 2025-09-25 06:28:37 UTC; unix"
       }
     },
+    "foreach": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "foreach",
+        "Type": "Package",
+        "Title": "Provides Foreach Looping Construct",
+        "Version": "1.5.2",
+        "Authors@R": "c(person(\"Folashade\", \"Daniel\", role=\"cre\", email=\"fdaniel@microsoft.com\"),\n             person(\"Hong\", \"Ooi\", role=\"ctb\"),\n             person(\"Rich\", \"Calaway\", role=\"ctb\"),\n             person(\"Microsoft\", role=c(\"aut\", \"cph\")),\n             person(\"Steve\", \"Weston\", role=\"aut\"))",
+        "Description": "Support for the foreach looping construct.  Foreach is an\n        idiom that allows for iterating over elements in a collection,\n        without the use of an explicit loop counter.  This package in\n        particular is intended to be used for its return value, rather\n        than for its side effects.  In that sense, it is similar to the\n        standard lapply function, but doesn't require the evaluation\n        of a function.  Using foreach without side effects also\n        facilitates executing the loop in parallel.",
+        "License": "Apache License (== 2.0)",
+        "URL": "https://github.com/RevolutionAnalytics/foreach",
+        "BugReports": "https://github.com/RevolutionAnalytics/foreach/issues",
+        "Depends": "R (>= 2.5.0)",
+        "Imports": "codetools, utils, iterators",
+        "Suggests": "randomForest, doMC, doParallel, testthat, knitr, rmarkdown",
+        "VignetteBuilder": "knitr",
+        "RoxygenNote": "7.1.1",
+        "Collate": "'callCombine.R' 'foreach.R' 'do.R' 'foreach-ext.R'\n'foreach-pkg.R' 'getDoPar.R' 'getDoSeq.R' 'getsyms.R' 'iter.R'\n'nextElem.R' 'onLoad.R' 'setDoPar.R' 'setDoSeq.R' 'times.R'\n'utils.R'",
+        "NeedsCompilation": "no",
+        "Packaged": "2022-01-11 04:21:12 UTC; fdaniel",
+        "Author": "Folashade Daniel [cre],\n  Hong Ooi [ctb],\n  Rich Calaway [ctb],\n  Microsoft [aut, cph],\n  Steve Weston [aut]",
+        "Maintainer": "Folashade Daniel <fdaniel@microsoft.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2022-02-02 09:20:02 UTC",
+        "Built": "R 4.5.0; ; 2025-04-01 06:33:05 UTC; unix",
+        "RemoteType": "standard",
+        "RemoteRef": "foreach",
+        "RemotePkgRef": "foreach",
+        "RemoteRepos": "https://cran.rstudio.com",
+        "RemoteReposName": "CRAN",
+        "RemotePkgPlatform": "aarch64-apple-darwin20",
+        "RemoteSha": "1.5.2"
+      }
+    },
     "fs": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -1295,6 +1421,44 @@
         "Repository": "RSPM",
         "Date/Publication": "2026-03-17 08:30:38 UTC",
         "Built": "R 4.5.0; aarch64-apple-darwin20; 2026-07-28 21:05:22 UTC; unix"
+      }
+    },
+    "glmnet": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "glmnet",
+        "Type": "Package",
+        "Title": "Lasso and Elastic-Net Regularized Generalized Linear Models",
+        "Version": "5.0",
+        "Date": "2026-04-27",
+        "Authors@R": "c(person(\"Jerome\", \"Friedman\", role=c(\"aut\")),\n\t     person(\"Trevor\", \"Hastie\", role=c(\"aut\", \"cre\"), email = \"hastie@stanford.edu\"),\n\t     person(\"Rob\", \"Tibshirani\", role=c(\"aut\")),\n\t     person(\"Balasubramanian\", \"Narasimhan\", role=c(\"aut\")),\n\t     person(\"Kenneth\",\"Tay\",role=c(\"aut\")),\n\t     person(\"Noah\", \"Simon\", role=c(\"aut\")),\n\t     person(\"Junyang\", \"Qian\", role=c(\"ctb\")),\n\t     person(\"James\", \"Yang\", role=c(\"aut\")),\n\t     person(\"Jonathan\",\"Taylor\", role=c(\"aut\")))",
+        "Depends": "R (>= 3.6.0), Matrix (>= 1.0-6)",
+        "Imports": "methods, utils, foreach, shape, survival, Rcpp",
+        "Suggests": "knitr, lars, nnet, testthat, xfun, rmarkdown",
+        "SystemRequirements": "C++17",
+        "Description": "Extremely efficient procedures for fitting the entire lasso or elastic-net regularization path for linear regression, logistic and multinomial regression models, Poisson regression, Cox model,  multiple-response Gaussian, and the grouped multinomial regression; see <doi:10.18637/jss.v033.i01> and <doi:10.18637/jss.v039.i05>. There are two new and important additions. The family argument can be a GLM family object, which opens the door to any programmed family (<doi:10.18637/jss.v106.i01>). This comes with a modest computational cost, so when the built-in families suffice, they should be used instead.  The other novelty is the relax option, which refits each of the active sets in the path unpenalized. The algorithm uses cyclical coordinate descent in a path-wise fashion, as described in the papers cited.",
+        "License": "GPL-2",
+        "VignetteBuilder": "knitr",
+        "Encoding": "UTF-8",
+        "URL": "https://glmnet.stanford.edu",
+        "RoxygenNote": "7.3.3",
+        "LinkingTo": "RcppEigen, Rcpp",
+        "NeedsCompilation": "yes",
+        "Packaged": "2026-04-30 21:22:11 UTC; hastie",
+        "Author": "Jerome Friedman [aut],\n  Trevor Hastie [aut, cre],\n  Rob Tibshirani [aut],\n  Balasubramanian Narasimhan [aut],\n  Kenneth Tay [aut],\n  Noah Simon [aut],\n  Junyang Qian [ctb],\n  James Yang [aut],\n  Jonathan Taylor [aut]",
+        "Maintainer": "Trevor Hastie <hastie@stanford.edu>",
+        "Repository": "CRAN",
+        "Date/Publication": "2026-05-04 05:40:42 UTC",
+        "Built": "R 4.5.2; aarch64-apple-darwin20; 2026-05-04 07:45:44 UTC; unix",
+        "Archs": "glmnet.so.dSYM",
+        "RemoteType": "standard",
+        "RemoteRef": "glmnet",
+        "RemotePkgRef": "glmnet",
+        "RemoteRepos": "https://cran.rstudio.com",
+        "RemoteReposName": "CRAN",
+        "RemotePkgPlatform": "aarch64-apple-darwin20",
+        "RemoteSha": "5.0"
       }
     },
     "glue": {
@@ -1708,6 +1872,36 @@
         "Archs": "isoband.so.dSYM"
       }
     },
+    "iterators": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "iterators",
+        "Type": "Package",
+        "Title": "Provides Iterator Construct",
+        "Version": "1.0.14",
+        "Authors@R": "c(person(\"Folashade\", \"Daniel\", role=\"cre\", email=\"fdaniel@microsoft.com\"),\n             person(\"Revolution\", \"Analytics\", role=c(\"aut\", \"cph\")),\n             person(\"Steve\", \"Weston\", role=\"aut\"))",
+        "Description": "Support for iterators, which allow a programmer to traverse\n    through all the elements of a vector, list, or other collection of data.",
+        "URL": "https://github.com/RevolutionAnalytics/iterators",
+        "Depends": "R (>= 2.5.0), utils",
+        "Suggests": "RUnit, foreach",
+        "License": "Apache License (== 2.0)",
+        "NeedsCompilation": "no",
+        "Packaged": "2022-01-16 18:19:31 UTC; folashade",
+        "Author": "Folashade Daniel [cre],\n  Revolution Analytics [aut, cph],\n  Steve Weston [aut]",
+        "Maintainer": "Folashade Daniel <fdaniel@microsoft.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2022-02-05 00:50:08 UTC",
+        "Built": "R 4.5.0; ; 2025-03-31 21:42:23 UTC; unix",
+        "RemoteType": "standard",
+        "RemoteRef": "iterators",
+        "RemotePkgRef": "iterators",
+        "RemoteRepos": "https://cran.rstudio.com",
+        "RemoteReposName": "CRAN",
+        "RemotePkgPlatform": "aarch64-apple-darwin20",
+        "RemoteSha": "1.0.14"
+      }
+    },
     "jose": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -1871,6 +2065,35 @@
         "Repository": "RSPM",
         "Date/Publication": "2026-01-08 06:11:06 UTC",
         "Built": "R 4.5.0; x86_64-pc-linux-gnu; 2026-01-11 13:59:37 UTC; unix"
+      }
+    },
+    "lattice": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "lattice",
+        "Version": "0.22-7",
+        "Date": "2025-03-31",
+        "Priority": "recommended",
+        "Title": "Trellis Graphics for R",
+        "Authors@R": "c(person(\"Deepayan\", \"Sarkar\", role = c(\"aut\", \"cre\"),\n\t            email = \"deepayan.sarkar@r-project.org\",\n\t\t    comment = c(ORCID = \"0000-0003-4107-1553\")),\n              person(\"Felix\", \"Andrews\", role = \"ctb\"),\n\t      person(\"Kevin\", \"Wright\", role = \"ctb\", comment = \"documentation\"),\n\t      person(\"Neil\", \"Klepeis\", role = \"ctb\"),\n\t      person(\"Johan\", \"Larsson\", role = \"ctb\", comment = \"miscellaneous improvements\"),\n              person(\"Zhijian (Jason)\", \"Wen\", role = \"cph\", comment = \"filled contour code\"),\n              person(\"Paul\", \"Murrell\", role = \"ctb\", email = \"paul@stat.auckland.ac.nz\"),\n\t      person(\"Stefan\", \"Eng\", role = \"ctb\", comment = \"violin plot improvements\"),\n\t      person(\"Achim\", \"Zeileis\", role = \"ctb\", comment = \"modern colors\"),\n              person(\"Alexandre\", \"Courtiol\", role = \"ctb\", comment = \"generics for larrows, lpolygon, lrect and lsegments\")\n\t      )",
+        "Description": "A powerful and elegant high-level data visualization\n  system inspired by Trellis graphics, with an emphasis on\n  multivariate data. Lattice is sufficient for typical graphics needs,\n  and is also flexible enough to handle most nonstandard requirements.\n  See ?Lattice for an introduction.",
+        "Depends": "R (>= 4.0.0)",
+        "Suggests": "KernSmooth, MASS, latticeExtra, colorspace",
+        "Imports": "grid, grDevices, graphics, stats, utils",
+        "Enhances": "chron, zoo",
+        "LazyLoad": "yes",
+        "LazyData": "yes",
+        "License": "GPL (>= 2)",
+        "URL": "https://lattice.r-forge.r-project.org/",
+        "BugReports": "https://github.com/deepayan/lattice/issues",
+        "NeedsCompilation": "yes",
+        "Packaged": "2025-04-02 04:55:57 UTC; deepayan",
+        "Author": "Deepayan Sarkar [aut, cre] (<https://orcid.org/0000-0003-4107-1553>),\n  Felix Andrews [ctb],\n  Kevin Wright [ctb] (documentation),\n  Neil Klepeis [ctb],\n  Johan Larsson [ctb] (miscellaneous improvements),\n  Zhijian (Jason) Wen [cph] (filled contour code),\n  Paul Murrell [ctb],\n  Stefan Eng [ctb] (violin plot improvements),\n  Achim Zeileis [ctb] (modern colors),\n  Alexandre Courtiol [ctb] (generics for larrows, lpolygon, lrect and\n    lsegments)",
+        "Maintainer": "Deepayan Sarkar <deepayan.sarkar@r-project.org>",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-04-02 15:40:02 UTC",
+        "Built": "R 4.5.1; aarch64-apple-darwin20; 2025-06-14 01:29:47 UTC; unix"
       }
     },
     "lazyeval": {
@@ -2971,6 +3194,33 @@
         "Built": "R 4.5.0; ; 2026-06-17 19:21:28 UTC; unix"
       }
     },
+    "shape": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "shape",
+        "Version": "1.4.6.1",
+        "Title": "Functions for Plotting Graphical Shapes, Colors",
+        "Author": "Karline Soetaert <karline.soetaert@nioz.nl>",
+        "Maintainer": "Karline Soetaert <karline.soetaert@nioz.nl>",
+        "Depends": "R (>= 2.01)",
+        "Imports": "stats, graphics, grDevices",
+        "Description": "Functions for plotting graphical shapes\n  such as ellipses, circles, cylinders, arrows, ...",
+        "License": "GPL (>= 3)",
+        "NeedsCompilation": "no",
+        "Packaged": "2024-02-18 12:52:04 UTC; karlines",
+        "Repository": "CRAN",
+        "Date/Publication": "2024-02-23 13:00:02 UTC",
+        "Built": "R 4.5.0; ; 2025-03-31 21:47:51 UTC; unix",
+        "RemoteType": "standard",
+        "RemoteRef": "shape",
+        "RemotePkgRef": "shape",
+        "RemoteRepos": "https://cran.rstudio.com",
+        "RemoteReposName": "CRAN",
+        "RemotePkgPlatform": "aarch64-apple-darwin20",
+        "RemoteSha": "1.4.6.1"
+      }
+    },
     "shiny": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -3117,6 +3367,33 @@
         "Repository": "RSPM",
         "Date/Publication": "2025-11-04 14:00:02 UTC",
         "Built": "R 4.5.0; ; 2026-07-28 21:05:07 UTC; unix"
+      }
+    },
+    "survival": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Title": "Survival Analysis",
+        "Priority": "recommended",
+        "Package": "survival",
+        "Version": "3.8-3",
+        "Date": "2024-12-17",
+        "Depends": "R (>= 3.5.0)",
+        "Imports": "graphics, Matrix, methods, splines, stats, utils",
+        "LazyData": "Yes",
+        "LazyDataCompression": "xz",
+        "ByteCompile": "Yes",
+        "Authors@R": "c(person(c(\"Terry\", \"M\"), \"Therneau\",\n                    email=\"therneau.terry@mayo.edu\",\n\t            role=c(\"aut\", \"cre\")),\n               person(\"Thomas\", \"Lumley\", role=c(\"ctb\", \"trl\"),\n\t       comment=\"original S->R port and R maintainer until 2009\"),\n\t       person(\"Atkinson\", \"Elizabeth\", role=\"ctb\"),\n\t       person(\"Crowson\", \"Cynthia\", role=\"ctb\"))",
+        "Description": "Contains the core survival analysis routines, including\n\t     definition of Surv objects, \n\t     Kaplan-Meier and Aalen-Johansen (multi-state) curves, Cox models,\n\t     and parametric accelerated failure time models.",
+        "License": "LGPL (>= 2)",
+        "URL": "https://github.com/therneau/survival",
+        "NeedsCompilation": "yes",
+        "Packaged": "2024-12-17 16:37:18 UTC; therneau",
+        "Author": "Terry M Therneau [aut, cre],\n  Thomas Lumley [ctb, trl] (original S->R port and R maintainer until\n    2009),\n  Atkinson Elizabeth [ctb],\n  Crowson Cynthia [ctb]",
+        "Maintainer": "Terry M Therneau <therneau.terry@mayo.edu>",
+        "Repository": "CRAN",
+        "Date/Publication": "2024-12-17 20:20:02 UTC",
+        "Built": "R 4.5.1; aarch64-apple-darwin20; 2025-06-14 01:30:21 UTC; unix"
       }
     },
     "sys": {
@@ -3766,7 +4043,7 @@
   },
   "files": {
     "app.R": {
-      "checksum": "93304de1bdae876caef6ac06bdc0f705"
+      "checksum": "383fffdbc58e92c776bccebaf8489a1d"
     },
     "data/archive/charges_s1.csv": {
       "checksum": "1e3817a41325e8d62416e07a0cf34b1a"
@@ -3808,13 +4085,13 @@
       "checksum": "13bbf0d6dd52317b9cdb17b5111a1b65"
     },
     "R/analysis.R": {
-      "checksum": "7253d8aa22d65f222254a61ba5e8d257"
+      "checksum": "cf49a939c10963640ae361de9315dd88"
     },
     "R/data.R": {
       "checksum": "f23c50a20e96a99da7411a3091a4e2f9"
     },
     "R/fees.R": {
-      "checksum": "eece7cf3d845165e544aceddedfc3e7a"
+      "checksum": "c70a829dd1b825cd85204680f4ca95ea"
     },
     "R/scrape.R": {
       "checksum": "09beba447a2a1d1024d215fec5c6a158"
@@ -3826,13 +4103,13 @@
       "checksum": "4ff0da251788c397faa9cb7e92185115"
     },
     "renv.lock": {
-      "checksum": "c247225a2a1ac0396d6749cb81f3ea90"
+      "checksum": "a84b5dfc849ba53e7370b62717e3c857"
     },
     "www/borulanta-crest.png": {
       "checksum": "a0dcb498352f25105daea5d7ced96de3"
     },
     "www/borulanta.css": {
-      "checksum": "6539d0f4cfb7385ee2289a02fe6ed43c"
+      "checksum": "e06d237900dcd46aab9ac59ef41cb8a1"
     }
   },
   "users": null

@@ -451,6 +451,43 @@ the same names.
 
 ## Statistics, continued
 
+### Two estimators
+
+The player-effects tab offers a choice, and the two report different things.
+
+**Raw (OLS)** is the fit that was always there: no intercept, one column per
+player, so a coefficient is that player's additive share of the scoreline, with
+its p-value in brackets.
+
+**Shrunk (ridge)** penalises the player coefficients, pulling each toward the
+average player by an amount inversely proportional to how much is known about
+them — three appearances move a long way, thirty barely move. This is the same
+fix, for the same reason, as regularised adjusted plus-minus in basketball:
+collinear lineups, thin data per player. It fits an intercept and leaves it
+unpenalised, so a coefficient is a deviation from the average player rather than
+a share of the scoreline; without one, shrinking toward zero would mean
+shrinking toward "contributed nothing", and with ten players sharing a four-goal
+total the whole table would be biased downward. The opponent controls are
+unpenalised, and `standardize = FALSE` because glmnet's default would penalise a
+rare player's coefficient *less* than a regular's, which is backwards.
+
+It buys that with the confidence intervals: ridge has no usable analytic
+standard error, so those columns come back `NA`, the error bars leave the
+coefficient plot and the p-value bracket leaves the table.
+
+**The shrunk estimates come out very close to zero, and that is the answer
+rather than a display problem.** The penalty is picked by cross-validation,
+which asks how much of a match the lineup predicts out of sample, and over these
+matches it is almost none — the OLS fit's adjusted R² is about 0.05. The
+ordering still carries something; the magnitudes are telling you not to lean on
+it. The table switches to significant figures under ridge so the ordering stays
+legible instead of rendering as a column of `0.00`.
+
+A player who turned out for every match in the window has an indicator that
+never varies. OLS aliases the column and drops them; glmnet refuses the whole
+fit, so they are removed from the ridge design rather than taking everybody else
+down with them.
+
 Player-effect regressions drop anyone below `MIN_REGRESSION_APPEARANCES`
 (default 3) in the selected window — with only a handful of appearances a
 player cannot be separated from the matches they happened to play in. They stay

@@ -278,13 +278,82 @@ REGRESSION_OUTCOMES <- c(
   "goal_difference"
 )
 
+# Shrinkage ----
+#
+# The OLS fit spends one column per player on 44 matches, so a three-appearance
+# player's coefficient is estimated off three nights and the extremes of the
+# chart are populated by exactly the people we know least about. Ridge pulls
+# every estimate toward the middle by an amount inversely proportional to how
+# much is known about that player: three appearances move a long way, thirty
+# barely move. It is the same fix, for the same reason, as regularised adjusted
+# plus-minus in basketball — collinear lineups, thin data per player.
+#
+# Three settings matter and are easy to get wrong.
+#
+# The intercept is fitted and left unpenalised. Without one, shrinking toward
+# zero means shrinking toward "contributed nothing to the scoreline", and ten
+# players share a four-goal total, so the whole table would be biased downward.
+# With one, the shrinkage target is the average player, which is the comparison
+# anybody reading the chart already has in mind.
+#
+# standardize = FALSE, because glmnet's default penalises on the standardised
+# scale: a rare player has a small standard deviation, so his original-scale
+# coefficient would be penalised *less* than a regular's. That is backwards.
+# On the original scale an equal penalty shrinks the thin players more, which
+# is the entire point.
+#
+# The opponent controls are unpenalised. They are there to be conditioned on,
+# not estimated, and shrinking them would leak opponent quality back into the
+# player coefficients.
+#
+# What it costs is the confidence interval: ridge has no usable analytic
+# standard error, so those columns come back NA and the display drops the parts
+# that depend on them.
+RIDGE_SEED <- 20260910L
+
+#' Ridge coefficients for one outcome, on the same design OLS is given.
+ridge_coefficients <- function(formula, data, penalised) {
+  design <- model.matrix(formula, data = data)
+  design <- design[, colnames(design) != "(Intercept)", drop = FALSE]
+  response <- data[[all.vars(formula)[[1]]]]
+
+  # cv.glmnet picks lambda by k-fold CV, which is random; at n in the dozens it
+  # would otherwise move between page loads on identical data.
+  # Ten folds over a single short season leaves one or two matches in each,
+  # which cv.glmnet complains about and which makes the chosen penalty mostly
+  # noise. Keep at least three matches per fold, and at least three folds.
+  folds <- max(3L, min(10L, nrow(design) %/% 3L))
+
+  withr::with_seed(RIDGE_SEED, {
+    fit <- glmnet::cv.glmnet(
+      x = design, y = response, alpha = 0, nfolds = folds,
+      standardize = FALSE, intercept = TRUE,
+      penalty.factor = as.integer(colnames(design) %in% penalised)
+    )
+    # lambda.min rather than lambda.1se: the 1-SE rule flattens nearly
+    # everything to the intercept at this sample size, which is defensible
+    # inference and a useless chart.
+    coefficients <- as.matrix(stats::coef(fit, s = "lambda.min"))
+  })
+
+  stats::setNames(coefficients[, 1], rownames(coefficients))
+}
+
 #' Match-level regressions of each outcome on player indicators.
 #'
 #' `strength` is the table from `opponent_strength()`; when it is given,
 #' `matches` must carry a `season_id`. Only the player coefficients are
 #' returned — the opponent controls are there to be conditioned on, not read.
+#'
+#' `estimator` picks OLS or ridge. The two report different quantities and the
+#' display says which: without an intercept an OLS coefficient is a player's
+#' additive share of the scoreline, while a ridge coefficient is their deviation
+#' from the average player. The return shape is the same either way, with the
+#' uncertainty columns NA under ridge.
 player_regression_results <- function(attendance, matches, strength = NULL,
-                                      min_appearances = MIN_REGRESSION_APPEARANCES) {
+                                      min_appearances = MIN_REGRESSION_APPEARANCES,
+                                      estimator = c("ols", "ridge")) {
+  estimator <- match.arg(estimator)
   empty_results <- function() {
     tibble(
       player = character(), outcome = character(), estimate = numeric(),
@@ -308,9 +377,49 @@ player_regression_results <- function(attendance, matches, strength = NULL,
   regressors <- c(player_names, opponent_controls(contribution_data))
 
   # With no more matches than regressors the design matrix has no residual
-  # degrees of freedom, so there is nothing to estimate.
-  if (length(player_names) == 0 || nrow(contribution_data) <= length(regressors)) {
+  # degrees of freedom, so OLS has nothing to estimate. Ridge is defined either
+  # way — the penalty is what buys the identification back — so the guard only
+  # applies to the fit that needs it.
+  if (length(player_names) == 0) {
     return(empty_results())
+  }
+  if (estimator == "ols" && nrow(contribution_data) <= length(regressors)) {
+    return(empty_results())
+  }
+
+  if (estimator == "ridge") {
+    # A player who turned out for every match in the window has an indicator
+    # that never varies, so nothing separates them from the intercept. OLS
+    # aliases such a column and reports NA; glmnet refuses the whole fit. Drop
+    # them from the design rather than lose the other players with them — being
+    # ever-present is a plausible thing to be in a single short season.
+    varies <- vapply(
+      player_names,
+      function(name) n_distinct(contribution_data[[name]]) > 1,
+      logical(1)
+    )
+    player_names <- player_names[varies]
+    if (length(player_names) == 0) {
+      return(empty_results())
+    }
+    regressors <- c(player_names, opponent_controls(contribution_data))
+
+    return(purrr::map_dfr(REGRESSION_OUTCOMES, function(outcome) {
+      estimates <- ridge_coefficients(
+        reformulate(regressors, response = outcome, intercept = TRUE),
+        contribution_data,
+        penalised = player_names
+      )
+      tibble(
+        player = names(estimates),
+        outcome = outcome,
+        estimate = unname(estimates),
+        std_error = NA_real_, conf_low = NA_real_, conf_high = NA_real_,
+        p_value = NA_real_
+      ) %>%
+        filter(player %in% player_names)
+    }) %>%
+      left_join(player_appearances, by = "player"))
   }
 
   purrr::map_dfr(REGRESSION_OUTCOMES, function(outcome) {
@@ -359,6 +468,14 @@ opponent_controls <- function(contribution_data) {
 #' One column per outcome rather than two: the p-value is a footnote to the
 #' coefficient, not a number anyone reads on its own.
 format_estimate <- function(estimate, p_value) {
+  # Ridge has no usable analytic standard error, so there is no bracket to
+  # print, and its estimates are small enough that two decimals would render
+  # the whole column as 0.00. Significant figures instead, so the ranking the
+  # penalty produced is still legible.
+  if (all(is.na(p_value))) {
+    return(formatC(estimate, format = "g", digits = 3))
+  }
+
   paste0(
     formatC(estimate, format = "f", digits = 2),
     " [",

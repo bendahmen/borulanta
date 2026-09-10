@@ -655,6 +655,9 @@ attack_defence_plot <- function(regression_results) {
 }
 
 coefficient_plot <- function(regression_results, selected_outcome) {
+    # Ridge returns no interval, so the layer that draws one is left out rather
+    # than handed a column of NA to warn about.
+    has_interval <- !all(is.na(regression_results$conf_low))
     outcome_labels <- c(
         points = "Points",
         goals_scored = "Goals scored",
@@ -669,14 +672,20 @@ coefficient_plot <- function(regression_results, selected_outcome) {
 
     ggplot(plot_data, aes(x = player, y = estimate)) +
         geom_hline(yintercept = 0, color = "#8a938d", linewidth = 0.4) +
-        geom_errorbar(aes(ymin = conf_low, ymax = conf_high), width = 0) +
+        (if (has_interval) {
+            geom_errorbar(aes(ymin = conf_low, ymax = conf_high), width = 0)
+        }) +
         geom_point(color = "#0850AB", size = 2.6) +
         coord_flip() +
         labs(
             x = NULL,
             y = paste0(
                 outcome_labels[[selected_outcome]],
-                " coefficient with 95% confidence interval"
+                if (has_interval) {
+                    " coefficient with 95% confidence interval"
+                } else {
+                    ": deviation from the average player, shrunk"
+                }
             )
         ) +
         theme_minimal(base_size = 12) +
@@ -698,7 +707,8 @@ plot_card_ui <- function(title, subtitle, output_id, height) {
     )
 }
 
-regression_explanation_ui <- function(regression_results, min_appearances, coverage) {
+regression_explanation_ui <- function(regression_results, min_appearances, coverage,
+                                      estimator = "ols") {
     included <- unique(regression_results$player)
 
     opponent_paragraph <- if (coverage$observed == 0) {
@@ -722,7 +732,35 @@ regression_explanation_ui <- function(regression_results, min_appearances, cover
         )
     }
 
-    card_body(
+    estimator_paragraph <- if (estimator == "ridge") {
+        tagList(
+            p(
+                paste0(
+                    "These are ridge estimates. The plain fit spends a column on ",
+                    "each of the ", length(included), " players over a few dozen ",
+                    "matches, so somebody with three appearances is measured off ",
+                    "three nights and lands at whichever extreme those nights ",
+                    "went. Ridge pulls every estimate toward the average player ",
+                    "by an amount inversely proportional to how much is known ",
+                    "about them, so the thin players move a long way and the ",
+                    "regulars barely move. A coefficient here is a deviation from ",
+                    "the average player rather than a share of the scoreline, and ",
+                    "there are no confidence intervals: ridge has no usable ",
+                    "standard error."
+                )
+            ),
+            p(
+                paste(
+                    "The estimates come out very close to zero, and that is the",
+                    "result rather than a display problem. The penalty is chosen",
+                    "by cross-validation, which is asking how much of a match",
+                    "the lineup predicts out of sample, and the answer here is",
+                    "almost none. The ordering still means something; the",
+                    "magnitudes are telling you not to lean on it."
+                )
+            )
+        )
+    } else {
         p(
             paste0(
                 "Each column is a separate match-level regression of that outcome ",
@@ -730,9 +768,14 @@ regression_explanation_ui <- function(regression_results, min_appearances, cover
                 "least ", min_appearances, " appearances in the selected seasons. ",
                 "The coefficient says how the outcome moves when that player is on ",
                 "the pitch, holding the rest of the lineup fixed. The number in ",
-                "brackets is the OLS p-value."
+                "brackets is the OLS p-value, and with this many players a couple ",
+                "below 0.05 is what chance alone produces."
             )
-        ),
+        )
+    }
+
+    card_body(
+        estimator_paragraph,
         p(
             paste(
                 "Anyone below the appearance threshold has no indicator of their",
@@ -743,6 +786,39 @@ regression_explanation_ui <- function(regression_results, min_appearances, cover
         ),
         opponent_paragraph
     )
+}
+
+#' The estimator toggle, above every card it changes.
+#'
+#' Not inside the coefficient-plot card next to the outcome picker, because it
+#' governs all three outputs on the tab. Radio buttons rather than a switch so
+#' the labels can carry what the choice means.
+estimator_control <- div(
+    class = "selection-shell estimator-shell",
+    radioButtons(
+        "regression_estimator",
+        "Estimates",
+        choices = c(
+            "Raw (OLS)" = "ols",
+            "Shrunk toward the average player (ridge)" = "ridge"
+        ),
+        selected = "ols",
+        inline = TRUE
+    )
+)
+
+#' What a coefficient means, which is not the same under both estimators.
+#'
+#' The OLS fit has no intercept, so a coefficient is a player's additive share
+#' of the scoreline. The ridge fit has one, so a coefficient is their deviation
+#' from the average player. Putting both under one heading would be wrong about
+#' one of them.
+estimate_label <- function(estimator) {
+    if (estimator == "ridge") {
+        "Deviation from the average player, shrunk by how little we know."
+    } else {
+        "Coefficient on each outcome, with its p-value in brackets."
+    }
 }
 
 regression_explanation <- card(
@@ -1407,6 +1483,7 @@ ui <- page_fluid(
                     ),
                     conditionalPanel(
                     "output.season_has_regression",
+                    estimator_control,
                     layout_columns(
                         col_widths = c(6, 6),
                         plot_card_ui(
@@ -1440,11 +1517,14 @@ ui <- page_fluid(
                             )
                         )
                     ),
-                    table_card_ui(
-                        "Player effects",
-                        "Player by player",
-                        "Coefficient on each outcome, with its p-value in brackets.",
-                        "player_regressions"
+                    card(
+                        class = "table-card",
+                        card_header(
+                            div(class = "section-tag", "Player effects"),
+                            h2(class = "table-title", "Player by player"),
+                            uiOutput("regression_table_note")
+                        ),
+                        card_body(dataTableOutput("player_regressions"))
                     ),
                     regression_explanation
                     )
@@ -1535,9 +1615,12 @@ server <- function(input, output, session) {
         season_form_data(scoped()$attendance, scoped()$matches)
     })
 
+    estimator <- reactive(input$regression_estimator %||% "ols")
+
     regression_results <- reactive({
         player_regression_results(
-            scoped()$attendance, scoped()$matches, app_data$opponent_strength
+            scoped()$attendance, scoped()$matches, app_data$opponent_strength,
+            estimator = estimator()
         )
     })
 
@@ -1806,11 +1889,16 @@ server <- function(input, output, session) {
         coefficient_plot(regression_results(), input$regression_outcome)
     })
 
+    output$regression_table_note <- renderUI({
+        p(class = "table-subtitle", estimate_label(estimator()))
+    })
+
     output$regression_explanation <- renderUI({
         req(has_regression())
         regression_explanation_ui(
             regression_results(), MIN_REGRESSION_APPEARANCES,
-            opponent_coverage(scoped()$matches, app_data$opponent_strength)
+            opponent_coverage(scoped()$matches, app_data$opponent_strength),
+            estimator()
         )
     })
 

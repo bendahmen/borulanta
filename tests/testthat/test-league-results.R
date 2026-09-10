@@ -303,3 +303,105 @@ test_that("the controls count against the degrees of freedom", {
   expect_gt(nrow(player_regression_results(window$attendance, window$matches, window$strength)), 0)
   expect_equal(nrow(player_regression_results(crowded, window$matches, window$strength)), 0)
 })
+
+# Shrinkage ----
+#
+# Ridge is offered beside OLS on the same tab, so it has to return the same
+# shape and shrink in the direction it claims to.
+
+test_that("ridge returns the same shape as OLS, with no interval", {
+  dates <- as.Date("2026-01-07") + seq(0, 11) * 7
+  attendance <- bind_rows(
+    tibble(date = dates[1:10], player = "Ben"),
+    tibble(date = dates[c(1:6, 9:12)], player = "Vitto"),
+    tibble(date = dates[2:11], player = "Max"),
+    tibble(date = dates[c(1, 3, 5, 7, 8, 10, 12)], player = "Boris")
+  ) %>% mutate(season_id = "s1")
+  matches <- tibble(
+    date = dates,
+    opponent = "Ball FC",
+    goals_for = c(3L, 1L, 2L, 0L, 4L, 1L, 2L, 3L, 1L, 0L, 2L, 1L),
+    goals_against = c(1L, 2L, 2L, 3L, 0L, 1L, 4L, 1L, 0L, 2L, 1L, 3L),
+    dl_match_id = "1", season_id = "s1"
+  )
+
+  ridge <- player_regression_results(attendance, matches, estimator = "ridge")
+
+  expect_setequal(names(ridge), names(player_regression_results(attendance, matches)))
+  expect_true(all(is.na(ridge$conf_low)))
+  expect_true(all(is.na(ridge$p_value)))
+  expect_false(any(is.na(ridge$estimate)))
+})
+
+test_that("ridge pulls the estimates in toward each other", {
+  # The defining property, and the only one that survives the two fits
+  # reporting different quantities: OLS without an intercept gives a share of
+  # the scoreline, ridge with one gives a deviation from the average player, so
+  # a per-player ratio between them is not a shrinkage factor. Dispersion is.
+  dates <- as.Date("2026-01-07") + seq(0, 11) * 7
+  attendance <- bind_rows(
+    tibble(date = dates[-6], player = "Regular"),
+    tibble(date = dates[1:3], player = "Occasional"),
+    tibble(date = dates[1:9], player = "A"),
+    tibble(date = dates[4:12], player = "B"),
+    tibble(date = dates[c(1:4, 8:12)], player = "C")
+  ) %>% mutate(season_id = "s1")
+  matches <- tibble(
+    date = dates, opponent = "Ball FC",
+    goals_for = c(5L, 6L, 7L, 0L, 1L, 0L, 1L, 0L, 1L, 0L, 1L, 0L),
+    goals_against = c(0L, 0L, 0L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L),
+    dl_match_id = "1", season_id = "s1"
+  )
+
+  spread <- function(estimator) {
+    results <- player_regression_results(attendance, matches, estimator = estimator)
+    sd(results$estimate[results$outcome == "goal_difference"])
+  }
+
+  expect_lt(spread("ridge"), spread("ols"))
+})
+
+test_that("an ever-present player does not take the whole fit down with them", {
+  # Their indicator never varies, so nothing separates them from the intercept.
+  # OLS aliases the column; glmnet refuses the entire fit unless it is dropped.
+  dates <- as.Date("2026-01-07") + seq(0, 9) * 7
+  attendance <- bind_rows(
+    tibble(date = dates, player = "EverPresent"),
+    tibble(date = dates[1:6], player = "Ben"),
+    tibble(date = dates[4:10], player = "Vitto"),
+    tibble(date = dates[c(1, 3, 5, 7, 9)], player = "Max")
+  ) %>% mutate(season_id = "s1")
+  matches <- tibble(
+    date = dates, opponent = "Ball FC",
+    goals_for = c(3L, 1L, 2L, 0L, 4L, 1L, 2L, 3L, 1L, 2L),
+    goals_against = c(1L, 2L, 2L, 3L, 0L, 1L, 4L, 1L, 1L, 0L),
+    dl_match_id = "1", season_id = "s1"
+  )
+
+  ridge <- player_regression_results(attendance, matches, estimator = "ridge")
+
+  expect_false("EverPresent" %in% ridge$player)
+  expect_setequal(unique(ridge$player), c("Ben", "Vitto", "Max"))
+})
+
+test_that("ridge is reproducible across calls", {
+  # cv.glmnet picks lambda by random folds; without a fixed seed the chart would
+  # move between page loads on identical data.
+  dates <- as.Date("2026-01-07") + seq(0, 9) * 7
+  attendance <- bind_rows(
+    tibble(date = dates[1:8], player = "Ben"),
+    tibble(date = dates[3:10], player = "Vitto"),
+    tibble(date = dates[c(1, 2, 5, 6, 9, 10)], player = "Max")
+  ) %>% mutate(season_id = "s1")
+  matches <- tibble(
+    date = dates, opponent = "Ball FC",
+    goals_for = c(3L, 1L, 2L, 0L, 4L, 1L, 2L, 3L, 1L, 2L),
+    goals_against = c(1L, 2L, 2L, 3L, 0L, 1L, 4L, 1L, 1L, 0L),
+    dl_match_id = "1", season_id = "s1"
+  )
+
+  first <- player_regression_results(attendance, matches, estimator = "ridge")
+  second <- player_regression_results(attendance, matches, estimator = "ridge")
+
+  expect_equal(first$estimate, second$estimate)
+})
