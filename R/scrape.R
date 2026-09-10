@@ -98,7 +98,8 @@ parse_panel <- function(panel, date) {
 #' Goals and man of the match from one fixture's accordion.
 #'
 #' `side` is "home"/"away" because that is all the page knows; which of those is
-#' us is decided later, once we know which side of the fixture we were on.
+#' us is decided later, once we know which side of the fixture we were on. It is
+#' NA on a man of the match, whose team the page does not record at all.
 parse_panel_events <- function(panel) {
   empty <- tibble(
     side = character(),
@@ -152,7 +153,18 @@ parse_event_row <- function(row) {
   }
 
   tibble(
-    side = if (!is.na(home)) "home" else "away",
+    # A goal is rendered in the column of the side that scored it. A man of the
+    # match is not: the site puts the name in the home column whoever won it,
+    # so the column says nothing and the side is left unknown for
+    # `orient_events()` to work out. Twelve played fixtures across the two
+    # saved pages, every MOM in column one, several of them away players.
+    side = if (event_type == "mom") {
+      NA_character_
+    } else if (!is.na(home)) {
+      "home"
+    } else {
+      "away"
+    },
     minute = minute,
     event_type = event_type,
     player = coalesce(home, away)
@@ -192,8 +204,32 @@ our_fixtures <- function(fixtures, team = OUR_TEAM) {
 orient_events <- function(events, we_are_home) {
   our_side <- if (we_are_home) "home" else "away"
   events %>%
-    mutate(team = if_else(side == our_side, "us", "them")) %>%
+    mutate(
+      side = coalesce(side, scoring_side(player, events)),
+      team = if_else(side == our_side, "us", "them")
+    ) %>%
     select(team, minute, event_type, player)
+}
+
+#' Which side a name scored for in this fixture, or NA if that is not decisive.
+#'
+#' The only thing on the page that ties a man of the match to a team is the goal
+#' list beside it, so a MOM who scored can be placed and one who did not cannot.
+#' A name that scored for both sides is two different people with one first
+#' name, which is the whole reason this is not simply matched against our
+#' roster: crediting our Daniel with a night an opposition Daniel had is exactly
+#' the mistake that would never show up as an error anywhere downstream.
+#'
+#' NA propagates: an unplaceable event ends up on neither team and is left for a
+#' person, rather than landing on ours by default.
+scoring_side <- function(names, events) {
+  scorers <- events %>%
+    filter(event_type == "goal", !is.na(side), !is.na(player)) %>%
+    distinct(player, side) %>%
+    add_count(player) %>%
+    filter(n == 1)
+
+  scorers$side[match(names, scorers$player)]
 }
 
 #' The league's own standings table, as the page renders it.

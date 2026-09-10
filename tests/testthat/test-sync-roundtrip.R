@@ -55,7 +55,8 @@ test_that("a first result can actually be written to the empty files", {
     expect_no_error(write_sync_files(result, match_path, event_path))
 
     expect_equal(nrow(read_match_file(match_path)), 1)
-    expect_equal(nrow(read_event_file(event_path)), 3)
+    # Two of the three goals were ours; the opposition's is not recorded.
+    expect_equal(nrow(read_event_file(event_path)), 2)
   })
 })
 

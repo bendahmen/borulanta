@@ -238,20 +238,25 @@ validate_app_data <- function(data) {
     "match events for an unknown player",
     setdiff(na.omit(data$events$player), data$players$player)
   )
+  # The file holds our own events and nothing else — the sync drops the
+  # opposition's, and their first names collide with ours often enough that a
+  # stray row would be counted as one of ours by every tally in the app rather
+  # than showing up as an error anywhere.
+  complain(
+    "match events for a team other than ours",
+    setdiff(data$events$team, "us")
+  )
 
-  # A goal tally that disagrees with the scoreline means the event log is
-  # partial, and a partial log looks exactly like a complete one to anything
-  # that counts it. Say so rather than let it be totted up as fact.
-  goal_tally <- data$events %>%
-    filter(event_type == "goal") %>%
-    count(date, team) %>%
-    tidyr::pivot_wider(names_from = team, values_from = n, values_fill = 0L)
-  for (side in c("us", "them")) {
-    if (!side %in% names(goal_tally)) goal_tally[[side]] <- 0L
-  }
+  # A goal tally that disagrees with our side of the scoreline means the event
+  # log is partial, and a partial log looks exactly like a complete one to
+  # anything that counts it. Say so rather than let it be totted up as fact.
+  # Only our own side can be checked, since theirs is not recorded.
+  our_goals <- data$events %>%
+    filter(event_type == "goal", team == "us") %>%
+    count(date, name = "logged")
   mismatched <- data$matches %>%
-    inner_join(goal_tally, by = "date") %>%
-    filter(us != goals_for | them != goals_against)
+    inner_join(our_goals, by = "date") %>%
+    filter(logged != goals_for)
   complain(
     "goal events that do not add up to the scoreline",
     format(mismatched$date, "%d/%m/%Y")

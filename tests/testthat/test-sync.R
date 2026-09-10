@@ -76,12 +76,17 @@ test_that("a played match is recorded with its opponent and its goals", {
   expect_equal(out$matches$goals_against, 1L)
   expect_equal(out$matches$dl_match_id, "901")
 
-  expect_equal(nrow(out$events), 3)
-  expect_equal(sum(out$events$team == "us"), 2L)
+  # Two goals of ours, and the opposition's is read but not kept.
+  expect_equal(nrow(out$events), 2)
+  expect_true(all(out$events$team == "us"))
+  expect_setequal(out$events$player, c("Felix", "Ferg"))
   expect_equal(nrow(out$report$new), 1)
 })
 
-test_that("scorer names are mapped for us and left alone for them", {
+test_that("the opposition's scorers are dropped, name collision and all", {
+  # Both sides had a Felix. Ours is Vitto on the roster; theirs is a different
+  # person entirely, and keeping his goal would either rename him into our squad
+  # or leave a name in the file that nothing in the app can account for.
   scraped <- fixture(
     "2026-06-10", goals_for = 1, goals_against = 1,
     events = goals(c("us", "12", "Felix"), c("them", "20", "Felix"))
@@ -90,10 +95,9 @@ test_that("scorer names are mapped for us and left alone for them", {
 
   out <- run(scraped, names = names)
 
-  expect_equal(out$events$player[out$events$team == "us"], "Vitto")
-  # The opposition's Felix is a different person and not on our roster; renaming
-  # him would put a phantom appearance in the app.
-  expect_equal(out$events$player[out$events$team == "them"], "Felix")
+  expect_equal(nrow(out$events), 1)
+  expect_equal(out$events$team, "us")
+  expect_equal(out$events$player, "Vitto")
 })
 
 # Refusing to record ----
@@ -247,6 +251,75 @@ test_that("running twice replaces the events rather than doubling them", {
   expect_equal(nrow(twice$report$new), 0)
 })
 
+# Man of the match ----
+#
+# The page does not say which team won it, so the sync places him off the goal
+# list beside him or not at all. See R/scrape.R for how that is worked out;
+# these are about what the sync then does with the answer.
+
+#' A fixture with a man of the match already placed on a side by the scrape.
+with_mom <- function(team, player = "Felix", ...) {
+  fixture(..., events = bind_rows(
+    goals(c("us", "12", "Felix")),
+    tibble(team = team, minute = NA_integer_, event_type = "mom", player = player)
+  ))
+}
+
+test_that("a man of the match of ours is recorded", {
+  out <- run(with_mom("us", "Felix", date = "2026-06-10", goals_for = 1))
+
+  mom <- out$events %>% filter(event_type == "mom")
+  expect_equal(mom$player, "Felix")
+  expect_equal(mom$team, "us")
+})
+
+test_that("a man of the match of theirs is recorded for nobody", {
+  out <- run(with_mom("them", "Andy", date = "2026-06-10", goals_for = 1))
+
+  expect_equal(nrow(out$events %>% filter(event_type == "mom")), 0)
+})
+
+test_that("a man of the match of theirs clears one we wrongly hold", {
+  # The state the old parser left behind: it read every MOM as the home team's,
+  # so an away win put an opposition player in our file. A re-run has to take
+  # him back out, not merely stop adding him.
+  wrong <- no_events() %>% add_row(
+    date = as.Date("2026-06-10"), dl_match_id = "900", team = "us",
+    minute = NA_integer_, event_type = "mom", player = "Andy"
+  )
+
+  out <- run(with_mom("them", "Andy", date = "2026-06-10", goals_for = 1), events = wrong)
+
+  expect_equal(nrow(out$events %>% filter(event_type == "mom")), 0)
+})
+
+test_that("an unplaceable man of the match is reported and left to a person", {
+  scraped <- with_mom(NA_character_, "Ciaran", date = "2026-06-10", goals_for = 1)
+
+  out <- run(scraped)
+
+  expect_equal(nrow(out$events %>% filter(event_type == "mom")), 0)
+  expect_equal(out$report$unattributed_mom$player, "Ciaran")
+  expect_equal(out$report$unattributed_mom$opponent, "Ball FC")
+})
+
+test_that("a man of the match entered by hand survives the next sync", {
+  # The whole point of not writing an unplaceable one: if the sync went on
+  # rewriting the date's MOM rows regardless, the answer would be wiped every
+  # Wednesday and there would be no way to record it at all.
+  scraped <- with_mom(NA_character_, "Ciaran", date = "2026-06-10", goals_for = 1)
+  once <- run(scraped)
+  by_hand <- once$events %>% add_row(
+    date = as.Date("2026-06-10"), dl_match_id = "900", team = "us",
+    minute = NA_integer_, event_type = "mom", player = "Vitto"
+  )
+
+  twice <- run(scraped, matches = once$matches, events = by_hand)
+
+  mom <- twice$events %>% filter(event_type == "mom")
+  expect_equal(mom$player, "Vitto")
+})
+
 test_that("a correction on the site takes effect on the next run", {
   first <- run(fixture(
     "2026-06-10", goals_for = 1, goals_against = 0,
@@ -369,16 +442,16 @@ test_that("a real page of played matches syncs into empty files", {
   expect_equal(out$matches$goals_for, c(8L, 2L, 2L, 3L))
   expect_equal(out$matches$goals_against, c(1L, 3L, 1L, 0L))
 
-  # Every goal in every match came through, on the right side of it.
+  # Every goal of ours came through, and none of theirs — though the miscount
+  # check still counts both sides off the page, which is why it stays quiet.
   our_goals <- out$events %>% filter(event_type == "goal", team == "us")
-  their_goals <- out$events %>% filter(event_type == "goal", team == "them")
   expect_equal(nrow(our_goals), sum(out$matches$goals_for))
-  expect_equal(nrow(their_goals), sum(out$matches$goals_against))
+  expect_true(all(out$events$team == "us"))
   expect_equal(nrow(out$report$miscounted), 0)
 
-  # ...and our scorers are named as we name them, theirs as the site does.
+  # ...and our scorers are named as we name them.
   expect_true("Fergus" %in% our_goals$player)
-  expect_false("Fergus" %in% their_goals$player)
+  expect_false("Ferg" %in% our_goals$player)
 })
 
 test_that("re-syncing the same real page is a no-op", {

@@ -168,6 +168,23 @@ test_that("the fixture snapshot keeps every fixture and drops the scores", {
   expect_false(any(c("goals_for", "goals_against") %in% names(snapshot$fixtures)))
 })
 
+test_that("a fixture whose result is recorded drops off the list", {
+  # The page keeps the fixture up all season with the score written into it.
+  # Once the result is in matches.csv the fixture is history, and writing it
+  # back would have the app filtering it out on every page that reads the file.
+  fixtures <- tibble(
+    date = as.Date(c("2026-09-09", "2026-09-16")),
+    dl_match_id = c("96094", "96099"),
+    opponent = c("Shamrock Posers", "Brother Man FC"),
+    goals_for = c(2L, 0L), goals_against = c(3L, 0L)
+  )
+
+  snapshot <- snapshot_tables(fixtures, empty_standings(), as.Date("2026-09-10"),
+                              recorded = as.Date("2026-09-09"))
+
+  expect_equal(snapshot$fixtures$date, as.Date("2026-09-16"))
+})
+
 test_that("the standings snapshot is dated and ordered by position", {
   standings <- tibble(
     position = c(2L, 1L), team = c("Borulanta", "Ball FC"),

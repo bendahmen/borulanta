@@ -22,7 +22,8 @@
 #'
 #' Rows of these kinds are rewritten from the site for any date it accepts, so
 #' fixing a name mapping and re-running repairs history. Anything else in
-#' match_events.csv — hand-recorded assists, say — is left alone.
+#' match_events.csv — hand-recorded assists, say — is left alone. So is a man of
+#' the match the page would not let us attribute; see `settled_event_kinds()`.
 SYNCED_EVENT_TYPES <- c("goal", "mom")
 
 #' Reconcile scraped fixtures against the existing files.
@@ -74,11 +75,10 @@ sync_results <- function(fixtures, matches, events, seasons, name_map,
   # branch exists to prevent.
   accepted <- decided %>% filter(action != "conflict")
   writing <- decided %>% filter(action %in% c("new", "enrich"))
+  recorded <- playable %>% filter(date %in% accepted$date)
 
   updated_matches <- apply_match_changes(matches, writing)
-  updated_events <- apply_event_changes(
-    events, playable %>% filter(date %in% accepted$date), name_map
-  )
+  updated_events <- apply_event_changes(events, recorded, name_map)
 
   report <- list(
     new = decided %>% filter(action == "new"),
@@ -89,7 +89,14 @@ sync_results <- function(fixtures, matches, events, seasons, name_map,
     refused = classified %>% filter(disposition %in% c("no_season", "closed_season")),
     miscounted = classified %>%
       filter(disposition == "playable", goal_events > 0,
-             goal_events != goals_for + goals_against)
+             goal_events != goals_for + goals_against),
+    # A man of the match nobody scored, so nothing on the page says which team
+    # won it. Reported rather than guessed at; whatever the file already holds
+    # for that date is left alone, so an answer entered by hand survives.
+    unattributed_mom = scraped_events(recorded) %>%
+      filter(event_type == "mom", is.na(team)) %>%
+      left_join(recorded %>% select(date, opponent), by = "date") %>%
+      select(date, opponent, player)
   )
 
   list(
@@ -316,27 +323,72 @@ apply_match_changes <- function(matches, writing) {
     arrange(date)
 }
 
+#' Every event on the page for the dates the sync accepted, ours and theirs.
+#'
+#' Split out because the reconciliation needs to look at the opposition's rows
+#' even though it never writes them: an opposition goal is what places a man of
+#' the match, and what makes the miscount check worth anything.
+scraped_events <- function(accepted) {
+  empty <- tibble(
+    date = as.Date(character()), dl_match_id = character(), team = character(),
+    minute = integer(), event_type = character(), player = character()
+  )
+  if (nrow(accepted) == 0) {
+    return(empty)
+  }
+
+  accepted %>%
+    select(date, dl_match_id, events) %>%
+    tidyr::unnest(events) %>%
+    select(any_of(names(empty)))
+}
+
+#' The event kinds the page has settled for each accepted date.
+#'
+#' Not simply every kind the sync produces. Goals are settled by the fixture
+#' being accepted at all: the scoreline is the site's and the goals are read off
+#' the same panel, so an accepted date's goal list is the site's to replace,
+#' including replacing it with nothing when we failed to score.
+#'
+#' A man of the match is settled only when we could tell whose it was. The page
+#' does not say, so an award that cannot be placed against the goal list leaves
+#' whatever is on file alone — which is what makes hand-entering one stick
+#' across the next sync instead of being wiped every week.
+settled_event_kinds <- function(accepted, scraped) {
+  bind_rows(
+    accepted %>% transmute(date, event_type = "goal"),
+    scraped %>%
+      filter(event_type == "mom", !is.na(team)) %>%
+      distinct(date, event_type)
+  )
+}
+
 #' Rewrite the site-derived events for every date the sync accepted.
 #'
 #' Events are a projection of the page rather than an accumulation, so an
-#' accepted date has its goal and MOM rows replaced outright. That is what makes
-#' a correction on the site, or a newly added name mapping, take effect on a
+#' accepted date has its settled rows replaced outright. That is what makes a
+#' correction on the site, or a newly added name mapping, take effect on a
 #' re-run instead of appending a second copy. Event kinds the sync does not
-#' produce, and dates it did not accept, are left exactly as they are — right
-#' down to their order, since a file nobody is changing should come back
-#' identical rather than merely equivalent.
+#' produce, kinds the page did not settle, and dates it did not accept are left
+#' exactly as they are — right down to their order, since a file nobody is
+#' changing should come back identical rather than merely equivalent.
+#'
+#' Only our own side is written. The page carries the opposition's scorers too
+#' and the reconciliation reads them, but they are nobody we field, they share
+#' first names with people we do field, and every count in the app is a count of
+#' our own players — so they are not part of the record.
 apply_event_changes <- function(events, accepted, name_map) {
   if (nrow(accepted) == 0) {
     return(events)
   }
 
+  scraped <- scraped_events(accepted)
   kept <- events %>%
-    filter(!(date %in% accepted$date & event_type %in% SYNCED_EVENT_TYPES))
+    anti_join(settled_event_kinds(accepted, scraped), by = c("date", "event_type"))
 
-  fresh <- accepted %>%
-    select(date, dl_match_id, events) %>%
-    tidyr::unnest(events) %>%
-    mutate(player = map_player_names(player, team, name_map)) %>%
+  fresh <- scraped %>%
+    filter(team == "us") %>%
+    mutate(player = map_player_names(player, name_map)) %>%
     select(date, dl_match_id, team, minute, event_type, player) %>%
     as_event_table()
 
@@ -347,16 +399,15 @@ apply_event_changes <- function(events, accepted, name_map) {
 #' Translate the site's first names into our player names.
 #'
 #' The site records "Felix"; the roster says whatever we call him. Only our own
-#' side is mapped — the opposition's names are kept verbatim, because they are
-#' not our players and exist only so a goal tally reconciles with the score. An
-#' unmapped name of ours is left as it came, so nothing is lost and the sync has
-#' something to report.
-map_player_names <- function(player, team, name_map) {
+#' events reach this, so a name is ours by construction rather than by looking
+#' like one of ours. An unmapped name is left as it came, so nothing is lost and
+#' the sync has something to report.
+map_player_names <- function(player, name_map) {
   if (is.null(name_map) || nrow(name_map) == 0) {
     return(player)
   }
   mapped <- name_map$player[match(player, name_map$site_name)]
-  if_else(team == "us" & !is.na(mapped), mapped, player)
+  coalesce(mapped, player)
 }
 
 #' Write both files back in the shape the rest of the project reads them.
@@ -371,7 +422,7 @@ empty_report <- function() {
   blank <- tibble(date = as.Date(character()))
   list(
     new = blank, enriched = blank, unchanged = blank, conflicting = blank,
-    pending = blank, refused = blank, miscounted = blank
+    pending = blank, refused = blank, miscounted = blank, unattributed_mom = blank
   )
 }
 
@@ -398,12 +449,19 @@ empty_report <- function() {
 #' @param scraped_on the date the page was fetched, recorded so the app can say
 #'   how stale the standings are — they age between syncs, and a table nobody
 #'   can date is a table nobody can distrust
-snapshot_tables <- function(fixtures, league_table, scraped_on = Sys.Date()) {
+#' @param recorded dates that already carry a result, dropped from the fixture
+#'   list. The page keeps a fixture up all season with the score written into
+#'   it; once the result is in matches.csv the fixture is history, and leaving
+#'   it here would have every sync write a file the app then has to filter and
+#'   validate_app_data() reports as stale.
+snapshot_tables <- function(fixtures, league_table, scraped_on = Sys.Date(),
+                            recorded = as.Date(character())) {
   list(
     # No score here, deliberately. matches.csv is the only source of truth for
     # results; this is a list of dates and who we are down to play on them.
     fixtures = fixtures %>%
       as_fixture_table() %>%
+      filter(!date %in% recorded) %>%
       transmute(date, opponent, dl_match_id) %>%
       arrange(date),
     league_table = league_table %>%

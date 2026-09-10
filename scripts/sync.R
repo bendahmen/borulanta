@@ -106,6 +106,13 @@ describe(
   "Goals logged do not add up to the score — the event list is partial",
   report$miscounted, c("date", "opponent", "goals_for", "goals_against", "goal_events")
 )
+describe(
+  paste(
+    "Man of the match not recorded — they did not score, so the page does not",
+    "say whose it was. Add it to data/match_events.csv by hand if it was ours"
+  ),
+  report$unattributed_mom, c("date", "opponent", "player")
+)
 
 # A scorer of ours who is neither a player we know nor a name we translate.
 # Most of the squad go by the same first name on the site, so only the ones that
@@ -128,11 +135,12 @@ if (length(unrecognised) > 0) {
 # league season only, so they are replaced wholesale every run. That is also
 # why they are written even when no result changed — the standings move when
 # any team plays, not just when we do.
-snapshot <- snapshot_tables(fixtures, league_table, scraped_on = Sys.Date())
+snapshot <- snapshot_tables(fixtures, league_table,
+                            scraped_on = Sys.Date(), recorded = result$matches$date)
 upcoming <- snapshot$fixtures %>% filter(date >= Sys.Date())
 
 rule("Fixtures and league table")
-cat(nrow(snapshot$fixtures), " fixtures of ours on the page, ",
+cat(nrow(fixtures), " fixtures of ours on the page, ",
     nrow(upcoming), " still to play.\n", sep = "")
 if (nrow(upcoming) > 0) {
   cat("Next: ", format(upcoming$date[[1]], "%d/%m/%Y"), " v ",

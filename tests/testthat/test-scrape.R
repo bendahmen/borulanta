@@ -73,6 +73,59 @@ test_that("our fixtures are oriented to us whichever side we were listed on", {
   expect_equal(sum(away_goals$team == "them"), 3L)
 })
 
+# Man of the match ----
+#
+# The site renders the winner's name in the home column of every fixture,
+# whichever team he plays for, so the column is not evidence and the only thing
+# tying him to a side is the goal list above him.
+
+test_that("the man of the match parses with no side of his own", {
+  events <- bind_rows(parse_fixtures(fixture_html("hoxton-played.html"))$events)
+
+  expect_true(all(is.na(events$side[events$event_type == "mom"])))
+  expect_false(any(is.na(events$side[events$event_type == "goal"])))
+})
+
+test_that("a man of the match who scored is put on the side he scored for", {
+  ours <- our_fixtures(
+    parse_fixtures(fixture_html("hoxton-played.html")),
+    team = "Hackney Hedgehogs"
+  )
+
+  # 22 Jul, at home: Ferg won it and scored twice for us.
+  won_by_us <- ours %>%
+    filter(date == as.Date("2026-07-22")) %>%
+    pull(events) %>%
+    first() %>%
+    filter(event_type == "mom")
+  expect_equal(won_by_us$player, "Ferg")
+  expect_equal(won_by_us$team, "us")
+
+  # 29 Jul, away: Harry won it and scored twice for AFC Cognizant. The site
+  # still put him in the home column, which on that fixture was theirs anyway —
+  # the point is that the goal list is what decided it.
+  won_by_them <- ours %>%
+    filter(date == as.Date("2026-07-29")) %>%
+    pull(events) %>%
+    first() %>%
+    filter(event_type == "mom")
+  expect_equal(won_by_them$player, "Harry")
+  expect_equal(won_by_them$team, "them")
+})
+
+test_that("a name that scored for both teams decides nothing", {
+  both <- tibble(
+    side = c("home", "away", NA),
+    minute = c(20L, 25L, NA),
+    event_type = c("goal", "goal", "mom"),
+    player = c("Felix", "Felix", "Felix")
+  )
+
+  oriented <- orient_events(both, we_are_home = TRUE)
+
+  expect_equal(oriented$team, c("us", "them", NA))
+})
+
 test_that("a bye week produces no fixture rather than an empty one", {
   # Nine teams and four pitches means one team sits out each week; ours is out
   # in week 3 of the fixture list.
@@ -100,7 +153,8 @@ test_that("a team that is not in the league yields no fixtures, not an error", {
 
 # A page assembled by hand, so a shape neither saved fixture happens to contain
 # can be exercised: an icon rendered without a src.
-minimal_page <- function(mom_icon = '<img src="/content/images/icons/icon-medal-blue.svg">') {
+minimal_page <- function(mom_icon = '<img src="/content/images/icons/icon-medal-blue.svg">',
+                         mom_player = "Ben") {
   paste0('
 <div class="tab-content section-fixtures">
   <div class="accordion-leagues">
@@ -132,7 +186,7 @@ minimal_page <- function(mom_icon = '<img src="/content/images/icons/icon-medal-
             <div class="icon-info"><i>', mom_icon, '</i></div>
           </div>
           <div class="team-info">
-            <div class="team-1-wrapper">Ben</div>
+            <div class="team-1-wrapper">', mom_player, '</div>
             <div class="team-wrapper"></div>
             <div class="team-2-wrapper"></div>
           </div>
@@ -161,6 +215,17 @@ test_that("an icon rendered without a src does not kill the parse", {
   expect_equal(sum(events$event_type == "goal"), 1L)
   # The medal icon is gone, so the row is recognised by its label instead.
   expect_equal(sum(events$event_type == "mom"), 1L)
+})
+
+test_that("a man of the match who did not score is left on neither side", {
+  # Nothing on the page says whose he is, and guessing from the roster is how
+  # an opposition player with one of our first names gets credited with a night
+  # he had against us.
+  events <- parse_fixtures(minimal_page(mom_player = "Ciaran"))$events[[1]]
+  oriented <- orient_events(events, we_are_home = TRUE)
+
+  expect_equal(oriented$team[oriented$event_type == "mom"], NA_character_)
+  expect_equal(oriented$team[oriented$event_type == "goal"], "us")
 })
 
 # The league table ----
