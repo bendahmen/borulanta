@@ -611,17 +611,35 @@ tr.rank-top3 > td {
   font-weight: 600;
 }
 
-/* The league table is shown whole — nine rows, no paging — so the card has to
-   grow to fit it. bslib makes a card body a flex item with overflow:auto, and
-   DT's scrollX wraps the table in its own scroll container, whose height a
-   flex parent reads as zero: the card settles on an arbitrary height and
-   scrolls the rest out of sight. Taking this one body out of the flex context
-   lets it size to its content again. The other tables page, so they fit
-   whatever height they are given and never hit this. */
+/* Every card here has to grow to fit what is in it, and by default none of
+   them does. A card body is a column flex container, and bslib gives the
+   htmlwidget inside it `flex: 1 1 400px` with `min-height: 0` — so the table
+   sits at its 400px flex basis no matter how tall its content is, and the card
+   settles on 437px and scrolls the rest out of sight inside a page that is
+   already scrolling. Every result put 2784px of table in that box.
+
+   Taking the body out of the flex context is the fix, because it is the flex
+   basis doing this: as a block, the widget is height:auto and sizes to its
+   rows. overflow:visible is not enough on its own — it restores the automatic
+   minimum size, which a plain tall child obeys and a flex-basis does not, so
+   it fixes a probe and leaves the real table clipped.
+
+   This once covered the league table only, on the reasoning that the other
+   tables page and so fit whatever height they are given. They do not — six of
+   them show every row they hold, and even the two that page overflow 437px —
+   so it covers all of them. */
+.table-card > .card-body,
 .league-table-card > .card-body {
   display: block;
   overflow: visible;
-  flex: 0 0 auto;
+}
+
+/* display:block costs bslib's flex gap, which is what spaced the bodies
+   holding a picker, a summary and a table one under another. Same spacing,
+   put back as a margin. */
+.table-card > .card-body > * + *,
+.league-table-card > .card-body > * + * {
+  margin-top: var(--bslib-spacer, 1rem);
 }
 
 /* Our row in the league table. Same trick as .rank-top3 above: Bootstrap 5
@@ -653,8 +671,20 @@ tr.is-us > td {
 
   .nav-pill-shell .nav {
     display: grid;
-    /* Five tabs: two columns would strand one on a row of its own. */
+    /* Five tabs: Home takes a row, the other four sit two by two. A sixth
+       stranded one of them on a row of its own. */
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Level with the SEASONS heading rather than under the pills, and out of
+     flow, so saying the picker is unused costs the hero no height. The hero
+     is held tight here and this caption is on the tab the app opens on. */
+  .season-inert {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 0;
+    font-size: 0.62rem;
   }
 
   .nav-pill-shell .nav .nav-item:first-child {
@@ -802,6 +832,28 @@ tr.is-us > td {
   line-height: 1.3;
   opacity: 0.72;
   white-space: nowrap;
+}
+
+/* The picker on a tab that does not read it — Home and Fees, both of which
+   are all of time on purpose. It says so under the pills and they go quiet.
+   Dimmed rather than hidden or disabled: the boxes still tick, so the scope
+   can be set here and carried to a tab that uses it, and a control that
+   vanishes on two tabs is harder to understand than one that explains itself.
+   The strapline says this too, and the phone layout hides the strapline. */
+.season-inert {
+  margin-top: 0.5rem;
+  text-align: right;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.season-shell:has(.shiny-conditional--shown) .control-label,
+.season-shell:has(.shiny-conditional--shown) .shiny-options-group {
+  opacity: 0.45;
+  transition: opacity 0.15s ease;
 }
 
 /* On a phone the header has to earn its space: crest beside the title, no

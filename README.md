@@ -5,22 +5,43 @@ Shiny app tracking fees, results and attendance for the Wednesday football game.
 ## Layout
 
 ```
-app.R                   UI, plot/table builders, server wiring
+app.R                   the ui, the server, and nothing else
 R/seasons.R             season definitions and filtering
 R/fees.R                fee rule sets and the charge engine
 R/analysis.R            match/player statistics (season-agnostic)
 R/data.R                CSV loading, season tagging, validation
+R/format.R              money, dates, badges — shared scraps of presentation
+R/plots.R               every ggplot, each taking an already-filtered frame
+R/tables.R              every DT, and the only place display naming happens
+R/cards.R               the bslib cards the ui is assembled from
+R/_disable_autoload.R   stops Shiny sourcing R/ before app.R runs; see below
 R/scrape.R              reading the league page
 R/sync.R                reconciling a scrape with the files
 scripts/                the sync runner, its commit-and-push wrapper, and the manifest writer
 manifest.json           what Connect Cloud installs and ships; generated, not hand-edited
-tests/testthat/         parser and sync tests, run against saved pages
+tests/testthat/         parser, sync, table and picker tests
 data/                   the source of truth, all hand-editable CSVs
 data/fixtures.csv       ⤷ except these two, which the sync replaces wholesale
 data/league_table.csv   ⤷ and which describe only the current league season
 data/league_results.csv ⤷ and this one, every league result, which the sync accumulates
 data/archive/           frozen ledgers for closed seasons
 ```
+
+The presentation layer is in `R/` rather than in `app.R` so it can be tested
+the same way the statistics are: a plot builder takes a frame and returns a
+plot, a table builder takes a frame and returns a widget, and neither knows
+that Shiny exists. What is left in `app.R` is the two things that genuinely
+have to be there — how the cards are arranged into tabs, and what is wired to
+what.
+
+**`R/_disable_autoload.R` has to ship, and has to exist.** Shiny sources every
+file in `R/` automatically before a line of `app.R` runs, which is before its
+`library()` calls: `R/cards.R` builds its cards at load time and cannot see
+bslib yet. That file's presence turns the autoloading off. `app.R` sources all
+of `R/` itself, in an order that matters — `R/seasons.R` needs
+`parse_match_date()` from `R/fees.R` — and always did, which is why the
+autoloading went unnoticed for so long. It was quietly sourcing every file a
+second time, harmlessly, back when they only defined functions.
 
 ## Weekly routine
 
@@ -199,20 +220,24 @@ seasons in `seasons.csv`, which are the windows the app scopes a regression to.
 
 ### Opponents
 
-The Matches tab carries two views built on the opponent. **Head to head** is
-our record against each side, ranked on points per match rather than total
-points because we have met some of them twice as often as others and the totals
-would rank on that instead of on how the games went. Matches from before the
-sync have no opponent recorded and are dropped rather than pooled into an
-"unknown" row: each is a different side, and one row averaging all of them
-describes nobody. A window made only of those says so instead of showing an
-empty table.
+Two views are built on the opponent, on different tabs. **Head to head**, on
+Matches, is our record against each side, ranked on points per match rather
+than total points because we have met some of them twice as often as others and
+the totals would rank on that instead of on how the games went. Matches from
+before the sync have no opponent recorded and are dropped rather than pooled
+into an "unknown" row: each is a different side, and one row averaging all of
+them describes nobody. A window made only of those says so instead of showing
+an empty table.
 
 **Run-in** is every fixture still to come with where that side sits in the
-standings. Like the home page it ignores the season picker, and for the same
-reason the snapshot files exist at all: the fixture list and the standings
-describe the current *league* season, which is not a fee season and has no
-business being filtered by one. An opponent the standings do not carry keeps
+standings, and it is on the **home page**, with the next match and the league
+table it is made of. It sat on Matches once and had to excuse itself in its own
+subtitle for ignoring the season picker, which is the tell that it was in the
+wrong place: the fixture list and the standings describe the current *league*
+season, which is not a fee season and has no business being filtered by one —
+the same reason the snapshot files exist at all. On the home page nothing takes
+the picker, so there is nothing to excuse, and Matches is now uniformly
+season-scoped. An opponent the standings do not carry keeps
 its row with those columns empty, because the fixture is still a fixture and
 dropping it would quietly shorten the run-in.
 
@@ -315,11 +340,21 @@ from the matches played rather than from the nominal boundaries.
 | `status` | `open` or `closed`, for reference |
 
 Every match, attendance row and payment is tagged with its season at load time.
-The tick boxes in the app header scope the **results and statistics** tabs, and
-any combination can be in scope at once — tick one season, a few, or all of them
-to pool them. Every season starts ticked, so the default view is all-time.
+The tick boxes in the app header scope **Matches, Players and Player effects**,
+and any combination can be in scope at once — tick one season, a few, or all of
+them to pool them. Every season starts ticked, so the default view is all-time.
 Ticking nothing puts nothing in scope, and each tab says so rather than showing
 zeros.
+
+On Home and Fees the tick boxes do nothing, and the header says so: they dim
+and a caption under them reads "Not used on this tab". The strapline says this
+too, but the phone layout hides the strapline — so on the screen where the
+picker is hardest to ignore, and on the tab the app opens on, it was
+unexplained. They are dimmed rather than hidden or disabled: a control that
+disappears on two tabs is harder to understand than one that explains itself,
+and the boxes still tick, so the scope can be set here and carried to a tab
+that reads it. `SEASON_SCOPED_TABS` in `app.R` is the list, and it is the only
+place the answer is written down.
 
 The Fees tab and the home page deliberately ignore the picker; Fees always
 covers all time. A
@@ -422,12 +457,21 @@ stamps on everything it writes. Keying on whether it has any event on file
 would be wrong in the direction that matters: a synced goalless draw with no
 man of the match has no events and is nonetheless completely recorded.
 
-## The player page
+## The Players tab
 
-One player at a time, scoped by the season picker: appearances and turnout,
-points per match when playing, goals and man of the match where they are on
-file, a strip showing which matches they played, and the side's record with and
-without them.
+Two views of one subject, stacked: **Who turns up** is the whole roster —
+turnout, points per match, goals for and against — and the page under it is one
+row of that table opened up.
+
+They used to be separate tabs, which made two destinations out of one question
+and left the player page with a dropdown for a picker. Now the table *is* the
+picker: click a row, read the player. The card below names whoever is selected,
+so the two never disagree about who is being shown.
+
+The page itself is one player at a time, scoped by the season picker:
+appearances and turnout, points per match when playing, goals and man of the
+match where they are on file, a strip showing which matches they played, and
+the side's record with and without them.
 
 That last one is the reason the page exists rather than being a filtered row of
 the attendance table, and it is also the number most likely to be over-read. It
@@ -442,12 +486,19 @@ an absence of evidence.
 
 Its picker is deliberately not the fee picker. That one offers the active roster
 and ignores seasons, because a balance is a running total; this is a page about
-matches that happened, so it offers whoever turned out in the ticked seasons — a
+matches that happened, so it lists whoever turned out in the ticked seasons — a
 player who has left still has a page, and a new signing who has not played yet
-does not. It is seeded from the fee picker when that person is in scope, so
-arriving here usually lands on you, but the two do not track each other
-afterwards: they are answering different questions and are not always offering
-the same names.
+does not. The table opens on the fee picker's person where they turned out, so
+arriving here usually lands on you, and on whoever turns up most where they did
+not. The two do not track each other afterwards: they are answering different
+questions and are not always offering the same names.
+
+The opening row is given to the table rather than sent to it afterwards through
+a `dataTableProxy`. A proxy message can arrive before the table it is addressed
+to exists and then never fire again, because nothing has changed to make it;
+seeded at render, the highlighted row and the page below it agree by
+construction. The same goes for the match picker on the Matches tab, which
+opens on the newest result.
 
 ## Statistics, continued
 
@@ -492,6 +543,28 @@ Player-effect regressions drop anyone below `MIN_REGRESSION_APPEARANCES`
 (default 3) in the selected window — with only a handful of appearances a
 player cannot be separated from the matches they happened to play in. They stay
 in attendance and every other statistic.
+
+## Tables
+
+Two things about the DTs are worth knowing, because both were live bugs and
+both fail silently rather than loudly.
+
+**A table with `dom = "t"` draws no pager, so its page length is the only thing
+between the data and a silent truncation.** DT's default is 10. The lineup card
+was on that default and the biggest squad on file is exactly 10, so the
+eleventh player to turn up would have vanished with nothing on screen to say
+so. `every_row()` in `R/tables.R` is the page length for anything that shows
+everything, and `tests/testthat/test-tables.R` holds it there.
+
+**A card body does not grow to fit its table unless it is told to.** bslib
+gives it `overflow: auto`, which sets the flex item's automatic minimum size to
+zero and so lets it shrink below its own content; the card settles on an
+arbitrary height — 437px, in practice — and scrolls the rest out of sight
+*inside* a page that is already scrolling. Every result put 2784px of table in
+that box. The stylesheet restores `overflow: visible` on every `.table-card`
+body, which restores the minimum size with it, and that alone is the fix.
+Nothing in the stylesheet can touch the flex properties: bslib writes
+`flex: 1 1 auto` as an inline style on every card body.
 
 ## Data checks
 

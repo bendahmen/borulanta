@@ -97,17 +97,21 @@ player_summary <- function(attendance, matches) {
     mutate(attendance_rate = appearances / n_matches)
 }
 
+#' Turnout and how those nights went, one row per player, best turnout first.
+#'
+#' The rate stays a proportion here and is scaled where it is displayed; the
+#' rounding is display too, but it happens here because the sort above depends
+#' on the unrounded rate and nothing downstream should have to know that.
 create_attendance_list <- function(attendance, matches) {
   player_summary(attendance, matches) %>%
     arrange(desc(attendance_rate)) %>%
     transmute(
-      Player = player,
-      `% Games Played` = attendance_rate * 100,
-      `Avg points` = avg_points,
-      `Avg goals scored` = avg_goals_scored,
-      `Avg goals conceded` = avg_goals_conceded
-    ) %>%
-    mutate(across(where(is.numeric), ~ round(.x, 2)))
+      player,
+      attendance_rate,
+      avg_points = round(avg_points, 2),
+      avg_goals_scored = round(avg_goals_scored, 2),
+      avg_goals_conceded = round(avg_goals_conceded, 2)
+    )
 }
 
 # Goals and man of the match ----
@@ -652,15 +656,6 @@ player_profile <- function(player, attendance, matches, events) {
       transmute(date, points, played = date %in% played_dates) %>%
       arrange(date)
   )
-}
-
-#' Who the player picker can offer: anyone who turned out in the window.
-#'
-#' Deliberately not the active roster, which is what the fee picker uses. This
-#' is a page about matches that happened, so a player who has since left still
-#' has one and a new signing who has not played yet does not.
-players_in_scope <- function(attendance) {
-  sort(unique(attendance$player))
 }
 
 # Opponents ----

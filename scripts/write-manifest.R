@@ -23,10 +23,15 @@ suppressPackageStartupMessages(library(rsconnect))
 # version from the lockfile, and without it falls back to scanning the code and
 # resolving against whatever happens to be installed. Same answer today, but
 # only the first is a guarantee.
+# R/scrape.R and R/sync.R are the sync's, not the app's: app.R never sources
+# them, and the deployment could not run them anyway — the league page returns
+# 403 to anything that is not a home connection. Everything else in R/ ships,
+# R/_disable_autoload.R very much included: without it Shiny sources all of R/
+# before app.R runs its library() calls, and R/cards.R dies on the first card().
 app_files <- c(
   "app.R",
   "renv.lock",
-  list.files("R", full.names = TRUE),
+  setdiff(list.files("R", full.names = TRUE), c("R/scrape.R", "R/sync.R")),
   list.files("data", recursive = TRUE, full.names = TRUE),
   list.files("www", full.names = TRUE)
 )

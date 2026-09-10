@@ -302,7 +302,7 @@ player_match_charges <- function(player, charges, seasons = NULL) {
       season = season_label,
       result,
       played,
-      `Squad size` = squad_size,
+      squad_size,
       charge,
       explanation
     )

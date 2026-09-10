@@ -92,9 +92,17 @@ test_that("the timeline marks every match played or missed", {
 })
 
 test_that("the picker offers whoever turned out, not the roster", {
+  # The roster table is the picker now, so this is the rule it has to keep:
+  # anyone who played in the window is on it, whether or not they are still on
+  # the fee roster, and a signing who has not played yet is not.
+  matches <- with_result(tibble(
+    date = as.Date(c("2026-01-07", "2026-01-14")),
+    opponent = NA_character_, goals_for = 2L, goals_against = 1L,
+    dl_match_id = NA_character_
+  ))
   attendance <- bind_rows(
     turnout("2026-01-07", c("Vitto", "Ben")), turnout("2026-01-14", "Ben")
   )
 
-  expect_equal(players_in_scope(attendance), c("Ben", "Vitto"))
+  expect_setequal(create_attendance_list(attendance, matches)$player, c("Ben", "Vitto"))
 })

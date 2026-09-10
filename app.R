@@ -4,11 +4,21 @@ library(tidyverse)
 library(DT)
 library(glue)
 
-# R/fees.R defines parse_match_date(), which R/seasons.R needs at load time.
+# The data layer first: R/fees.R defines parse_match_date(), which R/seasons.R
+# needs at load time. Then the presentation layer, which reads constants from
+# it — R/tables.R wants REGRESSION_TABLE_COLUMNS out of R/analysis.R.
+#
+# R/cards.R builds some of its cards eagerly rather than as functions, so it is
+# sourced after the helpers they call and before the ui below that holds them.
+# None of it touches app_data, which is why the load can come after.
 source("R/fees.R")
 source("R/seasons.R")
 source("R/analysis.R")
 source("R/data.R")
+source("R/format.R")
+source("R/plots.R")
+source("R/tables.R")
+source("R/cards.R")
 
 # Read and validate every CSV once per process, not once per visitor.
 app_data <- load_app_data()
@@ -32,1317 +42,6 @@ app_theme <- bs_theme(
         "sans-serif"
     ),
     code_font = font_collection("SFMono-Regular", "Menlo", "monospace")
-)
-
-# The fee cards appear on both Home and Fees, so they are built rather than
-# stored: Shiny needs a unique id per input, and the same card in two places
-# would give two selectInputs the same one. The Fees tab keeps the original ids
-# and the home page gets its own; the server keeps the two pickers on the same
-# person, so switching on one tab carries to the other.
-fee_panel_ui <- function(input_id, output_id) {
-    card(
-        class = "panel-card",
-        card_body(
-            div(class = "section-tag", "Fee Check"),
-            div(
-                class = "selection-shell",
-                selectInput(input_id, "Choose your name", choices = NULL)
-            ),
-            div(class = "fee-label", "Current balance"),
-            uiOutput(output_id),
-            div(
-                class = "fee-footnote",
-                paste(
-                    "Every season you have played, charged under the fee rules in",
-                    "force at the time, less what you have paid."
-                )
-            )
-        )
-    )
-}
-
-payment_panel_ui <- function() {
-    card(
-        class = "payment-card",
-        card_body(
-            div(class = "section-tag", "Settle Up"),
-            p(
-                class = "payment-copy",
-                "Balances move when I record the transfer, not when you send it."
-            ),
-            tags$a(
-                href = "https://monzo.me/benjamindahmen8?h=Njfjz9",
-                target = "_blank",
-                class = "payment-button",
-                "Pay via Monzo"
-            ),
-            div(
-                class = "account-panel",
-                div(class = "account-title", "Bank transfer details"),
-                p(class = "account-detail", "Account Number: 94456363"),
-                p(class = "account-detail", "Sort Code: 04-00-03"),
-                p(class = "account-detail", "Name: Benjamin Dahmen")
-            )
-        )
-    )
-}
-
-format_fee_amount <- function(amount) {
-    sign <- if (amount < 0) "-" else ""
-    paste0(sign, "£", formatC(abs(amount), format = "f", digits = 2))
-}
-
-# Home page cards ----
-
-#' "Wed 19 Aug 2026" — the weekday earns its place on a game that is always
-#' on a Wednesday, because a fixture that is not is worth noticing.
-format_match_date <- function(date) format(date, "%a %d %b %Y")
-
-# Freshness ----
-#
-# The CSVs are bundled into the deployment, so the app is only ever as fresh as
-# the last sync that was committed and deployed. Nothing on the page shows that:
-# a stale countdown looks exactly like a live one, and reads more confidently
-# than the results tabs it sits above. So the dates that bound the data are
-# stated outright rather than left to be inferred from it.
-
-#' Where the numbers came from and when, as one line under the strapline.
-#'
-#' Either half is dropped rather than rendered empty, so a checkout with no
-#' league table on file says only what it knows.
-#'
-#' Both a full and a short wording are emitted and the stylesheet picks one.
-#' The full line wraps to two on a phone, and the hero is the one part of this
-#' layout that is held to a fixed height there; the scrape date alone is the
-#' half worth keeping, because it is what the countdown beneath it depends on.
-#' Whichever is hidden is display:none, so it leaves the accessibility tree too
-#' and nothing is read out twice.
-freshness_note <- function(matches, league_table) {
-    last_result <- if (nrow(matches) > 0) {
-        paste("Results to", format(max(matches$date), "%d %b %Y"))
-    }
-    last_read <- if (nrow(league_table) > 0) {
-        format(max(league_table$scraped_on), "%d %b %Y")
-    }
-
-    if (is.null(last_result) && is.null(last_read)) {
-        return(NULL)
-    }
-
-    full <- paste(
-        c(last_result, if (!is.null(last_read)) paste("league page read", last_read)),
-        collapse = " \u00b7 "
-    )
-    short <- if (!is.null(last_read)) paste("Page read", last_read) else last_result
-
-    div(
-        class = "hero-freshness",
-        span(class = "freshness-full", full),
-        span(class = "freshness-short", short)
-    )
-}
-
-# A match week without a sync. The game is weekly and the sync runs after it,
-# so a fixture list older than this has missed at least one.
-STALE_FIXTURES_DAYS <- 8L
-
-#' A warning on the countdown when the fixture list behind it has gone stale.
-#'
-#' Only when it has: a provenance line on every visit is noise, and this is the
-#' one card that keeps counting down confidently while going wrong. The league
-#' table's scrape date stands in for the fixture list's own, which it does not
-#' have — both are snapshot files the same sync run replaces wholesale.
-stale_fixture_note <- function(scraped_on, today) {
-    if (length(scraped_on) == 0) {
-        return(NULL)
-    }
-
-    last_read <- max(scraped_on)
-    if (is.na(last_read) || as.integer(today - last_read) <= STALE_FIXTURES_DAYS) {
-        return(NULL)
-    }
-
-    div(
-        class = "home-stale",
-        paste0(
-            "The fixture list was last read on ", format(last_read, "%d %b"),
-            ", so this may be out of date."
-        )
-    )
-}
-
-#' Data problems on the page, rather than in a log nobody opens.
-#'
-#' validate_app_data() warns at startup, which reaches the console or the
-#' deployment log — exactly where it will not be seen. Quiet by design: these
-#' are notes to whoever maintains the CSVs rather than errors a reader can act
-#' on, and the panel is absent entirely when there is nothing wrong.
-data_health_banner <- function(problems) {
-    if (length(problems) == 0) {
-        return(NULL)
-    }
-
-    div(
-        class = "data-health",
-        div(class = "data-health-title", "Data check"),
-        tags$ul(class = "data-health-list", lapply(problems, tags$li))
-    )
-}
-
-result_badge <- function(points) {
-    label <- case_when(points == 3 ~ "WIN", points == 1 ~ "DRAW", TRUE ~ "LOSS")
-    class <- case_when(points == 3 ~ "win", points == 1 ~ "draw", TRUE ~ "loss")
-    span(class = paste("result-badge", class), label)
-}
-
-#' A comma list that reads like a sentence, with a tally where there is one.
-listed_scorers <- function(scorers) {
-    paste(
-        if_else(scorers$goals > 1, paste0(scorers$player, " (", scorers$goals, ")"), scorers$player),
-        collapse = ", "
-    )
-}
-
-#' The last result, with as much of the detail as we happen to hold.
-#'
-#' Opponent, scorers and man of the match all came in with the sync, so nothing
-#' played before it exists has any of them. Each is therefore dropped from the
-#' card rather than rendered blank: a line reading "Scorers: —" on every match
-#' in the archive is worse than no line.
-last_match_card_ui <- function(summary, seasons) {
-    if (is.null(summary)) {
-        return(card(
-            class = "home-card",
-            card_body(
-                div(class = "section-tag", "Last match"),
-                div(class = "empty-state", "No matches recorded yet.")
-            )
-        ))
-    }
-
-    played <- summary$match
-    season_label <- seasons$label[match(played$season_id, seasons$season_id)]
-
-    detail_line <- function(label, value) {
-        div(class = "home-detail", span(class = "home-detail-label", label), span(value))
-    }
-
-    card(
-        class = "home-card",
-        card_body(
-            div(class = "section-tag", "Last match"),
-            div(
-                class = "home-scoreline",
-                span(class = "home-score", played$result),
-                result_badge(played$points)
-            ),
-            div(
-                class = "home-card-meta",
-                paste(
-                    c(
-                        format_match_date(played$date),
-                        if (!is.na(played$opponent)) paste("v", played$opponent),
-                        if (!is.na(season_label)) season_label
-                    ),
-                    collapse = " \u00b7 "
-                )
-            ),
-            div(
-                class = "home-details",
-                detail_line("Squad", paste(summary$squad_size, "players")),
-                if (nrow(summary$scorers) > 0) {
-                    detail_line("Scorers", listed_scorers(summary$scorers))
-                },
-                if (!is.na(summary$mom)) detail_line("Man of the match", summary$mom)
-            )
-        )
-    )
-}
-
-#' The next fixture, or an honest note about why there is not one.
-#'
-#' The two empty cases are different and worth separating: a fixture list that
-#' has run out means the season is done or the sync is overdue, while no file at
-#' all means the sync has not run since fixtures started being recorded.
-next_match_card_ui <- function(fixture, have_fixtures, scraped_on = NULL,
-                               today = Sys.Date()) {
-    if (is.null(fixture)) {
-        return(card(
-            class = "home-card",
-            card_body(
-                div(class = "section-tag", "Next match"),
-                div(
-                    class = "empty-state",
-                    if (have_fixtures) {
-                        "No fixtures left on the league page. Run the sync once the new season is up."
-                    } else {
-                        "No fixture list yet — run the sync to pull one in."
-                    }
-                )
-            )
-        ))
-    }
-
-    days_away <- as.integer(fixture$date - today)
-    when <- case_when(
-        days_away == 0 ~ "Tonight",
-        days_away == 1 ~ "Tomorrow",
-        TRUE ~ paste("In", days_away, "days")
-    )
-
-    card(
-        class = "home-card",
-        card_body(
-            div(class = "section-tag", "Next match"),
-            div(class = if (days_away == 0) "home-when is-today" else "home-when", when),
-            div(class = "home-opponent", coalesce(fixture$opponent, "Opponent to be confirmed")),
-            div(class = "home-card-meta", format_match_date(fixture$date)),
-            stale_fixture_note(scraped_on, today)
-        )
-    )
-}
-
-#' The league standings, trimmed to what fits and with our row picked out.
-#'
-#' Goals for and against are dropped: this is context on a landing page, not
-#' the Matches tab, and goal difference carries the same information in one
-#' column. The scrape date is on the card because the table ages between syncs
-#' and a stale table that cannot be dated is a stale table nobody questions.
-league_table_ui <- function(league_table) {
-    if (nrow(league_table) == 0) {
-        return(card(
-            class = "table-card league-table-card",
-            card_body(
-                div(class = "section-tag", "League table"),
-                div(class = "empty-state", "No league table yet — run the sync to pull one in.")
-            )
-        ))
-    }
-
-    card(
-        class = "table-card league-table-card",
-        card_header(
-            div(class = "section-tag", "League table"),
-            h2(class = "table-title", "Where we sit"),
-            p(
-                class = "table-subtitle",
-                paste(
-                    "From the league's own page, as it stood on",
-                    format(max(league_table$scraped_on), "%d %B %Y.")
-                )
-            )
-        ),
-        card_body(dataTableOutput("league_table"))
-    )
-}
-
-league_table_table <- function(league_table) {
-    datatable(
-        league_table %>%
-            transmute(
-                Pos = position,
-                Team = team,
-                P = played, W = won, D = drawn, L = lost,
-                GD = goal_difference,
-                Pts = points
-            ),
-        rownames = FALSE,
-        class = "nowrap",
-        options = list(
-            dom = "t",
-            pageLength = nrow(league_table),
-            ordering = FALSE,
-            autoWidth = TRUE,
-            scrollX = TRUE,
-            rowCallback = JS(
-                "function(row, data) {",
-                sprintf("  if (data[1] === %s) { $(row).addClass('is-us'); }", jsonlite::toJSON(OUR_TEAM, auto_unbox = TRUE)),
-                "}"
-            )
-        )
-    )
-}
-
-fee_overview_summary <- function(overview) {
-    balance_label <- case_when(
-        overview$balance > 0 ~ "Still owed",
-        overview$balance < 0 ~ "Credit",
-        TRUE ~ "Settled"
-    )
-
-    div(
-        class = "fee-overview-summary",
-        div(
-            class = "fee-overview-stat",
-            div(class = "fee-overview-label", "Match charges"),
-            div(class = "fee-overview-value", format_fee_amount(overview$total_charges))
-        ),
-        div(
-            class = "fee-overview-stat",
-            div(class = "fee-overview-label", "Payments recorded"),
-            div(class = "fee-overview-value", format_fee_amount(overview$total_payments))
-        ),
-        div(
-            class = "fee-overview-stat",
-            div(class = "fee-overview-label", balance_label),
-            div(class = "fee-overview-value", format_fee_amount(overview$balance))
-        )
-    )
-}
-
-match_charge_table <- function(match_charges) {
-    table_data <- match_charges %>%
-        transmute(
-            Date = format(date, "%d %b %Y"),
-            Season = season,
-            Result = result,
-            `Played?` = if_else(played, "Yes", "No"),
-            `Squad size` = `Squad size`,
-            Charge = charge,
-            Explanation = explanation
-        )
-
-    datatable(
-        table_data,
-        rownames = FALSE,
-        class = "nowrap",
-        options = list(
-            dom = "tip",
-            pageLength = 12,
-            ordering = FALSE,
-            autoWidth = TRUE,
-            scrollX = TRUE
-        )
-    ) %>%
-        formatCurrency(columns = "Charge", currency = "£", digits = 2)
-}
-
-payment_history_table <- function(payment_history) {
-    table_data <- payment_history %>%
-        transmute(
-            Date = format(date, "%d %b %Y"),
-            Payment = amount
-        )
-
-    datatable(
-        table_data,
-        rownames = FALSE,
-        class = "nowrap",
-        options = list(
-            dom = "t",
-            ordering = FALSE,
-            autoWidth = TRUE,
-            scrollX = TRUE,
-            language = list(emptyTable = "No payments recorded yet.")
-        )
-    ) %>%
-        formatCurrency(columns = "Payment", currency = "£", digits = 2)
-}
-
-#' Everyone's balance at once, for the person actually chasing the money.
-#'
-#' Outstanding and credit are shown apart rather than netted: the net is what
-#' the pot is short, but a credit belongs to somebody who cannot be asked for
-#' money they have already paid, so it is not an offset against what is owed.
-balance_totals_ui <- function(totals) {
-    div(
-        class = "fee-overview-summary",
-        div(
-            class = "fee-overview-stat",
-            div(class = "fee-overview-label", "Still owed"),
-            div(class = "fee-overview-value", format_fee_amount(totals$outstanding))
-        ),
-        div(
-            class = "fee-overview-stat",
-            div(class = "fee-overview-label", "In credit"),
-            div(class = "fee-overview-value", format_fee_amount(totals$credit))
-        ),
-        div(
-            class = "fee-overview-stat",
-            div(class = "fee-overview-label", "Settled up"),
-            div(class = "fee-overview-value", totals$settled)
-        )
-    )
-}
-
-balance_table <- function(balances) {
-    table_data <- balances %>%
-        transmute(
-            Player = player,
-            Charges = charges,
-            Payments = payments,
-            `Last payment` = if_else(
-                is.na(last_payment), "\u2014", format(last_payment, "%d %b %Y")
-            ),
-            Balance = balance
-        )
-
-    datatable(
-        table_data,
-        rownames = FALSE,
-        class = "nowrap",
-        options = list(
-            dom = "t",
-            pageLength = nrow(table_data),
-            ordering = FALSE,
-            autoWidth = TRUE,
-            scrollX = TRUE,
-            language = list(emptyTable = "Nobody has been charged anything yet."),
-            # Picked out by row rather than by a badge in the cell: it is the
-            # person that is owed or owing, not the number.
-            rowCallback = JS(
-                "function(row, data) {",
-                "  var balance = parseFloat(data[4]);",
-                "  if (balance > 0) { $(row).addClass('is-owed'); }",
-                "  if (balance < 0) { $(row).addClass('is-credit'); }",
-                "}"
-            )
-        )
-    ) %>%
-        formatCurrency(columns = c("Charges", "Payments", "Balance"), currency = "\u00a3", digits = 2)
-}
-
-everyone_panel <- card(
-    class = "table-card",
-    card_header(
-        div(class = "section-tag", "Everyone"),
-        h2(class = "table-title", "Who is square and who is not"),
-        p(
-            class = "table-subtitle",
-            paste(
-                "All seasons, same rules as your own balance. Rows in amber owe",
-                "something; rows in green are owed."
-            )
-        )
-    ),
-    card_body(
-        uiOutput("balance_totals"),
-        dataTableOutput("all_balances")
-    )
-)
-
-fee_history_panel <- tagList(
-    card(
-        class = "table-card",
-        card_header(
-            div(class = "section-tag", "Payment history"),
-            h2(class = "table-title", "How your balance is calculated"),
-            p(
-                class = "table-subtitle",
-                "All seasons, each match charged under the rules in force at the time."
-            )
-        ),
-        card_body(uiOutput("fee_overview_summary"))
-    ),
-    card(
-        class = "table-card",
-        card_header(
-            div(class = "section-tag", "Charges"),
-            h2(class = "table-title", "Match-by-match charges"),
-            p(
-                class = "fee-history-note",
-                "Shares are rounded to the penny here. The totals above are not."
-            )
-        ),
-        card_body(dataTableOutput("match_charges"))
-    ),
-    card(
-        class = "table-card",
-        card_header(
-            div(class = "section-tag", "Payments"),
-            h2(class = "table-title", "Payments made")
-        ),
-        card_body(dataTableOutput("payment_history"))
-    )
-)
-
-#' A table in a card, headed the way every other card here is headed: a short
-#' category kicker above a descriptive title. They are separate arguments
-#' because they say different things — passing one value for both prints it
-#' twice, stacked.
-table_card_ui <- function(tag, title, subtitle, output_id) {
-    card(
-        class = "table-card",
-        card_header(
-            div(class = "section-tag", tag),
-            h2(class = "table-title", title),
-            p(class = "table-subtitle", subtitle)
-        ),
-        card_body(
-            dataTableOutput(output_id)
-        )
-    )
-}
-
-regression_table <- function(regression_results) {
-    # DT counts from zero, and only over the data columns because rownames are
-    # off. Each visible outcome column is told to sort on its hidden partner.
-    column_index <- function(name) match(name, names(regression_results)) - 1L
-    # unname(), because a named columnDefs list is not valid DataTables options.
-    visible <- unname(vapply(names(REGRESSION_TABLE_COLUMNS), column_index, integer(1)))
-    hidden <- unname(vapply(unname(REGRESSION_TABLE_COLUMNS), column_index, integer(1)))
-
-    datatable(
-        regression_results,
-        rownames = FALSE,
-        class = "nowrap",
-        options = list(
-            dom = "tip",
-            pageLength = 25,
-            order = list(list(1, "desc")),
-            autoWidth = TRUE,
-            scrollX = TRUE,
-            columnDefs = c(
-                list(list(targets = hidden, visible = FALSE)),
-                purrr::map2(
-                    visible, hidden,
-                    ~ list(targets = .x, orderData = .y, className = "dt-right")
-                )
-            )
-        )
-    )
-}
-
-attack_defence_plot <- function(regression_results) {
-    plot_data <- regression_results %>%
-        filter(outcome %in% c("goals_scored", "goals_conceded", "goal_difference")) %>%
-        select(player, appearances, outcome, estimate) %>%
-        pivot_wider(names_from = outcome, values_from = estimate) %>%
-        mutate(defensive_effect = -goals_conceded)
-
-    ggplot(
-        plot_data,
-        aes(x = goals_scored, y = defensive_effect, size = appearances, color = goal_difference)
-    ) +
-        geom_vline(xintercept = 0, color = "#8a938d", linewidth = 0.4) +
-        geom_hline(yintercept = 0, color = "#8a938d", linewidth = 0.4) +
-        geom_point(alpha = 0.8) +
-        ggrepel::geom_label_repel(
-            aes(label = player),
-            seed = 20260820,
-            size = 3.2,
-            fontface = "bold",
-            fill = "white",
-            color = "#16241f",
-            label.size = 0.2,
-            box.padding = 0.45,
-            point.padding = 0.3,
-            min.segment.length = 0,
-            max.overlaps = Inf,
-            show.legend = FALSE
-        ) +
-        scale_color_gradient2(
-            low = "#AB4400",
-            mid = "#16241f",
-            high = "#006D1E",
-            midpoint = 0,
-            name = "Goal difference"
-        ) +
-        scale_size_area(max_size = 14, name = "Appearances") +
-        scale_x_continuous(expand = expansion(mult = 0.2)) +
-        scale_y_continuous(expand = expansion(mult = 0.2)) +
-        labs(
-            x = "Goals scored: coefficient",
-            y = "Goals conceded: coefficient, sign flipped"
-        ) +
-        coord_equal(clip = "off") +
-        theme_minimal(base_size = 12) +
-        theme(
-            panel.grid.minor = element_blank(),
-            legend.position = "bottom",
-            plot.margin = margin(12, 32, 12, 32)
-        )
-}
-
-coefficient_plot <- function(regression_results, selected_outcome) {
-    # Ridge returns no interval, so the layer that draws one is left out rather
-    # than handed a column of NA to warn about.
-    has_interval <- !all(is.na(regression_results$conf_low))
-    outcome_labels <- c(
-        points = "Points",
-        goals_scored = "Goals scored",
-        goals_conceded = "Goals conceded",
-        goal_difference = "Goal difference"
-    )
-
-    plot_data <- regression_results %>%
-        filter(outcome == selected_outcome) %>%
-        arrange(estimate) %>%
-        mutate(player = factor(player, levels = player))
-
-    ggplot(plot_data, aes(x = player, y = estimate)) +
-        geom_hline(yintercept = 0, color = "#8a938d", linewidth = 0.4) +
-        (if (has_interval) {
-            geom_errorbar(aes(ymin = conf_low, ymax = conf_high), width = 0)
-        }) +
-        geom_point(color = "#0850AB", size = 2.6) +
-        coord_flip() +
-        labs(
-            x = NULL,
-            y = paste0(
-                outcome_labels[[selected_outcome]],
-                if (has_interval) {
-                    " coefficient with 95% confidence interval"
-                } else {
-                    ": deviation from the average player, shrunk"
-                }
-            )
-        ) +
-        theme_minimal(base_size = 12) +
-        theme(
-            panel.grid.minor = element_blank(),
-            panel.grid.major.y = element_blank()
-        )
-}
-
-plot_card_ui <- function(title, subtitle, output_id, height) {
-    card(
-        class = "table-card",
-        card_header(
-            div(class = "section-tag", "Visualise"),
-            h2(class = "table-title", title),
-            p(class = "table-subtitle", subtitle)
-        ),
-        card_body(plotOutput(output_id, height = height))
-    )
-}
-
-regression_explanation_ui <- function(regression_results, min_appearances, coverage,
-                                      estimator = "ols") {
-    included <- unique(regression_results$player)
-
-    opponent_paragraph <- if (coverage$observed == 0) {
-        p(
-            paste(
-                "No match in this window has its opponent on file, so nothing",
-                "adjusts for who we played."
-            )
-        )
-    } else {
-        p(
-            paste0(
-                "The opponent is on file for ", coverage$observed, " of ",
-                coverage$total, " matches here. Those matches also control for ",
-                "opponent strength: the other side's goal difference per game ",
-                "against everyone except us that season, centred so that 0 is an ",
-                "average opponent. Matches with no opponent recorded take the ",
-                "average and an indicator, which keeps their own level out of the ",
-                "player coefficients."
-            )
-        )
-    }
-
-    estimator_paragraph <- if (estimator == "ridge") {
-        tagList(
-            p(
-                paste0(
-                    "These are ridge estimates. The plain fit spends a column on ",
-                    "each of the ", length(included), " players over a few dozen ",
-                    "matches, so somebody with three appearances is measured off ",
-                    "three nights and lands at whichever extreme those nights ",
-                    "went. Ridge pulls every estimate toward the average player ",
-                    "by an amount inversely proportional to how much is known ",
-                    "about them, so the thin players move a long way and the ",
-                    "regulars barely move. A coefficient here is a deviation from ",
-                    "the average player rather than a share of the scoreline, and ",
-                    "there are no confidence intervals: ridge has no usable ",
-                    "standard error."
-                )
-            ),
-            p(
-                paste(
-                    "The estimates come out very close to zero, and that is the",
-                    "result rather than a display problem. The penalty is chosen",
-                    "by cross-validation, which is asking how much of a match",
-                    "the lineup predicts out of sample, and the answer here is",
-                    "almost none. The ordering still means something; the",
-                    "magnitudes are telling you not to lean on it."
-                )
-            )
-        )
-    } else {
-        p(
-            paste0(
-                "Each column is a separate match-level regression of that outcome ",
-                "on indicators for the ", length(included), " players with at ",
-                "least ", min_appearances, " appearances in the selected seasons. ",
-                "The coefficient says how the outcome moves when that player is on ",
-                "the pitch, holding the rest of the lineup fixed. The number in ",
-                "brackets is the OLS p-value, and with this many players a couple ",
-                "below 0.05 is what chance alone produces."
-            )
-        )
-    }
-
-    card_body(
-        estimator_paragraph,
-        p(
-            paste(
-                "Anyone below the appearance threshold has no indicator of their",
-                "own and sits in the residual. There is no time trend. These are",
-                "descriptive: nothing here separates a good player from one who",
-                "happens to play in good teams."
-            )
-        ),
-        opponent_paragraph
-    )
-}
-
-#' The estimator toggle, above every card it changes.
-#'
-#' Not inside the coefficient-plot card next to the outcome picker, because it
-#' governs all three outputs on the tab. Radio buttons rather than a switch so
-#' the labels can carry what the choice means.
-estimator_control <- div(
-    class = "selection-shell estimator-shell",
-    radioButtons(
-        "regression_estimator",
-        "Estimates",
-        choices = c(
-            "Raw (OLS)" = "ols",
-            "Shrunk toward the average player (ridge)" = "ridge"
-        ),
-        selected = "ols",
-        inline = TRUE
-    )
-)
-
-#' What a coefficient means, which is not the same under both estimators.
-#'
-#' The OLS fit has no intercept, so a coefficient is a player's additive share
-#' of the scoreline. The ridge fit has one, so a coefficient is their deviation
-#' from the average player. Putting both under one heading would be wrong about
-#' one of them.
-estimate_label <- function(estimator) {
-    if (estimator == "ridge") {
-        "Deviation from the average player, shrunk by how little we know."
-    } else {
-        "Coefficient on each outcome, with its p-value in brackets."
-    }
-}
-
-regression_explanation <- card(
-    class = "table-card",
-    card_header(
-        div(class = "section-tag", "Method"),
-        h2(class = "table-title", "How to read the player effects")
-    ),
-    uiOutput("regression_explanation")
-)
-
-#' Season tick boxes, newest first, each captioned with when that season ran.
-season_picker <- function(app_data) {
-    spans <- season_span(app_data$seasons, app_data$matches) %>%
-        arrange(desc(start_date))
-
-    checkboxGroupInput(
-        "seasons",
-        "Seasons",
-        choiceNames = purrr::map2(
-            spans$label,
-            spans$span,
-            ~ tagList(
-                span(class = "season-name", .x),
-                span(class = "season-span", .y)
-            )
-        ),
-        choiceValues = spans$season_id,
-        # Everything is in scope until you narrow it.
-        selected = spans$season_id,
-        inline = TRUE
-    )
-}
-
-#' Placeholder shown when the selected season has no matches recorded yet.
-empty_season_card <- function(message) {
-    card(
-        class = "table-card",
-        card_body(div(class = "empty-state", message))
-    )
-}
-
-match_plot_theme <- function() {
-    theme_minimal(base_size = 12) +
-        theme(
-            panel.grid.minor = element_blank(),
-            legend.position = "bottom"
-        )
-}
-
-season_form_plot <- function(season_form, selected_metric) {
-    if (selected_metric == "points") {
-        return(
-            ggplot(season_form, aes(x = date, y = rolling_points)) +
-                geom_line(color = "#0850AB", linewidth = 1) +
-                geom_point(color = "#0850AB", size = 2.4) +
-                scale_y_continuous(limits = c(0, 3)) +
-                labs(y = "Points per match", x = NULL) +
-                match_plot_theme()
-        )
-    }
-
-    if (selected_metric == "goals") {
-        plot_data <- season_form %>%
-            select(date, rolling_goals_scored, rolling_goals_conceded) %>%
-            pivot_longer(
-                cols = -date,
-                names_to = "metric",
-                values_to = "value"
-            ) %>%
-            mutate(
-                metric = recode(
-                    metric,
-                    rolling_goals_scored = "Goals scored",
-                    rolling_goals_conceded = "Goals conceded"
-                )
-            )
-
-        return(
-            ggplot(plot_data, aes(x = date, y = value, color = metric)) +
-                geom_line(linewidth = 1) +
-                geom_point(size = 2.2) +
-                scale_color_manual(
-                    values = c(
-                        "Goals scored" = "#0850AB",
-                        "Goals conceded" = "#AB4400"
-                    ),
-                    name = NULL
-                ) +
-                labs(y = "Goals per match", x = NULL) +
-                match_plot_theme()
-        )
-    }
-
-    if (selected_metric == "goal_difference") {
-        return(
-            ggplot(season_form, aes(x = date, y = rolling_goal_difference)) +
-                geom_hline(yintercept = 0, color = "#8a938d", linewidth = 0.4) +
-                geom_line(color = "#006D1E", linewidth = 1) +
-                geom_point(color = "#006D1E", size = 2.4) +
-                labs(y = "Goal difference per match", x = NULL) +
-                match_plot_theme()
-        )
-    }
-
-    ggplot(season_form, aes(x = date, y = rolling_squad_size)) +
-        geom_line(color = "#006D1E", linewidth = 1) +
-        geom_point(color = "#006D1E", size = 2.4) +
-        labs(y = "Players per match", x = NULL) +
-        match_plot_theme()
-}
-
-season_form_card <- card(
-    class = "table-card",
-    card_header(
-        div(class = "section-tag", "Season form"),
-        h2(class = "table-title", "How the season is trending"),
-        p(
-            class = "table-subtitle",
-            "Each point averages the last five matches. The first four average what there is."
-        )
-    ),
-    card_body(
-        div(
-            class = "selection-shell",
-            selectInput(
-                "form_metric",
-                "Show",
-                choices = c(
-                    "Points per match" = "points",
-                    "Goals scored and conceded" = "goals",
-                    "Goal difference" = "goal_difference",
-                    "Squad size" = "squad_size"
-                )
-            )
-        ),
-        plotOutput("season_form_plot", height = "380px")
-    )
-)
-
-match_summary_ui <- function(selected_match) {
-    outcome <- case_when(
-        selected_match$points == 3 ~ "Win",
-        selected_match$points == 1 ~ "Draw",
-        TRUE ~ "Loss"
-    )
-
-    div(
-        class = "match-detail-summary",
-        div(
-            class = "match-detail-stat",
-            div(class = "match-detail-label", "Result"),
-            div(class = "match-detail-value", selected_match$result),
-            div(
-                class = "match-detail-note",
-                paste(
-                    c(
-                        format(selected_match$date, "%d %B %Y"),
-                        na.omit(selected_match$opponent),
-                        outcome
-                    ),
-                    collapse = " — "
-                )
-            )
-        ),
-        div(
-            class = "match-detail-stat",
-            div(class = "match-detail-label", "Points"),
-            div(class = "match-detail-value", selected_match$points),
-            div(class = "match-detail-note", "Out of 3")
-        ),
-        div(
-            class = "match-detail-stat",
-            div(class = "match-detail-label", "Squad"),
-            div(class = "match-detail-value", selected_match$squad_size),
-            div(class = "match-detail-note", "On the sheet that night")
-        )
-    )
-}
-
-match_lineup_table <- function(lineup) {
-    datatable(
-        lineup %>%
-            transmute(
-                Player = player,
-                `Season appearances` = season_appearances,
-                `Attendance rate` = attendance_rate
-            ),
-        rownames = FALSE,
-        class = "nowrap",
-        options = list(
-            dom = "t",
-            ordering = FALSE,
-            autoWidth = TRUE,
-            scrollX = TRUE
-        )
-    ) %>%
-        formatPercentage(columns = "Attendance rate", digits = 0)
-}
-
-scorer_display_table <- function(scorers) {
-    datatable(
-        scorers %>%
-            transmute(
-                Player = player,
-                Goals = goals,
-                MOM = mom,
-                Appearances = appearances,
-                `Goals per game` = round(goals_per_appearance, 2)
-            ),
-        rownames = FALSE,
-        class = "nowrap",
-        options = list(
-            dom = "tip",
-            pageLength = 15,
-            order = list(list(1, "desc")),
-            autoWidth = TRUE,
-            scrollX = TRUE,
-            language = list(
-                emptyTable = "No goals on file yet \u2014 they arrive with the sync."
-            )
-        )
-    )
-}
-
-#' What the leaderboard above it actually covers.
-#'
-#' Stated rather than assumed, because for anything played before the sync it
-#' is not all-time and a table that does not say so invites being read as if it
-#' were. Appearances are counted over the same matches as the goals, so the
-#' rate divides like by like.
-scorer_coverage_ui <- function(coverage) {
-    if (coverage$observed == 0) {
-        return(p(
-            class = "table-subtitle",
-            paste(
-                "No match in the selected seasons has its goals on file.",
-                "They start with the sync."
-            )
-        ))
-    }
-
-    p(
-        class = "table-subtitle",
-        if (coverage$observed == coverage$total) {
-            paste0(
-                "All ", coverage$total, " matches in the selected seasons have ",
-                "their goals on file."
-            )
-        } else {
-            paste0(
-                coverage$observed, " of the ", coverage$total, " matches in the ",
-                "selected seasons have their goals on file. The rest were played ",
-                "before the sync existed and are left out, appearances included."
-            )
-        }
-    )
-}
-
-#' Goals and man of the match, with the window they cover stated on the card.
-scorer_card <- card(
-    class = "table-card",
-    card_header(
-        div(class = "section-tag", "Scorers"),
-        h2(class = "table-title", "Goals and man of the match"),
-        uiOutput("scorer_coverage")
-    ),
-    card_body(dataTableOutput("scorers"))
-)
-
-# Player page ----
-
-#' A player's season at a glance: four numbers, then the record behind them.
-player_headline_ui <- function(profile) {
-    stat <- function(label, value, note) {
-        div(
-            class = "match-detail-stat",
-            div(class = "match-detail-label", label),
-            div(class = "match-detail-value", value),
-            div(class = "match-detail-note", note)
-        )
-    }
-
-    div(
-        class = "match-detail-summary",
-        stat(
-            "Appearances", profile$appearances,
-            paste0("of ", profile$matches, " matches")
-        ),
-        stat(
-            "Turnout",
-            if (is.na(profile$attendance_rate)) "\u2014" else paste0(round(profile$attendance_rate * 100), "%"),
-            "share of matches played"
-        ),
-        stat(
-            "Points per match",
-            if (is.na(profile$present$points_per_match)) "\u2014" else format(round(profile$present$points_per_match, 2), nsmall = 2),
-            "when playing"
-        ),
-        # Goals only earn a tile once there is a match they could have been
-        # scored in. Before that the sync has simply not run yet, and a zero
-        # would read as a barren season rather than an empty file.
-        if (profile$covered > 0) {
-            stat(
-                "Goals", profile$goals,
-                paste0(
-                    profile$mom, " man of the match, over ", profile$covered,
-                    " recorded"
-                )
-            )
-        }
-    )
-}
-
-#' The two records side by side, and the gap between them with its caveat.
-#'
-#' Presented as two rows rather than one difference because the difference is
-#' the part that invites over-reading: it compares the nights they turned up
-#' with the nights they did not, and nothing about that holds the rest of the
-#' lineup, the opponent or the squad size fixed.
-with_without_table <- function(profile) {
-    rows <- bind_rows(
-        profile$present %>% mutate(when = "Played"),
-        profile$absent %>% mutate(when = "Missed")
-    )
-
-    datatable(
-        rows %>%
-            transmute(
-                ` ` = when,
-                P = played, W = won, D = drawn, L = lost,
-                GF = goals_for, GA = goals_against,
-                `Pts/match` = round(points_per_match, 2)
-            ),
-        rownames = FALSE,
-        class = "nowrap",
-        options = list(
-            dom = "t", ordering = FALSE, autoWidth = TRUE, scrollX = TRUE
-        )
-    )
-}
-
-differential_note <- function(profile) {
-    if (is.na(profile$differential)) {
-        return(p(
-            class = "table-subtitle",
-            paste(
-                "No comparison to draw: there is no match in the selected",
-                "seasons on the other side of it."
-            )
-        ))
-    }
-
-    direction <- if (profile$differential >= 0) "better" else "worse"
-    p(
-        class = "table-subtitle",
-        paste0(
-            "The side takes ", format(round(abs(profile$differential), 2), nsmall = 2),
-            " points a match ", direction, " with ", profile$player,
-            " than without. That is a description of how those nights went, not ",
-            "of what they did: it holds nothing else about the match fixed. The ",
-            "player effects tab does hold the rest of the lineup fixed."
-        )
-    )
-}
-
-appearance_timeline_plot <- function(profile) {
-    ggplot(profile$timeline, aes(x = date, y = 1, fill = played)) +
-        geom_tile(height = 0.6, width = 5) +
-        scale_fill_manual(
-            values = c(`TRUE` = "#0850AB", `FALSE` = "#dfe3e0"),
-            labels = c(`TRUE` = "Played", `FALSE` = "Missed"),
-            name = NULL
-        ) +
-        scale_y_continuous(breaks = NULL) +
-        labs(x = NULL, y = NULL) +
-        theme_minimal(base_size = 12) +
-        theme(
-            panel.grid = element_blank(),
-            legend.position = "bottom",
-            axis.text.y = element_blank()
-        )
-}
-
-player_page <- tagList(
-    card(
-        class = "table-card",
-        card_header(
-            div(class = "section-tag", "Player"),
-            h2(class = "table-title", "One player at a time"),
-            p(
-                class = "table-subtitle",
-                "Anyone who has turned out in the seasons you have ticked."
-            )
-        ),
-        card_body(
-            div(
-                class = "selection-shell",
-                selectInput("profile_player", "Choose a player", choices = NULL)
-            ),
-            uiOutput("player_headline"),
-            h3(class = "match-lineup-title", "Appearances"),
-            plotOutput("appearance_timeline", height = "140px")
-        )
-    ),
-    card(
-        class = "table-card",
-        card_header(
-            div(class = "section-tag", "With and without"),
-            h2(class = "table-title", "How the side does either way"),
-            uiOutput("differential_note")
-        ),
-        card_body(dataTableOutput("with_without"))
-    )
-)
-
-opponent_record_table <- function(record) {
-    datatable(
-        record %>%
-            transmute(
-                Opponent = opponent,
-                P = played, W = won, D = drawn, L = lost,
-                GF = goals_for, GA = goals_against, GD = goal_difference,
-                `Pts/match` = round(points_per_match, 2)
-            ),
-        rownames = FALSE,
-        class = "nowrap",
-        options = list(
-            dom = "t",
-            pageLength = nrow(record),
-            ordering = FALSE,
-            autoWidth = TRUE,
-            scrollX = TRUE
-        )
-    )
-}
-
-#' Our record against each side, or an honest note about why there is not one.
-#'
-#' The opponent arrived with the sync, so a window made only of older matches
-#' has nobody to group by. That is a different thing from having played nobody
-#' and is worth saying, rather than showing an empty table.
-opponent_record_card <- card(
-    class = "table-card",
-    card_header(
-        div(class = "section-tag", "Head to head"),
-        h2(class = "table-title", "How we do against each side"),
-        p(
-            class = "table-subtitle",
-            paste(
-                "Points per match rather than total points: we have met some",
-                "sides twice as often as others."
-            )
-        )
-    ),
-    card_body(uiOutput("opponent_record"))
-)
-
-run_in_table <- function(fixtures) {
-    datatable(
-        fixtures %>%
-            transmute(
-                Date = format(date, "%d %b %Y"),
-                Opponent = opponent,
-                Pos = position,
-                P = played,
-                GD = goal_difference,
-                Pts = points
-            ),
-        rownames = FALSE,
-        class = "nowrap",
-        options = list(
-            dom = "t",
-            pageLength = nrow(fixtures),
-            ordering = FALSE,
-            autoWidth = TRUE,
-            scrollX = TRUE,
-            language = list(emptyTable = "No fixtures left on the league page.")
-        )
-    )
-}
-
-#' What is left to play, and what the standings say about it.
-#'
-#' Like the home page and for the same reason, this ignores the season picker:
-#' the fixture list and the standings describe the current league season only,
-#' and scoping them by a fee season would filter one thing by the boundaries of
-#' another.
-run_in_card <- card(
-    class = "table-card",
-    card_header(
-        div(class = "section-tag", "Run-in"),
-        h2(class = "table-title", "Who is left"),
-        p(
-            class = "table-subtitle",
-            paste(
-                "Every fixture still to come, with where that side sits in the",
-                "league. All of the current league season, whatever the season",
-                "picker says."
-            )
-        )
-    ),
-    card_body(dataTableOutput("run_in"))
-)
-
-match_detail_card <- card(
-    class = "table-card",
-    card_header(
-        div(class = "section-tag", "Match detail"),
-        h2(class = "table-title", "Lineup and season context"),
-        p(
-            class = "table-subtitle",
-            "Who played, and how much of that season they turned up for."
-        )
-    ),
-    card_body(
-        div(
-            class = "selection-shell",
-            selectInput("selected_match", "Match", choices = NULL)
-        ),
-        uiOutput("match_summary"),
-        h3(class = "match-lineup-title", "Lineup"),
-        dataTableOutput("match_lineup")
-    )
 )
 
 # User interface ----
@@ -1372,7 +71,7 @@ ui <- page_fluid(
                     class = "hero-copy",
                     paste(
                         "Where we left off, who is next, and what you owe.",
-                        "The season picker applies to matches, attendance and",
+                        "The season picker applies to matches, players and",
                         "player effects."
                     )
                 ),
@@ -1383,7 +82,15 @@ ui <- page_fluid(
             ),
             div(
                 class = "season-shell",
-                season_picker(app_data)
+                season_picker(app_data),
+                # Dimmed and captioned, not hidden or disabled: the tick boxes
+                # stay usable, so the scope can be set here and carried to a
+                # tab that reads it. Under the pills rather than over them,
+                # where the heading already is.
+                conditionalPanel(
+                    "!output.season_picker_applies",
+                    div(class = "season-inert", "Not used on this tab")
+                )
             )
         ),
         data_health_banner(app_data$problems),
@@ -1404,6 +111,12 @@ ui <- page_fluid(
                         uiOutput("next_match_card")
                     ),
                     uiOutput("league_table_card"),
+                    # The run-in belongs with these two and not on Matches: it
+                    # describes the current league season, which is not a fee
+                    # season, and it used to have to say so in its own subtitle
+                    # to excuse ignoring the picker. Here nothing ignores the
+                    # picker, so there is nothing to excuse.
+                    run_in_card,
                     div(
                         class = "fees-grid",
                         fee_panel_ui("home_fee_player", "home_fees_owed"),
@@ -1433,36 +146,19 @@ ui <- page_fluid(
                         season_form_card,
                         scorer_card,
                         opponent_record_card,
-                        run_in_card,
-                        table_card_ui(
-                            "Matches",
-                            "Every result",
-                            "Newest first, for the seasons you have ticked.",
-                            "matches"
-                        ),
+                        every_result_card,
                         match_detail_card
                     )
                 ),
-                nav_panel(
-                    "Attendance",
-                    icon = icon("users"),
-                    conditionalPanel(
-                        "!output.season_has_matches",
-                        empty_season_card("No matches in the selected seasons yet.")
-                    ),
-                    conditionalPanel(
-                        "output.season_has_matches",
-                        table_card_ui(
-                            "Attendance",
-                            "Who turns up",
-                            "Share of matches played, and how those matches went.",
-                            "attendance_list"
-                        )
-                    )
-                ),
+                # Attendance used to be a tab of its own holding one card. It
+                # is the roster-wide version of the statistic the page below it
+                # shows one player at a time, so it is the way in to that page
+                # rather than a separate destination: pick a row, read the
+                # player. One fewer tab, and the picker gets something to pick
+                # from.
                 nav_panel(
                     "Players",
-                    icon = icon("user"),
+                    icon = icon("users"),
                     conditionalPanel(
                         "!output.season_has_matches",
                         empty_season_card("No matches in the selected seasons yet.")
@@ -1534,60 +230,15 @@ ui <- page_fluid(
     )
 )
 
-match_table <- function(matches) {
-    matches <- matches %>%
-        mutate(
-            outcome = case_when(
-                goals_for > goals_against ~ "<span class='result-badge win'>WIN</span>",
-                goals_for == goals_against ~ "<span class='result-badge draw'>DRAW</span>",
-                TRUE ~ "<span class='result-badge loss'>LOSS</span>"
-            )
-        ) %>%
-        transmute(
-            Date = format(date, "%d %b %Y"),
-            Opponent = coalesce(opponent, "\u2014"),
-            Result = result,
-            Outcome = outcome
-        )
-
-    datatable(
-        matches,
-        rownames = FALSE,
-        escape = FALSE, # required to render the badge span
-        class = "nowrap",
-        options = list(
-            dom = "t",
-            pageLength = nrow(matches),
-            ordering = FALSE,
-            autoWidth = TRUE,
-            scrollX = TRUE
-        )
-    )
-}
-
-attendance_table <- function(attendance_list) {
-    datatable(
-        attendance_list,
-        rownames = FALSE,
-        class = "nowrap",
-        options = list(
-            dom = "tip",
-            pageLength = 15,
-            order = list(list(1, "desc")),
-            autoWidth = TRUE,
-            scrollX = TRUE,
-            rowCallback = JS(
-                "function(row, data, index) {",
-                "  if (index < 3) { $(row).addClass('rank-top3'); }",
-                "}"
-            )
-        )
-    )
-}
-
 # The two Fee check cards, one per tab. Named once so the server can keep them
 # in step without either tab knowing the other exists.
 FEE_PLAYER_INPUTS <- c("fee_player", "home_fee_player")
+
+# The tabs the season picker actually scopes, by their nav_panel titles. Home
+# and Fees are the two it does not: both are all of time on purpose — what just
+# happened and what is next do not take a season, and a balance is a running
+# total that would show a debt in one season and its mirror image in the next.
+SEASON_SCOPED_TABS <- c("Matches", "Players", "Player effects")
 
 # Server logic ----
 server <- function(input, output, session) {
@@ -1681,36 +332,24 @@ server <- function(input, output, session) {
         )
     })
 
-    # Keyed on the fixture list rather than has_matches(), which stays TRUE
-    # across two seasons that both have matches and so would not re-fire.
-    observeEvent(season_form(), {
-        if (!has_matches()) {
-            updateSelectInput(session, "selected_match", choices = character(0))
-            return()
-        }
-
-        match_choices <- season_form() %>%
-            arrange(desc(date)) %>%
-            transmute(
-                value = as.character(date),
-                label = paste(
-                    format(date, "%d %b %Y"),
-                    "\u2014",
-                    if_else(is.na(opponent), result, paste(result, "v", opponent))
-                )
-            )
-
-        updateSelectInput(
-            session,
-            "selected_match",
-            choices = setNames(match_choices$value, match_choices$label),
-            selected = match_choices$value[[1]]
-        )
+    # The match the detail card describes, picked by clicking a row of Every
+    # result rather than from a dropdown that listed the same matches again.
+    #
+    # DT reports the index into the data it was given, not the position on
+    # screen, so this indexes the same frame the table was built from. Falling
+    # back to the first row rather than req()-ing a selection keeps the card
+    # filled on arrival and through a season change, which clears the
+    # selection: an empty card under a full table reads as a fault.
+    selected_match_date <- reactive({
+        req(has_matches())
+        matches <- scoped()$matches
+        row <- input$matches_rows_selected
+        if (length(row) != 1 || row > nrow(matches)) row <- 1L
+        as.character(matches$date[[row]])
     })
 
     selected_match_details <- reactive({
-        req(has_matches(), input$selected_match)
-        match_detail_data(season_form(), scoped()$attendance, input$selected_match)
+        match_detail_data(season_form(), scoped()$attendance, selected_match_date())
     })
 
     # Fees ----
@@ -1828,37 +467,51 @@ server <- function(input, output, session) {
 
     # Players ----
     #
-    # A separate picker from the fee one on purpose. That one offers the active
-    # roster and ignores seasons, because a balance is a running total; this is
-    # a page about matches that happened, so it offers whoever turned out in the
-    # ticked seasons. It is seeded from the fee picker when that person is in
-    # scope, so arriving here usually lands on you, but the two do not track
-    # each other afterwards — they are answering different questions and are not
-    # always even offering the same names.
-    observeEvent(list(scoped()$attendance, selected_fee_player()), {
-        players <- players_in_scope(scoped()$attendance)
-        if (length(players) == 0) {
-            updateSelectInput(session, "profile_player", choices = character(0))
-            return()
-        }
+    # The roster table is the picker, and the page under it is one row of that
+    # table opened up. It offers whoever turned out in the ticked seasons,
+    # which is deliberately not the fee picker's list: that one offers the
+    # active roster and ignores seasons because a balance is a running total,
+    # while this is a page about matches that happened. A player who has left
+    # still has a page; a new signing who has not played yet does not.
+    roster_list <- reactive({
+        req(has_matches())
+        create_attendance_list(scoped()$attendance, scoped()$matches)
+    })
 
-        current <- input$profile_player
-        chosen <- if (isTruthy(current) && current %in% players) {
-            current
-        } else if (isTruthy(selected_fee_player()) && selected_fee_player() %in% players) {
-            selected_fee_player()
-        } else {
-            players[[1]]
-        }
+    # Seeded from the fee picker where that person turned out in the ticked
+    # seasons, so arriving here usually lands on you. Isolated because it is an
+    # opening position rather than a link: changing the fee player on the other
+    # tab should not reach over and move the row you picked here. Where they
+    # did not turn out — the two pickers are allowed to disagree about who
+    # exists — it opens on whoever turns up most, which is the top of the table.
+    output$attendance_list <- renderDT({
+        roster <- roster_list()
+        seed <- match(isolate(selected_fee_player()), roster$player)
+        attendance_table(roster, selected_row = coalesce(seed, 1L))
+    })
 
-        updateSelectInput(session, "profile_player", choices = players, selected = chosen)
-    }, ignoreNULL = FALSE)
+    # As with the match picker, DT reports the index into the data rather than
+    # the position on screen, so re-sorting the table by any column leaves this
+    # pointing at the same person. No selection falls back to the top of the
+    # table rather than emptying the page below it.
+    profile_player <- reactive({
+        roster <- roster_list()
+        req(nrow(roster) > 0)
+        row <- input$attendance_list_rows_selected
+        if (length(row) != 1 || row > nrow(roster)) row <- 1L
+        roster$player[[row]]
+    })
 
     profile <- reactive({
-        req(has_matches(), input$profile_player)
-        req(input$profile_player %in% players_in_scope(scoped()$attendance))
         player_profile(
-            input$profile_player, scoped()$attendance, scoped()$matches, scoped()$events
+            profile_player(), scoped()$attendance, scoped()$matches, scoped()$events
+        )
+    })
+
+    output$profile_player_note <- renderUI({
+        p(
+            class = "table-subtitle",
+            paste0(profile_player(), ". Pick another row above to change who this is about.")
         )
     })
 
@@ -1866,12 +519,6 @@ server <- function(input, output, session) {
     output$with_without <- renderDT(with_without_table(profile()))
     output$differential_note <- renderUI(differential_note(profile()))
     output$appearance_timeline <- renderPlot(appearance_timeline_plot(profile()))
-
-    # Attendance ----
-    output$attendance_list <- renderDT({
-        req(has_matches())
-        attendance_table(create_attendance_list(scoped()$attendance, scoped()$matches))
-    })
 
     # Player effects ----
     output$player_regressions <- renderDT({
@@ -1907,6 +554,22 @@ server <- function(input, output, session) {
     output$season_has_regression <- reactive(has_regression())
     outputOptions(output, "season_has_matches", suspendWhenHidden = FALSE)
     outputOptions(output, "season_has_regression", suspendWhenHidden = FALSE)
+
+    # Where the season picker applies ----
+    #
+    # It sits in the hero on every tab and does nothing on two of them. The
+    # strapline says so, and the phone layout hides the strapline — so on the
+    # screen where the picker is hardest to ignore it is also unexplained, and
+    # it is the tab the app opens on. Rather than move it, say so: the shell
+    # goes quiet and captions itself on the tabs that read all of time anyway.
+    # Named rather than written straight into output, so it can be read on its
+    # own: an anonymous reactive assigned to output is reachable from the
+    # conditionalPanel and from nowhere else.
+    season_picker_applies <- reactive({
+        (input$app_tabs %||% "Home") %in% SEASON_SCOPED_TABS
+    })
+    output$season_picker_applies <- season_picker_applies
+    outputOptions(output, "season_picker_applies", suspendWhenHidden = FALSE)
 }
 
 # Run app ----
