@@ -70,9 +70,21 @@ Rscript scripts/sync.R --write  # actually change it
 Rscript scripts/sync.R --from saved-page.html --write
 ```
 
-`scripts/sync-and-commit.sh` wraps that: it runs the sync, commits the two
+`scripts/sync-and-commit.sh` wraps that: it runs the sync, commits the five
 files it owns — by pathspec, so it cannot sweep up anything else you have
 staged — pushes, and appends to `raw/sync.log`.
+
+On macOS, a blocked download (HTTP 403) now opens the league page in Safari.
+Complete the bot check there. The command waits up to five minutes, captures the
+page automatically once the fixtures appear, and resumes the sync. You do not
+need to save or download the page. The browser prompt also appears in the terminal.
+
+Safari needs a one-time setup. In Safari > Settings > Advanced, enable
+**Show features for web developers**, then select **Develop > Allow JavaScript
+from Apple Events**. If macOS asks whether Terminal may control Safari, allow it.
+The command leaves the league page open. Closing that page or reaching the timeout
+stops the sync before it writes data or commits anything. The same fallback works
+with `Rscript scripts/sync.R`, which previews changes without writing them.
 
 Nothing is lost by running it late, or by skipping a week: the sync reads the
 whole season every time and is idempotent, so it catches up on its own.
@@ -83,13 +95,9 @@ Both of the obvious ways to schedule it are closed, and it is worth writing
 down so neither gets attempted again.
 
 **A GitHub Action cannot fetch the page.** The league site sits behind
-Cloudflare, which returns 403 to datacentre addresses: the identical request
-that succeeds from a home connection fails from a hosted runner. Its
-`robots.txt` allows the default user agent, so this is an edge rule about where
-a request comes from rather than a policy about the request — but the only ways
-around it are to lie about the user agent or to proxy, and neither is worth
-doing to a site that will happily serve the same page to the same person from
-their own machine.
+Cloudflare, which has returned 403 to requests from both a hosted runner and
+this Mac. The Safari fallback requires a local browser and somebody present
+to complete any bot check, so it does not make unattended jobs reliable.
 
 **A launchd agent on the Mac cannot reach the repository.** It lives under
 `~/Library/CloudStorage`, which macOS shields from scheduled jobs, so a launchd

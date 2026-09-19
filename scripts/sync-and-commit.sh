@@ -5,8 +5,8 @@
 #
 # It is not scheduled, and both of the obvious ways to schedule it are closed.
 # A GitHub Action cannot fetch the page: the league site sits behind Cloudflare,
-# which returns 403 to datacentre addresses while serving the identical request
-# happily to a home connection. And a launchd agent on this Mac cannot reach the
+# which can return 403 and require a bot check in Safari. The browser fallback
+# needs somebody present. And a launchd agent on this Mac cannot reach the
 # repository: it lives under ~/Library/CloudStorage, which macOS shields from
 # scheduled jobs, so bash cannot so much as read this file from one.
 
@@ -21,13 +21,13 @@ export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 log="$repo/raw/sync.log"
 mkdir -p "$(dirname "$log")"
 
-# Worth a nudge even when run by hand: the interesting output is in the log,
-# and the run is quiet either way.
+# Notifications accompany the terminal output and saved log.
 notify() {
   osascript -e "display notification \"$2\" with title \"$1\"" >/dev/null 2>&1 || true
 }
 
-exec >>"$log" 2>&1
+# Keep the browser prompt visible while retaining the complete log.
+exec > >(tee -a "$log") 2>&1
 echo
 echo "=== $(date '+%Y-%m-%d %H:%M:%S %Z') ==="
 

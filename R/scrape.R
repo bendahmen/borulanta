@@ -28,12 +28,39 @@ SCRAPER_USER_AGENT <- paste(
 #' broke and we no longer have the page it broke on", so a sync run keeps one.
 fetch_league_page <- function(url = DREAMLEAGUES_URL, snapshot_path = NULL) {
   response <- httr::GET(url, httr::user_agent(SCRAPER_USER_AGENT), httr::timeout(30))
-  httr::stop_for_status(response, task = paste("fetch", url))
-
-  html <- httr::content(response, as = "text", encoding = "UTF-8")
+  if (httr::status_code(response) == 403L && Sys.info()[["sysname"]] == "Darwin") {
+    html <- fetch_league_page_in_safari(url)
+  } else {
+    httr::stop_for_status(response, task = paste("fetch", url))
+    html <- httr::content(response, as = "text", encoding = "UTF-8")
+  }
   if (!is.null(snapshot_path)) {
     dir.create(dirname(snapshot_path), showWarnings = FALSE, recursive = TRUE)
     writeLines(html, snapshot_path, useBytes = TRUE)
+  }
+  html
+}
+
+# Use the normal browser session so the user can complete a challenge themselves.
+# Capture into a temporary file: a failed browser run must never reuse old HTML.
+fetch_league_page_in_safari <- function(url) {
+  message("HTTP 403: opening Safari. Complete the bot check there; sync will resume ",
+          "automatically (waiting up to 5 minutes).")
+  html_path <- tempfile(fileext = ".html")
+  error_path <- tempfile(fileext = ".log")
+  on.exit(unlink(c(html_path, error_path)), add = TRUE)
+  status <- system2(
+    "/usr/bin/osascript",
+    shQuote(c(here::here("scripts", "fetch-league-page.applescript"), url)),
+    stdout = html_path, stderr = error_path
+  )
+  if (status != 0L) {
+    stop("Safari capture failed: ",
+         paste(readLines(error_path, warn = FALSE), collapse = "\n"), call. = FALSE)
+  }
+  html <- paste(readLines(html_path, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+  if (!nzchar(html)) {
+    stop("Safari returned an empty page; no data were updated.", call. = FALSE)
   }
   html
 }
