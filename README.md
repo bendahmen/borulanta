@@ -397,7 +397,11 @@ that season's players to `data/player_seasons.csv`.
 Core status is per season rather than a column per rule change, so a player
 moving in or out of the core is one cell, not a schema change.
 
-`data/players.csv` is now just the list of names — the identity table.
+`data/players.csv` is now just the list of names — the identity table. Its
+`guest` column marks people who played without being charged: they are listed
+so their goals and man-of-the-match awards are recognised, but they have no
+attendance or roster rows. Nothing in the app reads the column; it records why
+a name has no attendance.
 
 ## Fee rules
 
