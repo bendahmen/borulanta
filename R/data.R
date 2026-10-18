@@ -43,7 +43,9 @@ EVENT_COLUMNS <- readr::cols(
 FIXTURE_COLUMNS <- readr::cols(
   date = readr::col_character(),
   opponent = readr::col_character(),
-  dl_match_id = readr::col_character()
+  dl_match_id = readr::col_character(),
+  kickoff = readr::col_character(),
+  pitch = readr::col_character()
 )
 
 LEAGUE_TABLE_COLUMNS <- readr::cols(
@@ -88,7 +90,9 @@ read_fixture_file <- function(path) {
     return(tibble(
       date = as.Date(character()),
       opponent = character(),
-      dl_match_id = character()
+      dl_match_id = character(),
+      kickoff = character(),
+      pitch = character()
     ))
   }
   readr::read_csv(path, col_types = FIXTURE_COLUMNS) %>%

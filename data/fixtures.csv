@@ -1,12 +1,12 @@
-date,opponent,dl_match_id
-21/10/2026,Foireann Peile,96120
-28/10/2026,The Dirty Boys,96124
-04/11/2026,Saffron Rangers,96127
-11/11/2026,Shamrock Posers,96130
-18/11/2026,Brother Man FC,96135
-02/12/2026,Ball FC,96141
-09/12/2026,Finessin FC,96146
-16/12/2026,Dynamo Mickey CF,96151
-06/01/2027,Foireann Peile,96156
-13/01/2027,The Dirty Boys,96160
-20/01/2027,Saffron Rangers,96163
+date,opponent,dl_match_id,kickoff,pitch
+21/10/2026,Foireann Peile,96120,20:20,Pitch 1
+28/10/2026,The Dirty Boys,96124,20:20,Pitch 1
+04/11/2026,Saffron Rangers,96127,20:00,Front Pitch
+11/11/2026,Shamrock Posers,96130,19:40,Pitch 1
+18/11/2026,Brother Man FC,96135,20:00,Front Pitch
+02/12/2026,Ball FC,96141,19:00,Pitch 1
+09/12/2026,Finessin FC,96146,19:40,Pitch 1
+16/12/2026,Dynamo Mickey CF,96151,20:00,Front Pitch
+06/01/2027,Foireann Peile,96156,20:20,Pitch 1
+13/01/2027,The Dirty Boys,96160,20:20,Pitch 1
+20/01/2027,Saffron Rangers,96163,20:00,Front Pitch

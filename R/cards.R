@@ -207,6 +207,17 @@ last_match_card_ui <- function(summary, seasons) {
 }
 
 
+#' "20:20 · Pitch 1", or nothing when the page gave neither.
+kickoff_pitch_line <- function(fixture) {
+  parts <- c(fixture$kickoff, fixture$pitch)
+  parts <- parts[!is.na(parts) & nzchar(parts)]
+  if (length(parts) == 0) {
+    return(NULL)
+  }
+  div(class = "home-card-meta", paste(parts, collapse = " \u00b7 "))
+}
+
+
 #' The next fixture, or an honest note about why there is not one.
 #'
 #' The two empty cases are different and worth separating: a fixture list that
@@ -245,6 +256,7 @@ next_match_card_ui <- function(fixture, have_fixtures, scraped_on = NULL,
             div(class = if (days_away == 0) "home-when is-today" else "home-when", when),
             div(class = "home-opponent", coalesce(fixture$opponent, "Opponent to be confirmed")),
             div(class = "home-card-meta", format_match_date(fixture$date)),
+            kickoff_pitch_line(fixture),
             stale_fixture_note(scraped_on, today)
         )
     )

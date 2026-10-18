@@ -162,7 +162,7 @@ test_that("the fixture snapshot keeps every fixture and drops the scores", {
 
   snapshot <- snapshot_tables(fixtures, empty_standings(), as.Date("2026-09-10"))
 
-  expect_equal(names(snapshot$fixtures), c("date", "opponent", "dl_match_id"))
+  expect_equal(names(snapshot$fixtures), c("date", "opponent", "dl_match_id", "kickoff", "pitch"))
   expect_equal(snapshot$fixtures$date, as.Date(c("2026-09-09", "2026-09-16")))
   # matches.csv is the only source of truth for a result.
   expect_false(any(c("goals_for", "goals_against") %in% names(snapshot$fixtures)))

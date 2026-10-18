@@ -148,8 +148,14 @@ as_event_table <- function(events) {
 }
 
 as_fixture_table <- function(fixtures) {
+  # Kick-off and pitch are display-only, so a table without them is still valid.
+  for (col in c("kickoff", "pitch")) {
+    if (!col %in% names(fixtures)) fixtures[[col]] <- NA_character_
+  }
   fixtures %>%
     mutate(
+      kickoff = as.character(kickoff),
+      pitch = as.character(pitch),
       date = as_date_column(date),
       dl_match_id = as_id(dl_match_id),
       opponent = as.character(opponent),
@@ -462,7 +468,7 @@ snapshot_tables <- function(fixtures, league_table, scraped_on = Sys.Date(),
     fixtures = fixtures %>%
       as_fixture_table() %>%
       filter(!date %in% recorded) %>%
-      transmute(date, opponent, dl_match_id) %>%
+      transmute(date, opponent, dl_match_id, kickoff, pitch) %>%
       arrange(date),
     league_table = league_table %>%
       mutate(scraped_on = as.Date(scraped_on)) %>%

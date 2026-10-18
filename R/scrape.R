@@ -111,9 +111,15 @@ parse_panel <- function(panel, date) {
     rvest::html_attr("href") %>%
     str_remove("^#info-")
 
+  # "20:20 - Pitch 1": kick-off and pitch sit in the panel header, not the title row.
+  kickoff <- text_of(title, ".date-info") %>% str_extract("\\d{1,2}:\\d{2}")
+  pitch <- text_of(title, ".date-info .pitch")
+
   tibble(
     date = date,
     dl_match_id = fixture_id,
+    kickoff = kickoff,
+    pitch = pitch,
     home_team = text_of(title, ".team-1-wrapper"),
     away_team = text_of(title, ".team-2-wrapper"),
     home_goals = goals[[1]],
@@ -209,7 +215,7 @@ our_fixtures <- function(fixtures, team = OUR_TEAM) {
 
   if (nrow(ours) == 0) {
     return(ours %>% transmute(
-      date, dl_match_id,
+      date, dl_match_id, kickoff, pitch,
       opponent = character(),
       goals_for = integer(),
       goals_against = integer(),
@@ -225,7 +231,7 @@ our_fixtures <- function(fixtures, team = OUR_TEAM) {
       goals_against = if_else(we_are_home, away_goals, home_goals),
       events = purrr::map2(events, we_are_home, orient_events)
     ) %>%
-    select(date, dl_match_id, opponent, goals_for, goals_against, events)
+    select(date, dl_match_id, kickoff, pitch, opponent, goals_for, goals_against, events)
 }
 
 orient_events <- function(events, we_are_home) {
