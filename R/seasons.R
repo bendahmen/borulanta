@@ -41,13 +41,6 @@ filter_season <- function(data, season_ids) {
   data %>% filter(.data$season_id %in% .env$season_ids)
 }
 
-#' Choices for the season picker, newest first.
-season_choices <- function(seasons) {
-  seasons %>%
-    arrange(desc(start_date)) %>%
-    { setNames(.$season_id, .$label) }
-}
-
 #' When a season actually ran, as a short caption for the picker.
 #'
 #' Seasons here are a few months long and irregular, so the useful caption is
