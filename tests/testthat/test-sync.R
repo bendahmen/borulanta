@@ -12,7 +12,7 @@ test_seasons <- function() {
     start_date = as.Date(c("2026-01-01", "2026-06-01")),
     fee_rules = c("archived", "core_backstop"),
     status = c("closed", "open")
-  ) %>%
+  ) |>
     mutate(end_date = coalesce(lead(start_date) - 1, as.Date("9999-12-31")))
 }
 
@@ -188,7 +188,7 @@ test_that("a recycled fixture id cannot overwrite an older season's match", {
   out <- run(reused, matches = history, today = as.Date("2026-07-01"))
 
   expect_equal(nrow(out$matches), 2)
-  june_10 <- out$matches %>% filter(date == as.Date("2026-06-10"))
+  june_10 <- out$matches |> filter(date == as.Date("2026-06-10"))
   expect_equal(june_10$goals_for, 2L)
   expect_equal(june_10$opponent, "Ball FC")
 })
@@ -268,7 +268,7 @@ with_mom <- function(team, player = "Felix", ...) {
 test_that("a man of the match of ours is recorded", {
   out <- run(with_mom("us", "Felix", date = "2026-06-10", goals_for = 1))
 
-  mom <- out$events %>% filter(event_type == "mom")
+  mom <- out$events |> filter(event_type == "mom")
   expect_equal(mom$player, "Felix")
   expect_equal(mom$team, "us")
 })
@@ -276,21 +276,21 @@ test_that("a man of the match of ours is recorded", {
 test_that("a man of the match of theirs is recorded for nobody", {
   out <- run(with_mom("them", "Andy", date = "2026-06-10", goals_for = 1))
 
-  expect_equal(nrow(out$events %>% filter(event_type == "mom")), 0)
+  expect_equal(nrow(out$events |> filter(event_type == "mom")), 0)
 })
 
 test_that("a man of the match of theirs clears one we wrongly hold", {
   # The state the old parser left behind: it read every MOM as the home team's,
   # so an away win put an opposition player in our file. A re-run has to take
   # him back out, not merely stop adding him.
-  wrong <- no_events() %>% add_row(
+  wrong <- no_events() |> add_row(
     date = as.Date("2026-06-10"), dl_match_id = "900", team = "us",
     minute = NA_integer_, event_type = "mom", player = "Andy"
   )
 
   out <- run(with_mom("them", "Andy", date = "2026-06-10", goals_for = 1), events = wrong)
 
-  expect_equal(nrow(out$events %>% filter(event_type == "mom")), 0)
+  expect_equal(nrow(out$events |> filter(event_type == "mom")), 0)
 })
 
 test_that("an unplaceable man of the match is reported and left to a person", {
@@ -298,7 +298,7 @@ test_that("an unplaceable man of the match is reported and left to a person", {
 
   out <- run(scraped)
 
-  expect_equal(nrow(out$events %>% filter(event_type == "mom")), 0)
+  expect_equal(nrow(out$events |> filter(event_type == "mom")), 0)
   expect_equal(out$report$unattributed_mom$player, "Ciaran")
   expect_equal(out$report$unattributed_mom$opponent, "Ball FC")
 })
@@ -309,14 +309,14 @@ test_that("a man of the match entered by hand survives the next sync", {
   # Wednesday and there would be no way to record it at all.
   scraped <- with_mom(NA_character_, "Ciaran", date = "2026-06-10", goals_for = 1)
   once <- run(scraped)
-  by_hand <- once$events %>% add_row(
+  by_hand <- once$events |> add_row(
     date = as.Date("2026-06-10"), dl_match_id = "900", team = "us",
     minute = NA_integer_, event_type = "mom", player = "Vitto"
   )
 
   twice <- run(scraped, matches = once$matches, events = by_hand)
 
-  mom <- twice$events %>% filter(event_type == "mom")
+  mom <- twice$events |> filter(event_type == "mom")
   expect_equal(mom$player, "Vitto")
 })
 
@@ -389,7 +389,7 @@ test_that("a page we do not appear in aborts without writing", {
     goals_for = 2L, goals_against = 1L, dl_match_id = "901"
   )
 
-  out <- run(no_matches()[0, ] %>%
+  out <- run(no_matches()[0, ] |>
     transmute(date, dl_match_id, opponent, goals_for, goals_against,
               events = list()), matches = history)
 
@@ -444,7 +444,7 @@ test_that("a real page of played matches syncs into empty files", {
 
   # Every goal of ours came through, and none of theirs — though the miscount
   # check still counts both sides off the page, which is why it stays quiet.
-  our_goals <- out$events %>% filter(event_type == "goal", team == "us")
+  our_goals <- out$events |> filter(event_type == "goal", team == "us")
   expect_equal(nrow(our_goals), sum(out$matches$goals_for))
   expect_true(all(out$events$team == "us"))
   expect_equal(nrow(out$report$miscounted), 0)

@@ -80,7 +80,7 @@ parse_fixtures <- function(html) {
 parse_week <- function(week) {
   # "09 September 2026 - Week 1" — the week number is the site's own bookkeeping
   # and tells us nothing the date does not.
-  header <- rvest::html_element(week, ".accordion-date") %>% rvest::html_text2()
+  header <- rvest::html_element(week, ".accordion-date") |> rvest::html_text2()
   date <- as.Date(str_trim(str_remove(header, "\\s*-\\s*Week\\s*\\d+\\s*$")), format = "%d %B %Y")
   if (is.na(date)) {
     stop("could not read a fixture date from: ", header, call. = FALSE)
@@ -107,12 +107,12 @@ parse_panel <- function(panel, date) {
   # postponement by hand, but deliberately not used to match rows: the league
   # restarts each season with a fresh set of ids, so an id is only unique
   # within a season while a date is unique full stop.
-  fixture_id <- rvest::html_element(title, ".plus-info") %>%
-    rvest::html_attr("href") %>%
+  fixture_id <- rvest::html_element(title, ".plus-info") |>
+    rvest::html_attr("href") |>
     str_remove("^#info-")
 
   # "20:20 - Pitch 1": kick-off and pitch sit in the panel header, not the title row.
-  kickoff <- text_of(title, ".date-info") %>% str_extract("\\d{1,2}:\\d{2}")
+  kickoff <- text_of(title, ".date-info") |> str_extract("\\d{1,2}:\\d{2}")
   pitch <- text_of(title, ".date-info .pitch")
 
   tibble(
@@ -167,7 +167,7 @@ parse_event_row <- function(row) {
   # Classify on the icon, which is what actually distinguishes the rows; the
   # label beside it is a fallback for the medal row, whose icon is dropped when
   # no man of the match was awarded.
-  icons <- rvest::html_elements(row, ".icon-info img") %>% rvest::html_attr("src")
+  icons <- rvest::html_elements(row, ".icon-info img") |> rvest::html_attr("src")
   label <- str_trim(rvest::html_text2(rvest::html_element(row, ".time-info p")))
 
   shows <- function(icon) any(str_detect(icons, icon), na.rm = TRUE)
@@ -210,11 +210,11 @@ parse_event_row <- function(row) {
 #' bookkeeping rather than anything real; the only thing the distinction is
 #' good for is knowing which end of the scoreline is ours.
 our_fixtures <- function(fixtures, team = OUR_TEAM) {
-  ours <- fixtures %>%
+  ours <- fixtures |>
     filter(home_team == team | away_team == team)
 
   if (nrow(ours) == 0) {
-    return(ours %>% transmute(
+    return(ours |> transmute(
       date, dl_match_id, kickoff, pitch,
       opponent = character(),
       goals_for = integer(),
@@ -223,24 +223,24 @@ our_fixtures <- function(fixtures, team = OUR_TEAM) {
     ))
   }
 
-  ours %>%
+  ours |>
     mutate(
       we_are_home = home_team == team,
       opponent = if_else(we_are_home, away_team, home_team),
       goals_for = if_else(we_are_home, home_goals, away_goals),
       goals_against = if_else(we_are_home, away_goals, home_goals),
       events = purrr::map2(events, we_are_home, orient_events)
-    ) %>%
+    ) |>
     select(date, dl_match_id, kickoff, pitch, opponent, goals_for, goals_against, events)
 }
 
 orient_events <- function(events, we_are_home) {
   our_side <- if (we_are_home) "home" else "away"
-  events %>%
+  events |>
     mutate(
       side = coalesce(side, scoring_side(player, events)),
       team = if_else(side == our_side, "us", "them")
-    ) %>%
+    ) |>
     select(team, minute, event_type, player)
 }
 
@@ -256,10 +256,10 @@ orient_events <- function(events, we_are_home) {
 #' NA propagates: an unplaceable event ends up on neither team and is left for a
 #' person, rather than landing on ours by default.
 scoring_side <- function(names, events) {
-  scorers <- events %>%
-    filter(event_type == "goal", !is.na(side), !is.na(player)) %>%
-    distinct(player, side) %>%
-    add_count(player) %>%
+  scorers <- events |>
+    filter(event_type == "goal", !is.na(side), !is.na(player)) |>
+    distinct(player, side) |>
+    add_count(player) |>
     filter(n == 1)
 
   scorers$side[match(names, scorers$player)]

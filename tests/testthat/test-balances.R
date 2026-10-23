@@ -32,7 +32,7 @@ test_that("it agrees with the per-player view it sits next to", {
   balances <- all_player_balances(charges, payments)
   overview <- player_fee_overview("Ben", charges, payments)
 
-  ben <- balances %>% filter(player == "Ben")
+  ben <- balances |> filter(player == "Ben")
   expect_equal(ben$balance, overview$balance)
   expect_equal(ben$charges, overview$total_charges)
 })
@@ -42,7 +42,7 @@ test_that("someone who has paid but never been charged still appears", {
   # quietly change the totals.
   balances <- all_player_balances(charge_row("Ben", 9.50), payment_row("Ghost", 20))
 
-  ghost <- balances %>% filter(player == "Ghost")
+  ghost <- balances |> filter(player == "Ghost")
   expect_equal(ghost$charges, 0)
   expect_equal(ghost$balance, -20)
 })
@@ -50,7 +50,7 @@ test_that("someone who has paid but never been charged still appears", {
 test_that("someone charged who has never paid appears with no payment date", {
   balances <- all_player_balances(charge_row("Ben", 9.50), payment_row("Vitto", 5))
 
-  ben <- balances %>% filter(player == "Ben")
+  ben <- balances |> filter(player == "Ben")
   expect_equal(ben$payments, 0)
   expect_true(is.na(ben$last_payment))
 })

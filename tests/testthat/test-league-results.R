@@ -261,7 +261,7 @@ test_that("a measured opponent shifts the player effects and stays out of the ta
   expect_setequal(with_control$player, c("A", "B", "C", "D"))
   expect_false(any(grepl("opponent", with_control$player)))
   goal_difference <- function(results) {
-    results %>% filter(outcome == "goal_difference") %>% arrange(player) %>% pull(estimate) %>% unname()
+    results |> filter(outcome == "goal_difference") |> arrange(player) |> pull(estimate) |> unname()
   }
   expect_false(isTRUE(all.equal(goal_difference(with_control), goal_difference(without))))
 
@@ -296,7 +296,7 @@ test_that("the controls count against the degrees of freedom", {
   # Eight matches, four players, two controls: six regressors fit. With eight
   # players there would be nothing left, so nothing is estimated.
   window <- a_window(c("Team 1" = 2, "Team 3" = 1.5))
-  crowded <- window$attendance %>%
+  crowded <- window$attendance |>
     bind_rows(tibble(date = rep(window$matches$date, 4),
                      player = rep(c("E", "F", "G", "H"), each = 8)))
 
@@ -316,7 +316,7 @@ test_that("ridge returns the same shape as OLS, with no interval", {
     tibble(date = dates[c(1:6, 9:12)], player = "Vitto"),
     tibble(date = dates[2:11], player = "Max"),
     tibble(date = dates[c(1, 3, 5, 7, 8, 10, 12)], player = "Boris")
-  ) %>% mutate(season_id = "s1")
+  ) |> mutate(season_id = "s1")
   matches <- tibble(
     date = dates,
     opponent = "Ball FC",
@@ -345,7 +345,7 @@ test_that("ridge pulls the estimates in toward each other", {
     tibble(date = dates[1:9], player = "A"),
     tibble(date = dates[4:12], player = "B"),
     tibble(date = dates[c(1:4, 8:12)], player = "C")
-  ) %>% mutate(season_id = "s1")
+  ) |> mutate(season_id = "s1")
   matches <- tibble(
     date = dates, opponent = "Ball FC",
     goals_for = c(5L, 6L, 7L, 0L, 1L, 0L, 1L, 0L, 1L, 0L, 1L, 0L),
@@ -370,7 +370,7 @@ test_that("an ever-present player does not take the whole fit down with them", {
     tibble(date = dates[1:6], player = "Ben"),
     tibble(date = dates[4:10], player = "Vitto"),
     tibble(date = dates[c(1, 3, 5, 7, 9)], player = "Max")
-  ) %>% mutate(season_id = "s1")
+  ) |> mutate(season_id = "s1")
   matches <- tibble(
     date = dates, opponent = "Ball FC",
     goals_for = c(3L, 1L, 2L, 0L, 4L, 1L, 2L, 3L, 1L, 2L),
@@ -392,7 +392,7 @@ test_that("ridge is reproducible across calls", {
     tibble(date = dates[1:8], player = "Ben"),
     tibble(date = dates[3:10], player = "Vitto"),
     tibble(date = dates[c(1, 2, 5, 6, 9, 10)], player = "Max")
-  ) %>% mutate(season_id = "s1")
+  ) |> mutate(season_id = "s1")
   matches <- tibble(
     date = dates, opponent = "Ball FC",
     goals_for = c(3L, 1L, 2L, 0L, 4L, 1L, 2L, 3L, 1L, 2L),

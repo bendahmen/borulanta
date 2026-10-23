@@ -11,9 +11,9 @@
 # recomputed, which is how a season stays reproducible after its rules retire.
 
 load_seasons <- function(path = "data/seasons.csv") {
-  read_csv(path, show_col_types = FALSE) %>%
-    mutate(start_date = parse_match_date(start_date)) %>%
-    arrange(start_date) %>%
+  read_csv(path, show_col_types = FALSE) |>
+    mutate(start_date = parse_match_date(start_date)) |>
+    arrange(start_date) |>
     mutate(end_date = coalesce(lead(start_date) - 1, as.Date("9999-12-31")))
 }
 
@@ -29,7 +29,7 @@ assign_season <- function(dates, seasons) {
 
 #' Add a `season_id` column to any table carrying a `date` column.
 with_season <- function(data, seasons) {
-  data %>% mutate(season_id = assign_season(.data$date, seasons))
+  data |> mutate(season_id = assign_season(.data$date, seasons))
 }
 
 #' Filter a season-tagged table to any set of seasons.
@@ -38,7 +38,7 @@ with_season <- function(data, seasons) {
 #' operation. An empty selection yields no rows, which is what the caller wants:
 #' nothing is selected, so nothing is in scope.
 filter_season <- function(data, season_ids) {
-  data %>% filter(.data$season_id %in% .env$season_ids)
+  data |> filter(.data$season_id %in% .env$season_ids)
 }
 
 #' When a season actually ran, as a short caption for the picker.
@@ -50,13 +50,13 @@ season_span <- function(seasons, matches) {
   month <- function(date) format(date, "%b")
   month_year <- function(date) format(date, "%b %Y")
 
-  played <- matches %>%
-    filter(!is.na(season_id)) %>%
-    group_by(season_id) %>%
+  played <- matches |>
+    filter(!is.na(season_id)) |>
+    group_by(season_id) |>
     summarise(first_match = min(date), last_match = max(date), .groups = "drop")
 
-  seasons %>%
-    left_join(played, by = "season_id") %>%
+  seasons |>
+    left_join(played, by = "season_id") |>
     mutate(
       span = case_when(
         is.na(first_match) ~ paste("from", month_year(start_date)),
@@ -66,6 +66,6 @@ season_span <- function(seasons, matches) {
           paste0(month(first_match), "\u2013", month_year(last_match)),
         TRUE ~ paste(month_year(first_match), "\u2013", month_year(last_match))
       )
-    ) %>%
+    ) |>
     select(season_id, label, start_date, span)
 }

@@ -76,12 +76,12 @@ LEAGUE_RESULT_COLUMNS <- readr::cols(
 )
 
 read_match_file <- function(path) {
-  readr::read_csv(path, col_types = MATCH_COLUMNS) %>%
+  readr::read_csv(path, col_types = MATCH_COLUMNS) |>
     mutate(date = parse_match_date(date))
 }
 
 read_event_file <- function(path) {
-  readr::read_csv(path, col_types = EVENT_COLUMNS) %>%
+  readr::read_csv(path, col_types = EVENT_COLUMNS) |>
     mutate(date = parse_match_date(date))
 }
 
@@ -95,7 +95,7 @@ read_fixture_file <- function(path) {
       pitch = character()
     ))
   }
-  readr::read_csv(path, col_types = FIXTURE_COLUMNS) %>%
+  readr::read_csv(path, col_types = FIXTURE_COLUMNS) |>
     mutate(date = parse_match_date(date))
 }
 
@@ -109,8 +109,8 @@ read_league_table_file <- function(path) {
       scraped_on = as.Date(character())
     ))
   }
-  readr::read_csv(path, col_types = LEAGUE_TABLE_COLUMNS) %>%
-    mutate(scraped_on = parse_match_date(scraped_on)) %>%
+  readr::read_csv(path, col_types = LEAGUE_TABLE_COLUMNS) |>
+    mutate(scraped_on = parse_match_date(scraped_on)) |>
     arrange(position)
 }
 
@@ -123,7 +123,7 @@ read_league_result_file <- function(path) {
       dl_match_id = character()
     ))
   }
-  readr::read_csv(path, col_types = LEAGUE_RESULT_COLUMNS) %>%
+  readr::read_csv(path, col_types = LEAGUE_RESULT_COLUMNS) |>
     mutate(date = parse_match_date(date))
 }
 
@@ -134,7 +134,7 @@ read_league_result_file <- function(path) {
 #' derived once here rather than parsed back out of a string wherever it is
 #' shown.
 with_result <- function(matches) {
-  matches %>% mutate(result = paste0(goals_for, "-", goals_against))
+  matches |> mutate(result = paste0(goals_for, "-", goals_against))
 }
 
 load_app_data <- function(dir = "data") {
@@ -144,27 +144,27 @@ load_app_data <- function(dir = "data") {
   players <- read_csv(path("players.csv"), show_col_types = FALSE)
   rosters <- read_csv(path("player_seasons.csv"), show_col_types = FALSE)
 
-  matches <- read_match_file(path("matches.csv")) %>%
-    with_result() %>%
-    with_season(seasons) %>%
+  matches <- read_match_file(path("matches.csv")) |>
+    with_result() |>
+    with_season(seasons) |>
     arrange(desc(date))
 
-  events <- read_event_file(path("match_events.csv")) %>%
+  events <- read_event_file(path("match_events.csv")) |>
     with_season(seasons)
 
-  attendance <- read_csv(path("attendance.csv"), show_col_types = FALSE) %>%
-    mutate(date = parse_match_date(date)) %>%
+  attendance <- read_csv(path("attendance.csv"), show_col_types = FALSE) |>
+    mutate(date = parse_match_date(date)) |>
     with_season(seasons)
 
-  payments <- read_csv(path("payments.csv"), show_col_types = FALSE) %>%
-    mutate(date = parse_match_date(date)) %>%
+  payments <- read_csv(path("payments.csv"), show_col_types = FALSE) |>
+    mutate(date = parse_match_date(date)) |>
     with_season(seasons)
 
   # Fixtures are season-tagged so the home page can say which season the next
   # match falls in; the league table is not, because its season is the league's
   # own and has nothing to do with the fee seasons the rest of the app counts in.
-  fixtures <- read_fixture_file(path("fixtures.csv")) %>%
-    with_season(seasons) %>%
+  fixtures <- read_fixture_file(path("fixtures.csv")) |>
+    with_season(seasons) |>
     arrange(date)
 
   league_table <- read_league_table_file(path("league_table.csv"))
@@ -255,11 +255,11 @@ validate_app_data <- function(data) {
   # log is partial, and a partial log looks exactly like a complete one to
   # anything that counts it. Say so rather than let it be totted up as fact.
   # Only our own side can be checked, since theirs is not recorded.
-  our_goals <- data$events %>%
-    filter(event_type == "goal", team == "us") %>%
+  our_goals <- data$events |>
+    filter(event_type == "goal", team == "us") |>
     count(date, name = "logged")
-  mismatched <- data$matches %>%
-    inner_join(our_goals, by = "date") %>%
+  mismatched <- data$matches |>
+    inner_join(our_goals, by = "date") |>
     filter(logged != goals_for)
   complain(
     "goal events that do not add up to the scoreline",
@@ -282,8 +282,8 @@ validate_app_data <- function(data) {
   # The sync keys league results on date and the two teams, so a duplicate can
   # only come from a hand edit. It would count a match twice in the opponent
   # strength index.
-  duplicated_results <- data$league_results %>%
-    count(date, home_team, away_team) %>%
+  duplicated_results <- data$league_results |>
+    count(date, home_team, away_team) |>
     filter(n > 1)
   complain(
     "league results recorded more than once",
@@ -292,11 +292,11 @@ validate_app_data <- function(data) {
 
   # Someone who played but was not on that season's active roster is charged
   # nothing, which is almost always a missing roster row rather than a freebie.
-  unrostered <- data$attendance %>%
+  unrostered <- data$attendance |>
     anti_join(
-      data$rosters %>% filter(active),
+      data$rosters |> filter(active),
       by = c("season_id", "player")
-    ) %>%
+    ) |>
     pull(player)
   complain("players in attendance but not on that season's active roster", unrostered)
 

@@ -18,7 +18,7 @@ test_that("the record is per opponent, and points are per match", {
 
   record <- opponent_record(matches)
 
-  ball <- record %>% filter(opponent == "Ball FC")
+  ball <- record |> filter(opponent == "Ball FC")
   expect_equal(ball$played, 2L)
   expect_equal(ball$won, 1L)
   expect_equal(ball$lost, 1L)

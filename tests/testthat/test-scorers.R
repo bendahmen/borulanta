@@ -49,7 +49,7 @@ test_that("a match is covered when the sync stamped its fixture id on it", {
 test_that("a synced goalless draw is covered even with nothing logged in it", {
   # The reason coverage keys on the fixture id rather than on having events:
   # this match is completely recorded and has no events at all.
-  goalless <- covered_match("2026-01-14") %>%
+  goalless <- covered_match("2026-01-14") |>
     mutate(goals_for = 0L, goals_against = 0L)
 
   expect_equal(event_coverage(goalless)$observed, 1)
@@ -65,7 +65,7 @@ test_that("the rate divides by appearances in covered matches, not every one", {
 
   table <- scorer_table(events, attendance, matches)
 
-  ben <- table %>% filter(player == "Ben")
+  ben <- table |> filter(player == "Ben")
   # Two appearances in total, one of them in a match we have events for.
   expect_equal(ben$appearances, 1L)
   expect_equal(ben$goals_per_appearance, 1)
@@ -115,7 +115,7 @@ test_that("a scorer with no attendance row is shown rather than dropped", {
 
   table <- scorer_table(events, played("2026-01-14", "Ben"), matches)
 
-  ghost <- table %>% filter(player == "Ghost")
+  ghost <- table |> filter(player == "Ghost")
   expect_equal(ghost$goals, 1L)
   expect_equal(ghost$appearances, 0L)
   expect_true(is.na(ghost$goals_per_appearance))

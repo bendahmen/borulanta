@@ -172,18 +172,18 @@ season_charges <- function(season, matches, attendance, rosters) {
   }
 
   rules <- fee_rule_set(season$fee_rules)
-  roster <- rosters %>%
-    filter(season_id == season$season_id, active) %>%
+  roster <- rosters |>
+    filter(season_id == season$season_id, active) |>
     select(player, core)
 
-  season_matches <- matches %>% filter(season_id == season$season_id)
+  season_matches <- matches |> filter(season_id == season$season_id)
   if (nrow(season_matches) == 0 || nrow(roster) == 0) {
     return(empty_charges())
   }
 
-  squads <- attendance %>%
-    filter(season_id == season$season_id) %>%
-    split(~ date) %>%
+  squads <- attendance |>
+    filter(season_id == season$season_id) |>
+    split(~ date) |>
     map(~ .x$player)
 
   purrr::pmap_dfr(season_matches, function(...) {
@@ -191,7 +191,7 @@ season_charges <- function(season, matches, attendance, rosters) {
     squad <- squads[[as.character(match$date)]]
     if (is.null(squad)) squad <- character(0)
 
-    rules$charge(squad, roster, rules$params) %>%
+    rules$charge(squad, roster, rules$params) |>
       mutate(
         season_id = season$season_id,
         date = match$date,
@@ -199,7 +199,7 @@ season_charges <- function(season, matches, attendance, rosters) {
         squad_size = length(squad),
         .before = 1
       )
-  }) %>%
+  }) |>
     select(season_id, date, player, played, squad_size, charge, explanation)
 }
 
@@ -217,7 +217,7 @@ archived_charges <- function(season_id) {
     return(empty_charges())
   }
 
-  read_csv(path, show_col_types = FALSE) %>%
+  read_csv(path, show_col_types = FALSE) |>
     mutate(date = parse_match_date(date))
 }
 
@@ -226,10 +226,10 @@ all_charges <- function(seasons, matches, attendance, rosters) {
   purrr::pmap_dfr(seasons, function(...) {
     season <- tibble(...)
     season_charges(season, matches, attendance, rosters)
-  }) %>%
+  }) |>
     # Ledgers carry no result column; attach it from the fixture list.
-    select(-any_of("result")) %>%
-    left_join(matches %>% select(date, result), by = "date")
+    select(-any_of("result")) |>
+    left_join(matches |> select(date, result), by = "date")
 }
 
 # Everyone at once ----
@@ -247,23 +247,23 @@ all_charges <- function(seasons, matches, attendance, rosters) {
 #' Rounded per player rather than at the end, so the column adds up to the
 #' total printed beside it. The underlying ledger stays at full precision.
 all_player_balances <- function(charges, payments) {
-  charged <- charges %>%
-    group_by(player) %>%
+  charged <- charges |>
+    group_by(player) |>
     summarise(charges = sum(charge), .groups = "drop")
 
-  paid <- payments %>%
-    group_by(player) %>%
+  paid <- payments |>
+    group_by(player) |>
     summarise(
       payments = sum(amount),
       last_payment = max(date),
       .groups = "drop"
     )
 
-  full_join(charged, paid, by = "player") %>%
+  full_join(charged, paid, by = "player") |>
     mutate(
       across(c(charges, payments), ~ round(coalesce(.x, 0), 2)),
       balance = round(charges - payments, 2)
-    ) %>%
+    ) |>
     arrange(desc(balance), player)
 }
 
@@ -285,8 +285,8 @@ balance_totals <- function(balances) {
 # Per-player views ----
 
 player_match_charges <- function(player, charges, seasons = NULL) {
-  charges <- charges %>%
-    filter(.data$player == .env$player) %>%
+  charges <- charges |>
+    filter(.data$player == .env$player) |>
     arrange(desc(date))
 
   # The charge history spans every season, so say which one each match was in.
@@ -296,7 +296,7 @@ player_match_charges <- function(player, charges, seasons = NULL) {
     seasons$label[match(charges$season_id, seasons$season_id)]
   }
 
-  charges %>%
+  charges |>
     transmute(
       date,
       season = season_label,
@@ -309,9 +309,9 @@ player_match_charges <- function(player, charges, seasons = NULL) {
 }
 
 player_payment_history <- function(player, payments) {
-  payments %>%
-    filter(.data$player == .env$player) %>%
-    arrange(desc(date)) %>%
+  payments |>
+    filter(.data$player == .env$player) |>
+    arrange(desc(date)) |>
     transmute(date, amount)
 }
 

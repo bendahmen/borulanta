@@ -56,46 +56,46 @@ sync_results <- function(fixtures, matches, events, seasons, name_map,
     return(c(unchanged, list(report = empty_report(), abort = abort)))
   }
 
-  classified <- fixtures %>%
+  classified <- fixtures |>
     mutate(
       season_id = assign_season(date, seasons),
       goal_events = purrr::map_int(events, ~ sum(.x$event_type == "goal")),
       disposition = fixture_disposition(
         date, goals_for, goals_against, goal_events, season_id, seasons, today
       )
-    ) %>%
+    ) |>
     resolve_pending_against_file(matches)
 
-  playable <- classified %>% filter(disposition == "playable")
+  playable <- classified |> filter(disposition == "playable")
   decided <- decide_against_existing(playable, matches)
 
   # A date whose score we could not agree on is left alone completely. Rewriting
   # its goals from a page we have just decided not to believe would leave the
   # two files contradicting each other, which is the failure the conflict
   # branch exists to prevent.
-  accepted <- decided %>% filter(action != "conflict")
-  writing <- decided %>% filter(action %in% c("new", "enrich"))
-  recorded <- playable %>% filter(date %in% accepted$date)
+  accepted <- decided |> filter(action != "conflict")
+  writing <- decided |> filter(action %in% c("new", "enrich"))
+  recorded <- playable |> filter(date %in% accepted$date)
 
   updated_matches <- apply_match_changes(matches, writing)
   updated_events <- apply_event_changes(events, recorded, name_map)
 
   report <- list(
-    new = decided %>% filter(action == "new"),
-    enriched = decided %>% filter(action == "enrich"),
-    unchanged = decided %>% filter(action == "unchanged"),
-    conflicting = decided %>% filter(action == "conflict"),
-    pending = classified %>% filter(disposition == "pending"),
-    refused = classified %>% filter(disposition %in% c("no_season", "closed_season")),
-    miscounted = classified %>%
+    new = decided |> filter(action == "new"),
+    enriched = decided |> filter(action == "enrich"),
+    unchanged = decided |> filter(action == "unchanged"),
+    conflicting = decided |> filter(action == "conflict"),
+    pending = classified |> filter(disposition == "pending"),
+    refused = classified |> filter(disposition %in% c("no_season", "closed_season")),
+    miscounted = classified |>
       filter(disposition == "playable", goal_events > 0,
              goal_events != goals_for + goals_against),
     # A man of the match nobody scored, so nothing on the page says which team
     # won it. Reported rather than guessed at; whatever the file already holds
     # for that date is left alone, so an answer entered by hand survives.
-    unattributed_mom = scraped_events(recorded) %>%
-      filter(event_type == "mom", is.na(team)) %>%
-      left_join(recorded %>% select(date, opponent), by = "date") %>%
+    unattributed_mom = scraped_events(recorded) |>
+      filter(event_type == "mom", is.na(team)) |>
+      left_join(recorded |> select(date, opponent), by = "date") |>
       select(date, opponent, player)
   )
 
@@ -125,7 +125,7 @@ as_id <- function(x) {
 }
 
 as_match_table <- function(matches) {
-  matches %>%
+  matches |>
     mutate(
       date = as_date_column(date),
       opponent = as.character(opponent),
@@ -136,7 +136,7 @@ as_match_table <- function(matches) {
 }
 
 as_event_table <- function(events) {
-  events %>%
+  events |>
     mutate(
       date = as_date_column(date),
       dl_match_id = as_id(dl_match_id),
@@ -152,7 +152,7 @@ as_fixture_table <- function(fixtures) {
   for (col in c("kickoff", "pitch")) {
     if (!col %in% names(fixtures)) fixtures[[col]] <- NA_character_
   }
-  fixtures %>%
+  fixtures |>
     mutate(
       kickoff = as.character(kickoff),
       pitch = as.character(pitch),
@@ -239,11 +239,11 @@ fixture_disposition <- function(date, goals_for, goals_against, goal_events,
 #' worth saying; without this it would be reported as awaiting a scoreline every
 #' Friday for the rest of the season.
 resolve_pending_against_file <- function(classified, matches) {
-  recorded <- matches %>%
+  recorded <- matches |>
     filter(!is.na(goals_for), !is.na(goals_against))
   goalless <- recorded$date[recorded$goals_for == 0 & recorded$goals_against == 0]
 
-  classified %>%
+  classified |>
     mutate(disposition = dplyr::case_when(
       disposition != "pending" ~ disposition,
       date %in% goalless ~ "playable",
@@ -254,7 +254,7 @@ resolve_pending_against_file <- function(classified, matches) {
 
 #' Compare playable fixtures with what is already recorded.
 decide_against_existing <- function(playable, matches) {
-  existing <- matches %>%
+  existing <- matches |>
     transmute(
       date,
       on_file = TRUE,
@@ -264,9 +264,9 @@ decide_against_existing <- function(playable, matches) {
       existing_id = dl_match_id
     )
 
-  playable %>%
-    select(date, season_id, dl_match_id, opponent, goals_for, goals_against) %>%
-    left_join(existing, by = "date") %>%
+  playable |>
+    select(date, season_id, dl_match_id, opponent, goals_for, goals_against) |>
+    left_join(existing, by = "date") |>
     mutate(
       on_file = coalesce(on_file, FALSE),
       # Only count as filling a blank if there is something to put in it.
@@ -305,27 +305,27 @@ apply_match_changes <- function(matches, writing) {
     return(matches)
   }
 
-  new_rows <- writing %>%
-    filter(action == "new") %>%
+  new_rows <- writing |>
+    filter(action == "new") |>
     transmute(date, opponent, goals_for, goals_against, dl_match_id)
 
-  enrichment <- writing %>%
-    filter(action == "enrich") %>%
+  enrichment <- writing |>
+    filter(action == "enrich") |>
     select(date,
       fresh_opponent = opponent, fresh_id = dl_match_id,
       fresh_for = goals_for, fresh_against = goals_against
     )
 
-  matches %>%
-    left_join(enrichment, by = "date") %>%
+  matches |>
+    left_join(enrichment, by = "date") |>
     mutate(
       opponent = coalesce(opponent, fresh_opponent),
       dl_match_id = coalesce(dl_match_id, fresh_id),
       goals_for = coalesce(goals_for, fresh_for),
       goals_against = coalesce(goals_against, fresh_against)
-    ) %>%
-    select(-fresh_opponent, -fresh_id, -fresh_for, -fresh_against) %>%
-    bind_rows(new_rows) %>%
+    ) |>
+    select(-fresh_opponent, -fresh_id, -fresh_for, -fresh_against) |>
+    bind_rows(new_rows) |>
     arrange(date)
 }
 
@@ -343,9 +343,9 @@ scraped_events <- function(accepted) {
     return(empty)
   }
 
-  accepted %>%
-    select(date, dl_match_id, events) %>%
-    tidyr::unnest(events) %>%
+  accepted |>
+    select(date, dl_match_id, events) |>
+    tidyr::unnest(events) |>
     select(any_of(names(empty)))
 }
 
@@ -362,9 +362,9 @@ scraped_events <- function(accepted) {
 #' across the next sync instead of being wiped every week.
 settled_event_kinds <- function(accepted, scraped) {
   bind_rows(
-    accepted %>% transmute(date, event_type = "goal"),
-    scraped %>%
-      filter(event_type == "mom", !is.na(team)) %>%
+    accepted |> transmute(date, event_type = "goal"),
+    scraped |>
+      filter(event_type == "mom", !is.na(team)) |>
       distinct(date, event_type)
   )
 }
@@ -389,16 +389,16 @@ apply_event_changes <- function(events, accepted, name_map) {
   }
 
   scraped <- scraped_events(accepted)
-  kept <- events %>%
+  kept <- events |>
     anti_join(settled_event_kinds(accepted, scraped), by = c("date", "event_type"))
 
-  fresh <- scraped %>%
-    filter(team == "us") %>%
-    mutate(player = map_player_names(player, name_map)) %>%
-    select(date, dl_match_id, team, minute, event_type, player) %>%
+  fresh <- scraped |>
+    filter(team == "us") |>
+    mutate(player = map_player_names(player, name_map)) |>
+    select(date, dl_match_id, team, minute, event_type, player) |>
     as_event_table()
 
-  bind_rows(kept, fresh) %>%
+  bind_rows(kept, fresh) |>
     arrange(date, event_type, minute)
 }
 
@@ -418,7 +418,7 @@ map_player_names <- function(player, name_map) {
 
 #' Write both files back in the shape the rest of the project reads them.
 write_sync_files <- function(result, match_path, event_path) {
-  as_written <- function(data) data %>% mutate(date = format(date, "%d/%m/%Y"))
+  as_written <- function(data) data |> mutate(date = format(date, "%d/%m/%Y"))
   readr::write_csv(as_written(result$matches), match_path, na = "")
   readr::write_csv(as_written(result$events), event_path, na = "")
   invisible(result)
@@ -465,13 +465,13 @@ snapshot_tables <- function(fixtures, league_table, scraped_on = Sys.Date(),
   list(
     # No score here, deliberately. matches.csv is the only source of truth for
     # results; this is a list of dates and who we are down to play on them.
-    fixtures = fixtures %>%
-      as_fixture_table() %>%
-      filter(!date %in% recorded) %>%
-      transmute(date, opponent, dl_match_id, kickoff, pitch) %>%
+    fixtures = fixtures |>
+      as_fixture_table() |>
+      filter(!date %in% recorded) |>
+      transmute(date, opponent, dl_match_id, kickoff, pitch) |>
       arrange(date),
-    league_table = league_table %>%
-      mutate(scraped_on = as.Date(scraped_on)) %>%
+    league_table = league_table |>
+      mutate(scraped_on = as.Date(scraped_on)) |>
       arrange(position)
   )
 }
@@ -479,7 +479,7 @@ snapshot_tables <- function(fixtures, league_table, scraped_on = Sys.Date(),
 #' Replace both snapshot files.
 write_snapshot_files <- function(snapshot, fixture_path, table_path) {
   as_written <- function(data, ...) {
-    data %>% mutate(across(c(...), ~ format(.x, "%d/%m/%Y")))
+    data |> mutate(across(c(...), ~ format(.x, "%d/%m/%Y")))
   }
   readr::write_csv(as_written(snapshot$fixtures, date), fixture_path, na = "")
   readr::write_csv(as_written(snapshot$league_table, scraped_on), table_path, na = "")
@@ -523,21 +523,21 @@ sync_league_results <- function(all_fixtures, league_results, today = Sys.Date()
   league_results <- as_league_result_table(league_results)
   key <- c("date", "home_team", "away_team")
 
-  played <- all_fixtures %>%
+  played <- all_fixtures |>
     mutate(
       date = as_date_column(date),
       goal_events = purrr::map_int(events, ~ sum(.x$event_type == "goal"))
-    ) %>%
-    filter(date < today, home_goals + away_goals > 0 | goal_events > 0) %>%
-    select(date, home_team, away_team, home_goals, away_goals, dl_match_id) %>%
+    ) |>
+    filter(date < today, home_goals + away_goals > 0 | goal_events > 0) |>
+    select(date, home_team, away_team, home_goals, away_goals, dl_match_id) |>
     as_league_result_table()
 
-  added <- played %>% anti_join(league_results, by = key)
-  corrected <- played %>%
+  added <- played |> anti_join(league_results, by = key)
+  corrected <- played |>
     inner_join(
-      league_results %>% select(all_of(key), old_home = home_goals, old_away = away_goals),
+      league_results |> select(all_of(key), old_home = home_goals, old_away = away_goals),
       by = key
-    ) %>%
+    ) |>
     filter(old_home != home_goals | old_away != away_goals)
 
   # A file nobody is changing comes back identical rather than merely
@@ -549,16 +549,16 @@ sync_league_results <- function(all_fixtures, league_results, today = Sys.Date()
     ))
   }
 
-  updated <- league_results %>%
-    anti_join(played, by = key) %>%
-    bind_rows(played) %>%
+  updated <- league_results |>
+    anti_join(played, by = key) |>
+    bind_rows(played) |>
     arrange(date, home_team, away_team)
 
   list(league_results = updated, added = added, corrected = corrected, changed = TRUE)
 }
 
 as_league_result_table <- function(results) {
-  results %>%
+  results |>
     mutate(
       date = as_date_column(date),
       home_team = as.character(home_team),
@@ -571,7 +571,7 @@ as_league_result_table <- function(results) {
 
 write_league_result_file <- function(league_results, path) {
   readr::write_csv(
-    league_results %>% mutate(date = format(date, "%d/%m/%Y")), path, na = ""
+    league_results |> mutate(date = format(date, "%d/%m/%Y")), path, na = ""
   )
   invisible(league_results)
 }

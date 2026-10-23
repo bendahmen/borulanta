@@ -42,8 +42,8 @@ describe <- function(label, rows, columns) {
     return(invisible(NULL))
   }
   rule(paste0(label, " (", nrow(rows), ")"))
-  print(as.data.frame(rows %>%
-    mutate(date = format(date, "%d/%m/%Y")) %>%
+  print(as.data.frame(rows |>
+    mutate(date = format(date, "%d/%m/%Y")) |>
     select(any_of(columns))), row.names = FALSE)
 }
 
@@ -117,10 +117,10 @@ describe(
 # A scorer of ours who is neither a player we know nor a name we translate.
 # Most of the squad go by the same first name on the site, so only the ones that
 # do not are worth mentioning.
-unrecognised <- result$events %>%
-  filter(team == "us", !is.na(player)) %>%
-  distinct(player) %>%
-  pull(player) %>%
+unrecognised <- result$events |>
+  filter(team == "us", !is.na(player)) |>
+  distinct(player) |>
+  pull(player) |>
   setdiff(players$player)
 if (length(unrecognised) > 0) {
   rule("Scorers we do not recognise")
@@ -137,7 +137,7 @@ if (length(unrecognised) > 0) {
 # any team plays, not just when we do.
 snapshot <- snapshot_tables(fixtures, league_table,
                             scraped_on = Sys.Date(), recorded = result$matches$date)
-upcoming <- snapshot$fixtures %>% filter(date >= Sys.Date())
+upcoming <- snapshot$fixtures |> filter(date >= Sys.Date())
 
 rule("Fixtures and league table")
 cat(nrow(fixtures), " fixtures of ours on the page, ",
@@ -149,7 +149,7 @@ if (nrow(upcoming) > 0) {
 if (!OUR_TEAM %in% league_table$team) {
   cat("NOTE: ", OUR_TEAM, " is not in the league table on this page.\n", sep = "")
 } else {
-  us <- league_table %>% filter(team == OUR_TEAM)
+  us <- league_table |> filter(team == OUR_TEAM)
   cat("League position: ", us$position, " of ", nrow(league_table),
       " on ", us$points, " points.\n", sep = "")
 }

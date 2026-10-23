@@ -8,7 +8,7 @@ matches_for <- function(dates, goals_for, goals_against, opponent = NA_character
     goals_for = as.integer(goals_for),
     goals_against = as.integer(goals_against),
     dl_match_id = NA_character_
-  ) %>%
+  ) |>
     with_result()
 }
 
@@ -17,7 +17,7 @@ matches_for <- function(dates, goals_for, goals_against, opponent = NA_character
 test_that("the last match is the latest one, whatever order the file is in", {
   matches <- matches_for(
     c("2026-08-05", "2026-08-19", "2026-08-12"), c(6, 5, 10), c(2, 3, 6)
-  ) %>%
+  ) |>
     mutate(season_id = "s2")
   attendance <- tibble(
     date = as.Date(c("2026-08-19", "2026-08-19", "2026-08-12")),
@@ -34,7 +34,7 @@ test_that("the last match is the latest one, whatever order the file is in", {
 })
 
 test_that("scorers are tallied per player and the opposition's are left out", {
-  matches <- matches_for("2026-08-19", 3, 1) %>% mutate(season_id = "s2")
+  matches <- matches_for("2026-08-19", 3, 1) |> mutate(season_id = "s2")
   events <- tibble(
     date = as.Date("2026-08-19"),
     dl_match_id = NA_character_,
@@ -56,7 +56,7 @@ test_that("scorers are tallied per player and the opposition's are left out", {
 test_that("a match with no events recorded still summarises", {
   # Everything played before the sync existed is in exactly this state, so it
   # is the common case rather than an edge one.
-  matches <- matches_for("2026-08-19", 5, 3) %>% mutate(season_id = "s2")
+  matches <- matches_for("2026-08-19", 5, 3) |> mutate(season_id = "s2")
 
   summary <- last_match_summary(
     matches, tibble(date = as.Date("2026-08-19"), player = "Ben"), empty_events()

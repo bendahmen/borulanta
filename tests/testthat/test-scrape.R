@@ -22,7 +22,7 @@ test_that("goals logged reconcile with every scoreline", {
   # picking up the wrong rows the two will not agree.
   fixtures <- parse_fixtures(fixture_html("hoxton-played.html"))
 
-  tallies <- fixtures %>%
+  tallies <- fixtures |>
     mutate(logged = map_int(events, ~ sum(.x$event_type == "goal")))
 
   expect_equal(tallies$logged, tallies$home_goals + tallies$away_goals)
@@ -58,17 +58,17 @@ test_that("our fixtures are oriented to us whichever side we were listed on", {
 
   # 22 Jul: listed at home, won 8-1. 29 Jul: listed away, lost 2-3. The score
   # has to follow us across the fixture, not stay with the home column.
-  home_match <- ours %>% filter(date == as.Date("2026-07-22"))
+  home_match <- ours |> filter(date == as.Date("2026-07-22"))
   expect_equal(home_match$goals_for, 8L)
   expect_equal(home_match$goals_against, 1L)
 
-  away_match <- ours %>% filter(date == as.Date("2026-07-29"))
+  away_match <- ours |> filter(date == as.Date("2026-07-29"))
   expect_equal(away_match$opponent, "AFC Cognizant")
   expect_equal(away_match$goals_for, 2L)
   expect_equal(away_match$goals_against, 3L)
 
   # ...and so do the goals inside it.
-  away_goals <- away_match$events[[1]] %>% filter(event_type == "goal")
+  away_goals <- away_match$events[[1]] |> filter(event_type == "goal")
   expect_equal(sum(away_goals$team == "us"), 2L)
   expect_equal(sum(away_goals$team == "them"), 3L)
 })
@@ -93,10 +93,10 @@ test_that("a man of the match who scored is put on the side he scored for", {
   )
 
   # 22 Jul, at home: Ferg won it and scored twice for us.
-  won_by_us <- ours %>%
-    filter(date == as.Date("2026-07-22")) %>%
-    pull(events) %>%
-    first() %>%
+  won_by_us <- ours |>
+    filter(date == as.Date("2026-07-22")) |>
+    pull(events) |>
+    first() |>
     filter(event_type == "mom")
   expect_equal(won_by_us$player, "Ferg")
   expect_equal(won_by_us$team, "us")
@@ -104,10 +104,10 @@ test_that("a man of the match who scored is put on the side he scored for", {
   # 29 Jul, away: Harry won it and scored twice for AFC Cognizant. The site
   # still put him in the home column, which on that fixture was theirs anyway —
   # the point is that the goal list is what decided it.
-  won_by_them <- ours %>%
-    filter(date == as.Date("2026-07-29")) %>%
-    pull(events) %>%
-    first() %>%
+  won_by_them <- ours |>
+    filter(date == as.Date("2026-07-29")) |>
+    pull(events) |>
+    first() |>
     filter(event_type == "mom")
   expect_equal(won_by_them$player, "Harry")
   expect_equal(won_by_them$team, "them")
@@ -278,7 +278,7 @@ test_that("each column lands in the field it belongs to", {
     list(2, OUR_TEAM,  5, 3, 0, 2, 19, 14, 5, 9)
   )))
 
-  us <- standings %>% filter(team == OUR_TEAM)
+  us <- standings |> filter(team == OUR_TEAM)
   expect_equal(us$position, 2L)
   expect_equal(us$played, 5L)
   expect_equal(us$won, 3L)

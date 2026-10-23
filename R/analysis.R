@@ -7,7 +7,7 @@
 
 #' Results with points and goal difference derived from the score.
 match_outcomes <- function(matches) {
-  matches %>%
+  matches |>
     mutate(
       goals_scored = as.integer(goals_for),
       goals_conceded = as.integer(goals_against),
@@ -26,10 +26,10 @@ create_player_contribution_table <- function(attendance, matches) {
     return(match_outcomes(matches[0, , drop = FALSE]))
   }
 
-  attendance %>%
-    select(date, player) %>%
-    mutate(present = 1L) %>%
-    pivot_wider(names_from = player, values_from = present, values_fill = 0L) %>%
+  attendance |>
+    select(date, player) |>
+    mutate(present = 1L) |>
+    pivot_wider(names_from = player, values_from = present, values_fill = 0L) |>
     inner_join(match_outcomes(matches), by = "date")
 }
 
@@ -41,12 +41,12 @@ rolling_match_average <- function(values, window = 5L) {
 }
 
 season_form_data <- function(attendance, matches) {
-  attendance_by_match <- attendance %>% count(date, name = "squad_size")
+  attendance_by_match <- attendance |> count(date, name = "squad_size")
 
-  match_outcomes(matches) %>%
-    left_join(attendance_by_match, by = "date") %>%
-    mutate(squad_size = coalesce(squad_size, 0L)) %>%
-    arrange(date) %>%
+  match_outcomes(matches) |>
+    left_join(attendance_by_match, by = "date") |>
+    mutate(squad_size = coalesce(squad_size, 0L)) |>
+    arrange(date) |>
     mutate(
       rolling_points = rolling_match_average(points),
       rolling_goals_scored = rolling_match_average(goals_scored),
@@ -58,21 +58,21 @@ season_form_data <- function(attendance, matches) {
 
 match_detail_data <- function(season_form, attendance, selected_date) {
   selected_date <- as.Date(selected_date)
-  selected_match <- season_form %>% filter(date == selected_date)
+  selected_match <- season_form |> filter(date == selected_date)
 
   if (nrow(selected_match) != 1) {
     stop("selected_date must identify exactly one match")
   }
 
   n_matches <- nrow(season_form)
-  player_attendance <- attendance %>%
-    count(player, name = "season_appearances") %>%
+  player_attendance <- attendance |>
+    count(player, name = "season_appearances") |>
     mutate(attendance_rate = season_appearances / n_matches)
 
-  lineup <- attendance %>%
-    filter(date == selected_date) %>%
-    distinct(player) %>%
-    left_join(player_attendance, by = "player") %>%
+  lineup <- attendance |>
+    filter(date == selected_date) |>
+    distinct(player) |>
+    left_join(player_attendance, by = "player") |>
     arrange(desc(season_appearances), player)
 
   list(match = selected_match, lineup = lineup)
@@ -81,19 +81,19 @@ match_detail_data <- function(season_form, attendance, selected_date) {
 #' Appearance rate and on-pitch averages, one row per player.
 player_summary <- function(attendance, matches) {
   n_matches <- n_distinct(matches$date)
-  outcomes <- match_outcomes(matches) %>%
+  outcomes <- match_outcomes(matches) |>
     select(date, points, goals_scored, goals_conceded)
 
-  attendance %>%
-    inner_join(outcomes, by = "date") %>%
-    group_by(player) %>%
+  attendance |>
+    inner_join(outcomes, by = "date") |>
+    group_by(player) |>
     summarise(
       appearances = n(),
       avg_points = mean(points),
       avg_goals_scored = mean(goals_scored),
       avg_goals_conceded = mean(goals_conceded),
       .groups = "drop"
-    ) %>%
+    ) |>
     mutate(attendance_rate = appearances / n_matches)
 }
 
@@ -103,8 +103,8 @@ player_summary <- function(attendance, matches) {
 #' rounding is display too, but it happens here because the sort above depends
 #' on the unrounded rate and nothing downstream should have to know that.
 create_attendance_list <- function(attendance, matches) {
-  player_summary(attendance, matches) %>%
-    arrange(desc(attendance_rate)) %>%
+  player_summary(attendance, matches) |>
+    arrange(desc(attendance_rate)) |>
     transmute(
       player,
       attendance_rate,
@@ -156,26 +156,26 @@ scorer_table <- function(events, attendance, matches) {
     ))
   }
 
-  ours <- events %>%
+  ours <- events |>
     filter(team == "us", date %in% coverage$dates)
 
   tally <- function(type, name) {
-    ours %>%
-      filter(event_type == type) %>%
+    ours |>
+      filter(event_type == type) |>
       count(player, name = name)
   }
 
-  attendance %>%
-    filter(date %in% coverage$dates) %>%
-    count(player, name = "appearances") %>%
-    full_join(tally("goal", "goals"), by = "player") %>%
-    full_join(tally("mom", "mom"), by = "player") %>%
+  attendance |>
+    filter(date %in% coverage$dates) |>
+    count(player, name = "appearances") |>
+    full_join(tally("goal", "goals"), by = "player") |>
+    full_join(tally("mom", "mom"), by = "player") |>
     mutate(
       across(c(appearances, goals, mom), ~ coalesce(.x, 0L)),
       # Nought from nothing is not a rate. A player with events but no
       # appearance on file would otherwise divide by zero and sort to the top.
       goals_per_appearance = if_else(appearances > 0, goals / appearances, NA_real_)
-    ) %>%
+    ) |>
     arrange(desc(goals), desc(mom), player)
 }
 
@@ -215,23 +215,23 @@ opponent_strength <- function(league_results, seasons, team = OUR_TEAM) {
     ))
   }
 
-  third_party <- league_results %>%
-    filter(home_team != team, away_team != team) %>%
-    with_season(seasons) %>%
+  third_party <- league_results |>
+    filter(home_team != team, away_team != team) |>
+    with_season(seasons) |>
     filter(!is.na(season_id))
 
   # Each result is one game for each of its two sides.
   bind_rows(
-    third_party %>%
+    third_party |>
       transmute(season_id, opponent = home_team, goal_difference = home_goals - away_goals),
-    third_party %>%
+    third_party |>
       transmute(season_id, opponent = away_team, goal_difference = away_goals - home_goals)
-  ) %>%
-    group_by(season_id, opponent) %>%
-    summarise(games = n(), per_game = mean(goal_difference), .groups = "drop") %>%
-    group_by(season_id) %>%
-    mutate(strength = per_game - mean(per_game)) %>%
-    ungroup() %>%
+  ) |>
+    group_by(season_id, opponent) |>
+    summarise(games = n(), per_game = mean(goal_difference), .groups = "drop") |>
+    group_by(season_id) |>
+    mutate(strength = per_game - mean(per_game)) |>
+    ungroup() |>
     select(season_id, opponent, games, strength)
 }
 
@@ -243,18 +243,18 @@ opponent_strength <- function(league_results, seasons, team = OUR_TEAM) {
 #' the league results existed.
 with_opponent_strength <- function(matches, strength = NULL) {
   if (is.null(strength) || nrow(strength) == 0) {
-    return(matches %>% mutate(opponent_strength = 0, opponent_unobserved = 1L))
+    return(matches |> mutate(opponent_strength = 0, opponent_unobserved = 1L))
   }
 
-  matches %>%
+  matches |>
     left_join(
-      strength %>% select(season_id, opponent, strength),
+      strength |> select(season_id, opponent, strength),
       by = c("season_id", "opponent")
-    ) %>%
+    ) |>
     mutate(
       opponent_unobserved = as.integer(is.na(strength)),
       opponent_strength = coalesce(strength, 0)
-    ) %>%
+    ) |>
     select(-strength)
 }
 
@@ -373,10 +373,10 @@ player_regression_results <- function(attendance, matches, strength = NULL,
   contribution_data <- create_player_contribution_table(
     attendance, with_opponent_strength(matches, strength)
   )
-  player_appearances <- attendance %>% count(player, name = "appearances")
-  player_names <- player_appearances %>%
-    filter(appearances >= min_appearances) %>%
-    pull(player) %>%
+  player_appearances <- attendance |> count(player, name = "appearances")
+  player_names <- player_appearances |>
+    filter(appearances >= min_appearances) |>
+    pull(player) |>
     sort()
   regressors <- c(player_names, opponent_controls(contribution_data))
 
@@ -420,9 +420,9 @@ player_regression_results <- function(attendance, matches, strength = NULL,
         estimate = unname(estimates),
         std_error = NA_real_, conf_low = NA_real_, conf_high = NA_real_,
         p_value = NA_real_
-      ) %>%
+      ) |>
         filter(player %in% player_names)
-    }) %>%
+    }) |>
       left_join(player_appearances, by = "player"))
   }
 
@@ -442,9 +442,9 @@ player_regression_results <- function(attendance, matches, strength = NULL,
       conf_low = estimate - confidence_critical_value * std_error,
       conf_high = estimate + confidence_critical_value * std_error,
       p_value = coefficients[, "Pr(>|t|)"]
-    ) %>%
+    ) |>
       filter(player %in% player_names)
-  }) %>%
+  }) |>
     left_join(player_appearances, by = "player")
 }
 
@@ -493,13 +493,13 @@ format_estimate <- function(estimate, p_value) {
 }
 
 player_regression_table <- function(regression_results) {
-  regression_results %>%
-    select(player, appearances, outcome, estimate, p_value) %>%
+  regression_results |>
+    select(player, appearances, outcome, estimate, p_value) |>
     pivot_wider(
       names_from = outcome,
       values_from = c(estimate, p_value),
       names_sep = "_"
-    ) %>%
+    ) |>
     transmute(
       Player = player,
       Appearances = appearances,
@@ -515,7 +515,7 @@ player_regression_table <- function(regression_results) {
       sort_goals_scored = estimate_goals_scored,
       sort_goals_conceded = estimate_goals_conceded,
       sort_goal_difference = estimate_goal_difference
-    ) %>%
+    ) |>
     arrange(desc(Appearances), Player)
 }
 
@@ -547,27 +547,27 @@ last_match_summary <- function(matches, attendance, events) {
     return(NULL)
   }
 
-  match <- matches %>%
-    filter(date == max(date)) %>%
-    slice(1) %>%
+  match <- matches |>
+    filter(date == max(date)) |>
+    slice(1) |>
     match_outcomes()
 
-  lineup <- attendance %>%
-    filter(date == match$date) %>%
-    distinct(player) %>%
+  lineup <- attendance |>
+    filter(date == match$date) |>
+    distinct(player) |>
     arrange(player)
 
-  match_events <- events %>% filter(date == match$date)
+  match_events <- events |> filter(date == match$date)
 
   # One row per scorer with a tally, since a hat-trick should read as a
   # hat-trick rather than three identical lines.
-  scorers <- match_events %>%
-    filter(event_type == "goal", team == "us", !is.na(player)) %>%
-    count(player, name = "goals") %>%
+  scorers <- match_events |>
+    filter(event_type == "goal", team == "us", !is.na(player)) |>
+    count(player, name = "goals") |>
     arrange(desc(goals), player)
 
-  mom <- match_events %>%
-    filter(event_type == "mom", team == "us", !is.na(player)) %>%
+  mom <- match_events |>
+    filter(event_type == "mom", team == "us", !is.na(player)) |>
     pull(player)
 
   list(
@@ -590,14 +590,14 @@ last_match_summary <- function(matches, attendance, events) {
 #' A fixture dated today counts as still to come, matching the sync: the game is
 #' in the evening and the page is read during the day.
 next_fixture <- function(fixtures, matches, today = Sys.Date()) {
-  upcoming <- fixtures %>%
-    filter(date >= today, !date %in% matches$date) %>%
+  upcoming <- fixtures |>
+    filter(date >= today, !date %in% matches$date) |>
     arrange(date)
 
   if (nrow(upcoming) == 0) {
     return(NULL)
   }
-  upcoming %>% slice(1)
+  upcoming |> slice(1)
 }
 
 # One player at a time ----
@@ -615,11 +615,11 @@ next_fixture <- function(fixtures, matches, today = Sys.Date()) {
 #' the card can say what it is out of.
 player_profile <- function(player, attendance, matches, events) {
   outcomes <- match_outcomes(matches)
-  appearances <- attendance %>% filter(.data$player == .env$player)
+  appearances <- attendance |> filter(.data$player == .env$player)
   played_dates <- appearances$date
 
   record_over <- function(dates) {
-    subset <- outcomes %>% filter(date %in% dates)
+    subset <- outcomes |> filter(date %in% dates)
     tibble(
       played = nrow(subset),
       won = sum(subset$points == 3),
@@ -637,7 +637,7 @@ player_profile <- function(player, attendance, matches, events) {
   absent <- record_over(setdiff(outcomes$date, played_dates))
 
   coverage <- event_coverage(matches)
-  ours <- events %>%
+  ours <- events |>
     filter(team == "us", .data$player == .env$player, date %in% coverage$dates)
 
   list(
@@ -652,8 +652,8 @@ player_profile <- function(player, attendance, matches, events) {
     goals = sum(ours$event_type == "goal"),
     mom = sum(ours$event_type == "mom"),
     covered = coverage$observed,
-    timeline = outcomes %>%
-      transmute(date, points, played = date %in% played_dates) %>%
+    timeline = outcomes |>
+      transmute(date, points, played = date %in% played_dates) |>
       arrange(date)
   )
 }
@@ -670,7 +670,7 @@ player_profile <- function(player, attendance, matches, events) {
 #' twice as often as others and the totals would rank on that instead of on how
 #' the games went.
 opponent_record <- function(matches) {
-  played <- matches %>% filter(!is.na(opponent))
+  played <- matches |> filter(!is.na(opponent))
 
   if (nrow(played) == 0) {
     return(tibble(
@@ -681,8 +681,8 @@ opponent_record <- function(matches) {
     ))
   }
 
-  match_outcomes(played) %>%
-    group_by(opponent) %>%
+  match_outcomes(played) |>
+    group_by(opponent) |>
     summarise(
       played = n(),
       won = sum(points == 3),
@@ -691,11 +691,11 @@ opponent_record <- function(matches) {
       goals_for = sum(goals_scored),
       goals_against = sum(goals_conceded),
       .groups = "drop"
-    ) %>%
+    ) |>
     mutate(
       goal_difference = goals_for - goals_against,
       points_per_match = (won * 3 + drawn) / played
-    ) %>%
+    ) |>
     arrange(desc(points_per_match), desc(goal_difference), opponent)
 }
 
@@ -710,8 +710,8 @@ opponent_record <- function(matches) {
 #' empty. The fixture is still a fixture, and dropping it would silently
 #' shorten the run-in.
 run_in <- function(fixtures, matches, league_table, today = Sys.Date()) {
-  upcoming <- fixtures %>%
-    filter(date >= today, !date %in% matches$date) %>%
+  upcoming <- fixtures |>
+    filter(date >= today, !date %in% matches$date) |>
     arrange(date)
 
   if (nrow(upcoming) == 0) {
@@ -728,12 +728,12 @@ run_in <- function(fixtures, matches, league_table, today = Sys.Date()) {
       goal_difference = integer(), points = integer()
     )
   } else {
-    league_table %>%
+    league_table |>
       select(team, position, played, goal_difference, points)
   }
 
-  upcoming %>%
-    select(date, opponent) %>%
+  upcoming |>
+    select(date, opponent) |>
     left_join(standings, by = c("opponent" = "team"))
 }
 

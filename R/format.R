@@ -6,8 +6,8 @@
 
 
 format_fee_amount <- function(amount) {
-    sign <- if (amount < 0) "-" else ""
-    paste0(sign, "£", formatC(abs(amount), format = "f", digits = 2))
+  sign <- if (amount < 0) "-" else ""
+  paste0(sign, "£", formatC(abs(amount), format = "f", digits = 2))
 }
 
 
@@ -24,18 +24,18 @@ STALE_FIXTURES_DAYS <- 8L
 
 
 result_badge <- function(points) {
-    label <- case_when(points == 3 ~ "WIN", points == 1 ~ "DRAW", TRUE ~ "LOSS")
-    class <- case_when(points == 3 ~ "win", points == 1 ~ "draw", TRUE ~ "loss")
-    span(class = paste("result-badge", class), label)
+  label <- case_when(points == 3 ~ "WIN", points == 1 ~ "DRAW", TRUE ~ "LOSS")
+  class <- case_when(points == 3 ~ "win", points == 1 ~ "draw", TRUE ~ "loss")
+  span(class = paste("result-badge", class), label)
 }
 
 
 #' A comma list that reads like a sentence, with a tally where there is one.
 listed_scorers <- function(scorers) {
-    paste(
-        if_else(scorers$goals > 1, paste0(scorers$player, " (", scorers$goals, ")"), scorers$player),
-        collapse = ", "
-    )
+  paste(
+    if_else(scorers$goals > 1, paste0(scorers$player, " (", scorers$goals, ")"), scorers$player),
+    collapse = ", "
+  )
 }
 
 
@@ -46,9 +46,9 @@ listed_scorers <- function(scorers) {
 #' from the average player. Putting both under one heading would be wrong about
 #' one of them.
 estimate_label <- function(estimator) {
-    if (estimator == "ridge") {
-        "Deviation from the average player, shrunk by how little we know."
-    } else {
-        "Coefficient on each outcome, with its p-value in brackets."
-    }
+  if (estimator == "ridge") {
+    "Deviation from the average player, shrunk by how little we know."
+  } else {
+    "Coefficient on each outcome, with its p-value in brackets."
+  }
 }
