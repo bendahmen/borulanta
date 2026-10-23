@@ -80,3 +80,15 @@ test_that("warning is still how it announces itself at startup", {
 
   expect_warning(validate_app_data(data), "payments from an unknown player")
 })
+
+test_that("a match or an attendance row entered twice is reported", {
+  data <- clean_data()
+  data$matches <- bind_rows(data$matches, data$matches)
+  data$attendance <- bind_rows(data$attendance, data$attendance)
+
+  problems <- suppressWarnings(validate_app_data(data))
+  expect_true(any(grepl("^matches recorded more than once: 14/01/2026$", problems)))
+  expect_true(any(grepl(
+    "^attendance recorded twice for the same player and date: Ben 14/01/2026$", problems
+  )))
+})

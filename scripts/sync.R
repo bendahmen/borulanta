@@ -76,8 +76,8 @@ seasons <- load_seasons("data/seasons.csv")
 
 matches <- read_match_file("data/matches.csv")
 events <- read_event_file("data/match_events.csv")
-name_map <- read_csv("data/name_map.csv", show_col_types = FALSE)
-players <- read_csv("data/players.csv", show_col_types = FALSE)
+name_map <- read_csv("data/name_map.csv", col_types = NAME_MAP_COLUMNS)
+players <- read_csv("data/players.csv", col_types = PLAYER_COLUMNS)
 
 result <- sync_results(fixtures, matches, events, seasons, name_map)
 
@@ -146,18 +146,23 @@ if (nrow(upcoming) > 0) {
   cat("Next: ", format(upcoming$date[[1]], "%d/%m/%Y"), " v ",
       coalesce(upcoming$opponent[[1]], "?"), "\n", sep = "")
 }
-if (!OUR_TEAM %in% league_table$team) {
-  cat("NOTE: ", OUR_TEAM, " is not in the league table on this page.\n", sep = "")
+# A table without us in it is a page we do not understand, and replacing the
+# files with it would empty the run-in's positions and switch off the stale-data
+# note on the home page. Keep last week's instead.
+in_table <- OUR_TEAM %in% league_table$team
+if (!in_table) {
+  cat("NOTE: ", OUR_TEAM, " is not in the league table on this page, ",
+      "so the snapshot files are left as they are.\n", sep = "")
 } else {
   us <- league_table |> filter(team == OUR_TEAM)
   cat("League position: ", us$position, " of ", nrow(league_table),
       " on ", us$points, " points.\n", sep = "")
 }
 
-if (write_changes) {
+if (in_table && write_changes) {
   write_snapshot_files(snapshot, "data/fixtures.csv", "data/league_table.csv")
   cat("data/fixtures.csv and data/league_table.csv replaced.\n")
-} else {
+} else if (in_table) {
   cat("Dry run — re-run with --write to replace them.\n")
 }
 

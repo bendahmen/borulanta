@@ -217,7 +217,12 @@ attendance_table <- function(attendance_list, selected_row = 1L) {
         Turnout = attendance_rate,
         `Avg points` = avg_points,
         `Avg goals scored` = avg_goals_scored,
-        `Avg goals conceded` = avg_goals_conceded
+        `Avg goals conceded` = avg_goals_conceded,
+        # The top three by turnout, marked here rather than counted in the
+        # browser. renderDT is server-side, where every index a rowCallback is
+        # given restarts on each page, so counting there highlighted three rows
+        # on every page and moved the highlight with every re-sort.
+        rank_class = if_else(row_number() <= 3, "rank-top3", "")
       ),
     rownames = FALSE,
     class = "nowrap",
@@ -231,9 +236,10 @@ attendance_table <- function(attendance_list, selected_row = 1L) {
       order = list(list(1, "desc")),
       autoWidth = TRUE,
       scrollX = TRUE,
+      columnDefs = list(list(targets = 5, visible = FALSE)),
       rowCallback = JS(
-        "function(row, data, index) {",
-        "  if (index < 3) { $(row).addClass('rank-top3'); }",
+        "function(row, data) {",
+        "  if (data[5]) { $(row).addClass(data[5]); }",
         "}"
       )
     )

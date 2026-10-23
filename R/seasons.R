@@ -10,8 +10,16 @@
 # means charges are read from a frozen ledger in data/archive/ rather than
 # recomputed, which is how a season stays reproducible after its rules retire.
 
+SEASON_COLUMNS <- readr::cols(
+  season_id = readr::col_character(),
+  label = readr::col_character(),
+  start_date = readr::col_character(),
+  fee_rules = readr::col_character(),
+  status = readr::col_character()
+)
+
 load_seasons <- function(path = "data/seasons.csv") {
-  read_csv(path, show_col_types = FALSE) |>
+  readr::read_csv(path, col_types = SEASON_COLUMNS) |>
     mutate(start_date = parse_match_date(start_date)) |>
     arrange(start_date) |>
     mutate(end_date = coalesce(lead(start_date) - 1, as.Date("9999-12-31")))

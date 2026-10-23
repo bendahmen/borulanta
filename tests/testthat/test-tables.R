@@ -66,6 +66,20 @@ test_that("the display naming happens in the tables and not upstream", {
   )
   expect_equal(
     column_names(attendance_table(attendance_list)),
-    c("Player", "Turnout", "Avg points", "Avg goals scored", "Avg goals conceded")
+    c("Player", "Turnout", "Avg points", "Avg goals scored", "Avg goals conceded", "rank_class")
   )
+})
+
+test_that("the top three by turnout are marked in the data, not counted per page", {
+  roster <- tibble(
+    player = LETTERS[1:20], attendance_rate = seq(1, 0.05, length.out = 20),
+    avg_points = 1, avg_goals_scored = 1, avg_goals_conceded = 1
+  )
+  widget <- attendance_table(roster)
+  expect_equal(which(widget$x$data$rank_class == "rank-top3"), 1:3)
+
+  # The marker column is hidden, and it is the one the row callback reads.
+  hidden <- purrr::keep(widget$x$options$columnDefs, ~ isFALSE(.x$visible))
+  expect_length(hidden, 1)
+  expect_equal(names(widget$x$data)[hidden[[1]]$targets + 1], "rank_class")
 })

@@ -75,6 +75,37 @@ LEAGUE_RESULT_COLUMNS <- readr::cols(
   dl_match_id = readr::col_character()
 )
 
+# The hand-edited files. Short, but pinned for the same reason: a guessed type
+# is right until the day one cell makes it wrong.
+
+PLAYER_COLUMNS <- readr::cols(
+  player = readr::col_character(),
+  guest = readr::col_logical()
+)
+
+ROSTER_COLUMNS <- readr::cols(
+  season_id = readr::col_character(),
+  player = readr::col_character(),
+  core = readr::col_logical(),
+  active = readr::col_logical()
+)
+
+ATTENDANCE_COLUMNS <- readr::cols(
+  date = readr::col_character(),
+  player = readr::col_character()
+)
+
+PAYMENT_COLUMNS <- readr::cols(
+  date = readr::col_character(),
+  player = readr::col_character(),
+  amount = readr::col_double()
+)
+
+NAME_MAP_COLUMNS <- readr::cols(
+  site_name = readr::col_character(),
+  player = readr::col_character()
+)
+
 read_match_file <- function(path) {
   readr::read_csv(path, col_types = MATCH_COLUMNS) |>
     mutate(date = parse_match_date(date))
@@ -141,8 +172,8 @@ load_app_data <- function(dir = "data") {
   path <- function(...) file.path(dir, ...)
 
   seasons <- load_seasons(path("seasons.csv"))
-  players <- read_csv(path("players.csv"), show_col_types = FALSE)
-  rosters <- read_csv(path("player_seasons.csv"), show_col_types = FALSE)
+  players <- readr::read_csv(path("players.csv"), col_types = PLAYER_COLUMNS)
+  rosters <- readr::read_csv(path("player_seasons.csv"), col_types = ROSTER_COLUMNS)
 
   matches <- read_match_file(path("matches.csv")) |>
     with_result() |>
@@ -152,11 +183,11 @@ load_app_data <- function(dir = "data") {
   events <- read_event_file(path("match_events.csv")) |>
     with_season(seasons)
 
-  attendance <- read_csv(path("attendance.csv"), show_col_types = FALSE) |>
+  attendance <- readr::read_csv(path("attendance.csv"), col_types = ATTENDANCE_COLUMNS) |>
     mutate(date = parse_match_date(date)) |>
     with_season(seasons)
 
-  payments <- read_csv(path("payments.csv"), show_col_types = FALSE) |>
+  payments <- readr::read_csv(path("payments.csv"), col_types = PAYMENT_COLUMNS) |>
     mutate(date = parse_match_date(date)) |>
     with_season(seasons)
 
@@ -206,6 +237,22 @@ validate_app_data <- function(data) {
       warning(note, call. = FALSE)
     }
   }
+
+  # Matches are keyed on their date, and so is everything joined to them: a
+  # second row for one date fans out every join and charges the squad twice.
+  complain(
+    "matches recorded more than once",
+    format(data$matches$date[duplicated(data$matches$date)], "%d/%m/%Y")
+  )
+  # A player down twice for one night counts twice in the squad size, which
+  # changes everybody's share of the fee that night.
+  repeated <- data$attendance |>
+    count(date, player) |>
+    filter(n > 1)
+  complain(
+    "attendance recorded twice for the same player and date",
+    paste(repeated$player, format(repeated$date, "%d/%m/%Y"))
+  )
 
   # Anything dated before the first season has nowhere to go.
   for (table in c("matches", "attendance", "payments")) {

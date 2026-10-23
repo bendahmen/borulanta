@@ -299,7 +299,9 @@ server <- function(input, output, session) {
   observeEvent(fee_players(), {
     players <- fee_players()
     current <- selected_fee_player()
-    chosen <- if (isTruthy(current) && current %in% players) current else players[[1]]
+    # head() rather than [[1]]: an empty active roster leaves nobody chosen
+    # and the fee cards waiting, where [[1]] would end the session.
+    chosen <- if (isTruthy(current) && current %in% players) current else head(players, 1)
 
     selected_fee_player(chosen)
     for (id in FEE_PLAYER_INPUTS) {

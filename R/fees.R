@@ -211,13 +211,25 @@ empty_charges <- function() {
   )
 }
 
+# Typed to match empty_charges(), so a frozen season and a priced one bind
+# without a clash: squad_size would otherwise read back as a double.
+LEDGER_COLUMNS <- readr::cols(
+  season_id = readr::col_character(),
+  date = readr::col_character(),
+  player = readr::col_character(),
+  played = readr::col_logical(),
+  squad_size = readr::col_integer(),
+  charge = readr::col_double(),
+  explanation = readr::col_character()
+)
+
 archived_charges <- function(season_id) {
   path <- file.path("data", "archive", paste0("charges_", season_id, ".csv"))
   if (!file.exists(path)) {
     return(empty_charges())
   }
 
-  read_csv(path, show_col_types = FALSE) |>
+  readr::read_csv(path, col_types = LEDGER_COLUMNS) |>
     mutate(date = parse_match_date(date))
 }
 
