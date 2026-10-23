@@ -25,14 +25,14 @@ app_data <- load_app_data()
 
 app_theme <- bs_theme(
   version = 5,
-  bg = "#f7f9f6",
-  fg = "#16241f",
-  primary = "#0850AB", # navy blue (oklch(45% 0.16 258)) — was the lime green
-  secondary = "#AB4400", # amber (oklch(52% 0.15 45))
-  success = "#006D1E", # green (oklch(46% 0.15 148))
-  info = "#0850AB",
-  warning = "#AB4400",
-  danger = "#AB4400",
+  bg = APP_COLOURS[["background"]],
+  fg = APP_COLOURS[["ink"]],
+  primary = APP_COLOURS[["blue"]],
+  secondary = APP_COLOURS[["amber"]],
+  success = APP_COLOURS[["green"]],
+  info = APP_COLOURS[["blue"]],
+  warning = APP_COLOURS[["amber"]],
+  danger = APP_COLOURS[["amber"]],
   base_font = font_collection("Barlow", "Avenir Next", "Trebuchet MS", "sans-serif"),
   heading_font = font_collection(
     "Barlow Condensed",
@@ -177,53 +177,7 @@ ui <- page_fluid(
               )
             )
           ),
-          conditionalPanel(
-            "output.season_has_regression",
-            estimator_control,
-            layout_columns(
-              col_widths = c(6, 6),
-              plot_card_ui(
-                "Attack and defence",
-                "Top right is more goals scored and fewer conceded, holding the rest of the lineup fixed.",
-                "attack_defence_plot",
-                "680px"
-              ),
-              card(
-                class = "table-card",
-                card_header(
-                  div(class = "section-tag", "Visualise"),
-                  h2(class = "table-title", "Coefficient plot"),
-                  p(
-                    class = "table-subtitle",
-                    "Dots are estimates and lines are 95% confidence intervals."
-                  )
-                ),
-                card_body(
-                  selectInput(
-                    "regression_outcome",
-                    "Outcome",
-                    choices = c(
-                      "Points" = "points",
-                      "Goals scored" = "goals_scored",
-                      "Goals conceded" = "goals_conceded",
-                      "Goal difference" = "goal_difference"
-                    )
-                  ),
-                  plotOutput("coefficient_plot", height = "560px")
-                )
-              )
-            ),
-            card(
-              class = "table-card",
-              card_header(
-                div(class = "section-tag", "Player effects"),
-                h2(class = "table-title", "Player by player"),
-                uiOutput("regression_table_note")
-              ),
-              card_body(dataTableOutput("player_regressions"))
-            ),
-            regression_explanation
-          )
+          conditionalPanel("output.season_has_regression", player_effects_page)
         )
       )
     )

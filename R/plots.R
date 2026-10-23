@@ -17,8 +17,8 @@ season_form_plot <- function(season_form, selected_metric) {
   if (selected_metric == "points") {
     return(
       ggplot(season_form, aes(x = date, y = rolling_points)) +
-        geom_line(color = "#0850AB", linewidth = 1) +
-        geom_point(color = "#0850AB", size = 2.4) +
+        geom_line(color = APP_COLOURS[["blue"]], linewidth = 1) +
+        geom_point(color = APP_COLOURS[["blue"]], size = 2.4) +
         scale_y_continuous(limits = c(0, 3)) +
         labs(y = "Points per match", x = NULL) +
         match_plot_theme()
@@ -47,8 +47,8 @@ season_form_plot <- function(season_form, selected_metric) {
         geom_point(size = 2.2) +
         scale_color_manual(
           values = c(
-            "Goals scored" = "#0850AB",
-            "Goals conceded" = "#AB4400"
+            "Goals scored" = APP_COLOURS[["blue"]],
+            "Goals conceded" = APP_COLOURS[["amber"]]
           ),
           name = NULL
         ) +
@@ -60,17 +60,17 @@ season_form_plot <- function(season_form, selected_metric) {
   if (selected_metric == "goal_difference") {
     return(
       ggplot(season_form, aes(x = date, y = rolling_goal_difference)) +
-        geom_hline(yintercept = 0, color = "#8a938d", linewidth = 0.4) +
-        geom_line(color = "#006D1E", linewidth = 1) +
-        geom_point(color = "#006D1E", size = 2.4) +
+        geom_hline(yintercept = 0, color = APP_COLOURS[["rule"]], linewidth = 0.4) +
+        geom_line(color = APP_COLOURS[["green"]], linewidth = 1) +
+        geom_point(color = APP_COLOURS[["green"]], size = 2.4) +
         labs(y = "Goal difference per match", x = NULL) +
         match_plot_theme()
     )
   }
 
   ggplot(season_form, aes(x = date, y = rolling_squad_size)) +
-    geom_line(color = "#006D1E", linewidth = 1) +
-    geom_point(color = "#006D1E", size = 2.4) +
+    geom_line(color = APP_COLOURS[["green"]], linewidth = 1) +
+    geom_point(color = APP_COLOURS[["green"]], size = 2.4) +
     labs(y = "Players per match", x = NULL) +
     match_plot_theme()
 }
@@ -87,8 +87,8 @@ attack_defence_plot <- function(regression_results) {
     plot_data,
     aes(x = goals_scored, y = defensive_effect, size = appearances, color = goal_difference)
   ) +
-    geom_vline(xintercept = 0, color = "#8a938d", linewidth = 0.4) +
-    geom_hline(yintercept = 0, color = "#8a938d", linewidth = 0.4) +
+    geom_vline(xintercept = 0, color = APP_COLOURS[["rule"]], linewidth = 0.4) +
+    geom_hline(yintercept = 0, color = APP_COLOURS[["rule"]], linewidth = 0.4) +
     geom_point(alpha = 0.8) +
     ggrepel::geom_label_repel(
       aes(label = player),
@@ -96,7 +96,7 @@ attack_defence_plot <- function(regression_results) {
       size = 3.2,
       fontface = "bold",
       fill = "white",
-      color = "#16241f",
+      color = APP_COLOURS[["ink"]],
       label.size = 0.2,
       box.padding = 0.45,
       point.padding = 0.3,
@@ -105,9 +105,9 @@ attack_defence_plot <- function(regression_results) {
       show.legend = FALSE
     ) +
     scale_color_gradient2(
-      low = "#AB4400",
-      mid = "#16241f",
-      high = "#006D1E",
+      low = APP_COLOURS[["amber"]],
+      mid = APP_COLOURS[["ink"]],
+      high = APP_COLOURS[["green"]],
       midpoint = 0,
       name = "Goal difference"
     ) +
@@ -132,12 +132,6 @@ coefficient_plot <- function(regression_results, selected_outcome) {
   # Ridge returns no interval, so the layer that draws one is left out rather
   # than handed a column of NA to warn about.
   has_interval <- !all(is.na(regression_results$conf_low))
-  outcome_labels <- c(
-    points = "Points",
-    goals_scored = "Goals scored",
-    goals_conceded = "Goals conceded",
-    goal_difference = "Goal difference"
-  )
 
   plot_data <- regression_results |>
     filter(outcome == selected_outcome) |>
@@ -145,16 +139,16 @@ coefficient_plot <- function(regression_results, selected_outcome) {
     mutate(player = factor(player, levels = player))
 
   ggplot(plot_data, aes(x = player, y = estimate)) +
-    geom_hline(yintercept = 0, color = "#8a938d", linewidth = 0.4) +
+    geom_hline(yintercept = 0, color = APP_COLOURS[["rule"]], linewidth = 0.4) +
     (if (has_interval) {
       geom_errorbar(aes(ymin = conf_low, ymax = conf_high), width = 0)
     }) +
-    geom_point(color = "#0850AB", size = 2.6) +
+    geom_point(color = APP_COLOURS[["blue"]], size = 2.6) +
     coord_flip() +
     labs(
       x = NULL,
       y = paste0(
-        outcome_labels[[selected_outcome]],
+        OUTCOME_LABELS[[selected_outcome]],
         if (has_interval) {
           " coefficient with 95% confidence interval"
         } else {
@@ -174,7 +168,7 @@ appearance_timeline_plot <- function(profile) {
   ggplot(profile$timeline, aes(x = date, y = 1, fill = played)) +
     geom_tile(height = 0.6, width = 5) +
     scale_fill_manual(
-      values = c(`TRUE` = "#0850AB", `FALSE` = "#dfe3e0"),
+      values = c(`TRUE` = APP_COLOURS[["blue"]], `FALSE` = APP_COLOURS[["faint"]]),
       labels = c(`TRUE` = "Played", `FALSE` = "Missed"),
       name = NULL
     ) +

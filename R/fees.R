@@ -19,6 +19,13 @@ parse_match_date <- function(x) {
 
 money <- function(x) formatC(x, format = "f", digits = 2)
 
+# The wording of an ordinary even split, which every rule set falls back on.
+even_split_note <- function(match_fee, squad_size) {
+  paste0("Played: £", money(match_fee), " split across ", squad_size, " recorded players.")
+}
+
+ABSENT_NOTE <- "Did not play: players were charged only when present."
+
 FEE_RULE_SETS <- list(
 
   # Match fee split evenly across everyone who turned up, whatever the numbers.
@@ -34,11 +41,8 @@ FEE_RULE_SETS <- list(
         charge = if_else(roster$player %in% squad, share, 0),
         explanation = if_else(
           roster$player %in% squad,
-          paste0(
-            "Played: £", money(params$match_fee), " split across ",
-            squad_size, " recorded players."
-          ),
-          "Did not play: players were charged only when present."
+          even_split_note(params$match_fee, squad_size),
+          ABSENT_NOTE
         )
       )
     }
@@ -61,11 +65,8 @@ FEE_RULE_SETS <- list(
           charge = if_else(played, share, 0),
           explanation = if_else(
             played,
-            paste0(
-              "Played: £", money(params$match_fee), " split across ",
-              squad_size, " recorded players."
-            ),
-            "Did not play: players were charged only when present."
+            even_split_note(params$match_fee, squad_size),
+            ABSENT_NOTE
           )
         ))
       }
@@ -131,10 +132,7 @@ FEE_RULE_SETS <- list(
           TRUE ~ 0
         ),
         explanation = case_when(
-          played & !floored ~ paste0(
-            "Played: £", money(params$match_fee), " split across ",
-            squad_size, " recorded players."
-          ),
+          played & !floored ~ even_split_note(params$match_fee, squad_size),
           played ~ paste0(
             "Small squad: only ", squad_size, " played, so the fee was divided by the ",
             "minimum of ", params$min_players, " — the same £", money(share),
@@ -145,7 +143,7 @@ FEE_RULE_SETS <- list(
             money(shortfall), " was split across the ", n_absent_core,
             " core players who missed it."
           ),
-          TRUE ~ "Did not play: players were charged only when present."
+          TRUE ~ ABSENT_NOTE
         )
       )
     }

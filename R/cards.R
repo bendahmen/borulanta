@@ -282,15 +282,11 @@ league_table_ui <- function(league_table) {
 
   card(
     class = "table-card league-table-card",
-    card_header(
-      div(class = "section-tag", "League table"),
-      h2(class = "table-title", "Where we sit"),
-      p(
-        class = "table-subtitle",
-        paste(
-          "From the league's own page, as it stood on",
-          format(max(league_table$scraped_on), "%d %B %Y.")
-        )
+    card_head(
+      "League table", "Where we sit",
+      paste(
+        "From the league's own page, as it stood on",
+        format(max(league_table$scraped_on), "%d %B %Y.")
       )
     ),
     card_body(dataTableOutput("league_table"))
@@ -298,21 +294,38 @@ league_table_ui <- function(league_table) {
 }
 
 
-#' A table in a card, headed the way every other card here is headed: a short
-#' category kicker above a descriptive title. They are separate arguments
-#' because they say different things — passing one value for both prints it
-#' twice, stacked.
-table_card_ui <- function(tag, title, subtitle, output_id) {
-  card(
-    class = "table-card",
-    card_header(
-      div(class = "section-tag", tag),
-      h2(class = "table-title", title),
-      p(class = "table-subtitle", subtitle)
-    ),
-    card_body(
-      dataTableOutput(output_id)
-    )
+#' The heading every card here shares: a short category kicker above a
+#' descriptive title. They are separate arguments because they say different
+#' things — passing one value for both prints it twice, stacked.
+#'
+#' The subtitle is a string or any tag, because some cards have the server
+#' write it through a uiOutput.
+card_head <- function(tag, title, subtitle = NULL) {
+  card_header(
+    div(class = "section-tag", tag),
+    h2(class = "table-title", title),
+    if (is.character(subtitle)) p(class = "table-subtitle", subtitle) else subtitle
+  )
+}
+
+
+#' A headed card with its contents in the body: the shape of nearly every card
+#' below the home page.
+table_card <- function(tag, title, subtitle = NULL, ...) {
+  card(class = "table-card", card_head(tag, title, subtitle), card_body(...))
+}
+
+
+#' One figure in a row of them: a label, the number, and a line under it.
+#'
+#' `family` picks the class prefix, since the match and player pages style
+#' theirs as `match-detail-*` and the fee cards as `fee-overview-*`.
+stat_tile <- function(label, value, note = NULL, family = "match-detail") {
+  div(
+    class = paste0(family, "-stat"),
+    div(class = paste0(family, "-label"), label),
+    div(class = paste0(family, "-value"), value),
+    if (!is.null(note)) div(class = paste0(family, "-note"), note)
   )
 }
 
@@ -326,32 +339,23 @@ empty_season_card <- function(message) {
 }
 
 
-season_form_card <- card(
-  class = "table-card",
-  card_header(
-    div(class = "section-tag", "Season form"),
-    h2(class = "table-title", "How the season is trending"),
-    p(
-      class = "table-subtitle",
-      "Each point averages the last five matches. The first four average what there is."
+season_form_card <- table_card(
+  "Season form", "How the season is trending",
+  "Each point averages the last five matches. The first four average what there is.",
+  div(
+    class = "selection-shell",
+    selectInput(
+      "form_metric",
+      "Show",
+      choices = c(
+        "Points per match" = "points",
+        "Goals scored and conceded" = "goals",
+        "Goal difference" = "goal_difference",
+        "Squad size" = "squad_size"
+      )
     )
   ),
-  card_body(
-    div(
-      class = "selection-shell",
-      selectInput(
-        "form_metric",
-        "Show",
-        choices = c(
-          "Points per match" = "points",
-          "Goals scored and conceded" = "goals",
-          "Goal difference" = "goal_difference",
-          "Squad size" = "squad_size"
-        )
-      )
-    ),
-    plotOutput("season_form_plot", height = "380px")
-  )
+  plotOutput("season_form_plot", height = "380px")
 )
 
 
@@ -364,34 +368,19 @@ match_summary_ui <- function(selected_match) {
 
   div(
     class = "match-detail-summary",
-    div(
-      class = "match-detail-stat",
-      div(class = "match-detail-label", "Result"),
-      div(class = "match-detail-value", selected_match$result),
-      div(
-        class = "match-detail-note",
-        paste(
-          c(
-            format(selected_match$date, "%d %B %Y"),
-            na.omit(selected_match$opponent),
-            outcome
-          ),
-          collapse = " — "
-        )
+    stat_tile(
+      "Result", selected_match$result,
+      paste(
+        c(
+          format(selected_match$date, "%d %B %Y"),
+          na.omit(selected_match$opponent),
+          outcome
+        ),
+        collapse = " — "
       )
     ),
-    div(
-      class = "match-detail-stat",
-      div(class = "match-detail-label", "Points"),
-      div(class = "match-detail-value", selected_match$points),
-      div(class = "match-detail-note", "Out of 3")
-    ),
-    div(
-      class = "match-detail-stat",
-      div(class = "match-detail-label", "Squad"),
-      div(class = "match-detail-value", selected_match$squad_size),
-      div(class = "match-detail-note", "On the sheet that night")
-    )
+    stat_tile("Points", selected_match$points, "Out of 3"),
+    stat_tile("Squad", selected_match$squad_size, "On the sheet that night")
   )
 }
 
@@ -432,14 +421,9 @@ scorer_coverage_ui <- function(coverage) {
 
 
 #' Goals and man of the match, with the window they cover stated on the card.
-scorer_card <- card(
-  class = "table-card",
-  card_header(
-    div(class = "section-tag", "Scorers"),
-    h2(class = "table-title", "Goals and man of the match"),
-    uiOutput("scorer_coverage")
-  ),
-  card_body(dataTableOutput("scorers"))
+scorer_card <- table_card(
+  "Scorers", "Goals and man of the match", uiOutput("scorer_coverage"),
+  dataTableOutput("scorers")
 )
 
 
@@ -447,27 +431,18 @@ scorer_card <- card(
 
 #' A player's season at a glance: four numbers, then the record behind them.
 player_headline_ui <- function(profile) {
-  stat <- function(label, value, note) {
-    div(
-      class = "match-detail-stat",
-      div(class = "match-detail-label", label),
-      div(class = "match-detail-value", value),
-      div(class = "match-detail-note", note)
-    )
-  }
-
   div(
     class = "match-detail-summary",
-    stat(
+    stat_tile(
       "Appearances", profile$appearances,
       paste0("of ", profile$matches, " matches")
     ),
-    stat(
+    stat_tile(
       "Turnout",
       if (is.na(profile$attendance_rate)) "\u2014" else paste0(round(profile$attendance_rate * 100), "%"),
       "share of matches played"
     ),
-    stat(
+    stat_tile(
       "Points per match",
       if (is.na(profile$present$points_per_match)) "\u2014" else format(round(profile$present$points_per_match, 2), nsmall = 2),
       "when playing"
@@ -476,7 +451,7 @@ player_headline_ui <- function(profile) {
     # scored in. Before that the sync has simply not run yet, and a zero
     # would read as a barren season rather than an empty file.
     if (profile$covered > 0) {
-      stat(
+      stat_tile(
         "Goals", profile$goals,
         paste0(
           profile$mom, " man of the match, over ", profile$covered,
@@ -517,42 +492,23 @@ player_page <- tagList(
   # The roster, and the way in to the page below it. This was the Attendance
   # tab: the same statistic for everybody at once that the card under it
   # gives one player at a time, which made two tabs out of one subject.
-  card(
-    class = "table-card",
-    card_header(
-      div(class = "section-tag", "Attendance"),
-      h2(class = "table-title", "Who turns up"),
-      p(
-        class = "table-subtitle",
-        paste(
-          "Share of matches played, and how those matches went.",
-          "Pick a row for that player's page."
-        )
-      )
+  table_card(
+    "Attendance", "Who turns up",
+    paste(
+      "Share of matches played, and how those matches went.",
+      "Pick a row for that player's page."
     ),
-    card_body(dataTableOutput("attendance_list"))
+    dataTableOutput("attendance_list")
   ),
-  card(
-    class = "table-card",
-    card_header(
-      div(class = "section-tag", "Player"),
-      h2(class = "table-title", "One player at a time"),
-      uiOutput("profile_player_note")
-    ),
-    card_body(
-      uiOutput("player_headline"),
-      h3(class = "match-lineup-title", "Appearances"),
-      plotOutput("appearance_timeline", height = "140px")
-    )
+  table_card(
+    "Player", "One player at a time", uiOutput("profile_player_note"),
+    uiOutput("player_headline"),
+    h3(class = "match-lineup-title", "Appearances"),
+    plotOutput("appearance_timeline", height = "140px")
   ),
-  card(
-    class = "table-card",
-    card_header(
-      div(class = "section-tag", "With and without"),
-      h2(class = "table-title", "How the side does either way"),
-      uiOutput("differential_note")
-    ),
-    card_body(dataTableOutput("with_without"))
+  table_card(
+    "With and without", "How the side does either way", uiOutput("differential_note"),
+    dataTableOutput("with_without")
   )
 )
 
@@ -562,20 +518,13 @@ player_page <- tagList(
 #' The opponent arrived with the sync, so a window made only of older matches
 #' has nobody to group by. That is a different thing from having played nobody
 #' and is worth saying, rather than showing an empty table.
-opponent_record_card <- card(
-  class = "table-card",
-  card_header(
-    div(class = "section-tag", "Head to head"),
-    h2(class = "table-title", "How we do against each side"),
-    p(
-      class = "table-subtitle",
-      paste(
-        "Points per match rather than total points: we have met some",
-        "sides twice as often as others."
-      )
-    )
+opponent_record_card <- table_card(
+  "Head to head", "How we do against each side",
+  paste(
+    "Points per match rather than total points: we have met some",
+    "sides twice as often as others."
   ),
-  card_body(uiOutput("opponent_record"))
+  uiOutput("opponent_record")
 )
 
 
@@ -586,20 +535,10 @@ opponent_record_card <- card(
 #' so scoping it by the picker would filter one thing by the boundaries of
 #' another. It sat on Matches once and had to say so in its own subtitle. Here
 #' nothing takes the picker, so there is nothing to say.
-run_in_card <- card(
-  class = "table-card",
-  card_header(
-    div(class = "section-tag", "Run-in"),
-    h2(class = "table-title", "Who is left"),
-    p(
-      class = "table-subtitle",
-      paste(
-        "Every fixture still to come, with where that side sits in the",
-        "league."
-      )
-    )
-  ),
-  card_body(dataTableOutput("run_in"))
+run_in_card <- table_card(
+  "Run-in", "Who is left",
+  "Every fixture still to come, with where that side sits in the league.",
+  dataTableOutput("run_in")
 )
 
 
@@ -608,37 +547,21 @@ run_in_card <- card(
 #' One card rather than two: the table was a list of every match and the card
 #' under it opened with a dropdown listing the same matches again, in the same
 #' order, immediately below. The table is the picker now.
-every_result_card <- card(
-  class = "table-card",
-  card_header(
-    div(class = "section-tag", "Matches"),
-    h2(class = "table-title", "Every result"),
-    p(
-      class = "table-subtitle",
-      paste(
-        "Newest first, for the seasons you have ticked. Pick a row for",
-        "the lineup that night."
-      )
-    )
+every_result_card <- table_card(
+  "Matches", "Every result",
+  paste(
+    "Newest first, for the seasons you have ticked. Pick a row for",
+    "the lineup that night."
   ),
-  card_body(dataTableOutput("matches"))
+  dataTableOutput("matches")
 )
 
-match_detail_card <- card(
-  class = "table-card",
-  card_header(
-    div(class = "section-tag", "Match detail"),
-    h2(class = "table-title", "Lineup and season context"),
-    p(
-      class = "table-subtitle",
-      "Who played, and how much of that season they turned up for."
-    )
-  ),
-  card_body(
-    uiOutput("match_summary"),
-    h3(class = "match-lineup-title", "Lineup"),
-    dataTableOutput("match_lineup")
-  )
+match_detail_card <- table_card(
+  "Match detail", "Lineup and season context",
+  "Who played, and how much of that season they turned up for.",
+  uiOutput("match_summary"),
+  h3(class = "match-lineup-title", "Lineup"),
+  dataTableOutput("match_lineup")
 )
 
 
@@ -651,21 +574,14 @@ fee_overview_summary <- function(overview) {
 
   div(
     class = "fee-overview-summary",
-    div(
-      class = "fee-overview-stat",
-      div(class = "fee-overview-label", "Match charges"),
-      div(class = "fee-overview-value", format_fee_amount(overview$total_charges))
+    stat_tile(
+      "Match charges", format_fee_amount(overview$total_charges), family = "fee-overview"
     ),
-    div(
-      class = "fee-overview-stat",
-      div(class = "fee-overview-label", "Payments recorded"),
-      div(class = "fee-overview-value", format_fee_amount(overview$total_payments))
+    stat_tile(
+      "Payments recorded", format_fee_amount(overview$total_payments),
+      family = "fee-overview"
     ),
-    div(
-      class = "fee-overview-stat",
-      div(class = "fee-overview-label", balance_label),
-      div(class = "fee-overview-value", format_fee_amount(overview$balance))
-    )
+    stat_tile(balance_label, format_fee_amount(overview$balance), family = "fee-overview")
   )
 }
 
@@ -678,92 +594,40 @@ fee_overview_summary <- function(overview) {
 balance_totals_ui <- function(totals) {
   div(
     class = "fee-overview-summary",
-    div(
-      class = "fee-overview-stat",
-      div(class = "fee-overview-label", "Still owed"),
-      div(class = "fee-overview-value", format_fee_amount(totals$outstanding))
-    ),
-    div(
-      class = "fee-overview-stat",
-      div(class = "fee-overview-label", "In credit"),
-      div(class = "fee-overview-value", format_fee_amount(totals$credit))
-    ),
-    div(
-      class = "fee-overview-stat",
-      div(class = "fee-overview-label", "Settled up"),
-      div(class = "fee-overview-value", totals$settled)
-    )
+    stat_tile("Still owed", format_fee_amount(totals$outstanding), family = "fee-overview"),
+    stat_tile("In credit", format_fee_amount(totals$credit), family = "fee-overview"),
+    stat_tile("Settled up", totals$settled, family = "fee-overview")
   )
 }
 
 
-everyone_panel <- card(
-  class = "table-card",
-  card_header(
-    div(class = "section-tag", "Everyone"),
-    h2(class = "table-title", "Who is square and who is not"),
-    p(
-      class = "table-subtitle",
-      paste(
-        "All seasons, same rules as your own balance. Rows in amber owe",
-        "something; rows in green are owed."
-      )
-    )
+everyone_panel <- table_card(
+  "Everyone", "Who is square and who is not",
+  paste(
+    "All seasons, same rules as your own balance. Rows in amber owe",
+    "something; rows in green are owed."
   ),
-  card_body(
-    uiOutput("balance_totals"),
-    dataTableOutput("all_balances")
-  )
+  uiOutput("balance_totals"),
+  dataTableOutput("all_balances")
 )
 
 
 fee_history_panel <- tagList(
-  card(
-    class = "table-card",
-    card_header(
-      div(class = "section-tag", "Payment history"),
-      h2(class = "table-title", "How your balance is calculated"),
-      p(
-        class = "table-subtitle",
-        "All seasons, each match charged under the rules in force at the time."
-      )
-    ),
-    card_body(uiOutput("fee_overview_summary"))
+  table_card(
+    "Payment history", "How your balance is calculated",
+    "All seasons, each match charged under the rules in force at the time.",
+    uiOutput("fee_overview_summary")
   ),
-  card(
-    class = "table-card",
-    card_header(
-      div(class = "section-tag", "Charges"),
-      h2(class = "table-title", "Match-by-match charges"),
-      p(
-        class = "fee-history-note",
-        "Shares are rounded to the penny here. The totals above are not."
-      )
+  table_card(
+    "Charges", "Match-by-match charges",
+    p(
+      class = "fee-history-note",
+      "Shares are rounded to the penny here. The totals above are not."
     ),
-    card_body(dataTableOutput("match_charges"))
+    dataTableOutput("match_charges")
   ),
-  card(
-    class = "table-card",
-    card_header(
-      div(class = "section-tag", "Payments"),
-      h2(class = "table-title", "Payments made")
-    ),
-    card_body(dataTableOutput("payment_history"))
-  )
+  table_card("Payments", "Payments made", NULL, dataTableOutput("payment_history"))
 )
-
-
-plot_card_ui <- function(title, subtitle, output_id, height) {
-  card(
-    class = "table-card",
-    card_header(
-      div(class = "section-tag", "Visualise"),
-      h2(class = "table-title", title),
-      p(class = "table-subtitle", subtitle)
-    ),
-    card_body(plotOutput(output_id, height = height))
-  )
-}
 
 
 regression_explanation_ui <- function(regression_results, min_appearances, coverage,
@@ -868,13 +732,44 @@ estimator_control <- div(
 )
 
 
+# Not a table_card(): the server renders the card_body itself.
 regression_explanation <- card(
   class = "table-card",
-  card_header(
-    div(class = "section-tag", "Method"),
-    h2(class = "table-title", "How to read the player effects")
-  ),
+  card_head("Method", "How to read the player effects"),
   uiOutput("regression_explanation")
+)
+
+
+#' The Player effects tab, from the estimator toggle down. Its empty state is
+#' arranged in app.R with the other tabs'.
+player_effects_page <- tagList(
+  estimator_control,
+  layout_columns(
+    col_widths = c(6, 6),
+    table_card(
+      "Visualise", "Attack and defence",
+      paste(
+        "Top right is more goals scored and fewer conceded, holding the rest",
+        "of the lineup fixed."
+      ),
+      plotOutput("attack_defence_plot", height = "680px")
+    ),
+    table_card(
+      "Visualise", "Coefficient plot",
+      "Dots are estimates and lines are 95% confidence intervals.",
+      selectInput(
+        "regression_outcome",
+        "Outcome",
+        choices = setNames(names(OUTCOME_LABELS), OUTCOME_LABELS)
+      ),
+      plotOutput("coefficient_plot", height = "560px")
+    )
+  ),
+  table_card(
+    "Player effects", "Player by player", uiOutput("regression_table_note"),
+    dataTableOutput("player_regressions")
+  ),
+  regression_explanation
 )
 
 

@@ -5,9 +5,22 @@
 # that use them because they carry no layout of their own.
 
 
+# The theme's colours, for the plots and the bslib theme to share. The
+# stylesheet keeps its own oklch copies in :root, which R cannot reach.
+APP_COLOURS <- c(
+  blue = "#0850AB", # oklch(45% 0.16 258)
+  amber = "#AB4400", # oklch(52% 0.15 45)
+  green = "#006D1E", # oklch(46% 0.15 148)
+  ink = "#16241f",
+  background = "#f7f9f6",
+  rule = "#8a938d",
+  faint = "#dfe3e0"
+)
+
+
 format_fee_amount <- function(amount) {
   sign <- if (amount < 0) "-" else ""
-  paste0(sign, "£", formatC(abs(amount), format = "f", digits = 2))
+  paste0(sign, "£", money(abs(amount)))
 }
 
 

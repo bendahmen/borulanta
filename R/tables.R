@@ -16,8 +16,22 @@
 every_row <- function(data) max(nrow(data), 1L)
 
 
-league_table_table <- function(league_table) {
+#' A DT with the settings every table here shares. `options` carries only what
+#' differs from table to table and is merged over the shared ones; anything
+#' else goes straight through to datatable().
+app_datatable <- function(data, options = list(), ...) {
   datatable(
+    data,
+    rownames = FALSE,
+    class = "nowrap",
+    options = modifyList(list(autoWidth = TRUE), options),
+    ...
+  )
+}
+
+
+league_table_table <- function(league_table) {
+  app_datatable(
     league_table |>
       transmute(
         Pos = position,
@@ -26,13 +40,10 @@ league_table_table <- function(league_table) {
         GD = goal_difference,
         Pts = points
       ),
-    rownames = FALSE,
-    class = "nowrap",
     options = list(
       dom = "t",
       pageLength = every_row(league_table),
       ordering = FALSE,
-      autoWidth = TRUE,
       scrollX = TRUE,
       rowCallback = JS(
         "function(row, data) {",
@@ -60,11 +71,9 @@ match_table <- function(matches) {
       Outcome = outcome
     )
 
-  datatable(
+  app_datatable(
     matches,
-    rownames = FALSE,
     escape = FALSE, # required to render the badge span
-    class = "nowrap",
     # This table is the match picker: the detail card below it reads the
     # selected row. Rows stay in the order they arrive, newest first, so a
     # row index is a position in the data and nothing has to map it back.
@@ -73,7 +82,6 @@ match_table <- function(matches) {
       dom = "t",
       pageLength = every_row(matches),
       ordering = FALSE,
-      autoWidth = TRUE,
       scrollX = TRUE
     )
   )
@@ -81,7 +89,7 @@ match_table <- function(matches) {
 
 
 opponent_record_table <- function(record) {
-  datatable(
+  app_datatable(
     record |>
       transmute(
         Opponent = opponent,
@@ -89,13 +97,10 @@ opponent_record_table <- function(record) {
         GF = goals_for, GA = goals_against, GD = goal_difference,
         `Pts/match` = round(points_per_match, 2)
       ),
-    rownames = FALSE,
-    class = "nowrap",
     options = list(
       dom = "t",
       pageLength = every_row(record),
       ordering = FALSE,
-      autoWidth = TRUE,
       scrollX = TRUE
     )
   )
@@ -103,7 +108,7 @@ opponent_record_table <- function(record) {
 
 
 run_in_table <- function(fixtures) {
-  datatable(
+  app_datatable(
     fixtures |>
       transmute(
         Date = format(date, "%d %b %Y"),
@@ -113,13 +118,10 @@ run_in_table <- function(fixtures) {
         GD = goal_difference,
         Pts = points
       ),
-    rownames = FALSE,
-    class = "nowrap",
     options = list(
       dom = "t",
       pageLength = every_row(fixtures),
       ordering = FALSE,
-      autoWidth = TRUE,
       scrollX = TRUE,
       language = list(emptyTable = "No fixtures left on the league page.")
     )
@@ -128,20 +130,17 @@ run_in_table <- function(fixtures) {
 
 
 match_lineup_table <- function(lineup) {
-  datatable(
+  app_datatable(
     lineup |>
       transmute(
         Player = player,
         `Season appearances` = season_appearances,
         `Attendance rate` = attendance_rate
       ),
-    rownames = FALSE,
-    class = "nowrap",
     options = list(
       dom = "t",
       pageLength = every_row(lineup),
-      ordering = FALSE,
-      autoWidth = TRUE
+      ordering = FALSE
     )
   ) |>
     formatPercentage(columns = "Attendance rate", digits = 0)
@@ -149,7 +148,7 @@ match_lineup_table <- function(lineup) {
 
 
 scorer_display_table <- function(scorers) {
-  datatable(
+  app_datatable(
     scorers |>
       transmute(
         Player = player,
@@ -158,13 +157,10 @@ scorer_display_table <- function(scorers) {
         Appearances = appearances,
         `Goals per game` = round(goals_per_appearance, 2)
       ),
-    rownames = FALSE,
-    class = "nowrap",
     options = list(
       dom = "tip",
       pageLength = 15,
       order = list(list(1, "desc")),
-      autoWidth = TRUE,
       scrollX = TRUE,
       language = list(
         emptyTable = "No goals on file yet \u2014 they arrive with the sync."
@@ -186,7 +182,7 @@ with_without_table <- function(profile) {
     profile$absent |> mutate(when = "Missed")
   )
 
-  datatable(
+  app_datatable(
     rows |>
       transmute(
         ` ` = when,
@@ -194,10 +190,8 @@ with_without_table <- function(profile) {
         GF = goals_for, GA = goals_against,
         `Pts/match` = round(points_per_match, 2)
       ),
-    rownames = FALSE,
-    class = "nowrap",
     options = list(
-      dom = "t", ordering = FALSE, autoWidth = TRUE, scrollX = TRUE
+      dom = "t", ordering = FALSE, scrollX = TRUE
     )
   )
 }
@@ -210,7 +204,7 @@ with_without_table <- function(profile) {
 #' then never again, because nothing has changed to make it fire twice. Given
 #' here, the table and the page below it agree by construction.
 attendance_table <- function(attendance_list, selected_row = 1L) {
-  datatable(
+  app_datatable(
     attendance_list |>
       transmute(
         Player = player,
@@ -224,8 +218,6 @@ attendance_table <- function(attendance_list, selected_row = 1L) {
         # on every page and moved the highlight with every re-sort.
         rank_class = if_else(row_number() <= 3, "rank-top3", "")
       ),
-    rownames = FALSE,
-    class = "nowrap",
     # The roster is the player picker: the page below it reads the selected
     # row. DT reports the index into the data rather than the position on
     # screen, so re-sorting the table by any column keeps this honest.
@@ -234,7 +226,6 @@ attendance_table <- function(attendance_list, selected_row = 1L) {
       dom = "tip",
       pageLength = 15,
       order = list(list(1, "desc")),
-      autoWidth = TRUE,
       scrollX = TRUE,
       columnDefs = list(list(targets = 5, visible = FALSE)),
       rowCallback = JS(
@@ -260,15 +251,12 @@ match_charge_table <- function(match_charges) {
       Explanation = explanation
     )
 
-  datatable(
+  app_datatable(
     table_data,
-    rownames = FALSE,
-    class = "nowrap",
     options = list(
       dom = "tip",
       pageLength = 12,
       ordering = FALSE,
-      autoWidth = TRUE,
       scrollX = TRUE
     )
   ) |>
@@ -283,15 +271,12 @@ payment_history_table <- function(payment_history) {
       Payment = amount
     )
 
-  datatable(
+  app_datatable(
     table_data,
-    rownames = FALSE,
-    class = "nowrap",
     options = list(
       dom = "t",
       pageLength = every_row(table_data),
       ordering = FALSE,
-      autoWidth = TRUE,
       language = list(emptyTable = "No payments recorded yet.")
     )
   ) |>
@@ -311,15 +296,12 @@ balance_table <- function(balances) {
       Balance = balance
     )
 
-  datatable(
+  app_datatable(
     table_data,
-    rownames = FALSE,
-    class = "nowrap",
     options = list(
       dom = "t",
       pageLength = every_row(table_data),
       ordering = FALSE,
-      autoWidth = TRUE,
       scrollX = TRUE,
       language = list(emptyTable = "Nobody has been charged anything yet."),
       # Picked out by row rather than by a badge in the cell: it is the
@@ -345,15 +327,12 @@ regression_table <- function(regression_results) {
   visible <- unname(vapply(names(REGRESSION_TABLE_COLUMNS), column_index, integer(1)))
   hidden <- unname(vapply(unname(REGRESSION_TABLE_COLUMNS), column_index, integer(1)))
 
-  datatable(
+  app_datatable(
     regression_results,
-    rownames = FALSE,
-    class = "nowrap",
     options = list(
       dom = "tip",
       pageLength = 25,
       order = list(list(1, "desc")),
-      autoWidth = TRUE,
       scrollX = TRUE,
       columnDefs = c(
         list(list(targets = hidden, visible = FALSE)),

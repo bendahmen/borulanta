@@ -275,12 +275,16 @@ opponent_coverage <- function(matches, strength = NULL) {
 # of 3 this excludes exactly the players the previous hard-coded list did.
 MIN_REGRESSION_APPEARANCES <- 3L
 
-REGRESSION_OUTCOMES <- c(
-  "points",
-  "goals_scored",
-  "goals_conceded",
-  "goal_difference"
+# What each regression outcome is called on the page: the outcome picker, the
+# coefficient plot's axis and the table's column headings all read this.
+OUTCOME_LABELS <- c(
+  points = "Points",
+  goals_scored = "Goals scored",
+  goals_conceded = "Goals conceded",
+  goal_difference = "Goal difference"
 )
+
+REGRESSION_OUTCOMES <- names(OUTCOME_LABELS)
 
 # Shrinkage ----
 #
@@ -520,12 +524,7 @@ player_regression_table <- function(regression_results) {
 }
 
 # The columns above, paired: the one you see and the one it sorts on.
-REGRESSION_TABLE_COLUMNS <- c(
-  Points = "sort_points",
-  `Goals scored` = "sort_goals_scored",
-  `Goals conceded` = "sort_goals_conceded",
-  `Goal difference` = "sort_goal_difference"
-)
+REGRESSION_TABLE_COLUMNS <- setNames(paste0("sort_", REGRESSION_OUTCOMES), OUTCOME_LABELS)
 
 # The home page ----
 #
@@ -579,7 +578,8 @@ last_match_summary <- function(matches, attendance, events) {
   )
 }
 
-#' The next fixture we are down to play, or NULL if the list has run out.
+#' Fixtures still to come, soonest first. Shared by the next-match card and the
+#' run-in, so the two cannot disagree about what is left.
 #'
 #' Two things are filtered out, not one. A fixture in the past is obviously
 #' gone; so is a fixture whose date already carries a result, which is what a
@@ -589,10 +589,15 @@ last_match_summary <- function(matches, attendance, events) {
 #'
 #' A fixture dated today counts as still to come, matching the sync: the game is
 #' in the evening and the page is read during the day.
-next_fixture <- function(fixtures, matches, today = Sys.Date()) {
-  upcoming <- fixtures |>
+upcoming_fixtures <- function(fixtures, matches, today = Sys.Date()) {
+  fixtures |>
     filter(date >= today, !date %in% matches$date) |>
     arrange(date)
+}
+
+#' The next fixture we are down to play, or NULL if the list has run out.
+next_fixture <- function(fixtures, matches, today = Sys.Date()) {
+  upcoming <- upcoming_fixtures(fixtures, matches, today)
 
   if (nrow(upcoming) == 0) {
     return(NULL)
@@ -710,9 +715,7 @@ opponent_record <- function(matches) {
 #' empty. The fixture is still a fixture, and dropping it would silently
 #' shorten the run-in.
 run_in <- function(fixtures, matches, league_table, today = Sys.Date()) {
-  upcoming <- fixtures |>
-    filter(date >= today, !date %in% matches$date) |>
-    arrange(date)
+  upcoming <- upcoming_fixtures(fixtures, matches, today)
 
   if (nrow(upcoming) == 0) {
     return(tibble(
