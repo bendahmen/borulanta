@@ -467,7 +467,7 @@ man of the match has no events and is nonetheless completely recorded.
 
 ## The Players tab
 
-Two sub-views, Roster and Effects. On Roster, **Who turns up** is the whole roster —
+Two sub-views, Roster and Effects, opening on Effects. On Roster, **Who turns up** is the whole roster —
 turnout, points per match, goals for and against — and the page under it is one
 row of that table opened up.
 

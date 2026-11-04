@@ -146,8 +146,8 @@ ui <- page_fluid(
           conditionalPanel(
             "output.season_has_matches",
             navset_underline(
-              # The detail first: it opens on the latest match, and last
-              # week's lineup is what most people come here for.
+              selected = "Trends",
+              # The detail first within Results: it opens on the latest match.
               nav_panel("Results", match_detail_card, every_result_card),
               nav_panel("Trends", season_form_card, scorer_card, opponent_record_card)
             )
@@ -169,6 +169,7 @@ ui <- page_fluid(
           conditionalPanel(
             "output.season_has_matches",
             navset_underline(
+              selected = "Effects",
               nav_panel("Roster", player_page),
               nav_panel(
                 "Effects",
