@@ -1,0 +1,33 @@
+{
+  "last_match": {
+    "date": "2026-10-28",
+    "date_label": "Wed 28 Oct 2026",
+    "result": "2-3",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": "The Dirty Boys",
+    "season_label": "Season 3",
+    "meta_line": "Wed 28 Oct 2026 · v The Dirty Boys · Season 3",
+    "squad_size": 9,
+    "scorers": "Emiliano (2)",
+    "man_of_the_match": "Emiliano",
+    "details": [
+      {
+        "label": "Squad",
+        "value": "9 players"
+      },
+      {
+        "label": "Scorers",
+        "value": "Emiliano (2)"
+      },
+      {
+        "label": "Man of the match",
+        "value": "Emiliano"
+      }
+    ]
+  },
+  "last_match_tag": "Last match",
+  "last_match_empty": "No matches recorded yet.",
+  "league_position": "5th of 9 · 10 points from 7",
+  "league_link_label": "League table and run-in"
+}

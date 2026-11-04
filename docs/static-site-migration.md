@@ -98,7 +98,7 @@ Reuse the existing functions in `R/analysis.R`, `R/fees.R`, `R/data.R`, `R/seaso
 
 **Stale deploys.** A CSV commit without regenerated JSON would silently publish old numbers. Put a hash of `data/*.csv` in the export, and make the Astro build fail if it does not match the CSVs. The check needs only Node, so it runs on the host. A failed build keeps the previous version live.
 
-**Data problems.** `validate_app_data()` returns problems that Shiny shows in a quiet banner. Export them and show the same banner.
+**Data problems.** `validate_app_data()` returns problems that Shiny shows in a quiet banner. Export them and show the same banner. There is one exception: a repeated match date or a repeated attendance row makes the fees wrong, so the export stops, names the rows and writes nothing. The old JSON then fails the hash check, so the last good version stays live.
 
 **Search engines.** Balances are currently public to anyone with the link. Add `noindex` and a disallowing `robots.txt` from the start, and leave the wider privacy question to Ben below.
 
@@ -211,6 +211,10 @@ Raise each one when it becomes relevant, and do not settle them yourself.
 ## Out of scope until after cutover
 
 These include writes of any kind, logins, push notifications, RSVP (WhatsApp Events is the first test of demand), title odds, Wrapped pages, `.ics` feeds, pay links and PWA installation. Most become easy afterwards. Note good ideas for later, and do not build them now.
+
+## Change log
+
+- 4 November 2026: a repeated match date or attendance row now stops the export instead of going to the banner. Ben decided this because correct fees come first. In the Stage 1 review's test, a repeated last match published £719.56 outstanding instead of £491.55 under a quiet banner. No regression estimate had any bearing on it. Shiny is unchanged: it carries on and shows them in its banner.
 
 ## Kickoff prompt
 

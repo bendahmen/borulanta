@@ -1,0 +1,45 @@
+{
+  "data_hash": "ec861c7b15a8faf95923091434d193afb915fb0d9fe487ff7e66387a12356335",
+  "our_team": "Borulanta",
+  "min_regression_appearances": 3,
+  "stale_fixtures_days": 8,
+  "outcome_labels": {
+    "points": "Points",
+    "goals_scored": "Goals scored",
+    "goals_conceded": "Goals conceded",
+    "goal_difference": "Goal difference"
+  },
+  "seasons": [
+    {
+      "season_id": "s3",
+      "label": "Season 3",
+      "start_date": "2026-09-09",
+      "span": "Sep–Oct 2026"
+    },
+    {
+      "season_id": "s2",
+      "label": "Season 2",
+      "start_date": "2026-02-01",
+      "span": "Feb–Aug 2026"
+    },
+    {
+      "season_id": "s1",
+      "label": "Season 1",
+      "start_date": "2025-09-10",
+      "span": "Sep 2025 – Jan 2026"
+    }
+  ],
+  "subset_files": ["s1.json", "s2.json", "s3.json", "s1-s2.json", "s1-s3.json", "s2-s3.json", "s1-s2-s3.json"],
+  "problems": [],
+  "problems_title": "Data check",
+  "freshness": {
+    "full": "Results to 28 Oct 2026 · league page read 29 Oct 2026",
+    "short": "Page read 29 Oct 2026"
+  },
+  "empty_states": {
+    "no_matches": "No matches in the selected seasons yet.",
+    "no_regression": "Not enough matches in the selected seasons to estimate player effects. Tick more seasons.",
+    "no_opponent": "No match in the selected seasons has its opponent on file. They start with the sync.",
+    "no_scorers": "No goals on file yet — they arrive with the sync."
+  }
+}

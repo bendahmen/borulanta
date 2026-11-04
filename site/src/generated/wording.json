@@ -1,0 +1,105 @@
+{
+  "fee_panel": {
+    "tag": "Fee Check",
+    "picker_label": "Choose your name",
+    "balance_label": "Current balance",
+    "footnote": "Every season you have played, charged under the fee rules in force at the time, less what you have paid."
+  },
+  "settle_up": {
+    "tag": "Settle Up",
+    "copy": "Balances move when I record the transfer, not when you send it.",
+    "button_label": "Pay via Monzo",
+    "button_url": "https://monzo.me/benjamindahmen8?h=Njfjz9",
+    "account_title": "Bank transfer details",
+    "account_details": ["Account Number: 94456363", "Sort Code: 04-00-03", "Name: Benjamin Dahmen"]
+  },
+  "estimator_control": {
+    "legend": "Estimates",
+    "options": [
+      {
+        "value": "ols",
+        "label": "Raw (OLS)"
+      },
+      {
+        "value": "ridge",
+        "label": "Shrunk toward the average player (ridge)"
+      }
+    ]
+  },
+  "effects_cards": {
+    "attack_defence": {
+      "tag": "Visualise",
+      "title": "Attack and defence",
+      "subtitle": "Top right is more goals scored and fewer conceded, holding the rest of the lineup fixed.",
+      "picker_label": null
+    },
+    "coefficient_plot": {
+      "tag": "Visualise",
+      "title": "Coefficient plot",
+      "subtitle": null,
+      "picker_label": "Outcome"
+    },
+    "player_effects": {
+      "tag": "Player effects",
+      "title": "Player by player",
+      "subtitle": null,
+      "picker_label": null
+    },
+    "method": {
+      "tag": "Method",
+      "title": "How to read the player effects",
+      "subtitle": null,
+      "picker_label": null
+    }
+  },
+  "plot_labels": {
+    "attack_defence": {
+      "ols": {
+        "x": "Goals scored: coefficient",
+        "y": "Goals conceded: coefficient, sign flipped"
+      },
+      "ridge": {
+        "x": "Goals scored: coefficient",
+        "y": "Goals conceded: coefficient, sign flipped"
+      }
+    },
+    "coefficient": {
+      "ols": {
+        "points": {
+          "x": null,
+          "y": "Points coefficient with 95% confidence interval"
+        },
+        "goals_scored": {
+          "x": null,
+          "y": "Goals scored coefficient with 95% confidence interval"
+        },
+        "goals_conceded": {
+          "x": null,
+          "y": "Goals conceded coefficient with 95% confidence interval"
+        },
+        "goal_difference": {
+          "x": null,
+          "y": "Goal difference coefficient with 95% confidence interval"
+        }
+      },
+      "ridge": {
+        "points": {
+          "x": null,
+          "y": "Points: deviation from the average player, shrunk"
+        },
+        "goals_scored": {
+          "x": null,
+          "y": "Goals scored: deviation from the average player, shrunk"
+        },
+        "goals_conceded": {
+          "x": null,
+          "y": "Goals conceded: deviation from the average player, shrunk"
+        },
+        "goal_difference": {
+          "x": null,
+          "y": "Goal difference: deviation from the average player, shrunk"
+        }
+      }
+    }
+  }
+}
