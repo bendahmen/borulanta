@@ -7,3 +7,10 @@
 # Snapshots of the pages a sync parsed, kept for debugging a broken parse.
 # Outside data/ so scripts/write-manifest.R does not ship them with the app.
 raw/
+
+# The static site's installed packages and build output. All can be regenerated.
+# scripts/site-setup.sh also marks these folders so Dropbox does not sync them.
+site/node_modules/
+site/dist/
+site/.astro/
+site/.wrangler/
