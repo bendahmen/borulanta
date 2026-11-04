@@ -353,7 +353,8 @@ a:hover {
 /* ---- Fee history ---- */
 .fee-overview-summary {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* However many tiles there are, they fill the row. */
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
   gap: 0.75rem;
   margin-bottom: 1.25rem;
 }
@@ -391,7 +392,8 @@ a:hover {
 /* ---- Match detail ---- */
 .match-detail-summary {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* However many tiles there are, they fill the row. */
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
   gap: 0.75rem;
   margin: 1rem 0 1.25rem;
 }
@@ -676,17 +678,6 @@ tr.is-us > td {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  /* Level with the SEASONS heading rather than under the pills, and out of
-     flow, so saying the picker is unused costs the hero no height. The hero
-     is held tight here and this caption is on the tab the app opens on. */
-  .season-inert {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin-top: 0;
-    font-size: 0.62rem;
-  }
-
   .nav-pill-shell .nav .nav-item:first-child {
     grid-column: 1 / -1;
   }
@@ -707,16 +698,45 @@ tr.is-us > td {
 }
 
 
-/* ---- Season picker (sits in the hero, on the dark gradient) ---- */
+/* ---- Season picker (a dark band under the tabs it scopes) ---- */
 /* Tick boxes rather than a select: several seasons can be in scope at once,
    and there is no popup to be clipped by the hero's overflow: hidden. The
    native checkbox is hidden and the pill itself carries the state, so nothing
    sits outside the rounded frame. */
+.season-bar {
+  margin: 0.4rem 0 0.75rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 18px;
+  background: linear-gradient(155deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+}
+
 .season-shell {
   position: relative;
   z-index: 1;
   margin-left: auto;
   max-width: 34rem;
+}
+
+/* Sub-views inside a tab: quieter than the pills above them. */
+.nav-pill-shell .nav-underline {
+  /* Not the phone's two-column grid, which is for the pills. */
+  display: flex;
+  margin: 0.4rem 0 0.75rem;
+  padding: 0 0.6rem;
+}
+
+/* Our standing, on Home, in place of the whole table. */
+.league-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1.1rem;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  font-weight: 600;
 }
 
 .season-shell .control-label {
@@ -840,22 +860,6 @@ tr.is-us > td {
    can be set here and carried to a tab that uses it, and a control that
    vanishes on two tabs is harder to understand than one that explains itself.
    The strapline says this too, and the phone layout hides the strapline. */
-.season-inert {
-  margin-top: 0.5rem;
-  text-align: right;
-  color: rgba(255, 255, 255, 0.55);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.season-shell:has(.shiny-conditional--shown) .control-label,
-.season-shell:has(.shiny-conditional--shown) .shiny-options-group {
-  opacity: 0.45;
-  transition: opacity 0.15s ease;
-}
-
 /* On a phone the header has to earn its space: crest beside the title, no
    strapline, and the seasons in one horizontally scrolling row so the header
    stays the same height no matter how many seasons accumulate. */

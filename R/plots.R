@@ -78,18 +78,15 @@ season_form_plot <- function(season_form, selected_metric) {
 
 attack_defence_plot <- function(regression_results) {
   plot_data <- regression_results |>
-    filter(outcome %in% c("goals_scored", "goals_conceded", "goal_difference")) |>
+    filter(outcome %in% c("goals_scored", "goals_conceded")) |>
     select(player, appearances, outcome, estimate) |>
     pivot_wider(names_from = outcome, values_from = estimate) |>
     mutate(defensive_effect = -goals_conceded)
 
-  ggplot(
-    plot_data,
-    aes(x = goals_scored, y = defensive_effect, size = appearances, color = goal_difference)
-  ) +
+  ggplot(plot_data, aes(x = goals_scored, y = defensive_effect, size = appearances)) +
     geom_vline(xintercept = 0, color = APP_COLOURS[["rule"]], linewidth = 0.4) +
     geom_hline(yintercept = 0, color = APP_COLOURS[["rule"]], linewidth = 0.4) +
-    geom_point(alpha = 0.8) +
+    geom_point(alpha = 0.8, color = APP_COLOURS[["blue"]]) +
     ggrepel::geom_label_repel(
       aes(label = player),
       seed = 20260820,
@@ -103,13 +100,6 @@ attack_defence_plot <- function(regression_results) {
       min.segment.length = 0,
       max.overlaps = Inf,
       show.legend = FALSE
-    ) +
-    scale_color_gradient2(
-      low = APP_COLOURS[["amber"]],
-      mid = APP_COLOURS[["ink"]],
-      high = APP_COLOURS[["green"]],
-      midpoint = 0,
-      name = "Goal difference"
     ) +
     scale_size_area(max_size = 14, name = "Appearances") +
     scale_x_continuous(expand = expansion(mult = 0.2)) +

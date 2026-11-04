@@ -239,3 +239,25 @@ test_that("a missing snapshot file reads as empty rather than failing", {
   expect_null(next_fixture(read_fixture_file(missing),
                            matches_for(character(), integer(), integer())))
 })
+
+# League position ----
+
+test_that("the league strip states our position and is absent without us", {
+  standings <- tibble(
+    position = 1:3, team = c("Ball FC", OUR_TEAM, "Rovers"),
+    played = 7L, points = c(19L, 12L, 3L)
+  )
+  expect_match(
+    as.character(league_position_ui(standings)), "2nd of 3 \u00b7 12 points from 7",
+    fixed = TRUE
+  )
+  expect_null(league_position_ui(filter(standings, team != OUR_TEAM)))
+  expect_null(league_position_ui(standings[0, ]))
+})
+
+test_that("ordinals handle the teens", {
+  expect_equal(
+    purrr::map_chr(c(1, 2, 3, 4, 11, 12, 13, 21), ordinal),
+    c("1st", "2nd", "3rd", "4th", "11th", "12th", "13th", "21st")
+  )
+})

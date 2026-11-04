@@ -74,13 +74,14 @@ match_table <- function(matches) {
   app_datatable(
     matches,
     escape = FALSE, # required to render the badge span
-    # This table is the match picker: the detail card below it reads the
+    # This table is the match picker: the detail card above it reads the
     # selected row. Rows stay in the order they arrive, newest first, so a
     # row index is a position in the data and nothing has to map it back.
     selection = list(mode = "single", selected = 1, target = "row"),
     options = list(
-      dom = "t",
-      pageLength = every_row(matches),
+      # Paged, so a row is never far from the detail card it changes.
+      dom = "tp",
+      pageLength = 10,
       ordering = FALSE,
       scrollX = TRUE
     )
@@ -113,10 +114,7 @@ run_in_table <- function(fixtures) {
       transmute(
         Date = format(date, "%d %b %Y"),
         Opponent = opponent,
-        Pos = position,
-        P = played,
-        GD = goal_difference,
-        Pts = points
+        Pos = position
       ),
     options = list(
       dom = "t",
@@ -135,7 +133,7 @@ match_lineup_table <- function(lineup) {
       transmute(
         Player = player,
         `Season appearances` = season_appearances,
-        `Attendance rate` = attendance_rate
+        Turnout = attendance_rate
       ),
     options = list(
       dom = "t",
@@ -143,7 +141,7 @@ match_lineup_table <- function(lineup) {
       ordering = FALSE
     )
   ) |>
-    formatPercentage(columns = "Attendance rate", digits = 0)
+    formatPercentage(columns = "Turnout", digits = 0)
 }
 
 

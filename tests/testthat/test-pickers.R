@@ -114,8 +114,10 @@ test_that("the season picker only claims to apply where it does", {
     expect_false(season_picker_applies())
     session$setInputs(app_tabs = "Fees")
     expect_false(season_picker_applies())
+    session$setInputs(app_tabs = "League")
+    expect_false(season_picker_applies())
 
-    for (tab in c("Matches", "Players", "Player effects")) {
+    for (tab in c("Matches", "Players")) {
       session$setInputs(app_tabs = tab)
       expect_true(season_picker_applies())
     }

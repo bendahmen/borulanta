@@ -10,7 +10,10 @@
 # would give two selectInputs the same one. The Fees tab keeps the original ids
 # and the home page gets its own; the server keeps the two pickers on the same
 # person, so switching on one tab carries to the other.
-fee_panel_ui <- function(input_id, output_id) {
+#'
+#' `breakdown_id` adds the charges and payments behind the balance. Only the Fees
+#' tab passes it, since that is where the tables they total are.
+fee_panel_ui <- function(input_id, output_id, breakdown_id = NULL) {
   card(
     class = "panel-card",
     card_body(
@@ -21,6 +24,7 @@ fee_panel_ui <- function(input_id, output_id) {
       ),
       div(class = "fee-label", "Current balance"),
       uiOutput(output_id),
+      if (!is.null(breakdown_id)) uiOutput(breakdown_id),
       div(
         class = "fee-footnote",
         paste(
@@ -265,8 +269,7 @@ next_match_card_ui <- function(fixture, have_fixtures, scraped_on = NULL,
 
 #' The league standings, trimmed to what fits and with our row picked out.
 #'
-#' Goals for and against are dropped: this is context on a landing page, not
-#' the Matches tab, and goal difference carries the same information in one
+#' Goals for and against are dropped: goal difference carries the same information in one
 #' column. The scrape date is on the card because the table ages between syncs
 #' and a stale table that cannot be dated is a stale table nobody questions.
 league_table_ui <- function(league_table) {
@@ -290,6 +293,28 @@ league_table_ui <- function(league_table) {
       )
     ),
     card_body(dataTableOutput("league_table"))
+  )
+}
+
+
+#' Where we sit in one line, for the home page, with the way to the full table.
+#'
+#' Absent when the file does not list us, since the League tab says why.
+league_position_ui <- function(league_table) {
+  us <- league_table[league_table$team == OUR_TEAM, ]
+  if (nrow(us) != 1) {
+    return(NULL)
+  }
+
+  div(
+    class = "league-strip",
+    span(
+      paste0(
+        ordinal(us$position), " of ", nrow(league_table), " \u00b7 ",
+        us$points, " points from ", us$played
+      )
+    ),
+    actionLink("see_league", "League table and run-in")
   )
 }
 
@@ -360,6 +385,8 @@ season_form_card <- table_card(
 
 
 match_summary_ui <- function(selected_match) {
+  # The one tile earns its place because the table it was picked from may be a
+  # page away. Points and squad size were the outcome and the lineup again.
   outcome <- case_when(
     selected_match$points == 3 ~ "Win",
     selected_match$points == 1 ~ "Draw",
@@ -378,9 +405,7 @@ match_summary_ui <- function(selected_match) {
         ),
         collapse = " — "
       )
-    ),
-    stat_tile("Points", selected_match$points, "Out of 3"),
-    stat_tile("Squad", selected_match$squad_size, "On the sheet that night")
+    )
   )
 }
 
@@ -429,23 +454,17 @@ scorer_card <- table_card(
 
 # Player page ----
 
-#' A player's season at a glance: four numbers, then the record behind them.
+#' A player's season at a glance. Points per match lives in the Played row of
+#' With and without, and in the roster row this page was picked from.
 player_headline_ui <- function(profile) {
   div(
     class = "match-detail-summary",
     stat_tile(
-      "Appearances", profile$appearances,
-      paste0("of ", profile$matches, " matches")
-    ),
-    stat_tile(
-      "Turnout",
-      if (is.na(profile$attendance_rate)) "\u2014" else paste0(round(profile$attendance_rate * 100), "%"),
-      "share of matches played"
-    ),
-    stat_tile(
-      "Points per match",
-      if (is.na(profile$present$points_per_match)) "\u2014" else format(round(profile$present$points_per_match, 2), nsmall = 2),
-      "when playing"
+      "Appearances",
+      paste(profile$appearances, "of", profile$matches),
+      if (!is.na(profile$attendance_rate)) {
+        paste0(round(profile$attendance_rate * 100), "% turnout")
+      }
     ),
     # Goals only earn a tile once there is a match they could have been
     # scored in. Before that the sync has simply not run yet, and a zero
@@ -482,7 +501,7 @@ differential_note <- function(profile) {
       " points a match ", direction, " with ", profile$player,
       " than without. That is a description of how those nights went, not ",
       "of what they did: it holds nothing else about the match fixed. The ",
-      "player effects tab does hold the rest of the lineup fixed."
+      "Effects view does hold the rest of the lineup fixed."
     )
   )
 }
@@ -530,11 +549,9 @@ opponent_record_card <- table_card(
 
 #' What is left to play, and what the standings say about it.
 #'
-#' On the home page, with the next match and the standings it is made of: the
-#' fixture list describes the current league season, which is not a fee season,
-#' so scoping it by the picker would filter one thing by the boundaries of
-#' another. It sat on Matches once and had to say so in its own subtitle. Here
-#' nothing takes the picker, so there is nothing to say.
+#' On the League tab, with the standings it is made of: the fixture list
+#' describes the current league season, which is not a fee season, so scoping it
+#' by the picker would filter one thing by the boundaries of another.
 run_in_card <- table_card(
   "Run-in", "Who is left",
   "Every fixture still to come, with where that side sits in the league.",
@@ -550,8 +567,8 @@ run_in_card <- table_card(
 every_result_card <- table_card(
   "Matches", "Every result",
   paste(
-    "Newest first, for the seasons you have ticked. Pick a row for",
-    "the lineup that night."
+    "Newest first, for the seasons you have ticked. Pick a row to see",
+    "that night's lineup above."
   ),
   dataTableOutput("matches")
 )
@@ -565,13 +582,8 @@ match_detail_card <- table_card(
 )
 
 
+#' What the balance on the Fee check card is the difference of.
 fee_overview_summary <- function(overview) {
-  balance_label <- case_when(
-    overview$balance > 0 ~ "Still owed",
-    overview$balance < 0 ~ "Credit",
-    TRUE ~ "Settled"
-  )
-
   div(
     class = "fee-overview-summary",
     stat_tile(
@@ -580,8 +592,7 @@ fee_overview_summary <- function(overview) {
     stat_tile(
       "Payments recorded", format_fee_amount(overview$total_payments),
       family = "fee-overview"
-    ),
-    stat_tile(balance_label, format_fee_amount(overview$balance), family = "fee-overview")
+    )
   )
 }
 
@@ -603,21 +614,15 @@ balance_totals_ui <- function(totals) {
 
 everyone_panel <- table_card(
   "Everyone", "Who is square and who is not",
-  paste(
-    "All seasons, same rules as your own balance. Rows in amber owe",
-    "something; rows in green are owed."
-  ),
+  "Rows in amber owe something. Rows in green are owed.",
   uiOutput("balance_totals"),
   dataTableOutput("all_balances")
 )
 
 
+# Payments first: did my transfer land is the question Settle up raises.
 fee_history_panel <- tagList(
-  table_card(
-    "Payment history", "How your balance is calculated",
-    "All seasons, each match charged under the rules in force at the time.",
-    uiOutput("fee_overview_summary")
-  ),
+  table_card("Payments", "Payments made", NULL, dataTableOutput("payment_history")),
   table_card(
     "Charges", "Match-by-match charges",
     p(
@@ -625,8 +630,7 @@ fee_history_panel <- tagList(
       "Shares are rounded to the penny here. The totals above are not."
     ),
     dataTableOutput("match_charges")
-  ),
-  table_card("Payments", "Payments made", NULL, dataTableOutput("payment_history"))
+  )
 )
 
 
@@ -690,9 +694,8 @@ regression_explanation_ui <- function(regression_results, min_appearances, cover
         "on indicators for the ", length(included), " players with at ",
         "least ", min_appearances, " appearances in the selected seasons. ",
         "The coefficient says how the outcome moves when that player is on ",
-        "the pitch, holding the rest of the lineup fixed. The number in ",
-        "brackets is the OLS p-value, and with this many players a couple ",
-        "below 0.05 is what chance alone produces."
+        "the pitch, holding the rest of the lineup fixed. With this many ",
+        "players, a couple of p-values below 0.05 is what chance alone produces."
       )
     )
   }
@@ -740,7 +743,7 @@ regression_explanation <- card(
 )
 
 
-#' The Player effects tab, from the estimator toggle down. Its empty state is
+#' The Effects view of Players, from the estimator toggle down. Its empty state is
 #' arranged in app.R with the other tabs'.
 player_effects_page <- tagList(
   estimator_control,
@@ -756,7 +759,7 @@ player_effects_page <- tagList(
     ),
     table_card(
       "Visualise", "Coefficient plot",
-      "Dots are estimates and lines are 95% confidence intervals.",
+      NULL,
       selectInput(
         "regression_outcome",
         "Outcome",

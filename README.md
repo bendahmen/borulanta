@@ -238,12 +238,12 @@ them describes nobody. A window made only of those says so instead of showing
 an empty table.
 
 **Run-in** is every fixture still to come with where that side sits in the
-standings, and it is on the **home page**, with the next match and the league
-table it is made of. It sat on Matches once and had to excuse itself in its own
+standings, and it is on the **League tab**, with the league table it is made
+of. It sat on Matches once and had to excuse itself in its own
 subtitle for ignoring the season picker, which is the tell that it was in the
 wrong place: the fixture list and the standings describe the current *league*
 season, which is not a fee season and has no business being filtered by one —
-the same reason the snapshot files exist at all. On the home page nothing takes
+the same reason the snapshot files exist at all. On the League tab nothing takes
 the picker, so there is nothing to excuse, and Matches is now uniformly
 season-scoped. An opponent the standings do not carry keeps
 its row with those columns empty, because the fixture is still a fixture and
@@ -258,10 +258,10 @@ left as it came and reported, so adding the mapping and re-running fixes it.
 ## The home page
 
 The tab the app opens on, and the only one that answers a question in the
-present tense: the last result with who was there and what they did, the next
-fixture with a countdown, and the league table for context. Under those sit the
-Fee check and Settle up cards, so the two things anyone actually opens the app
-for are on the first screen.
+present tense: the next fixture with a countdown, the last result with who was
+there and what they did, and our league position in one line. Under those sit
+the Fee check and Settle up cards. The league table and run-in have their own
+tab, because together they pushed the fee cards 1,500px down the page.
 
 The Fee check card is on both Home and Fees. Shiny needs a unique id per input,
 so the card is built by a function rather than stored, and the two pickers get
@@ -348,23 +348,19 @@ from the matches played rather than from the nominal boundaries.
 | `status` | `open` or `closed`, for reference |
 
 Every match, attendance row and payment is tagged with its season at load time.
-The tick boxes in the app header scope **Matches, Players and Player effects**,
+The tick boxes under the tab bar scope **Matches and Players**,
 and any combination can be in scope at once — tick one season, a few, or all of
 them to pool them. Every season starts ticked, so the default view is all-time.
 Ticking nothing puts nothing in scope, and each tab says so rather than showing
 zeros.
 
-On Home and Fees the tick boxes do nothing, and the header says so: they dim
-and a caption under them reads "Not used on this tab". The strapline says this
-too, but the phone layout hides the strapline — so on the screen where the
-picker is hardest to ignore, and on the tab the app opens on, it was
-unexplained. They are dimmed rather than hidden or disabled: a control that
-disappears on two tabs is harder to understand than one that explains itself,
-and the boxes still tick, so the scope can be set here and carried to a tab
-that reads it. `SEASON_SCOPED_TABS` in `app.R` is the list, and it is the only
-place the answer is written down.
+Home, Fees and League do not show the tick boxes. They used to sit in the header
+on every tab, dimmed and captioned where they did nothing, and that explanation
+was most of what the landing tab's header said. Sitting under the tab bar, the
+boxes appear with the content they change. `SEASON_SCOPED_TABS` in `app.R` is the
+list, and it is the only place the answer is written down.
 
-The Fees tab and the home page deliberately ignore the picker; Fees always
+The Fees, League and Home tabs deliberately ignore the picker; Fees always
 covers all time. A
 balance is a running total, not a per-season statistic: people settle up when
 they settle up, not season by season, so scoping payments by date would show a
@@ -471,7 +467,7 @@ man of the match has no events and is nonetheless completely recorded.
 
 ## The Players tab
 
-Two views of one subject, stacked: **Who turns up** is the whole roster —
+Two sub-views, Roster and Effects. On Roster, **Who turns up** is the whole roster —
 turnout, points per match, goals for and against — and the page under it is one
 row of that table opened up.
 
@@ -481,15 +477,14 @@ picker: click a row, read the player. The card below names whoever is selected,
 so the two never disagree about who is being shown.
 
 The page itself is one player at a time, scoped by the season picker:
-appearances and turnout, points per match when playing, goals and man of the
-match where they are on file, a strip showing which matches they played, and
+appearances and turnout, goals and man of the match where they are on file, a strip showing which matches they played, and
 the side's record with and without them.
 
 That last one is the reason the page exists rather than being a filtered row of
 the attendance table, and it is also the number most likely to be over-read. It
 is shown as two records side by side rather than as one effect, with the gap
 stated in a sentence that says what it is not: a description of how those nights
-went, holding nothing else about the match fixed. The player effects tab is the
+went, holding nothing else about the match fixed. The Effects view is the
 one that holds the rest of the lineup fixed, and the page says so.
 
 An ever-present has no comparison rather than a zero one. `NaN` would print as a
@@ -516,7 +511,7 @@ opens on the newest result.
 
 ### Two estimators
 
-The player-effects tab offers a choice, and the two report different things.
+The Effects view offers a choice, and the two report different things.
 
 **Raw (OLS)** is the fit that was always there: no intercept, one column per
 player, so a coefficient is that player's additive share of the scoreline, with

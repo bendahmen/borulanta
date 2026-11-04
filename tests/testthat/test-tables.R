@@ -38,7 +38,9 @@ test_that("pagerless tables show every row they are given", {
     goals_for = 2L, goals_against = 1L,
     dl_match_id = "x"
   ))
-  expect_equal(page_length(match_table(matches)), 45L)
+  # The exception: paged, so a row stays near the detail card it changes.
+  expect_equal(page_length(match_table(matches)), 10L)
+  expect_true(grepl("p", match_table(matches)$x$options$dom))
 })
 
 # A squad of eleven is the case that used to lose a row: DT's default page

@@ -26,6 +26,18 @@ format_fee_amount <- function(amount) {
 
 # Home page cards ----
 
+#' 1st, 2nd, 3rd, 4th, ... 11th, 12th, 13th, 21st.
+ordinal <- function(n) {
+  tens <- n %% 100
+  suffix <- if (tens %in% 11:13) {
+    "th"
+  } else {
+    switch(as.character(n %% 10), "1" = "st", "2" = "nd", "3" = "rd", "th")
+  }
+  paste0(n, suffix)
+}
+
+
 #' "Wed 19 Aug 2026" — the weekday earns its place on a game that is always
 #' on a Wednesday, because a fixture that is not is worth noticing.
 format_match_date <- function(date) format(date, "%a %d %b %Y")

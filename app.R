@@ -53,7 +53,11 @@ ui <- page_fluid(
       name = "viewport",
       content = "width=device-width, initial-scale=1"
     ),
-    tags$link(rel = "stylesheet", type = "text/css", href = "borulanta.css")
+    # Versioned, or a browser holding the old stylesheet draws new markup with it.
+    tags$link(
+      rel = "stylesheet", type = "text/css",
+      href = paste0("borulanta.css?v=", as.integer(file.mtime("www/borulanta.css")))
+    )
   ),
   div(
     class = "app-shell",
@@ -69,28 +73,12 @@ ui <- page_fluid(
         h1(class = "hero-title", "Borulanta"),
         p(
           class = "hero-copy",
-          paste(
-            "Where we left off, who is next, and what you owe.",
-            "The season picker applies to matches, players and",
-            "player effects."
-          )
+          "Who is next, where we left off, and what you owe."
         ),
         # Kept out of .hero-copy, which the phone layout hides: a
         # countdown is read on a phone more than anywhere else, so how
         # old it is has to survive that.
         freshness_note(app_data$matches, app_data$league_table)
-      ),
-      div(
-        class = "season-shell",
-        season_picker(app_data),
-        # Dimmed and captioned, not hidden or disabled: the tick boxes
-        # stay usable, so the scope can be set here and carried to a
-        # tab that reads it. Under the pills rather than over them,
-        # where the heading already is.
-        conditionalPanel(
-          "!output.season_picker_applies",
-          div(class = "season-inert", "Not used on this tab")
-        )
       )
     ),
     data_health_banner(app_data$problems),
@@ -98,6 +86,12 @@ ui <- page_fluid(
       class = "nav-pill-shell",
       navset_pill(
         id = "app_tabs",
+        # Between the pills and the tab content, and only on the tabs it
+        # scopes: a control that does nothing should not be on the page.
+        header = conditionalPanel(
+          "output.season_picker_applies",
+          div(class = "season-bar", div(class = "season-shell", season_picker(app_data)))
+        ),
         # First, so it is where the app opens. Like the Fees tab, and
         # for the same reason, it ignores the season picker: it answers
         # what just happened and what is next, and a question in the
@@ -107,16 +101,10 @@ ui <- page_fluid(
           icon = icon("house"),
           div(
             class = "home-grid",
-            uiOutput("last_match_card"),
-            uiOutput("next_match_card")
+            uiOutput("next_match_card"),
+            uiOutput("last_match_card")
           ),
-          uiOutput("league_table_card"),
-          # The run-in belongs with these two and not on Matches: it
-          # describes the current league season, which is not a fee
-          # season, and it used to have to say so in its own subtitle
-          # to excuse ignoring the picker. Here nothing ignores the
-          # picker, so there is nothing to excuse.
-          run_in_card,
+          league_position_ui(app_data$league_table),
           div(
             class = "fees-grid",
             fee_panel_ui("home_fee_player", "home_fees_owed"),
@@ -126,13 +114,27 @@ ui <- page_fluid(
         nav_panel(
           "Fees",
           icon = icon("dollar-sign"),
-          div(
-            class = "fees-grid",
-            fee_panel_ui("fee_player", "fees_owed"),
-            payment_panel_ui()
-          ),
-          everyone_panel,
-          fee_history_panel
+          navset_underline(
+            nav_panel(
+              "You",
+              div(
+                class = "fees-grid",
+                fee_panel_ui("fee_player", "fees_owed", "fee_overview_summary"),
+                payment_panel_ui()
+              ),
+              fee_history_panel
+            ),
+            nav_panel("Everyone", everyone_panel)
+          )
+        ),
+        # The standings and the fixture list describe the current league
+        # season, which is not a fee season, so nothing here takes the
+        # picker. The run-in once had to excuse that in its own subtitle.
+        nav_panel(
+          "League",
+          icon = icon("trophy"),
+          uiOutput("league_table_card"),
+          run_in_card
         ),
         nav_panel(
           "Matches",
@@ -143,11 +145,12 @@ ui <- page_fluid(
           ),
           conditionalPanel(
             "output.season_has_matches",
-            season_form_card,
-            scorer_card,
-            opponent_record_card,
-            every_result_card,
-            match_detail_card
+            navset_underline(
+              # The detail first: it opens on the latest match, and last
+              # week's lineup is what most people come here for.
+              nav_panel("Results", match_detail_card, every_result_card),
+              nav_panel("Trends", season_form_card, scorer_card, opponent_record_card)
+            )
           )
         ),
         # Attendance used to be a tab of its own holding one card. It
@@ -163,21 +166,25 @@ ui <- page_fluid(
             "!output.season_has_matches",
             empty_season_card("No matches in the selected seasons yet.")
           ),
-          conditionalPanel("output.season_has_matches", player_page)
-        ),
-        nav_panel(
-          "Player effects",
-          icon = icon("chart-line"),
           conditionalPanel(
-            "!output.season_has_regression",
-            empty_season_card(
-              paste(
-                "Not enough matches in the selected seasons to",
-                "estimate player effects. Tick more seasons."
+            "output.season_has_matches",
+            navset_underline(
+              nav_panel("Roster", player_page),
+              nav_panel(
+                "Effects",
+                conditionalPanel(
+                  "!output.season_has_regression",
+                  empty_season_card(
+                    paste(
+                      "Not enough matches in the selected seasons to",
+                      "estimate player effects. Tick more seasons."
+                    )
+                  )
+                ),
+                conditionalPanel("output.season_has_regression", player_effects_page)
               )
             )
-          ),
-          conditionalPanel("output.season_has_regression", player_effects_page)
+          )
         )
       )
     )
@@ -188,11 +195,12 @@ ui <- page_fluid(
 # in step without either tab knowing the other exists.
 FEE_PLAYER_INPUTS <- c("fee_player", "home_fee_player")
 
-# The tabs the season picker actually scopes, by their nav_panel titles. Home
-# and Fees are the two it does not: both are all of time on purpose — what just
-# happened and what is next do not take a season, and a balance is a running
-# total that would show a debt in one season and its mirror image in the next.
-SEASON_SCOPED_TABS <- c("Matches", "Players", "Player effects")
+# The tabs the season picker actually scopes, by their nav_panel titles. Home,
+# Fees and League are the three it does not: what just happened and what is next
+# do not take a season, a balance is a running total that would show a debt in
+# one season and its mirror image in the next, and the league's seasons are not
+# ours.
+SEASON_SCOPED_TABS <- c("Matches", "Players")
 
 # Server logic ----
 server <- function(input, output, session) {
@@ -344,7 +352,8 @@ server <- function(input, output, session) {
   output$home_fees_owed <- renderUI(fees_owed_ui())
 
   # Home ----
-  #
+  observeEvent(input$see_league, nav_select("app_tabs", "League"))
+
   # Rendered rather than built once at startup because both cards say
   # something about today — "Tonight", "In 5 days" — and a process that has
   # been up for a week would otherwise still be counting down from the day it
@@ -513,12 +522,8 @@ server <- function(input, output, session) {
 
   # Where the season picker applies ----
   #
-  # It sits in the hero on every tab and does nothing on two of them. The
-  # strapline says so, and the phone layout hides the strapline — so on the
-  # screen where the picker is hardest to ignore it is also unexplained, and
-  # it is the tab the app opens on. Rather than move it, say so: the shell
-  # goes quiet and captions itself on the tabs that read all of time anyway.
-  # Named rather than written straight into output, so it can be read on its
+  # Shown only on the tabs it scopes. Named rather than written straight into
+  # output, so it can be read on its
   # own: an anonymous reactive assigned to output is reachable from the
   # conditionalPanel and from nowhere else.
   season_picker_applies <- reactive({
