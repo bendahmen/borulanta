@@ -6,6 +6,7 @@ import fixtures from '../generated/fixtures.json';
 import meta from '../generated/meta.json';
 import { moduleToInline, scriptSafeJson } from '../lib/inline.js';
 import { NO_SCRIPT } from '../lib/labels.js';
+import dates from '../lib/fixture-dates.js?raw';
 import source from '../lib/next-match.js?raw';
 
 const { wording } = fixtures;
@@ -22,7 +23,8 @@ const data = {
   stale_days: meta.stale_fixtures_days,
   wording,
 };
-const script = `(function(){${moduleToInline(source)}
+const script = `(function(){${moduleToInline(dates)}
+${moduleToInline(source)}
 mountNextMatch(document.getElementById("next-match"),${scriptSafeJson(data)});}());`;
 ---
 <section id="next-match" class="next" aria-labelledby="next-match-tag">

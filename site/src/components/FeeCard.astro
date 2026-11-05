@@ -1,16 +1,23 @@
 ---
 // "What do I owe" and "how do I pay" are one question, so this is one card.
-// Only feeRows() strings reach the page: fees.json stays at build time.
+// Only these strings reach the page: fees.json stays at build time. `breakdown` adds what
+// the balance is the difference of, as Fees has and Home does not, and the address of
+// each player's file. They sit on the option, so they change with the choice.
 import fees from '../generated/fees.json';
 import wording from '../generated/wording.json';
-import { feeRows } from '../lib/fee-rows.js';
+import { feeBreakdown, feeRows } from '../lib/fee-rows.js';
 import { moduleToInline } from '../lib/inline.js';
 import { FEE_STATUS, NO_SCRIPT } from '../lib/labels.js';
 import source from '../lib/player-picker.js?raw';
+import { playerSlugs } from '../lib/slug.js';
+import StatTiles from './StatTiles.astro';
 
+const { breakdown = false } = Astro.props;
 const panel = wording.fee_panel;
 const settle = wording.settle_up;
 const rows = feeRows(fees, FEE_STATUS);
+const slugs = breakdown ? playerSlugs(fees.overviews.map((overview) => overview.player)) : null;
+const tiles = wording.fee_cards.summary_tiles;
 const script = `(function(){${moduleToInline(source)}
 mountPlayerPicker(document.getElementById("fee-check"),function(){return localStorage;});}());`;
 ---
@@ -29,6 +36,9 @@ mountPlayerPicker(document.getElementById("fee-check"),function(){return localSt
                 data-balance={row.display}
                 data-status={row.status}
                 data-owed={row.owed ? '1' : '0'}
+                data-slug={slugs?.get(row.player)}
+                data-charges={breakdown ? feeBreakdown(fees, row.player).charges : undefined}
+                data-payments={breakdown ? feeBreakdown(fees, row.player).payments : undefined}
               >
                 {row.player}
               </option>
@@ -42,11 +52,23 @@ mountPlayerPicker(document.getElementById("fee-check"),function(){return localSt
       <div class="balance" aria-live="polite" aria-atomic="true">
         <p class="balance-label">{panel.balance_label}</p>
         <p class="amount-line">
-          <span class="amount" data-fee="amount"></span>
+          <span class="amount" data-fee="balance"></span>
           <span class="status" data-fee="status"></span>
         </p>
       </div>
     </div>
+    {
+      breakdown && (
+        <div class="breakdown">
+          <StatTiles
+            tiles={[
+              { label: tiles.charges, fee: 'charges' },
+              { label: tiles.payments, fee: 'payments' },
+            ]}
+          />
+        </div>
+      )
+    }
   </div>
   <script is:inline set:html={script}></script>
   <noscript><p class="footnote">{NO_SCRIPT.balance}</p></noscript>
@@ -171,6 +193,14 @@ mountPlayerPicker(document.getElementById("fee-check"),function(){return localSt
     color: var(--ink-muted);
     font-size: 0.8125rem;
     line-height: 1.2;
+  }
+
+  .breakdown {
+    display: none;
+  }
+
+  :global(.has-player) .breakdown {
+    display: block;
   }
 
   .footnote {

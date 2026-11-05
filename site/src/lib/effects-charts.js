@@ -5,13 +5,13 @@ import { axisX, axisY, dot, gridX, gridY, plot, ruleX, ruleY } from '@observable
 
 import {
   ATTACK_DEFENCE_MARGIN,
+  attackDefenceAxes,
   attackDefenceRows,
   axisTickFormat,
   COEFFICIENT_MARGIN,
   coefficientDomain,
   coefficientHeight,
   dotRadius,
-  equalDomains,
   maxDotRadius,
 } from './effects-data.js';
 import { dodgeLabels } from './label-dodge.js';
@@ -108,10 +108,7 @@ export function attackDefenceChart({ players, width, labels, title, description 
   const maxAppearances = Math.max(...rows.map((row) => row.appearances));
   const maxRadius = maxDotRadius(width);
   const radius = (row) => dotRadius(row.appearances, maxAppearances, maxRadius);
-  const domains = equalDomains(
-    rows.map((row) => row.goals_scored),
-    rows.map((row) => row.defensive_effect),
-  );
+  const domains = attackDefenceAxes(rows);
   // Biggest first, so a small dot is never hidden behind a large one.
   const drawOrder = [...rows].sort((a, b) => b.appearances - a.appearances || (a.player < b.player ? -1 : 1));
 

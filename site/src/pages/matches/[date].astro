@@ -1,0 +1,161 @@
+---
+// One match, on a page of its own, for sharing in WhatsApp. Built whole at build time, with no
+// script. Every figure is R's, for this match's own season, whatever anyone has ticked.
+import '../../styles/data-table.css';
+
+import CardHead from '../../components/CardHead.svelte';
+import MatchSummary from '../../components/MatchSummary.astro';
+import fees from '../../generated/fees.json';
+import matches from '../../generated/matches.json';
+import meta from '../../generated/meta.json';
+import wording from '../../generated/wording.json';
+import Base from '../../layouts/Base.astro';
+import { tableHtml } from '../../lib/data-table.js';
+import { MATCHES } from '../../lib/labels.js';
+import { matchHref } from '../../lib/match-data.js';
+import { matchDescription, matchPages, matchTitle } from '../../lib/match-pages.js';
+import { lineupColumns } from '../../lib/match-tables.js';
+import { readSeasonFile } from '../../lib/season-files.js';
+
+export function getStaticPaths() {
+  // Everyone the site can name, beyond the lineups: whoever has a balance, and any scorer.
+  const otherNames = [
+    ...fees.overviews.map((overview) => overview.player),
+    ...meta.seasons.flatMap((season) => readSeasonFile(season.season_id).scorers.rows.map((row) => row.player)),
+  ];
+  const pages = matchPages(matches, readSeasonFile, otherNames);
+  return pages.map((page) => ({ params: { date: page.match.date }, props: { page } }));
+}
+
+const { match, lineup, previous, next } = Astro.props.page;
+const card = wording.matches_cards.match_detail;
+const heading = { before: meta.our_team, after: match.opponent };
+const table = tableHtml({
+  className: 'dt-lineup dt-tight',
+  caption: card.lineup_title,
+  columns: lineupColumns(card.headings),
+  rows: lineup,
+});
+---
+<Base title={matchTitle(match, meta.our_team)} description={matchDescription(match)} current="matches">
+  <a class="back" href="/matches/results/">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="m15 6-6 6 6 6" /></svg>
+    {MATCHES.backToResults}
+  </a>
+  <div class="match">
+    <section class="card">
+      <p class="tag">{card.result_label}</p>
+      <MatchSummary played={match} heading={heading} />
+    </section>
+
+    <section class="card" aria-labelledby="lineup-title">
+      <CardHead id="lineup-title" card={card} />
+      <p class="season">{MATCHES.lineupSeason(match.season_label)}</p>
+      {lineup.length > 0 ? <Fragment set:html={table} /> : <p class="dt-empty">{MATCHES.noLineup}</p>}
+    </section>
+
+    <nav class="neighbours" aria-label={MATCHES.otherMatches}>
+      {
+        previous && (
+          <a class="neighbour" rel="prev" href={matchHref(previous.date)}>
+            <span class="direction">{MATCHES.previous}</span>
+            <span>{previous.date_label}</span>
+            <span class="score">{previous.result}</span>
+          </a>
+        )
+      }
+      {
+        next && (
+          <a class="neighbour is-next" rel="next" href={matchHref(next.date)}>
+            <span class="direction">{MATCHES.next}</span>
+            <span>{next.date_label}</span>
+            <span class="score">{next.result}</span>
+          </a>
+        )
+      }
+    </nav>
+  </div>
+</Base>
+
+<style>
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    min-height: 44px;
+    margin-bottom: 2px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .back svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .match {
+    display: grid;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .season {
+    margin-top: 6px;
+    font-size: 0.9375rem;
+    line-height: 1.35;
+  }
+
+  .neighbours {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 10px;
+  }
+
+  .neighbour {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1px;
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 0.9375rem;
+    line-height: 1.25;
+    text-decoration: none;
+  }
+
+  /* Next stays on the right when it is alone, on the oldest page's far side. */
+  .is-next {
+    grid-column: -2;
+    text-align: right;
+  }
+
+  .direction {
+    color: var(--blue);
+    font-weight: 600;
+  }
+
+  /* The hyphen would otherwise let "4-4" break across two lines. */
+  .score {
+    white-space: nowrap;
+  }
+
+  @media (min-width: 768px) {
+    .match {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      align-items: start;
+      gap: 16px;
+    }
+
+    .neighbours {
+      grid-column: 1 / -1;
+      gap: 16px;
+    }
+  }
+</style>

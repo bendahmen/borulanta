@@ -1,17 +1,19 @@
 // Fetches a season combination's file. Finished results stay in memory for the visit,
 // so going back to an earlier combination is instant, and a reply that arrives after
-// the ticks have moved on is reported as stale rather than shown.
+// the ticks have moved on is reported as stale rather than shown. Fees uses it too, for
+// the chosen player's file, with `pick` keeping everything.
 
-export function createSubsetLoader(fetchFile) {
+// The Effects page uses only these. The rest of a season's file is for the Stage 3 pages.
+const pickRegression = ({ has_matches, regression }) => ({ has_matches, regression });
+
+export function createSubsetLoader(fetchFile, pick = pickRegression) {
   const cache = new Map();
   let latest = 0;
 
   const fetchJson = async (file) => {
     const response = await fetchFile(file);
     if (!response.ok) throw new Error(`${file}: ${response.status}`);
-    // The page uses only these. The rest of the file is for the Stage 3 pages.
-    const { has_matches, regression } = await response.json();
-    return { has_matches, regression };
+    return pick(await response.json());
   };
 
   return {
@@ -32,7 +34,7 @@ export function createSubsetLoader(fetchFile) {
         throw error;
       }
     },
-    // For when the ticks move to a state with no file at all.
+    // For when the choice moves to a state with no file at all.
     cancel() {
       latest += 1;
     },

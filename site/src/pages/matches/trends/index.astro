@@ -1,0 +1,30 @@
+---
+import TrendsPage from '../../../components/matches/TrendsPage.svelte';
+import SeasonTicksScript from '../../../components/SeasonTicksScript.astro';
+import meta from '../../../generated/meta.json';
+import wording from '../../../generated/wording.json';
+import Matches from '../../../layouts/Matches.astro';
+import { NO_SCRIPT } from '../../../lib/labels.js';
+
+const { season_form, scorers, head_to_head } = wording.matches_cards;
+---
+<Matches view="trends">
+  <TrendsPage
+    client:load
+    seasons={meta.seasons}
+    emptyStates={meta.empty_states}
+    cards={{ season_form, scorers, head_to_head }}
+    plotLabels={wording.plot_labels.season_form}
+  />
+  <SeasonTicksScript />
+  <noscript>
+    <style is:inline>astro-island { display: none; }</style>
+    <p class="card no-script">{NO_SCRIPT.trends}</p>
+  </noscript>
+</Matches>
+
+<style>
+  .no-script {
+    color: var(--ink-muted);
+  }
+</style>

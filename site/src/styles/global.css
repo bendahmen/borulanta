@@ -219,6 +219,32 @@ a {
   }
 }
 
+/* R's result badge, in the live site's win, draw and loss colours. */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+}
+
+.badge-win {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.badge-draw {
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.badge-loss {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   a,
   summary,

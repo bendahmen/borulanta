@@ -1,35 +1,10 @@
 // Which fixture is next, worked out in the browser on each visit. This is the one
 // date logic allowed to duplicate R: upcoming_fixtures(), next_match_card_ui() and
-// stale_fixture_note() in R/. It is imported by the unit tests and inlined into
-// the page by moduleToInline(), so keep it plain: no imports, no multi-line strings.
+// stale_fixture_note() in R/. It is imported by the unit tests and inlined into the
+// page by moduleToInline(), after fixture-dates.js, so keep it plain: one-line imports
+// and no multi-line strings.
 
-const LONDON = new Intl.DateTimeFormat('en-GB', {
-  timeZone: 'Europe/London',
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-});
-
-// The calendar date in London as yyyy-mm-dd, wherever the phone is.
-export function londonDate(now) {
-  const part = {};
-  for (const { type, value } of LONDON.formatToParts(now)) part[type] = value;
-  return `${part.year}-${part.month}-${part.day}`;
-}
-
-const utcDay = (iso) => {
-  const [year, month, day] = iso.split('-').map(Number);
-  return Date.UTC(year, month - 1, day);
-};
-
-export function daysBetween(from, to) {
-  return (utcDay(to) - utcDay(from)) / 86400000;
-}
-
-// A fixture dated today counts as still to come: the game is in the evening.
-export function upcomingFixtures(fixtures, today) {
-  return fixtures.filter((fixture) => fixture.date >= today);
-}
+import { daysBetween, onReturn, londonDate, upcomingFixtures } from './fixture-dates.js';
 
 export function whenWord(daysAway, wording) {
   if (daysAway === 0) return wording.tonight;
@@ -73,15 +48,8 @@ export function paintNextMatch(root, view) {
   root.classList.toggle('is-today', Boolean(view.isToday));
 }
 
-// A phone keeps a tab for days and a restored page runs no scripts, so "Tonight"
-// has to be worked out again whenever the page comes back.
 export function mountNextMatch(root, data) {
   const paint = () => paintNextMatch(root, nextMatchView(data, londonDate(new Date())));
   paint();
-  addEventListener('pageshow', (event) => {
-    if (event.persisted) paint();
-  });
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) paint();
-  });
+  onReturn(paint);
 }

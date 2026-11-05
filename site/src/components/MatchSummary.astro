@@ -1,0 +1,80 @@
+---
+// The result of one match: the score and badge, R's line under them, and the details the
+// card has, each dropped where the export dropped it. On Home and on each match's own page.
+// `heading` makes the score the page's h1, read in full, as "Borulanta 2-3 The Dirty Boys".
+import { badgeClass } from '../lib/match-tables.js';
+
+const { played, heading = null } = Astro.props;
+const Score = heading ? 'h1' : 'p';
+---
+<Score class="scoreline">
+  {heading && <span class="visually-hidden">{heading.before} </span>}
+  <span class="score">{played.result}</span>
+  {heading?.after && <span class="visually-hidden"> {heading.after} </span>}
+  <span class={badgeClass(played.badge)}>{played.badge}</span>
+</Score>
+<p class="meta">{played.meta_line}</p>
+{
+  played.details.length > 0 && (
+    <dl class="details">
+      {played.details.map((detail) => (
+        <div>
+          <dt>{detail.label}</dt>
+          <dd>{detail.value}</dd>
+        </div>
+      ))}
+    </dl>
+  )
+}
+
+<style>
+  .scoreline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 2px;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .score {
+    font-family: var(--font-display);
+    font-size: 2.75rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .meta {
+    margin-top: 2px;
+    color: var(--ink-muted);
+    font-size: 0.9375rem;
+  }
+
+  .details {
+    display: grid;
+    gap: 3px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    font-size: 0.9375rem;
+  }
+
+  /* A label and its value share a line at normal text size. In rem, so enlarged text
+     puts the value under its label instead of pushing the card off the screen. */
+  .details div {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 12px;
+  }
+
+  dt {
+    flex: 0 0 7.5rem;
+    color: var(--ink-muted);
+  }
+
+  dd {
+    flex: 1 1 7.5rem;
+    min-width: 0;
+  }
+</style>

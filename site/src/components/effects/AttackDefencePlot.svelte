@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
 
-  import { dotRadius, maxDotRadius, sizeKeyValues } from '../../lib/effects-data.js';
+  import { attackDefenceAxes, attackDefenceRows, dotRadius, maxDotRadius, sizeKeyValues } from '../../lib/effects-data.js';
   import { EFFECTS } from '../../lib/labels.js';
   import { observeWidth } from '../../lib/plot-width.js';
 
@@ -21,6 +21,7 @@
       : [],
   );
   const keyHeight = $derived(key.length > 0 ? Math.ceil(key.at(-1).r * 2) + 2 : 0);
+  const scaleNote = $derived(attackDefenceAxes(attackDefenceRows(players)).note);
 
   onMount(() => {
     // Label widths are measured, so measure again once the real fonts are in.
@@ -54,6 +55,10 @@
     </span>
   {/each}
 </div>
+
+{#if scaleNote}
+  <p class="scale-note">{scaleNote}</p>
+{/if}
 
 <style>
   /* Reserves the plot's square before it draws, so nothing below it moves. */
@@ -95,6 +100,14 @@
     align-items: center;
     gap: 4px;
     font-variant-numeric: tabular-nums;
+  }
+
+  .scale-note {
+    margin-top: 6px;
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+    line-height: 1.35;
+    text-align: center;
   }
 
   circle {

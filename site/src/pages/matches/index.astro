@@ -1,10 +1,23 @@
 ---
-import Stub from '../../components/Stub.astro';
-import Base from '../../layouts/Base.astro';
-import { PAGES } from '../../lib/labels.js';
+// Shiny's Matches tab opens on Trends, so this address does too. Written out rather than with
+// Astro.redirect(), whose static page waits two seconds and drops the ticks from the URL.
+import { NAV, PAGES, SITE } from '../../lib/labels.js';
+import { redirectScript } from '../../lib/redirect.js';
 
-const page = PAGES.matches;
+const target = NAV.find((tab) => tab.id === 'matches').href;
+const script = redirectScript(target);
 ---
-<Base title={page.title} description={page.description} current="matches">
-  <Stub title={page.title} />
-</Base>
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>{PAGES.trends.title} · {SITE.name}</title>
+    <script is:inline set:html={script}></script>
+  </head>
+  <body>
+    <a href={target}>{PAGES.trends.title}</a>
+  </body>
+</html>

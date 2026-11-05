@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import { NOT_FOUND, PAGES } from '../lib/labels.js';
+---
+<Base title={PAGES.notFound.title} description={PAGES.notFound.description} current="none">
+  <section class="card">
+    <p class="tag">{NOT_FOUND.tag}</p>
+    <h1>{PAGES.notFound.title}</h1>
+    <p class="text">{NOT_FOUND.text}</p>
+    <a href="/">{NOT_FOUND.link}</a>
+  </section>
+</Base>
+
+<style>
+  h1 {
+    margin-top: 4px;
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .text {
+    margin-top: 6px;
+    color: var(--ink-muted);
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+</style>

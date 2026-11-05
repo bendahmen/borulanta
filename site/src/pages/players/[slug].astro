@@ -1,0 +1,88 @@
+---
+// One player, on a page of their own, for sharing in WhatsApp. The name, title and description
+// are built here and everything else follows the season ticks, as on Roster. The description
+// has no numbers, because a preview outlives them and the ticks change them.
+import '../../styles/data-table.css';
+
+import PlayerPage from '../../components/players/PlayerPage.svelte';
+import SeasonTicksScript from '../../components/SeasonTicksScript.astro';
+import fees from '../../generated/fees.json';
+import meta from '../../generated/meta.json';
+import wording from '../../generated/wording.json';
+import Base from '../../layouts/Base.astro';
+import { NO_SCRIPT, PLAYERS } from '../../lib/labels.js';
+import { playerPages } from '../../lib/player-pages.js';
+import { readSeasonFile } from '../../lib/season-files.js';
+
+export function getStaticPaths() {
+  const subsetIds = meta.subset_files.map((file) => file.replace(/\.json$/, ''));
+  // Everyone the site can name, beyond the profiles: whoever has a balance, any scorer and any
+  // lineup, so that a clash stops the build whichever page it would be on.
+  const otherNames = [
+    ...fees.overviews.map((overview) => overview.player),
+    ...subsetIds.flatMap((id) => readSeasonFile(id).scorers.rows.map((row) => row.player)),
+    ...subsetIds.flatMap((id) => readSeasonFile(id).match_details.flatMap((detail) => detail.lineup.map((row) => row.player))),
+  ];
+  return playerPages(subsetIds, readSeasonFile, otherNames).map(({ player, slug }) => ({ params: { slug }, props: { player } }));
+}
+
+const { player } = Astro.props;
+// Only what this page shows. The note about a table above belongs on Roster.
+const { tag, appearances_title, strip_key } = wording.players_cards.player;
+const cards = { player: { tag, appearances_title, strip_key }, with_without: wording.players_cards.with_without };
+---
+<Base title={player} description={PLAYERS.description(player)} current="players">
+  <a class="back" href="/players/roster/">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="m15 6-6 6 6 6" /></svg>
+    {PLAYERS.backToRoster}
+  </a>
+  <div class="heading">
+    <p class="tag">{tag}</p>
+    <h1>{player}</h1>
+  </div>
+  <PlayerPage client:load seasons={meta.seasons} player={player} noMatches={meta.empty_states.no_matches} cards={cards} />
+  <SeasonTicksScript />
+  <noscript>
+    <style is:inline>astro-island { display: none; }</style>
+    <p class="card no-script">{NO_SCRIPT.player}</p>
+  </noscript>
+</Base>
+
+<style>
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    min-height: 44px;
+    margin-bottom: 2px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .back svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .heading {
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    margin-top: 2px;
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+    text-transform: uppercase;
+  }
+
+  .no-script {
+    color: var(--ink-muted);
+  }
+</style>

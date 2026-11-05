@@ -22,16 +22,18 @@ export function writePlayer(getStorage, player) {
 
 export function mountPlayerPicker(root, getStorage) {
   const select = root.querySelector('select');
-  const amount = root.querySelector('[data-fee="amount"]');
-  const status = root.querySelector('[data-fee="status"]');
+  // Each slot names the data attribute on the option that fills it, so everything shown
+  // for a player belongs to that player's option and cannot outlast the choice.
+  const slots = root.querySelectorAll('[data-fee]');
 
   const show = () => {
     const chosen = select.options[select.selectedIndex];
     const picked = Boolean(chosen && chosen.value);
     root.classList.toggle('has-player', picked);
     root.classList.toggle('is-owed', picked && chosen.dataset.owed === '1');
-    amount.textContent = picked ? chosen.dataset.balance : '';
-    status.textContent = picked ? chosen.dataset.status : '';
+    slots.forEach((slot) => {
+      slot.textContent = picked ? chosen.dataset[slot.dataset.fee] : '';
+    });
   };
 
   // A saved name no longer on the roster leaves the picker on its placeholder.

@@ -1,0 +1,1066 @@
+[
+  {
+    "season_id": "s3",
+    "date": "2026-10-28",
+    "date_label": "Wed 28 Oct 2026",
+    "result": "2-3",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": "The Dirty Boys",
+    "season_label": "Season 3",
+    "meta_line": "Wed 28 Oct 2026 · v The Dirty Boys · Season 3",
+    "squad_size": 9,
+    "scorers": "Emiliano (2)",
+    "man_of_the_match": "Emiliano",
+    "details": [
+      {
+        "label": "Squad",
+        "value": "9 players"
+      },
+      {
+        "label": "Scorers",
+        "value": "Emiliano (2)"
+      },
+      {
+        "label": "Man of the match",
+        "value": "Emiliano"
+      }
+    ]
+  },
+  {
+    "season_id": "s3",
+    "date": "2026-10-21",
+    "date_label": "Wed 21 Oct 2026",
+    "result": "3-3",
+    "points": 1,
+    "badge": "DRAW",
+    "opponent": "Foireann Peile",
+    "season_label": "Season 3",
+    "meta_line": "Wed 21 Oct 2026 · v Foireann Peile · Season 3",
+    "squad_size": 7,
+    "scorers": "Boris, Daniel, Torge",
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      },
+      {
+        "label": "Scorers",
+        "value": "Boris, Daniel, Torge"
+      }
+    ]
+  },
+  {
+    "season_id": "s3",
+    "date": "2026-10-14",
+    "date_label": "Wed 14 Oct 2026",
+    "result": "4-1",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": "Dynamo Mickey CF",
+    "season_label": "Season 3",
+    "meta_line": "Wed 14 Oct 2026 · v Dynamo Mickey CF · Season 3",
+    "squad_size": 8,
+    "scorers": "Mateus (3), Emiliano",
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "8 players"
+      },
+      {
+        "label": "Scorers",
+        "value": "Mateus (3), Emiliano"
+      }
+    ]
+  },
+  {
+    "season_id": "s3",
+    "date": "2026-10-07",
+    "date_label": "Wed 07 Oct 2026",
+    "result": "2-3",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": "Finessin FC",
+    "season_label": "Season 3",
+    "meta_line": "Wed 07 Oct 2026 · v Finessin FC · Season 3",
+    "squad_size": 8,
+    "scorers": "Daniel, Torge",
+    "man_of_the_match": "Daniel",
+    "details": [
+      {
+        "label": "Squad",
+        "value": "8 players"
+      },
+      {
+        "label": "Scorers",
+        "value": "Daniel, Torge"
+      },
+      {
+        "label": "Man of the match",
+        "value": "Daniel"
+      }
+    ]
+  },
+  {
+    "season_id": "s3",
+    "date": "2026-09-30",
+    "date_label": "Wed 30 Sep 2026",
+    "result": "3-0",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": "Ball FC",
+    "season_label": "Season 3",
+    "meta_line": "Wed 30 Sep 2026 · v Ball FC · Season 3",
+    "squad_size": 7,
+    "scorers": "Akash (2), Luca",
+    "man_of_the_match": "Luca",
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      },
+      {
+        "label": "Scorers",
+        "value": "Akash (2), Luca"
+      },
+      {
+        "label": "Man of the match",
+        "value": "Luca"
+      }
+    ]
+  },
+  {
+    "season_id": "s3",
+    "date": "2026-09-16",
+    "date_label": "Wed 16 Sep 2026",
+    "result": "5-1",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": "Brother Man FC",
+    "season_label": "Season 3",
+    "meta_line": "Wed 16 Sep 2026 · v Brother Man FC · Season 3",
+    "squad_size": 7,
+    "scorers": "Vitto (2), Ameen, Dadde, Mateus",
+    "man_of_the_match": "Vitto",
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      },
+      {
+        "label": "Scorers",
+        "value": "Vitto (2), Ameen, Dadde, Mateus"
+      },
+      {
+        "label": "Man of the match",
+        "value": "Vitto"
+      }
+    ]
+  },
+  {
+    "season_id": "s3",
+    "date": "2026-09-09",
+    "date_label": "Wed 09 Sep 2026",
+    "result": "2-3",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": "Shamrock Posers",
+    "season_label": "Season 3",
+    "meta_line": "Wed 09 Sep 2026 · v Shamrock Posers · Season 3",
+    "squad_size": 9,
+    "scorers": "Daniel, Jasper",
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "9 players"
+      },
+      {
+        "label": "Scorers",
+        "value": "Daniel, Jasper"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-08-19",
+    "date_label": "Wed 19 Aug 2026",
+    "result": "5-3",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 19 Aug 2026 · Season 2",
+    "squad_size": 6,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "6 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-08-12",
+    "date_label": "Wed 12 Aug 2026",
+    "result": "10-6",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 12 Aug 2026 · Season 2",
+    "squad_size": 6,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "6 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-08-05",
+    "date_label": "Wed 05 Aug 2026",
+    "result": "6-2",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 05 Aug 2026 · Season 2",
+    "squad_size": 8,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "8 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-07-29",
+    "date_label": "Wed 29 Jul 2026",
+    "result": "5-3",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 29 Jul 2026 · Season 2",
+    "squad_size": 6,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "6 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-07-22",
+    "date_label": "Wed 22 Jul 2026",
+    "result": "5-4",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 22 Jul 2026 · Season 2",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-07-08",
+    "date_label": "Wed 08 Jul 2026",
+    "result": "2-10",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 08 Jul 2026 · Season 2",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-06-24",
+    "date_label": "Wed 24 Jun 2026",
+    "result": "5-4",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 24 Jun 2026 · Season 2",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-06-17",
+    "date_label": "Wed 17 Jun 2026",
+    "result": "2-4",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 17 Jun 2026 · Season 2",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-06-10",
+    "date_label": "Wed 10 Jun 2026",
+    "result": "3-2",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 10 Jun 2026 · Season 2",
+    "squad_size": 6,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "6 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-06-03",
+    "date_label": "Wed 03 Jun 2026",
+    "result": "5-3",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 03 Jun 2026 · Season 2",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-05-27",
+    "date_label": "Wed 27 May 2026",
+    "result": "4-5",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 27 May 2026 · Season 2",
+    "squad_size": 6,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "6 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-05-20",
+    "date_label": "Wed 20 May 2026",
+    "result": "2-1",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 20 May 2026 · Season 2",
+    "squad_size": 8,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "8 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-05-13",
+    "date_label": "Wed 13 May 2026",
+    "result": "2-3",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 13 May 2026 · Season 2",
+    "squad_size": 6,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "6 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-05-06",
+    "date_label": "Wed 06 May 2026",
+    "result": "14-1",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 06 May 2026 · Season 2",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-04-29",
+    "date_label": "Wed 29 Apr 2026",
+    "result": "1-4",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 29 Apr 2026 · Season 2",
+    "squad_size": 10,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "10 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-04-22",
+    "date_label": "Wed 22 Apr 2026",
+    "result": "3-2",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 22 Apr 2026 · Season 2",
+    "squad_size": 8,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "8 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-04-15",
+    "date_label": "Wed 15 Apr 2026",
+    "result": "6-3",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 15 Apr 2026 · Season 2",
+    "squad_size": 8,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "8 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-04-08",
+    "date_label": "Wed 08 Apr 2026",
+    "result": "1-5",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 08 Apr 2026 · Season 2",
+    "squad_size": 6,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "6 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-04-01",
+    "date_label": "Wed 01 Apr 2026",
+    "result": "5-2",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 01 Apr 2026 · Season 2",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-03-25",
+    "date_label": "Wed 25 Mar 2026",
+    "result": "5-4",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 25 Mar 2026 · Season 2",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-03-18",
+    "date_label": "Wed 18 Mar 2026",
+    "result": "6-2",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 18 Mar 2026 · Season 2",
+    "squad_size": 8,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "8 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-03-11",
+    "date_label": "Wed 11 Mar 2026",
+    "result": "3-7",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 11 Mar 2026 · Season 2",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-03-04",
+    "date_label": "Wed 04 Mar 2026",
+    "result": "7-2",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 04 Mar 2026 · Season 2",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-02-25",
+    "date_label": "Wed 25 Feb 2026",
+    "result": "9-3",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 25 Feb 2026 · Season 2",
+    "squad_size": 6,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "6 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-02-18",
+    "date_label": "Wed 18 Feb 2026",
+    "result": "9-4",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 18 Feb 2026 · Season 2",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-02-11",
+    "date_label": "Wed 11 Feb 2026",
+    "result": "3-4",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 11 Feb 2026 · Season 2",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s2",
+    "date": "2026-02-04",
+    "date_label": "Wed 04 Feb 2026",
+    "result": "7-2",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 2",
+    "meta_line": "Wed 04 Feb 2026 · Season 2",
+    "squad_size": 8,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "8 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2026-01-28",
+    "date_label": "Wed 28 Jan 2026",
+    "result": "2-2",
+    "points": 1,
+    "badge": "DRAW",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 28 Jan 2026 · Season 1",
+    "squad_size": 8,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "8 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2026-01-21",
+    "date_label": "Wed 21 Jan 2026",
+    "result": "6-5",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 21 Jan 2026 · Season 1",
+    "squad_size": 8,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "8 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2026-01-07",
+    "date_label": "Wed 07 Jan 2026",
+    "result": "2-3",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 07 Jan 2026 · Season 1",
+    "squad_size": 3,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "3 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2025-12-17",
+    "date_label": "Wed 17 Dec 2025",
+    "result": "1-7",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 17 Dec 2025 · Season 1",
+    "squad_size": 3,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "3 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2025-12-10",
+    "date_label": "Wed 10 Dec 2025",
+    "result": "8-1",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 10 Dec 2025 · Season 1",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2025-12-03",
+    "date_label": "Wed 03 Dec 2025",
+    "result": "5-7",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 03 Dec 2025 · Season 1",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2025-11-26",
+    "date_label": "Wed 26 Nov 2025",
+    "result": "6-3",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 26 Nov 2025 · Season 1",
+    "squad_size": 8,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "8 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2025-11-19",
+    "date_label": "Wed 19 Nov 2025",
+    "result": "2-2",
+    "points": 1,
+    "badge": "DRAW",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 19 Nov 2025 · Season 1",
+    "squad_size": 8,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "8 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2025-11-12",
+    "date_label": "Wed 12 Nov 2025",
+    "result": "4-5",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 12 Nov 2025 · Season 1",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2025-11-05",
+    "date_label": "Wed 05 Nov 2025",
+    "result": "2-1",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 05 Nov 2025 · Season 1",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2025-10-22",
+    "date_label": "Wed 22 Oct 2025",
+    "result": "3-8",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 22 Oct 2025 · Season 1",
+    "squad_size": 5,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "5 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2025-10-15",
+    "date_label": "Wed 15 Oct 2025",
+    "result": "12-4",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 15 Oct 2025 · Season 1",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2025-10-08",
+    "date_label": "Wed 08 Oct 2025",
+    "result": "4-4",
+    "points": 1,
+    "badge": "DRAW",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 08 Oct 2025 · Season 1",
+    "squad_size": 8,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "8 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2025-10-01",
+    "date_label": "Wed 01 Oct 2025",
+    "result": "0-6",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 01 Oct 2025 · Season 1",
+    "squad_size": 7,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "7 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2025-09-24",
+    "date_label": "Wed 24 Sep 2025",
+    "result": "1-2",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 24 Sep 2025 · Season 1",
+    "squad_size": 8,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "8 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2025-09-17",
+    "date_label": "Wed 17 Sep 2025",
+    "result": "6-2",
+    "points": 3,
+    "badge": "WIN",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 17 Sep 2025 · Season 1",
+    "squad_size": 8,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "8 players"
+      }
+    ]
+  },
+  {
+    "season_id": "s1",
+    "date": "2025-09-10",
+    "date_label": "Wed 10 Sep 2025",
+    "result": "4-5",
+    "points": 0,
+    "badge": "LOSS",
+    "opponent": null,
+    "season_label": "Season 1",
+    "meta_line": "Wed 10 Sep 2025 · Season 1",
+    "squad_size": 8,
+    "scorers": null,
+    "man_of_the_match": null,
+    "details": [
+      {
+        "label": "Squad",
+        "value": "8 players"
+      }
+    ]
+  }
+]

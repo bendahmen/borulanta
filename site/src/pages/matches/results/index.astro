@@ -1,0 +1,29 @@
+---
+import ResultsPage from '../../../components/matches/ResultsPage.svelte';
+import SeasonTicksScript from '../../../components/SeasonTicksScript.astro';
+import meta from '../../../generated/meta.json';
+import wording from '../../../generated/wording.json';
+import Matches from '../../../layouts/Matches.astro';
+import { NO_SCRIPT } from '../../../lib/labels.js';
+
+const { every_result, match_detail } = wording.matches_cards;
+---
+<Matches view="results">
+  <ResultsPage
+    client:load
+    seasons={meta.seasons}
+    noMatches={meta.empty_states.no_matches}
+    cards={{ every_result, match_detail }}
+  />
+  <SeasonTicksScript />
+  <noscript>
+    <style is:inline>astro-island { display: none; }</style>
+    <p class="card no-script">{NO_SCRIPT.results}</p>
+  </noscript>
+</Matches>
+
+<style>
+  .no-script {
+    color: var(--ink-muted);
+  }
+</style>

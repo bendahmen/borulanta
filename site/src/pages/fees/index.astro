@@ -1,10 +1,80 @@
 ---
-import Stub from '../../components/Stub.astro';
-import Base from '../../layouts/Base.astro';
-import { PAGES } from '../../lib/labels.js';
+// Your balance, how to pay it, and what it is made of. The picker restores your name and
+// fills the balance and the two tiles before first paint, from the option. The two tables
+// come from your own small file, because the whole of fees.json would be 385 KB. Payments
+// come first: did my transfer land is the question Settle up raises.
+import CardHead from '../../components/CardHead.svelte';
+import FeeCard from '../../components/FeeCard.astro';
+import fees from '../../generated/fees.json';
+import wording from '../../generated/wording.json';
+import Fees from '../../layouts/Fees.astro';
+import tableSource from '../../lib/data-table.js?raw';
+import historySource from '../../lib/fee-history.js?raw';
+import { moduleToInline, scriptSafeJson } from '../../lib/inline.js';
+import { FEES, NO_SCRIPT } from '../../lib/labels.js';
+import loaderSource from '../../lib/subset-loader.js?raw';
 
-const page = PAGES.fees;
+const { payments, charges } = wording.fee_cards;
+const data = {
+  payments: { title: payments.title, headings: payments.headings },
+  charges: { title: charges.title, headings: charges.headings, played: charges.played },
+  words: { ...FEES, noPayments: fees.empty.payments },
+};
+const script = `(function(){${moduleToInline(tableSource)}
+${moduleToInline(loaderSource)}
+${moduleToInline(historySource)}
+mountFeeHistory(document.getElementById("fee-history"),document.getElementById("fee-player"),${scriptSafeJson(data)},function(file){return fetch(file);});}());`;
 ---
-<Base title={page.title} description={page.description} current="fees">
-  <Stub title={page.title} />
-</Base>
+<Fees view="you">
+  <div id="fee-history" class="you">
+    <FeeCard breakdown />
+    <noscript><p class="card no-script">{NO_SCRIPT.feeHistory}</p></noscript>
+
+    <section class="card failed" data-history="failed" role="alert" hidden>
+      <p>{FEES.loadFailed}</p>
+      <button type="button" class="dt-button" data-history="retry">{FEES.retry}</button>
+    </section>
+
+    <section class="card payments" aria-labelledby="payments-title" tabindex="-1" data-history-card hidden>
+      <CardHead id="payments-title" card={payments} />
+      <div class="history-body" data-history="payments"></div>
+    </section>
+
+    <section class="card charges" aria-labelledby="charges-title" data-history-card hidden>
+      <CardHead id="charges-title" card={charges} />
+      <div class="history-body" data-history="charges"></div>
+      <button type="button" class="dt-button" data-history="more" hidden></button>
+    </section>
+  </div>
+  <script is:inline set:html={script}></script>
+</Fees>
+
+<style>
+  .you {
+    display: grid;
+    gap: 10px;
+  }
+
+  /* Room for the line that says it is loading. */
+  .history-body {
+    min-height: 2rem;
+  }
+
+  .no-script {
+    color: var(--ink-muted);
+  }
+
+  @media (min-width: 768px) {
+    .you {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: start;
+      gap: 16px;
+    }
+
+    .charges,
+    .failed,
+    .no-script {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

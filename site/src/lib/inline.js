@@ -1,9 +1,11 @@
 // Turns a module's raw source into something a classic inline script can run, so
-// the page and the unit tests share one copy of the logic.
+// the page and the unit tests share one copy of the logic. An import is dropped, so
+// the page has to place the module it names first, and it has to fit on one line.
 
 export function moduleToInline(source) {
   return source
     .replace(/^\s*\/\/.*$/gm, '')
+    .replace(/^import .*$/gm, '')
     .replace(/^export /gm, '')
     .replace(/^\s+/gm, '')
     .trim();

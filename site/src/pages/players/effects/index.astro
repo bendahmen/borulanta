@@ -1,26 +1,10 @@
 ---
 import EffectsPage from '../../../components/effects/EffectsPage.svelte';
+import SeasonTicksScript from '../../../components/SeasonTicksScript.astro';
 import meta from '../../../generated/meta.json';
 import wording from '../../../generated/wording.json';
 import Players from '../../../layouts/Players.astro';
-import { moduleToInline, scriptSafeJson } from '../../../lib/inline.js';
 import { NO_SCRIPT, PAGES } from '../../../lib/labels.js';
-import source from '../../../lib/season-ticks.js?raw';
-
-const known = meta.seasons.map((season) => season.season_id);
-
-// Runs as soon as the picker is in the page, long before the JavaScript arrives. It puts
-// the right ticks on the boxes before first paint and starts loading the right file,
-// which the URL or storage may make a different one from the default. The attribute tells
-// the component that the boxes are now safe to read at hydration.
-const script = `(function(){${moduleToInline(source)}
-var known=${scriptSafeJson(known)};
-var ticks=resolveTicks(location.search,function(){return localStorage;},known);
-document.querySelectorAll("[data-season-tick]").forEach(function(box){box.checked=ticks.includes(box.value);});
-document.documentElement.setAttribute("data-ticks-set","");
-var file=subsetFile(ticks);
-if(file){var link=document.createElement("link");link.rel="preload";link.as="fetch";link.crossOrigin="anonymous";link.href=file;document.head.appendChild(link);}
-}());`;
 ---
 <Players view="effects">
   <h1 class="visually-hidden">{PAGES.effects.title}</h1>
@@ -31,9 +15,9 @@ if(file){var link=document.createElement("link");link.rel="preload";link.as="fet
     outcomeLabels={meta.outcome_labels}
     estimatorControl={wording.estimator_control}
     cards={wording.effects_cards}
-    plotLabels={wording.plot_labels}
+    plotLabels={{ attack_defence: wording.plot_labels.attack_defence, coefficient: wording.plot_labels.coefficient }}
   />
-  <script is:inline set:html={script}></script>
+  <SeasonTicksScript />
   <noscript>
     <style is:inline>astro-island { display: none; }</style>
     <p class="card no-script">{NO_SCRIPT.effects}</p>

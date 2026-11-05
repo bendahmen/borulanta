@@ -38,6 +38,19 @@ export function sortRows(rows, sort) {
   return [...rows].sort(rowComparator(sort));
 }
 
+// Any other table, whose keys are its rows' own fields. The rows arrive in R's order, and a
+// stable sort leaves ties in that order, which is what DT's own sorting does with them.
+// Missing values go last whichever way the column runs.
+export function sortOnField(rows, { key, direction }) {
+  const sign = direction === 'descending' ? -1 : 1;
+  return [...rows].sort((rowA, rowB) => {
+    const missingA = isMissing(rowA[key]);
+    const missingB = isMissing(rowB[key]);
+    if (missingA || missingB) return missingA === missingB ? 0 : missingA ? 1 : -1;
+    return sign * compareAscending(rowA[key], rowB[key]);
+  });
+}
+
 // Names start A to Z and numbers start with the largest. A second press reverses.
 export function nextSort(current, key) {
   if (current.key === key) {

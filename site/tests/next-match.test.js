@@ -4,15 +4,9 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import vm from 'node:vm';
 
+import { daysBetween, londonDate, upcomingFixtures } from '../src/lib/fixture-dates.js';
 import { moduleToInline, scriptSafeJson } from '../src/lib/inline.js';
-import {
-  daysBetween,
-  isStale,
-  londonDate,
-  nextMatchView,
-  upcomingFixtures,
-  whenWord,
-} from '../src/lib/next-match.js';
+import { isStale, nextMatchView, whenWord } from '../src/lib/next-match.js';
 
 const wording = {
   tonight: 'Tonight',
@@ -68,7 +62,7 @@ test('londonDate holds across the March clock change', () => {
 // setting TZ here would come too late. London's date differs from every zone below at
 // one of these instants, so a formatter that fell back to local time gives a wrong date.
 test('londonDate ignores the time zone of the phone', () => {
-  const moduleUrl = new URL('../src/lib/next-match.js', import.meta.url).href;
+  const moduleUrl = new URL('../src/lib/fixture-dates.js', import.meta.url).href;
   const script = `import { londonDate } from ${JSON.stringify(moduleUrl)};
     console.log(process.argv.slice(1).map((iso) => londonDate(new Date(iso))).join(' '));`;
   const instants = ['2026-06-30T23:30:00Z', '2026-06-30T12:30:00Z'];
@@ -178,9 +172,9 @@ test('a run over the real fixtures.json with a pinned today', (t) => {
 });
 
 test('the inlined source runs as a classic script and agrees with the module', () => {
-  const source = readFileSync(new URL('../src/lib/next-match.js', import.meta.url), 'utf8');
-  const inline = moduleToInline(source);
-  assert.doesNotMatch(inline, /^export /m);
+  const read = (name) => readFileSync(new URL(`../src/lib/${name}.js`, import.meta.url), 'utf8');
+  const inline = `${moduleToInline(read('fixture-dates'))}\n${moduleToInline(read('next-match'))}`;
+  assert.doesNotMatch(inline, /^(export|import) /m);
 
   const context = {};
   vm.runInNewContext(`${inline}\nthis.result = [

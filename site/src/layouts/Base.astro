@@ -7,7 +7,8 @@ import meta from '../generated/meta.json';
 import { SITE, SKIP_LINK } from '../lib/labels.js';
 
 const { title, description, current, strapline = false } = Astro.props;
-const pageTitle = title === SITE.name ? title : `${title} · ${SITE.name}`;
+// A title that already leads with the name, as Home's and a match page's do, needs no second one.
+const pageTitle = title.startsWith(SITE.name) ? title : `${title} · ${SITE.name}`;
 // The page's own title is its h1 everywhere but Home.
 const BrandName = current === 'home' ? 'h1' : 'span';
 ---
@@ -21,6 +22,8 @@ const BrandName = current === 'home' ? 'h1' : 'span';
     <meta name="theme-color" content="#071e40" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="preload" href="/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/barlow-condensed-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />

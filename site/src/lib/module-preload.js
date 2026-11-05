@@ -26,12 +26,21 @@ export function reachableChunks(entries, readChunk) {
 
 // Ahead of the font preloads, because a host on HTTP/1.1 has only six connections and the
 // fonts can show a fallback while they wait, but the plot cannot draw without its chunk.
+// Largest first for the same reason: Plot is most of the bytes, and last in the queue it
+// waits for a free connection, which put the Effects plot half a second behind.
+// The font preloads go altogether on these pages. A font can show its fallback for a moment,
+// but the first view cannot draw without its chunks and its season file, and on six
+// connections the fonts held the season file back. They still load, from the stylesheet.
 // A page with no island has no chunks, and comes back unchanged.
+const FONT_PRELOAD = /<link\b[^>]*\brel="preload"[^>]*\bas="font"[^>]*>/g;
+
 export function addModulePreloads(html, readChunk) {
   const entries = [...html.matchAll(ISLAND_URL)].map((match) => match[1]);
   if (entries.length === 0) return html;
   const links = reachableChunks(entries, readChunk)
-    .map((name) => `<link rel="modulepreload" href="/_astro/${name}">`)
+    .map((name) => ({ name, size: readChunk(name).length }))
+    .sort((a, b) => b.size - a.size || a.name.localeCompare(b.name))
+    .map(({ name }) => `<link rel="modulepreload" href="/_astro/${name}">`)
     .join('');
-  return html.replace('<head>', `<head>${links}`);
+  return html.replace(FONT_PRELOAD, '').replace('<head>', `<head>${links}`);
 }

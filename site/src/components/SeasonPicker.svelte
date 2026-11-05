@@ -1,11 +1,11 @@
 <script>
-  import { EFFECTS } from '../../lib/labels.js';
+  import { SEASON_SCOPE } from '../lib/labels.js';
 
   let { seasons, ticks, onchange } = $props();
 </script>
 
 <fieldset>
-  <legend class="tag">{EFFECTS.seasons}</legend>
+  <legend class="tag">{SEASON_SCOPE.legend}</legend>
   <div class="seasons">
     {#each seasons as season (season.season_id)}
       <label>

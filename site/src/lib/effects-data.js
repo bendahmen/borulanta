@@ -1,5 +1,6 @@
 // The pure sums behind the Effects plots. Nothing here estimates anything or formats a
 // statistic: the numbers are R's, and these only decide where they go on the page.
+import { EFFECTS } from './labels.js';
 
 // Today's count across all seasons. Reserves height before the data arrives, so getting
 // it wrong in a later season only means a small shift.
@@ -40,8 +41,7 @@ function extentWithZero(values) {
 
 // One data unit is the same length on both axes, as coord_equal() does. On a square plot
 // that means one span for both, taken from the wider axis. The narrower axis stays
-// centred on its own data. Ridge can leave goals scored around 1e-37 and goals conceded
-// around 1: the dots then stand in a line, which is the true picture at equal scale.
+// centred on its own data.
 export function equalDomains(xs, ys, padding = 0.14) {
   const [xLow, xHigh] = extentWithZero(xs);
   const [yLow, yHigh] = extentWithZero(ys);
@@ -51,6 +51,42 @@ export function equalDomains(xs, ys, padding = 0.14) {
   const xMiddle = (xLow + xHigh) / 2;
   const yMiddle = (yLow + yHigh) / 2;
   return { x: [xMiddle - half, xMiddle + half], y: [yMiddle - half, yMiddle + half] };
+}
+
+export const SEPARATE_AXES_RATIO = 5;
+
+// Under ridge each outcome has its own penalty. Season 2 alone leaves goals scored around
+// 1e-37 and goals conceded around 1, and at equal scale the dots stand in a line nobody
+// can read. Spans include 0 because the reference lines do, so this measures what the
+// equal plot would have to fit. An axis that is all exactly 0 has nothing to spread out,
+// so it never triggers this, and the plot stays as it is.
+export function needsSeparateAxes(xs, ys, ratio = SEPARATE_AXES_RATIO) {
+  const [xLow, xHigh] = extentWithZero(xs);
+  const [yLow, yHigh] = extentWithZero(ys);
+  const narrow = Math.min(xHigh - xLow, yHigh - yLow);
+  const wide = Math.max(xHigh - xLow, yHigh - yLow);
+  return narrow > 0 && wide > ratio * narrow;
+}
+
+function ownDomain(values, padding) {
+  const [low, high] = extentWithZero(values);
+  const pad = (high - low) * padding;
+  return [low - pad, high + pad];
+}
+
+// Equal scale unless the rule above says otherwise. Same padding in both cases.
+export function attackDefenceDomains(xs, ys, padding = 0.14) {
+  if (!needsSeparateAxes(xs, ys)) return { ...equalDomains(xs, ys, padding), separate: false };
+  return { x: ownDomain(xs, padding), y: ownDomain(ys, padding), separate: true };
+}
+
+// What the plot and the line under it must agree on, so it is decided in one place.
+export function attackDefenceAxes(rows) {
+  const { x, y, separate } = attackDefenceDomains(
+    rows.map((row) => row.goals_scored),
+    rows.map((row) => row.defensive_effect),
+  );
+  return { x, y, note: separate ? EFFECTS.separateAxes : null };
 }
 
 export function coefficientDomain(rows, padding = 0.06) {

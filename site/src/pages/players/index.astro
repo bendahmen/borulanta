@@ -1,0 +1,23 @@
+---
+// Shiny's Players tab opens on Effects, so this address does too. Written out rather than with
+// Astro.redirect(), whose static page waits two seconds and drops the ticks from the URL.
+import { NAV, PAGES, SITE } from '../../lib/labels.js';
+import { redirectScript } from '../../lib/redirect.js';
+
+const target = NAV.find((tab) => tab.id === 'players').href;
+const script = redirectScript(target);
+---
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>{PAGES.effects.title} · {SITE.name}</title>
+    <script is:inline set:html={script}></script>
+  </head>
+  <body>
+    <a href={target}>{PAGES.effects.title}</a>
+  </body>
+</html>

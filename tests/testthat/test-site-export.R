@@ -259,7 +259,10 @@ test_that("every combination of seasons has a file and nothing else does", {
   expect_setequal(read_generated("meta")$subset_files, expected)
   expect_setequal(
     list.files(file.path(run_one, "site", "src", "generated")),
-    c("meta.json", "home.json", "fixtures.json", "league.json", "fees.json", "wording.json")
+    c(
+      "meta.json", "home.json", "fixtures.json", "league.json", "fees.json", "matches.json",
+      "wording.json"
+    )
   )
 })
 
@@ -670,6 +673,13 @@ test_that("every balance equals all_player_balances() to the penny", {
   ), "balances")
 })
 
+# The Everyone table and the Home picker read the first and Shiny's card reads the second.
+# One rounds before subtracting and the other after, so a half-penny can part them.
+test_that("all_player_balances() and player_fee_overview() give every player one balance", {
+  balances <- all_player_balances(shiny_data$charges, shiny_data$payments)
+  expect_equal(fee_strings_of(balances$balance), map_chr(balances$player, ~ format_fee_amount(player_fee_overview(.x, shiny_data$charges, shiny_data$payments, shiny_data$seasons)$balance)))
+})
+
 test_that("the totals equal balance_totals()", {
   totals <- read_generated("fees")$totals
   expected <- balance_totals(all_player_balances(shiny_data$charges, shiny_data$payments))
@@ -1020,10 +1030,96 @@ test_that("meta carries what the app holds as constants", {
   expect_equal(meta$empty_states$no_scorers, no_scorers$x$options$language$emptyTable)
 })
 
+test_that("the Fees and League card wording is what the cards and tables say", {
+  wording <- read_generated("wording")
+  fee_cards <- wording$fee_cards
+  league_cards <- wording$league_cards
+  headings <- function(widget) unname(unlist(names(widget$x$data)))
+
+  expect_setequal(names(fee_cards), c("summary_tiles", "payments", "charges", "everyone"))
+  expect_setequal(names(league_cards), c("headings", "run_in"))
+
+  # Against the real frames, which the export's stand-ins have to agree with.
+  player <- unlist(read_generated("fees")$fee_players)[[1]]
+  overview <- player_fee_overview(
+    player, shiny_data$charges, shiny_data$payments, shiny_data$seasons
+  )
+  balances <- all_player_balances(shiny_data$charges, shiny_data$payments)
+
+  summary_tiles <- fee_overview_summary(overview)
+  expect_equal(
+    unlist(fee_cards$summary_tiles, use.names = FALSE),
+    leaf_texts(summary_tiles, ".fee-overview-label")
+  )
+  expect_equal(fee_cards$summary_tiles$charges, "Match charges")
+  expect_equal(fee_cards$summary_tiles$payments, "Payments recorded")
+
+  history <- query_tags(fee_history_panel, ".table-card")
+  expect_equal(fee_cards$payments$tag, leaf_texts(history[[1]], ".section-tag"))
+  expect_equal(fee_cards$payments$title, leaf_texts(history[[1]], ".table-title"))
+  expect_null(fee_cards$payments$subtitle)
+  expect_equal(fee_cards$charges$tag, leaf_texts(history[[2]], ".section-tag"))
+  expect_equal(fee_cards$charges$title, leaf_texts(history[[2]], ".table-title"))
+  expect_equal(fee_cards$charges$subtitle, leaf_texts(history[[2]], ".fee-history-note"))
+  # In the order the tab has them, which a reorder of the panel would change.
+  expect_equal(fee_cards$payments$title, "Payments made")
+  expect_equal(fee_cards$charges$title, "Match-by-match charges")
+
+  expect_equal(
+    unlist(fee_cards$payments$headings, use.names = FALSE),
+    headings(payment_history_table(overview$payment_history))
+  )
+  expect_equal(
+    names(fee_cards$payments$headings),
+    c("date", "payment")
+  )
+  charge_table <- match_charge_table(overview$match_charges)
+  expect_equal(unlist(fee_cards$charges$headings, use.names = FALSE), headings(charge_table))
+  expect_equal(fee_cards$charges$headings$played, "Played?")
+  expect_equal(fee_cards$charges$headings$squad_size, "Squad size")
+  expect_setequal(
+    unlist(fee_cards$charges$played, use.names = FALSE),
+    unique(charge_table$x$data$`Played?`)
+  )
+  expect_equal(fee_cards$charges$played$yes, "Yes")
+  expect_equal(fee_cards$charges$played$no, "No")
+
+  expect_equal(fee_cards$everyone$tag, leaf_texts(everyone_panel, ".section-tag"))
+  expect_equal(fee_cards$everyone$title, leaf_texts(everyone_panel, ".table-title"))
+  expect_equal(fee_cards$everyone$subtitle, leaf_texts(everyone_panel, ".table-subtitle"))
+  expect_equal(
+    unlist(fee_cards$everyone$tiles, use.names = FALSE),
+    leaf_texts(balance_totals_ui(balance_totals(balances)), ".fee-overview-label")
+  )
+  expect_equal(fee_cards$everyone$tiles$outstanding, "Still owed")
+  expect_equal(fee_cards$everyone$tiles$credit, "In credit")
+  expect_equal(fee_cards$everyone$tiles$settled, "Settled up")
+  expect_equal(
+    unlist(fee_cards$everyone$headings, use.names = FALSE),
+    headings(balance_table(balances))
+  )
+  expect_equal(fee_cards$everyone$headings$last_payment, "Last payment")
+
+  expect_equal(
+    unlist(league_cards$headings, use.names = FALSE),
+    headings(league_table_table(shiny_data$league_table))
+  )
+  expect_equal(league_cards$headings$goal_difference, "GD")
+  expect_equal(league_cards$headings$points, "Pts")
+
+  expect_equal(league_cards$run_in$tag, leaf_texts(run_in_card, ".section-tag"))
+  expect_equal(league_cards$run_in$title, leaf_texts(run_in_card, ".table-title"))
+  expect_equal(league_cards$run_in$subtitle, leaf_texts(run_in_card, ".table-subtitle"))
+  fixtures <- run_in(shiny_data$fixtures, shiny_data$matches, shiny_data$league_table, today = FAR_PAST)
+  expect_equal(unlist(league_cards$run_in$headings, use.names = FALSE), headings(run_in_table(fixtures)))
+  expect_equal(league_cards$run_in$headings$position, "Pos")
+})
+
 test_that("the wording file is what the source functions return", {
   wording <- read_generated("wording")
   expect_setequal(names(wording), c(
-    "fee_panel", "settle_up", "estimator_control", "effects_cards", "plot_labels"
+    "fee_panel", "settle_up", "estimator_control", "effects_cards", "plot_labels",
+    "fee_cards", "league_cards", "matches_cards", "players_cards"
   ))
 
   fee_panel <- fee_panel_ui("a", "b")
@@ -1078,7 +1174,7 @@ test_that("the wording file is what the source functions return", {
   # Against real results, which the export's stand-in has to agree with.
   everything <- shiny_data$seasons$season_id
   labels <- wording$plot_labels
-  expect_setequal(names(labels), c("attack_defence", "coefficient"))
+  expect_setequal(names(labels), c("attack_defence", "coefficient", "season_form"))
   for (estimator in c("ols", "ridge")) {
     results <- expected_results(everything, estimator)
     expect_gt(nrow(results), 0)
@@ -1097,6 +1193,175 @@ test_that("the wording file is what the source functions return", {
       expect_equal(exported$y, coefficient$y)
       expect_type(exported$y, "character")
     }
+  }
+})
+
+test_that("the Matches card wording is what the cards and tables say", {
+  cards <- read_generated("wording")$matches_cards
+  headings <- function(widget) unname(unlist(names(widget$x$data)))
+  shown <- function(group) unname(unlist(group))
+  expect_setequal(names(cards), c(
+    "season_form", "scorers", "head_to_head", "every_result", "match_detail"
+  ))
+
+  # Against the real frames, which the export's stand-ins have to agree with.
+  everything <- shiny_data$seasons$season_id
+  scope <- scoped_like_app(everything)
+  form <- season_form_data(scope$attendance, scope$matches)
+  newest <- as.character(max(form$date))
+  detail <- match_detail_data(form, scope$attendance, newest)
+
+  form_card <- cards$season_form
+  expect_setequal(names(form_card), c("tag", "title", "subtitle", "metric_label", "metrics"))
+  expect_equal(form_card$tag, leaf_texts(season_form_card, ".section-tag"))
+  expect_equal(form_card$title, leaf_texts(season_form_card, ".table-title"))
+  expect_equal(form_card$subtitle, leaf_texts(season_form_card, ".table-subtitle"))
+  expect_equal(form_card$metric_label, leaf_texts(season_form_card, ".control-label"))
+  expect_equal(form_card$metric_label, "Show")
+  # Spelled out once, because the export reads them out of selectInput()'s string of HTML.
+  expect_rows(form_card$metrics, tibble(
+    value = c("points", "goals", "goal_difference", "squad_size"),
+    label = c(
+      "Points per match", "Goals scored and conceded", "Goal difference", "Squad size"
+    )
+  ), "metrics")
+
+  # The scorers' subtitle is the coverage line, in each season file.
+  expect_setequal(names(cards$scorers), c("tag", "title", "subtitle", "headings"))
+  expect_equal(cards$scorers$tag, leaf_texts(scorer_card, ".section-tag"))
+  expect_equal(cards$scorers$title, leaf_texts(scorer_card, ".table-title"))
+  expect_null(cards$scorers$subtitle)
+  expect_equal(
+    shown(cards$scorers$headings),
+    headings(scorer_display_table(
+      scorer_table(scope$events, scope$attendance, scope$matches)
+    ))
+  )
+  expect_setequal(
+    names(cards$scorers$headings),
+    c("player", "goals", "mom", "appearances", "goals_per_game")
+  )
+
+  expect_setequal(names(cards$head_to_head), c("tag", "title", "subtitle", "headings"))
+  expect_equal(cards$head_to_head$tag, leaf_texts(opponent_record_card, ".section-tag"))
+  expect_equal(cards$head_to_head$title, leaf_texts(opponent_record_card, ".table-title"))
+  expect_equal(cards$head_to_head$subtitle, leaf_texts(opponent_record_card, ".table-subtitle"))
+  expect_equal(
+    shown(cards$head_to_head$headings),
+    headings(opponent_record_table(opponent_record(scope$matches)))
+  )
+
+  expect_setequal(names(cards$every_result), c("tag", "title", "subtitle", "headings", "no_opponent"))
+  expect_equal(cards$every_result$tag, leaf_texts(every_result_card, ".section-tag"))
+  expect_equal(cards$every_result$title, leaf_texts(every_result_card, ".table-title"))
+  expect_equal(cards$every_result$subtitle, leaf_texts(every_result_card, ".table-subtitle"))
+  expect_equal(shown(cards$every_result$headings), headings(match_table(scope$matches)))
+  # The mark on a real match from before the sync.
+  no_opponent <- scope$matches |> filter(is.na(opponent)) |> slice(1)
+  expect_equal(nrow(no_opponent), 1L)
+  expect_equal(cards$every_result$no_opponent, match_table(no_opponent)$x$data$Opponent)
+
+  expect_setequal(names(cards$match_detail), c(
+    "tag", "title", "subtitle", "result_label", "lineup_title", "headings"
+  ))
+  expect_equal(cards$match_detail$tag, leaf_texts(match_detail_card, ".section-tag"))
+  expect_equal(cards$match_detail$title, leaf_texts(match_detail_card, ".table-title"))
+  expect_equal(cards$match_detail$subtitle, leaf_texts(match_detail_card, ".table-subtitle"))
+  expect_equal(cards$match_detail$lineup_title, leaf_texts(match_detail_card, ".match-lineup-title"))
+  expect_equal(
+    cards$match_detail$result_label,
+    leaf_texts(match_summary_ui(detail$match), ".match-detail-label")
+  )
+  expect_equal(shown(cards$match_detail$headings), headings(match_lineup_table(detail$lineup)))
+})
+
+test_that("the Players card wording is what the cards, tables and plot say", {
+  cards <- read_generated("wording")$players_cards
+  headings <- function(widget) unname(unlist(names(widget$x$data)))
+  shown <- function(group) unname(unlist(group))
+  expect_setequal(names(cards), c("who_turns_up", "player", "with_without"))
+
+  # Against the real frames, which the export's stand-ins have to agree with.
+  scope <- scoped_like_app(shiny_data$seasons$season_id)
+  roster <- create_attendance_list(scope$attendance, scope$matches)
+  profile <- player_profile(roster$player[[1]], scope$attendance, scope$matches, scope$events)
+
+  # In the order player_page lays them out.
+  expect_equal(
+    c(cards$who_turns_up$tag, cards$player$tag, cards$with_without$tag),
+    leaf_texts(player_page, ".section-tag")
+  )
+  expect_equal(
+    c(cards$who_turns_up$title, cards$player$title, cards$with_without$title),
+    leaf_texts(player_page, ".table-title")
+  )
+  # Only the first has a fixed subtitle: the other two are uiOutput()s, one of them the
+  # note below and the other the note in each profile.
+  expect_equal(cards$who_turns_up$subtitle, leaf_texts(player_page, ".table-subtitle"))
+  expect_null(cards$player$subtitle)
+  expect_null(cards$with_without$subtitle)
+
+  expect_setequal(names(cards$who_turns_up), c("tag", "title", "subtitle", "headings"))
+  expect_equal(
+    shown(cards$who_turns_up$headings),
+    setdiff(headings(attendance_table(roster)), "rank_class")
+  )
+  expect_equal(
+    names(cards$who_turns_up$headings),
+    c("player", "turnout", "avg_points", "avg_goals_scored", "avg_goals_conceded")
+  )
+  expect_equal(cards$who_turns_up$headings$turnout, "Turnout")
+  expect_equal(cards$who_turns_up$headings$avg_goals_conceded, "Avg goals conceded")
+
+  expect_setequal(names(cards$player), c(
+    "tag", "title", "subtitle", "note_after_name", "appearances_title", "strip_key"
+  ))
+  expect_equal(cards$player$appearances_title, leaf_texts(player_page, ".match-lineup-title"))
+  key <- appearance_timeline_plot(profile)$scales$get_scales("fill")$labels
+  expect_equal(cards$player$strip_key$played, key[["TRUE"]])
+  expect_equal(cards$player$strip_key$missed, key[["FALSE"]])
+  expect_equal(cards$player$strip_key$played, "Played")
+  expect_equal(cards$player$strip_key$missed, "Missed")
+
+  # Only app.R writes this. If it rewords the note, this fails and the copy gets updated.
+  source_text <- paste(readLines(here::here("app.R"), encoding = "UTF-8"), collapse = "\n")
+  expect_equal(cards$player$note_after_name, APP_PLAYER_NOTE_AFTER_NAME)
+  expect_true(grepl(
+    paste0('paste0(profile_player(), "', APP_PLAYER_NOTE_AFTER_NAME, '")'),
+    source_text,
+    fixed = TRUE
+  ))
+
+  expect_setequal(names(cards$with_without), c("tag", "title", "subtitle", "headings", "sides"))
+  both_sides <- with_without_table(profile)
+  expect_equal(shown(cards$with_without$headings), headings(both_sides))
+  expect_equal(cards$with_without$headings$points_per_match, "Pts/match")
+  expect_equal(shown(cards$with_without$sides), both_sides$x$data[[" "]])
+  expect_equal(cards$with_without$sides$played, "Played")
+  expect_equal(cards$with_without$sides$missed, "Missed")
+})
+
+test_that("the season form labels are what season_form_plot() calls its axes and lines", {
+  labels <- read_generated("wording")$plot_labels$season_form
+  scope <- scoped_like_app(shiny_data$seasons$season_id)
+  form <- season_form_data(scope$attendance, scope$matches)
+  metrics <- strings_of(read_generated("wording")$matches_cards$season_form$metrics, "value")
+
+  expect_setequal(names(labels), c(metrics, "series"))
+  for (metric in metrics) {
+    plot_labels <- season_form_plot(form, metric)$labels
+    expect_equal(labels[[metric]]$y, plot_labels$y)
+    expect_type(labels[[metric]]$y, "character")
+    expect_true(all(c("x", "y") %in% names(labels[[metric]])))
+    expect_null(labels[[metric]]$x)
+  }
+
+  # Each name belongs to the column whose values it is drawn with.
+  goals <- season_form_plot(form, "goals")$data
+  expect_setequal(names(labels$series), c("rolling_goals_scored", "rolling_goals_conceded"))
+  for (column in names(labels$series)) {
+    drawn <- goals |> filter(metric == labels$series[[column]]) |> arrange(date)
+    expect_equal(drawn$value, form[[column]])
   }
 })
 
@@ -1538,6 +1803,103 @@ test_that("a fresh checkout with nothing played and no snapshots still exports",
   expect_equal(fees$balances[[1]]$balance, -10)
   expect_equal(fees$balances[[1]]$balance_display, "-\u00a310.00")
   expect_equal(fees$totals$credit, 10)
+})
+
+test_that("each match page's card is what the last-match card would say on that night", {
+  rows <- read_generated("matches")
+  played <- shiny_data$matches |> filter(!is.na(season_id))
+
+  expect_equal(strings_of(rows, "date"), format(sort(played$date, decreasing = TRUE), "%Y-%m-%d"))
+
+  for (row in rows) {
+    summary <- last_match_summary(
+      played |> filter(date == as.Date(row$date)), shiny_data$attendance, shiny_data$events
+    )
+    card <- last_match_card_ui(summary, shiny_data$seasons)
+    expect_setequal(names(row), c(
+      "season_id", "date", "date_label", "result", "points", "badge", "opponent",
+      "season_label", "meta_line", "squad_size", "scorers", "man_of_the_match", "details"
+    ))
+
+    expect_equal(row$season_id, summary$match$season_id)
+    expect_equal(row$date_label, format_match_date(summary$match$date))
+    expect_equal(row$result, summary$match$result)
+    expect_equal(row$points, summary$match$points)
+    expect_equal(row$badge, leaf_texts(result_badge(summary$match$points), "span"))
+    if (is.na(summary$match$opponent)) {
+      expect_null(row$opponent)
+    } else {
+      expect_equal(row$opponent, summary$match$opponent)
+    }
+    expect_equal(
+      row$season_label,
+      shiny_data$seasons$label[match(summary$match$season_id, shiny_data$seasons$season_id)]
+    )
+    expect_equal(row$meta_line, leaf_texts(card, ".home-card-meta"))
+    expect_equal(row$squad_size, summary$squad_size)
+    expect_equal(row$squad_size, n_distinct(
+      shiny_data$attendance$player[shiny_data$attendance$date == as.Date(row$date)]
+    ))
+
+    # What the card shows, and what it drops.
+    if (nrow(summary$scorers) > 0) {
+      expect_equal(row$scorers, listed_scorers(summary$scorers))
+    } else {
+      expect_null(row$scorers)
+    }
+    if (is.na(summary$mom)) {
+      expect_null(row$man_of_the_match)
+    } else {
+      expect_equal(row$man_of_the_match, summary$mom)
+    }
+    lines <- query_tags(card, ".home-detail")
+    expect_equal(length(row$details), length(lines))
+    for (index in seq_along(lines)) {
+      expect_equal(
+        c(row$details[[index]]$label, row$details[[index]]$value),
+        as.character(unlist(tag_text(lines[[index]])))
+      )
+    }
+  }
+
+  # The newest is the card Home shows, field for field.
+  home_last <- read_generated("home")$last_match
+  rows[[1]]$season_id <- NULL
+  expect_equal(rows[[1]], home_last)
+})
+
+test_that("every match page's lineup has its entry in that match's own season file", {
+  for (row in read_generated("matches")) {
+    season_file <- read_subset(row$season_id)
+    expect_true(row$date %in% strings_of(season_file$match_details, "date"))
+  }
+})
+
+test_that("a match dated before the first season stays out of the match pages", {
+  data <- shiny_data
+  early <- data$matches |> slice(1) |> mutate(date = as.Date("2001-01-03"), season_id = NA_character_)
+  data$matches <- bind_rows(data$matches, early)
+
+  rows <- export_match_pages(data)
+  expect_false("2001-01-03" %in% map_chr(rows, "date"))
+  expect_equal(length(rows), sum(!is.na(shiny_data$matches$season_id)))
+})
+
+test_that("a synced match with no attendance yet has its page, with nobody in the lineup", {
+  data <- shiny_data
+  newest <- max(data$matches$date)
+  data$attendance <- data$attendance |> filter(date != newest)
+
+  rows <- round_trip(export_match_pages(data))
+  expect_equal(rows[[1]]$date, format(newest, "%Y-%m-%d"))
+  expect_equal(rows[[1]]$squad_size, 0L)
+
+  scope <- scope_to_seasons(data, rows[[1]]$season_id)
+  details <- round_trip(export_match_details(
+    season_form_data(scope$attendance, scope$matches), scope$attendance
+  ))
+  expect_equal(details[[1]]$date, rows[[1]]$date)
+  expect_length(details[[1]]$lineup, 0)
 })
 
 test_that("a last match with no opponent or events drops those from the card", {

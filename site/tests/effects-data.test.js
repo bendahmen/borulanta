@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
+import { readdirSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import {
+  attackDefenceAxes,
+  attackDefenceDomains,
   attackDefenceRows,
   axisTickFormat,
   coefficientDomain,
@@ -9,6 +12,7 @@ import {
   coefficientRows,
   dotRadius,
   equalDomains,
+  needsSeparateAxes,
   sizeKeyValues,
 } from '../src/lib/effects-data.js';
 
@@ -101,4 +105,79 @@ test('the size key uses round numbers and no more than four circles', () => {
   assert.deepEqual(sizeKeyValues(7), [2, 4, 6]);
   assert.deepEqual(sizeKeyValues(3), [1, 2, 3]);
   assert.deepEqual(sizeKeyValues(180), [50, 100, 150]);
+});
+
+test('axes stay equal up to and including a ratio of exactly 5', () => {
+  assert.equal(needsSeparateAxes([0, 1], [0, 5]), false);
+  assert.equal(needsSeparateAxes([0, 5], [0, 1]), false);
+  assert.equal(needsSeparateAxes([-1, 1], [-3, 7]), false);
+  assert.equal(needsSeparateAxes([0, 1], [0, 5.000001]), true);
+  assert.equal(needsSeparateAxes([0, 5.000001], [0, 1]), true);
+});
+
+test('a span counts 0, so equal values away from 0 still have one', () => {
+  assert.equal(needsSeparateAxes([2, 2, 2], [3, 3, 3]), false);
+  assert.equal(needsSeparateAxes([2, 2, 2], [11, 11, 11]), true);
+  assert.equal(needsSeparateAxes([1, 2], [-4, 6]), false);
+  assert.equal(needsSeparateAxes([1, 2], [-4, 7]), true);
+});
+
+test('an axis that is all exactly 0 keeps the equal scale, with or without data on the other', () => {
+  assert.equal(needsSeparateAxes([0, 0], [0, 0]), false);
+  assert.equal(needsSeparateAxes([0, 0], [-3, 3]), false);
+  assert.equal(needsSeparateAxes([-3, 3], [0, 0]), false);
+  assert.equal(needsSeparateAxes([], []), false);
+});
+
+test('the season 2 ridge shape gets its own domain on each axis, and 0 stays in both', () => {
+  const xs = [-4e-37, 6e-37];
+  const ys = [-1, 1.5];
+  const domains = attackDefenceDomains(xs, ys);
+  assert.equal(domains.separate, true);
+  assert.deepEqual(domains.x.map((value) => Number(value.toPrecision(6))), [-5.4e-37, 7.4e-37]);
+  assert.deepEqual(domains.y.map((value) => Number(value.toPrecision(6))), [-1.35, 1.85]);
+
+  const oneSided = attackDefenceDomains([1e-30, 2e-30], [1, 2]);
+  assert.ok(oneSided.x[0] < 0 && oneSided.x[1] > 2e-30);
+  assert.ok(oneSided.y[0] < 0 && oneSided.y[1] > 2);
+});
+
+test('below the ratio the domains are the equal ones', () => {
+  const xs = [-9, 8];
+  const ys = [-5, 2];
+  assert.deepEqual(attackDefenceDomains(xs, ys), { ...equalDomains(xs, ys), separate: false });
+});
+
+test('the plot and its note get one answer: separate axes come with the wording, equal ones with none', () => {
+  const row = (goals_scored, defensive_effect) => ({ goals_scored, defensive_effect });
+
+  const separate = attackDefenceAxes([row(-4e-37, -1), row(6e-37, 1.5)]);
+  assert.equal(separate.note, 'The two axes use different scales here: one set of estimates is far smaller than the other.');
+  assert.ok(separate.x[1] - separate.x[0] < 1e-35);
+  assert.ok(separate.y[1] - separate.y[0] > 1);
+
+  const equal = attackDefenceAxes([row(-1, -1), row(2, 1.5)]);
+  assert.equal(equal.note, null);
+  assert.ok(Math.abs(equal.x[1] - equal.x[0] - (equal.y[1] - equal.y[0])) < 1e-9);
+
+  assert.equal(attackDefenceAxes([]).note, null);
+});
+
+// Written against whatever the export holds today, so a weekly merge cannot break it.
+test('every real state holds all its dots, and shows the note only when its axes are separate', () => {
+  const folder = new URL('../public/data/seasons/', import.meta.url);
+  for (const file of readdirSync(folder)) {
+    const { regression } = JSON.parse(readFileSync(new URL(file, folder)));
+    for (const [estimator, { has_regression: hasRegression, players }] of Object.entries(regression)) {
+      if (!hasRegression) continue;
+      const rows = attackDefenceRows(players);
+      const xs = rows.map((one) => one.goals_scored);
+      const ys = rows.map((one) => one.defensive_effect);
+      const axes = attackDefenceAxes(rows);
+      const state = `${file} ${estimator}`;
+      assert.equal(axes.note !== null, needsSeparateAxes(xs, ys), state);
+      for (const value of xs) assert.ok(value > axes.x[0] && value < axes.x[1], state);
+      for (const value of ys) assert.ok(value > axes.y[0] && value < axes.y[1], state);
+    }
+  }
 });

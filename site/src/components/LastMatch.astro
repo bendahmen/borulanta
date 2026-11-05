@@ -1,29 +1,25 @@
 ---
 import home from '../generated/home.json';
+import { MATCHES } from '../lib/labels.js';
+import { matchHref } from '../lib/match-data.js';
+import MatchSummary from './MatchSummary.astro';
 
 const played = home.last_match;
-// The live site's win, draw and loss colours, keyed on R's own badge word.
-const badgeClass = played ? `badge-${played.badge.toLowerCase()}` : '';
+// A match dated before the first season has no page. See export_match_pages() in R.
+const href = played?.season_label ? matchHref(played.date) : null;
 ---
 <section class="card last" aria-labelledby="last-match-tag">
   <h2 id="last-match-tag" class="tag">{home.last_match_tag}</h2>
   {
     played ? (
       <>
-        <p class="scoreline">
-          <span class="score">{played.result}</span>
-          <span class:list={['badge', badgeClass]}>{played.badge}</span>
-        </p>
-        <p class="meta">{played.meta_line}</p>
-        {played.details.length > 0 && (
-          <dl class="details">
-            {played.details.map((detail) => (
-              <div>
-                <dt>{detail.label}</dt>
-                <dd>{detail.value}</dd>
-              </div>
-            ))}
-          </dl>
+        <MatchSummary played={played} />
+        {href && (
+          <a class="to-match" href={href} aria-label={MATCHES.matchPageFor(played.date_label)}>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+              <path d="m9 6 6 6-6 6" />
+            </svg>
+          </a>
         )}
       </>
     ) : (
@@ -33,76 +29,41 @@ const badgeClass = played ? `badge-${played.badge.toLowerCase()}` : '';
 </section>
 
 <style>
-  .scoreline {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 2px;
+  .last {
+    position: relative;
   }
 
-  .score {
-    font-family: var(--font-display);
-    font-size: 2.75rem;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-  }
-
-  .badge {
-    padding: 3px 10px;
-    border-radius: 999px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    line-height: 1.3;
-  }
-
-  .badge-win {
-    background: var(--green-soft);
-    color: var(--green);
-  }
-
-  .badge-draw {
-    background: var(--blue-soft);
-    color: var(--blue);
-  }
-
-  .badge-loss {
-    background: var(--amber-soft);
-    color: var(--amber);
-  }
-
-  .meta {
-    margin-top: 2px;
-    color: var(--ink-muted);
-    font-size: 0.9375rem;
-  }
-
-  .details {
-    display: grid;
-    gap: 3px;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid var(--border);
-    font-size: 0.9375rem;
-  }
-
-  /* A label and its value share a line at normal text size. In rem, so enlarged text
-     puts the value under its label instead of pushing the card off the screen. */
-  .details div {
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 12px;
-  }
-
-  dt {
-    flex: 0 0 7.5rem;
+  /* The whole card is the link, and the chevron says so. Neither takes any room, so nothing
+     else on the card moves. */
+  .to-match {
     color: var(--ink-muted);
   }
 
-  dd {
-    flex: 1 1 7.5rem;
-    min-width: 0;
+  .to-match::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+  }
+
+  .to-match:focus-visible {
+    outline: none;
+  }
+
+  .to-match:focus-visible::after {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+  }
+
+  .to-match svg {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   .empty {

@@ -100,6 +100,222 @@
           "y": "Goal difference: deviation from the average player, shrunk"
         }
       }
+    },
+    "season_form": {
+      "points": {
+        "x": null,
+        "y": "Points per match"
+      },
+      "goals": {
+        "x": null,
+        "y": "Goals per match"
+      },
+      "goal_difference": {
+        "x": null,
+        "y": "Goal difference per match"
+      },
+      "squad_size": {
+        "x": null,
+        "y": "Players per match"
+      },
+      "series": {
+        "rolling_goals_scored": "Goals scored",
+        "rolling_goals_conceded": "Goals conceded"
+      }
+    }
+  },
+  "fee_cards": {
+    "summary_tiles": {
+      "charges": "Match charges",
+      "payments": "Payments recorded"
+    },
+    "payments": {
+      "tag": "Payments",
+      "title": "Payments made",
+      "subtitle": null,
+      "headings": {
+        "date": "Date",
+        "payment": "Payment"
+      }
+    },
+    "charges": {
+      "tag": "Charges",
+      "title": "Match-by-match charges",
+      "subtitle": "Shares are rounded to the penny here. The totals above are not.",
+      "headings": {
+        "date": "Date",
+        "season": "Season",
+        "result": "Result",
+        "played": "Played?",
+        "squad_size": "Squad size",
+        "charge": "Charge",
+        "explanation": "Explanation"
+      },
+      "played": {
+        "yes": "Yes",
+        "no": "No"
+      }
+    },
+    "everyone": {
+      "tag": "Everyone",
+      "title": "Who is square and who is not",
+      "subtitle": "Rows in amber owe something. Rows in green are owed.",
+      "tiles": {
+        "outstanding": "Still owed",
+        "credit": "In credit",
+        "settled": "Settled up"
+      },
+      "headings": {
+        "player": "Player",
+        "charges": "Charges",
+        "payments": "Payments",
+        "last_payment": "Last payment",
+        "balance": "Balance"
+      }
+    }
+  },
+  "league_cards": {
+    "headings": {
+      "position": "Pos",
+      "team": "Team",
+      "played": "P",
+      "won": "W",
+      "drawn": "D",
+      "lost": "L",
+      "goal_difference": "GD",
+      "points": "Pts"
+    },
+    "run_in": {
+      "tag": "Run-in",
+      "title": "Who is left",
+      "subtitle": "Every fixture still to come, with where that side sits in the league.",
+      "headings": {
+        "date": "Date",
+        "opponent": "Opponent",
+        "position": "Pos"
+      }
+    }
+  },
+  "matches_cards": {
+    "season_form": {
+      "tag": "Season form",
+      "title": "How the season is trending",
+      "subtitle": "Each point averages the last five matches. The first four average what there is.",
+      "metric_label": "Show",
+      "metrics": [
+        {
+          "value": "points",
+          "label": "Points per match"
+        },
+        {
+          "value": "goals",
+          "label": "Goals scored and conceded"
+        },
+        {
+          "value": "goal_difference",
+          "label": "Goal difference"
+        },
+        {
+          "value": "squad_size",
+          "label": "Squad size"
+        }
+      ]
+    },
+    "scorers": {
+      "tag": "Scorers",
+      "title": "Goals and man of the match",
+      "subtitle": null,
+      "headings": {
+        "player": "Player",
+        "goals": "Goals",
+        "mom": "MOM",
+        "appearances": "Appearances",
+        "goals_per_game": "Goals per game"
+      }
+    },
+    "head_to_head": {
+      "tag": "Head to head",
+      "title": "How we do against each side",
+      "subtitle": "Points per match rather than total points: we have met some sides twice as often as others.",
+      "headings": {
+        "opponent": "Opponent",
+        "played": "P",
+        "won": "W",
+        "drawn": "D",
+        "lost": "L",
+        "goals_for": "GF",
+        "goals_against": "GA",
+        "goal_difference": "GD",
+        "points_per_match": "Pts/match"
+      }
+    },
+    "every_result": {
+      "tag": "Matches",
+      "title": "Every result",
+      "subtitle": "Newest first, for the seasons you have ticked. Pick a row to see that night's lineup above.",
+      "headings": {
+        "date": "Date",
+        "opponent": "Opponent",
+        "result": "Result",
+        "outcome": "Outcome"
+      },
+      "no_opponent": "—"
+    },
+    "match_detail": {
+      "tag": "Match detail",
+      "title": "Lineup and season context",
+      "subtitle": "Who played, and how much of that season they turned up for.",
+      "result_label": "Result",
+      "lineup_title": "Lineup",
+      "headings": {
+        "player": "Player",
+        "season_appearances": "Season appearances",
+        "turnout": "Turnout"
+      }
+    }
+  },
+  "players_cards": {
+    "who_turns_up": {
+      "tag": "Attendance",
+      "title": "Who turns up",
+      "subtitle": "Share of matches played, and how those matches went. Pick a row for that player's page.",
+      "headings": {
+        "player": "Player",
+        "turnout": "Turnout",
+        "avg_points": "Avg points",
+        "avg_goals_scored": "Avg goals scored",
+        "avg_goals_conceded": "Avg goals conceded"
+      }
+    },
+    "player": {
+      "tag": "Player",
+      "title": "One player at a time",
+      "subtitle": null,
+      "note_after_name": ". Pick another row above to change who this is about.",
+      "appearances_title": "Appearances",
+      "strip_key": {
+        "played": "Played",
+        "missed": "Missed"
+      }
+    },
+    "with_without": {
+      "tag": "With and without",
+      "title": "How the side does either way",
+      "subtitle": null,
+      "headings": {
+        "side": " ",
+        "played": "P",
+        "won": "W",
+        "drawn": "D",
+        "lost": "L",
+        "goals_for": "GF",
+        "goals_against": "GA",
+        "points_per_match": "Pts/match"
+      },
+      "sides": {
+        "played": "Played",
+        "missed": "Missed"
+      }
     }
   }
 }

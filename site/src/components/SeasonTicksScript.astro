@@ -1,0 +1,21 @@
+---
+// Goes straight after the island of any page with the season picker. It runs as soon as the
+// picker is in the page, long before the JavaScript arrives. It puts the right ticks on the
+// boxes before first paint and starts loading the right file, which the URL or storage may
+// make a different one from the default. The attribute tells the component that the boxes
+// are now safe to read at hydration.
+import meta from '../generated/meta.json';
+import { moduleToInline, scriptSafeJson } from '../lib/inline.js';
+import source from '../lib/season-ticks.js?raw';
+
+const known = meta.seasons.map((season) => season.season_id);
+const script = `(function(){${moduleToInline(source)}
+var known=${scriptSafeJson(known)};
+var ticks=resolveTicks(location.search,function(){return localStorage;},known);
+document.querySelectorAll("[data-season-tick]").forEach(function(box){box.checked=ticks.includes(box.value);});
+document.documentElement.setAttribute("data-ticks-set","");
+var file=subsetFile(ticks);
+if(file){var link=document.createElement("link");link.rel="preload";link.as="fetch";link.crossOrigin="anonymous";link.href=file;document.head.appendChild(link);}
+}());`;
+---
+<script is:inline set:html={script}></script>

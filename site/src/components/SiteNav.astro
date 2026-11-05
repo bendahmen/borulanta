@@ -4,10 +4,12 @@ import Icon from './Icon.astro';
 
 const { current } = Astro.props;
 
-// Players has its own sub-navigation, which marks the page. Its tab marks the section.
+// Fees, Matches and Players have their own sub-navigation, which marks the page. Their tabs
+// mark the section.
+const SECTIONS = ['fees', 'matches', 'players'];
 const currentValue = (tab) => {
   if (tab.id !== current) return undefined;
-  return tab.id === 'players' ? 'true' : 'page';
+  return SECTIONS.includes(tab.id) ? 'true' : 'page';
 };
 ---
 <nav class="tabs" aria-label={NAV_LABEL}>

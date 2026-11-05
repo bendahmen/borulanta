@@ -27,6 +27,12 @@ test('keeps only what the page uses', timed, async () => {
   assert.deepEqual(data, { has_matches: true, regression: { id: 'a' } });
 });
 
+test('a page can keep the whole file', timed, async () => {
+  const loader = createSubsetLoader(async () => reply(file('a')), (whole) => whole);
+  const { data } = await loader.load('a.json');
+  assert.deepEqual(data, file('a'));
+});
+
 test('a second load of a file is served from memory', timed, async () => {
   // Answers every call, so that a loader with no cache fails the count instead of waiting.
   const calls = [];

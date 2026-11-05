@@ -1,0 +1,37 @@
+---
+// Everyone's balance at once, for the person actually chasing the money. Built whole at
+// build time, with no script: a row that opens is a <details>.
+import CardHead from '../../../components/CardHead.svelte';
+import StatTiles from '../../../components/StatTiles.astro';
+import fees from '../../../generated/fees.json';
+import wording from '../../../generated/wording.json';
+import Fees from '../../../layouts/Fees.astro';
+import { tableHtml } from '../../../lib/data-table.js';
+import { balanceColumns, balanceRowClass } from '../../../lib/fee-rows.js';
+import { FEE_STATUS } from '../../../lib/labels.js';
+
+const card = wording.fee_cards.everyone;
+const { totals } = fees;
+
+// In the order all_player_balances() returns. Shiny has no sorting here either.
+const table = tableHtml({
+  className: 'dt-balances',
+  caption: card.title,
+  columns: balanceColumns(card.headings, FEE_STATUS),
+  rows: fees.balances,
+  rowClass: balanceRowClass,
+});
+---
+<Fees view="everyone">
+  <section class="card" aria-labelledby="everyone-title">
+    <CardHead id="everyone-title" card={card} />
+    <StatTiles
+      tiles={[
+        { label: card.tiles.outstanding, value: totals.outstanding_display, tone: 'is-owed' },
+        { label: card.tiles.credit, value: totals.credit_display, tone: 'is-credit' },
+        { label: card.tiles.settled, value: totals.settled },
+      ]}
+    />
+    {fees.balances.length > 0 ? <Fragment set:html={table} /> : <p class="dt-empty">{fees.empty.balances}</p>}
+  </section>
+</Fees>

@@ -1,0 +1,17 @@
+---
+// Fees has two sub-views and no season picker: a balance is a running total, as
+// SEASON_SCOPED_TABS in app.R records. Tables are drawn by src/lib/data-table.js.
+import '../styles/data-table.css';
+
+import SubNav from '../components/SubNav.astro';
+import { FEES_NAV, FEES_NAV_LABEL, PAGES } from '../lib/labels.js';
+import Base from './Base.astro';
+
+const { view } = Astro.props;
+const page = PAGES[view];
+---
+<Base title={page.title} description={page.description} current="fees">
+  <SubNav items={FEES_NAV} label={FEES_NAV_LABEL} current={view} />
+  <h1 class="visually-hidden">{page.title}</h1>
+  <slot />
+</Base>

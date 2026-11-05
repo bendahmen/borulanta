@@ -1,0 +1,61 @@
+---
+// A row of figures, as stat_tile() in R/cards.R. A tile with `fee` is filled by the
+// player picker, from the chosen player's option.
+const { tiles } = Astro.props;
+---
+<dl class="tiles">
+  {
+    tiles.map((tile) => (
+      <div class:list={['tile', tile.tone]}>
+        <dt>{tile.label}</dt>
+        <dd data-fee={tile.fee}>{tile.value}</dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  /* Three fit across a 375 px phone. In rem, so enlarged text stacks them instead. */
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(5.75rem, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .tile {
+    min-width: 0;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg);
+  }
+
+  dt {
+    color: var(--ink-muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  dd {
+    /* Keeps the tile's height while the picker has yet to fill it. */
+    min-height: 1.1em;
+    margin-top: 2px;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+
+  .is-owed dd {
+    color: var(--amber);
+  }
+
+  .is-credit dd {
+    color: var(--green);
+  }
+</style>

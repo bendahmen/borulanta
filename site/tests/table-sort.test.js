@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { DEFAULT_SORT, nextSort, rowComparator, sortOnShownColumn, sortRows } from '../src/lib/table-sort.js';
+import { DEFAULT_SORT, nextSort, sortOnField, rowComparator, sortOnShownColumn, sortRows } from '../src/lib/table-sort.js';
 
 const row = (player, appearances, points) => ({
   player,
@@ -91,4 +91,34 @@ test('a sort on a column still showing stays exactly as it was', () => {
   assert.equal(sortOnShownColumn(onName, onlySelected, 'points'), onName);
   const onOther = { key: 'goal_difference', direction: 'descending' };
   assert.equal(sortOnShownColumn(onOther, () => true, 'points'), onOther);
+});
+
+const scorers = [
+  { player: 'Mateus', goals: 4, mom: 0, rate: 1 },
+  { player: 'Emiliano', goals: 3, mom: 1, rate: 0.75 },
+  { player: 'Daniel', goals: 3, mom: 1, rate: 0.6 },
+  { player: 'Akash', goals: 2, mom: 0, rate: null },
+  { player: 'Torge', goals: 2, mom: 0, rate: 0.4 },
+];
+const order = (rows) => rows.map((item) => item.player);
+
+test('a field sort leaves ties in the order R sent, whichever way it runs', () => {
+  assert.deepEqual(order(sortOnField(scorers, { key: 'goals', direction: 'descending' })), ['Mateus', 'Emiliano', 'Daniel', 'Akash', 'Torge']);
+  assert.deepEqual(order(sortOnField(scorers, { key: 'goals', direction: 'ascending' })), ['Akash', 'Torge', 'Emiliano', 'Daniel', 'Mateus']);
+});
+
+test('a field sort puts a missing value last, whichever way it runs', () => {
+  assert.equal(sortOnField(scorers, { key: 'rate', direction: 'descending' }).at(-1).player, 'Akash');
+  assert.equal(sortOnField(scorers, { key: 'rate', direction: 'ascending' }).at(-1).player, 'Akash');
+});
+
+test('a field sort orders names as R does, and leaves the rows it was given alone', () => {
+  const before = order(scorers);
+  assert.deepEqual(order(sortOnField(scorers, { key: 'player', direction: 'ascending' })), ['Akash', 'Daniel', 'Emiliano', 'Mateus', 'Torge']);
+  assert.deepEqual(order(scorers), before);
+});
+
+test('the first press on a column of figures starts with the largest', () => {
+  assert.deepEqual(nextSort({ key: 'goals', direction: 'descending' }, 'mom'), { key: 'mom', direction: 'descending' });
+  assert.deepEqual(nextSort({ key: 'goals', direction: 'descending' }, 'goals'), { key: 'goals', direction: 'ascending' });
 });

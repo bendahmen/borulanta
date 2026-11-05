@@ -165,9 +165,9 @@ Scaffold `site/`, then build the shared shell and navigation, Home and Players >
 
 Build Fees (You, Everyone), League (table, run-in), Matches (Results, Trends) and Players (Roster and profile). Add shareable `/players/<slug>/` and `/matches/<date>/` pages. Each page gets its own title and description, which also sets up link previews.
 
-- [ ] Walk through `README.md` and every output in `app.R`, and list each feature as kept, changed or dropped. Ben approves anything dropped.
-- [ ] All numbers match Shiny across all season combinations, by a script rather than by eye where practical.
-- [ ] Every balance and the outstanding and credit totals match to the penny.
+- [ ] Walk through `README.md` and every output in `app.R`, and list each feature as kept, changed or dropped. Ben approves anything dropped. The list is in `docs/static-site-features.md`.
+- [x] All numbers match Shiny across all season combinations, by a script rather than by eye where practical.
+- [x] Every balance and the outstanding and credit totals match to the penny.
 
 ### Stage 4: weekly routine
 
@@ -204,7 +204,7 @@ Remove the Connect Cloud content, `app.R`, `manifest.json`, `scripts/write-manif
 
 Raise each one when it becomes relevant, and do not settle them yourself.
 
-1. **Season picker, at Stage 2.** We keep any-combination ticks in the prototype. Nobody has evidence anyone uses combinations, so a dropdown with an all-time option may be better on a phone.
+1. **Season picker, at Stage 2.** We keep any-combination ticks in the prototype. Nobody has evidence anyone uses combinations, so a dropdown with an all-time option may be better on a phone. Settled 5 November 2026: any-combination ticks stay.
 2. **Privacy, before Stage 5.** Names and balances are readable in the public repo and history, and would sit in public JSON too. Ben can accept that, or add Cloudflare Access with a private repo. Whether Access covers static assets is unconfirmed, and the Connect Cloud free tier deploys only from public repos, so going private has to wait until Shiny is retired or be arranged separately.
 3. **Address, at Stage 5.** A default Cloudflare address costs nothing, and a custom domain costs money.
 
@@ -216,6 +216,7 @@ These include writes of any kind, logins, push notifications, RSVP (WhatsApp Eve
 
 - 4 November 2026: a repeated match date or attendance row now stops the export instead of going to the banner. Ben decided this because correct fees come first. In the Stage 1 review's test, a repeated last match published £719.56 outstanding instead of £491.55 under a quiet banner. No regression estimate had any bearing on it. Shiny is unchanged: it carries on and shows them in its banner.
 - 4 November 2026: `data_hash` covers `data/archive/*.csv` as well as `data/*.csv`, because the archived ledgers feed the balances and a stale one would otherwise pass the check. Decided while writing the export, with no bearing on any estimate.
+- 5 November 2026: Ben gave the go-ahead for Stage 3. His phone could not reach the dev server, so the real-phone check falls to Stage 5. Any-combination ticks stay. Every other data problem stays in the banner, including a player missing from the active roster, attendance with no match, unknown players and anything dated before the first season. "To pay", "Nothing to pay" and "In credit" are approved. The ridge wording stays as written. Where one axis of the attack and defence plot would collapse into a line, the axes get separate scales and the plot says so. This last change came after seeing the estimates: under ridge each outcome has its own penalty, and season 2 alone shrinks goals scored to about 1e-37.
 
 ## Kickoff prompt
 

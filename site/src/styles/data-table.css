@@ -1,0 +1,1197 @@
+/* The tables src/lib/data-table.js draws, on any page that imports this. A phone first:
+   a table whose columns will not fit keeps the ones that matter and opens the rest under
+   the row, without a script. Container queries in rem rather than media queries, because
+   a media query cannot see enlarged text. */
+
+.dt-fit {
+  /* The row tints reach a little past the text, which stays in line with the card head. */
+  --dt-edge: 8px;
+  /* A row's link to its own page, wide enough for a thumb. */
+  --dt-go: 44px;
+  container-type: inline-size;
+  margin: 8px calc(-1 * var(--dt-edge)) 0;
+}
+
+.dt {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  line-height: 1.25;
+}
+
+.dt th,
+.dt td {
+  padding: 11px 0 11px 10px;
+  font-weight: 400;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: break-word;
+}
+
+.dt thead th {
+  padding-block: 0 5px;
+  border-bottom: 1px solid var(--border);
+  color: var(--ink-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  vertical-align: bottom;
+}
+
+.dt tbody th {
+  font-weight: 600;
+}
+
+.dt tr > :first-child {
+  padding-left: var(--dt-edge);
+}
+
+.dt tr > :last-child {
+  padding-right: var(--dt-edge);
+}
+
+.dt-row > * {
+  border-bottom: 1px solid var(--border);
+}
+
+.dt .dt-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.dt td.dt-num {
+  white-space: nowrap;
+}
+
+/* The one column that gives way when a table is short of room. */
+.dt-league .col-team,
+.dt-run-in .col-opponent {
+  width: 100%;
+  overflow-wrap: anywhere;
+}
+
+/* The word that says what a row's colour says. */
+.dt-cue {
+  margin-left: 4px;
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dt-row.is-owed {
+  background: var(--amber-soft);
+}
+
+.dt .is-owed > * {
+  font-weight: 600;
+}
+
+.dt .is-owed .dt-cue {
+  color: var(--amber);
+}
+
+.dt-row.is-credit {
+  background: var(--green-soft);
+}
+
+.dt .is-credit .dt-cue {
+  color: var(--green);
+}
+
+/* Our row: the weight and the bar say it as well as the tint. */
+.dt-row.is-us {
+  background: var(--blue-soft);
+}
+
+.dt .is-us > * {
+  font-weight: 600;
+}
+
+.dt .is-us > :first-child {
+  box-shadow: inset 3px 0 0 var(--blue);
+}
+
+.dt-empty {
+  margin-top: 8px;
+  color: var(--ink-muted);
+}
+
+.dt-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: none;
+  color: var(--blue);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ---- A table that folds, in its folded state ---- */
+
+/* Each row is a grid. The lead cell spans all of it, so the whole row is the tap target
+   and the part that opens can use the full width, and the kept figures sit on top of its
+   first line. Tracks are in rem so that they grow with the text, and each table says what
+   they are, because a row's grid cannot size itself from the rows around it. */
+.dt-folding,
+.dt-folding thead,
+.dt-folding tbody {
+  display: block;
+}
+
+.dt-folding tr {
+  display: grid;
+  grid-template-columns: var(--dt-columns);
+}
+
+.dt-folding .dt-fold {
+  display: none;
+}
+
+/* The tracks hold their own gaps. */
+.dt-folding thead th:not(:first-child),
+.dt-folding tbody td {
+  padding-left: 0;
+}
+
+.dt-folding tbody .dt-lead {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  padding: 0;
+}
+
+.dt-folding tbody td {
+  grid-row: 1;
+  pointer-events: none;
+}
+
+.dt-whole {
+  display: none;
+}
+
+.dt-more summary {
+  display: flex;
+  align-items: flex-start;
+  min-height: 44px;
+  padding: calc(11px + var(--dt-above, 0px)) calc(var(--dt-end, 0rem) + 4px) 11px calc(var(--dt-start, 0rem) + var(--dt-edge) - 3px);
+  list-style: none;
+  cursor: pointer;
+}
+
+.dt-more summary::-webkit-details-marker {
+  display: none;
+}
+
+.dt-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.dt-more summary:focus-visible {
+  outline-offset: -2px;
+}
+
+.dt-chevron {
+  flex: 0 0 auto;
+  /* Centred on the first line, however large the text. */
+  margin-top: calc((1.25em - 16px) / 2);
+  margin-right: 4px;
+  fill: none;
+  stroke: var(--ink-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dt-more[open] .dt-chevron {
+  transform: rotate(90deg);
+}
+
+.dt-more dl {
+  display: grid;
+  gap: 4px;
+  padding: 0 var(--dt-edge) 11px calc(var(--dt-start, 0rem) + var(--dt-edge) + 17px);
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.dt-more dl > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  column-gap: 12px;
+}
+
+.dt-more dt {
+  color: var(--ink-muted);
+}
+
+.dt-more dd {
+  margin-left: auto;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.dt-more .dt-long {
+  display: block;
+}
+
+.dt-more .dt-long dd {
+  margin: 1px 0 0;
+  text-align: left;
+}
+
+/* ---- Everything fits in columns from here ---- */
+
+@container (min-width: 40rem) {
+  .dt-folding { display: table; }
+  .dt-folding thead { display: table-header-group; }
+  .dt-folding tbody { display: table-row-group; }
+  .dt-folding tr { display: table-row; }
+  .dt-folding .dt-fold { display: table-cell; }
+  .dt-folding tbody .dt-lead { padding: 11px 0 11px var(--dt-edge); }
+  .dt-folding thead th:not(:first-child),
+  .dt-folding tbody td { padding-left: 10px; }
+  .dt-folding tbody td { pointer-events: auto; }
+  .dt-folding .dt-more { display: none; }
+  .dt-folding .dt-whole { display: inline; }
+
+  /* The explanation is the column that wraps. */
+  .dt-charges .dt-whole,
+  .dt-charges .col-season { white-space: nowrap; }
+  .dt-charges .col-explanation { width: 100%; }
+  .dt-charges .col-charge { padding-right: 0; }
+}
+
+/* The league table fits all eight columns at any phone width at normal text size. Only
+   enlarged text folds it. */
+@container (min-width: 15rem) {
+  .dt-tight.dt-folding { display: table; }
+  .dt-tight.dt-folding thead { display: table-header-group; }
+  .dt-tight.dt-folding tbody { display: table-row-group; }
+  .dt-tight.dt-folding tr { display: table-row; }
+  .dt-tight.dt-folding .dt-fold { display: table-cell; }
+  .dt-tight.dt-folding tbody .dt-lead { padding: 10px 0 10px 8px; }
+  .dt-tight.dt-folding thead th:not(:first-child),
+  .dt-tight.dt-folding tbody td { padding-left: 8px; }
+  .dt-league.dt-folding thead .col-team { padding-left: 8px; }
+  .dt-tight.dt-folding tbody td { pointer-events: auto; }
+  .dt-tight.dt-folding .dt-more { display: none; }
+  .dt-tight.dt-folding .dt-whole { display: inline; }
+}
+
+/* ---- Each table's folded tracks ---- */
+
+.dt-charges {
+  --dt-columns: minmax(0, 1fr) 3rem calc(3.25rem + var(--dt-edge));
+  --dt-end: calc(6.25rem + var(--dt-edge));
+}
+
+.dt-charges .col-result { grid-column: 2; }
+
+/* The last column showing, though not the last in the row: Explanation is folded away. */
+.dt-charges .col-charge {
+  grid-column: 3;
+  padding-right: var(--dt-edge);
+}
+
+.dt-balances {
+  --dt-columns: minmax(0, 1fr) calc(4rem + var(--dt-edge));
+  --dt-end: calc(4rem + var(--dt-edge));
+}
+
+.dt-balances .col-balance { grid-column: 2; }
+
+.dt-league {
+  --dt-columns: calc(1.75rem + var(--dt-edge)) minmax(0, 1fr) calc(2rem + var(--dt-edge));
+  --dt-start: calc(1.75rem + var(--dt-edge));
+  --dt-end: calc(2rem + var(--dt-edge));
+  font-size: 0.875rem;
+}
+
+.dt-league .col-position { grid-column: 1; }
+.dt-league .col-team { grid-column: 2; }
+.dt-league .col-points { grid-column: 3; }
+
+/* In line with the names, which sit past the chevron. */
+.dt-league.dt-folding thead .col-team {
+  padding-left: calc(var(--dt-edge) + 17px);
+}
+
+/* Tight enough for 320 px: the team name wraps before anything scrolls. */
+.dt-league th,
+.dt-league td {
+  padding: 10px 0 10px 8px;
+}
+
+.dt-run-in .col-date {
+  white-space: nowrap;
+}
+
+.dt-league thead th {
+  padding-block: 0 5px;
+}
+
+/* Enlarged text on a phone, where the kept figures leave the lead too little room. The
+   lead takes the full width and starts a line down, and the figures keep the first line.
+   That way round, a lead that wraps can never run into them. */
+@container (max-width: 14rem) {
+  .dt-charges {
+    --dt-above: calc(1.25em + 2px);
+    --dt-end: 0rem;
+  }
+}
+
+@container (max-width: 9rem) {
+  .dt-balances,
+  .dt-league {
+    --dt-above: calc(1.25em + 2px);
+    --dt-start: 0rem;
+    --dt-end: 0rem;
+  }
+}
+
+/* The same trouble here. The date and the opponent share one column, a line each, rather
+   than break a team name in two. */
+@container (max-width: 14rem) {
+  .dt-run-in,
+  .dt-run-in thead,
+  .dt-run-in tbody {
+    display: block;
+  }
+
+  .dt-run-in tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dt-run-in thead th,
+  .dt-run-in .dt-row > * {
+    border-bottom: 0;
+  }
+
+  .dt-run-in .col-date { grid-area: 1 / 1; padding-bottom: 0; white-space: normal; }
+  .dt-run-in .col-opponent { grid-area: 2 / 1; width: auto; padding: 0 0 11px var(--dt-edge); }
+  .dt-run-in .col-position { grid-area: 1 / 2 / span 2 / auto; }
+  .dt-run-in thead .col-date { padding-bottom: 0; }
+  .dt-run-in thead .col-opponent { padding-bottom: 5px; }
+  .dt-run-in thead .col-position { align-self: end; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dt-chevron {
+    transition: transform 0.15s ease;
+  }
+}
+
+/* ---- Matches: a table the page changes, in src/components/DataTable.svelte ---- */
+
+/* The mark sits above the word and takes no width, because every pixel counts on a phone. */
+.dt-sort {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 2px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dt-num .dt-sort {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.dt th[aria-sort] {
+  color: var(--blue);
+}
+
+.dt-sort-mark {
+  flex: 0 0 auto;
+  visibility: hidden;
+  fill: currentColor;
+}
+
+.dt-sort-mark.is-active {
+  visibility: visible;
+}
+
+.dt-sort-mark.is-up {
+  transform: rotate(180deg);
+}
+
+.dt-sort:focus-visible {
+  outline-offset: -2px;
+}
+
+/* The top three by turnout, as .rank-top3 on the live site. The word in the row says it too. */
+.dt-row.rank-top3 {
+  background: var(--green-soft);
+}
+
+.dt .rank-top3 .dt-cue {
+  color: var(--green);
+}
+
+/* The picked row: the weight and the bar say it as well as the tint. */
+.dt-row.is-picked {
+  background: var(--blue-soft);
+}
+
+.dt .is-picked > * {
+  font-weight: 600;
+}
+
+.dt .is-picked > :first-child {
+  box-shadow: inset 3px 0 0 var(--blue);
+}
+
+.dt-pickable .dt-row {
+  cursor: pointer;
+}
+
+.dt-pick {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .dt-pickable .dt-row:not(.is-picked):hover {
+    background: var(--bg);
+  }
+}
+
+/* A row's link to its own page: small to look at, full height to tap. */
+.dt-go {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--dt-go);
+  min-height: 44px;
+  margin-block: -11px;
+  color: var(--blue);
+}
+
+.dt-go svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dt-results .col-opponent {
+  width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.dt-results .col-date {
+  white-space: nowrap;
+}
+
+.dt-results .col-page {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+/* A name is a link, 44 px tall. The column is all links, so the colour says it without an
+   underline on every row. */
+.dt-lineup a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  text-decoration: none;
+}
+
+.dt-lineup td {
+  vertical-align: middle;
+}
+
+/* Under the row the link stays at the far side, with its label, and its cell has no padding
+   to take back. */
+.dt-more dl > .dt-link {
+  align-items: center;
+}
+
+.dt-more .dt-link a {
+  justify-content: flex-end;
+}
+
+@media (hover: hover) {
+  .dt-lineup a:hover {
+    text-decoration: underline;
+  }
+}
+
+/* A phone: the date and the opponent share a column, a line each, which leaves the name room. */
+@container (max-width: 30rem) {
+  .dt-results,
+  .dt-results thead,
+  .dt-results tbody {
+    display: block;
+  }
+
+  .dt-results tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 3rem 4.25rem var(--dt-go);
+    align-items: center;
+  }
+
+  .dt-results .dt-row {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dt-results thead tr {
+    border-bottom: 1px solid var(--border);
+    align-items: end;
+  }
+
+  .dt-results thead th,
+  .dt-results .dt-row > * {
+    padding-block: 0;
+    border-bottom: 0;
+  }
+
+  .dt-results .dt-row > * {
+    padding-left: 0;
+  }
+
+  .dt-results .col-date {
+    grid-area: 1 / 1;
+    padding-left: var(--dt-edge);
+  }
+
+  .dt-results .dt-row > .col-date {
+    padding-block: 8px 0;
+  }
+
+  .dt-results thead .col-opponent,
+  .dt-results .dt-row > .col-opponent {
+    grid-area: 2 / 1;
+    padding: 0 0 8px var(--dt-edge);
+    width: auto;
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+  }
+
+  .dt-results thead .col-opponent {
+    padding-bottom: 5px;
+    font-size: 0.8125rem;
+  }
+
+  .dt-results .col-result {
+    grid-area: 1 / 2 / span 2;
+    padding-inline: 0 10px;
+  }
+
+  .dt-results .col-outcome {
+    grid-area: 1 / 3 / span 2;
+    padding-left: 0;
+  }
+
+  .dt-results .col-page {
+    grid-area: 1 / 4 / span 2;
+    padding: 0;
+  }
+
+  .dt-results .dt-go {
+    margin-block: 0;
+  }
+
+  .dt-results .is-picked {
+    box-shadow: inset 3px 0 0 var(--blue);
+  }
+
+  .dt-results .is-picked > :first-child {
+    box-shadow: none;
+  }
+}
+
+/* Enlarged text: the score and the badge take a line of their own under those two. */
+@container (max-width: 15rem) {
+  .dt-results tr {
+    grid-template-columns: auto minmax(0, 1fr) var(--dt-go);
+    column-gap: 10px;
+  }
+
+  .dt-results .col-date,
+  .dt-results thead .col-opponent,
+  .dt-results .dt-row > .col-opponent {
+    grid-column: 1 / span 2;
+  }
+
+  .dt-results .dt-row > .col-opponent {
+    padding-bottom: 0;
+  }
+
+  .dt-results .col-result {
+    grid-area: 3 / 1;
+    padding: 0 0 8px var(--dt-edge);
+    text-align: left;
+  }
+
+  .dt-results thead .col-result {
+    padding-bottom: 5px;
+  }
+
+  .dt-results .col-outcome {
+    grid-area: 3 / 2;
+    padding-bottom: 8px;
+  }
+
+  .dt-results thead .col-outcome {
+    padding-bottom: 5px;
+  }
+
+  .dt-results .col-page {
+    grid-area: 1 / 3 / span 3;
+  }
+}
+
+/* Five columns fit from here down to a 320 px phone. Every heading stays a whole word or two. */
+.dt-scorers .col-player {
+  width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.dt-scorers thead th {
+  padding-left: 6px;
+  overflow-wrap: normal;
+  font-size: 0.75rem;
+}
+
+.dt-scorers td {
+  padding-left: 6px;
+}
+
+@container (min-width: 23rem) {
+  .dt-scorers thead th,
+  .dt-scorers td {
+    padding-left: 14px;
+  }
+}
+
+/* Below that, only with enlarged text: every figure on a line of its own, with its label, and
+   every sort still there along the top. */
+@container (max-width: 16.5rem) {
+  .dt-scorers,
+  .dt-scorers thead,
+  .dt-scorers tbody,
+  .dt-scorers tr {
+    display: block;
+  }
+
+  .dt-scorers thead tr {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 12px;
+    padding-inline: var(--dt-edge);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dt-scorers thead th {
+    padding: 0 0 5px;
+    border-bottom: 0;
+  }
+
+  .dt-scorers .col-player {
+    width: auto;
+  }
+
+  .dt-scorers .dt-sort,
+  .dt-num .dt-sort {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 4px;
+    width: auto;
+  }
+
+  .dt-scorers .dt-sort-mark {
+    order: 1;
+  }
+
+  .dt-scorers .dt-row > * {
+    display: block;
+    padding: 2px var(--dt-edge);
+    border-bottom: 0;
+  }
+
+  .dt-scorers .dt-row > .dt-lead {
+    padding-top: 10px;
+  }
+
+  .dt-scorers .dt-row > :last-child {
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dt-scorers td.dt-num {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    column-gap: 12px;
+    white-space: normal;
+  }
+
+  .dt-scorers td::before {
+    content: attr(data-label);
+    color: var(--ink-muted);
+  }
+}
+
+/* Head to head. A phone keeps the record and Pts/match, and the goals open under the row.
+   Everything has a column from 30rem, which is well short of the width for Fees. */
+.dt-opponents {
+  --dt-columns: minmax(0, 1fr) repeat(4, 1.5rem) calc(4.25rem + var(--dt-edge));
+  --dt-end: calc(10.25rem + var(--dt-edge));
+}
+
+.dt-opponents thead .col-opponent {
+  padding-left: calc(var(--dt-edge) + 17px);
+}
+
+.dt-opponents .col-played { grid-column: 2; }
+.dt-opponents .col-won { grid-column: 3; }
+.dt-opponents .col-drawn { grid-column: 4; }
+.dt-opponents .col-lost { grid-column: 5; }
+.dt-opponents .col-points-per-match { grid-column: 6; }
+
+@container (min-width: 30rem) {
+  .dt-opponents.dt-folding { display: table; }
+  .dt-opponents.dt-folding thead { display: table-header-group; }
+  .dt-opponents.dt-folding tbody { display: table-row-group; }
+  .dt-opponents.dt-folding tr { display: table-row; }
+  .dt-opponents.dt-folding .dt-fold { display: table-cell; }
+  .dt-opponents.dt-folding tbody .dt-lead { padding: 11px 0 11px var(--dt-edge); }
+  .dt-opponents.dt-folding thead .col-opponent { padding-left: var(--dt-edge); }
+  .dt-opponents.dt-folding thead th:not(:first-child),
+  .dt-opponents.dt-folding tbody td { padding-left: 10px; }
+  .dt-opponents.dt-folding tbody td { pointer-events: auto; }
+  .dt-opponents.dt-folding .dt-more { display: none; }
+  .dt-opponents.dt-folding .dt-whole { display: inline; }
+}
+
+/* Enlarged text on a phone. The name takes the full width a line down, and the figures keep
+   the first line, as on the charges. The heading row is laid out the same way. */
+@container (max-width: 14rem) {
+  .dt-opponents {
+    --dt-above: calc(1.25em + 2px);
+    --dt-end: 0rem;
+  }
+
+  .dt-opponents thead .col-opponent {
+    grid-area: 2 / 1 / auto / -1;
+    padding-left: calc(var(--dt-edge) + 17px);
+  }
+}
+
+/* The figures take the whole width here, and Pts/match has what the other four leave. */
+@container (max-width: 10.75rem) {
+  .dt-opponents {
+    --dt-columns: 0rem repeat(4, 1rem) minmax(0, 1fr);
+  }
+
+  .dt-opponents thead .col-points-per-match {
+    white-space: nowrap;
+  }
+}
+
+/* A lineup: three columns unless the text is enlarged, when the appearances fold away. */
+.dt-lineup {
+  --dt-columns: minmax(0, 1fr) calc(3rem + var(--dt-edge));
+  --dt-end: calc(3rem + var(--dt-edge));
+}
+
+.dt-lineup .col-player {
+  width: 100%;
+}
+
+.dt-lineup .col-turnout { grid-column: 2; }
+
+.dt-lineup.dt-folding thead .col-player {
+  padding-left: calc(var(--dt-edge) + 17px);
+}
+
+@container (min-width: 15rem) {
+  .dt-lineup.dt-folding thead .col-player {
+    padding-left: var(--dt-edge);
+  }
+
+  /* The link fills its cell, with margins that take back the padding .dt-tight gives it. */
+  .dt-lineup.dt-folding .dt-whole {
+    display: block;
+  }
+
+  .dt-lineup .dt-whole a {
+    margin-block: -10px;
+  }
+}
+
+/* ---- Players ---- */
+
+/* Who turns up. Every column fits from 36rem. Below that a row keeps the name, Turnout and Avg
+   points, and the goals open under it with their labels. */
+.dt-roster .col-player {
+  width: 100%;
+}
+
+.dt-roster td {
+  vertical-align: middle;
+}
+
+.dt-roster .col-page {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.dt-roster .dt-pick {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.dt-roster thead th {
+  white-space: nowrap;
+}
+
+.dt-roster thead th:not(.col-player),
+.dt-roster td {
+  padding-left: 16px;
+}
+
+/* The chevron's target, wide enough for a thumb, is what the name lines up past. */
+.dt-roster {
+  --dt-past-chevron: 44px;
+}
+
+.dt-unfold {
+  display: none;
+}
+
+.dt-unfold[aria-expanded='true'] .dt-chevron {
+  transform: rotate(90deg);
+}
+
+@container (max-width: 36rem) {
+  .dt-roster,
+  .dt-roster thead,
+  .dt-roster tbody {
+    display: block;
+  }
+
+  .dt-roster tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 3.25rem 3.25rem var(--dt-go);
+    align-items: center;
+  }
+
+  .dt-roster thead tr {
+    align-items: end;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dt-roster .dt-row {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dt-roster thead th,
+  .dt-roster .dt-row > * {
+    padding: 0;
+    border-bottom: 0;
+  }
+
+  .dt-roster thead th:not(.col-player),
+  .dt-roster td {
+    padding-left: 0;
+  }
+
+  .dt-roster thead th {
+    white-space: normal;
+  }
+
+  .dt-roster .col-attendance_rate { grid-area: 1 / 2; }
+  .dt-roster .col-avg_points { grid-area: 1 / 3; }
+  .dt-roster .col-page { grid-area: 1 / 4; padding: 0; }
+
+  /* In line with the names, past the chevron. */
+  .dt-roster thead .col-player {
+    grid-area: 1 / 1;
+    padding-left: var(--dt-past-chevron);
+  }
+
+  /* The goals keep their sort along the top, on a line of their own. */
+  .dt-roster thead th.col-avg_goals_scored {
+    grid-area: 2 / 1;
+    padding-left: var(--dt-past-chevron);
+  }
+
+  .dt-roster thead th.col-avg_goals_conceded {
+    grid-area: 2 / 2 / auto / -1;
+    padding-right: 2px;
+  }
+
+  .dt-roster thead .col-avg_goals_scored .dt-sort {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  /* The chevron holds the start of the row, so a word that wraps stays under the name. */
+  .dt-roster .dt-row > .dt-lead {
+    grid-area: 1 / 1;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: center;
+    column-gap: 4px;
+    min-height: 44px;
+    padding-left: var(--dt-past-chevron);
+  }
+
+  .dt-roster .dt-cue {
+    margin-left: 0;
+  }
+
+  .dt-unfold {
+    position: absolute;
+    inset: 0 auto 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--dt-past-chevron);
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+
+  .dt-unfold .dt-chevron {
+    margin: 0;
+  }
+
+  .dt-unfold:focus-visible {
+    outline-offset: -2px;
+  }
+
+  .dt-roster .dt-go {
+    margin-block: 0;
+  }
+
+  /* Under the row when opened, and always while the rows are sorted on that column. The figure
+     ends in line with the Avg points column. */
+  .dt-roster .dt-row > .dt-fold {
+    display: flex;
+    grid-column: 1 / -1;
+    justify-content: space-between;
+    column-gap: 12px;
+    padding: 0 var(--dt-go) 6px var(--dt-past-chevron);
+    font-size: 0.875rem;
+    white-space: normal;
+  }
+
+  /* Otherwise hidden from sight only. Removed outright, the row's link would fall under the
+     Avg goals scored heading for anyone using a screen reader. */
+  .dt-roster .dt-row:not(.is-open) > .dt-fold:not(.is-sorted) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .dt-roster .is-open > td.dt-fold::before,
+  .dt-roster .dt-row > td.dt-fold.is-sorted::before {
+    content: attr(data-label);
+    color: var(--ink-muted);
+  }
+
+  .dt-roster .is-picked {
+    box-shadow: inset 3px 0 0 var(--blue);
+  }
+
+  .dt-roster .is-picked > :first-child {
+    box-shadow: none;
+  }
+}
+
+/* Enlarged text: every figure on a line of its own, with its label, and every sort still
+   there along the top. */
+@container (max-width: 14.5rem) {
+  .dt-roster tr {
+    grid-template-columns: minmax(0, 1fr) var(--dt-go);
+  }
+
+  .dt-roster thead tr {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 12px;
+    padding-inline: var(--dt-edge);
+  }
+
+  .dt-roster thead th.col-player,
+  .dt-roster thead th.col-avg_goals_scored,
+  .dt-roster thead th.col-avg_goals_conceded {
+    width: auto;
+    padding: 0;
+  }
+
+  /* Blank, with nothing to press. Hidden from sight only, to keep the headings in step with
+     the cells for a screen reader. */
+  .dt-roster thead .col-page {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .dt-roster .dt-sort,
+  .dt-roster .dt-num .dt-sort {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 4px;
+    width: auto;
+  }
+
+  .dt-roster .dt-sort-mark {
+    order: 1;
+  }
+
+  .dt-roster .dt-row > .col-page {
+    grid-area: 1 / 2;
+  }
+
+  .dt-roster .dt-row > .dt-lead {
+    grid-area: 1 / 1;
+  }
+
+  .dt-roster .dt-row > .col-attendance_rate,
+  .dt-roster .dt-row > .col-avg_points {
+    grid-area: auto / 1 / auto / -1;
+  }
+
+  .dt-roster .dt-row > td.dt-num {
+    justify-content: space-between;
+    column-gap: 12px;
+    padding: 0 var(--dt-edge) 6px var(--dt-past-chevron);
+    font-size: 0.875rem;
+    white-space: normal;
+  }
+
+  .dt-roster .dt-row > .col-attendance_rate,
+  .dt-roster .dt-row > .col-avg_points {
+    display: flex;
+  }
+
+  .dt-roster .dt-row > .col-attendance_rate::before,
+  .dt-roster .dt-row > .col-avg_points::before {
+    content: attr(data-label);
+    color: var(--ink-muted);
+  }
+}
+
+/* With and without: eight columns, which fit down to a 320 px phone. */
+.dt-with-without .col-side {
+  width: 100%;
+}
+
+.dt-with-without thead th {
+  padding-left: 6px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.dt-with-without td {
+  padding-left: 6px;
+}
+
+/* From a 375 px phone up, the counts sit evenly rather than as wide as each happens to be. */
+@container (min-width: 20rem) {
+  .dt-with-without .col-played,
+  .dt-with-without .col-won,
+  .dt-with-without .col-drawn,
+  .dt-with-without .col-lost {
+    width: 1.6rem;
+  }
+
+  .dt-with-without .col-goals_for,
+  .dt-with-without .col-goals_against {
+    width: 1.9rem;
+  }
+}
+
+@container (min-width: 24rem) {
+  .dt-with-without thead th,
+  .dt-with-without td {
+    padding-left: 12px;
+  }
+}
+
+/* Below that, only with enlarged text: every figure on a line of its own, with its label.
+   The headings stay for a screen reader. */
+@container (max-width: 16.5rem) {
+  .dt-with-without,
+  .dt-with-without tbody,
+  .dt-with-without tr {
+    display: block;
+  }
+
+  .dt-with-without thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .dt-with-without .dt-row > * {
+    display: block;
+    padding: 2px var(--dt-edge);
+    border-bottom: 0;
+  }
+
+  .dt-with-without .dt-row > .dt-lead {
+    padding-top: 10px;
+  }
+
+  .dt-with-without .dt-row > :last-child {
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dt-with-without td.dt-num {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    column-gap: 12px;
+    white-space: normal;
+  }
+
+  .dt-with-without td::before {
+    content: attr(data-label);
+    color: var(--ink-muted);
+  }
+}

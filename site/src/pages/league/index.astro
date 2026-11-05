@@ -1,10 +1,99 @@
 ---
-import Stub from '../../components/Stub.astro';
+// The standings and the fixture list describe the current league season, which is not a
+// fee season, so nothing here takes the season picker. Both tables are in the HTML.
+import '../../styles/data-table.css';
+
+import CardHead from '../../components/CardHead.svelte';
+import fixtures from '../../generated/fixtures.json';
+import league from '../../generated/league.json';
+import meta from '../../generated/meta.json';
+import wording from '../../generated/wording.json';
 import Base from '../../layouts/Base.astro';
-import { PAGES } from '../../lib/labels.js';
+import { tableHtml } from '../../lib/data-table.js';
+import dates from '../../lib/fixture-dates.js?raw';
+import { moduleToInline } from '../../lib/inline.js';
+import { NO_SCRIPT, PAGES } from '../../lib/labels.js';
+import { leagueColumns, runInColumns } from '../../lib/league-table.js';
+import runIn from '../../lib/run-in.js?raw';
 
 const page = PAGES.league;
+const cards = wording.league_cards;
+const hasStandings = league.rows.length > 0;
+const hasFixtures = fixtures.fixtures.length > 0;
+
+const standings = tableHtml({
+  className: 'dt-league dt-tight',
+  caption: league.title,
+  columns: leagueColumns(cards.headings),
+  rows: league.rows,
+  rowClass: (row) => (row.team === meta.our_team ? 'is-us' : ''),
+  rowAttributes: (row) => (row.team === meta.our_team ? { 'aria-current': 'true' } : {}),
+});
+
+// Every fixture is in the HTML and hidden. The script below shows those still to come
+// before first paint, and with scripts off the style in the noscript shows them all.
+const runInTable = tableHtml({
+  className: 'dt-run-in',
+  caption: cards.run_in.title,
+  columns: runInColumns(cards.run_in.headings),
+  rows: fixtures.fixtures,
+  rowAttributes: (row) => ({ 'data-date': row.date, hidden: true }),
+});
+
+const script = `(function(){${moduleToInline(dates)}
+${moduleToInline(runIn)}
+mountRunIn(document.getElementById("run-in"));}());`;
 ---
 <Base title={page.title} description={page.description} current="league">
-  <Stub title={page.title} />
+  <h1 class="visually-hidden">{page.title}</h1>
+  <div class="league">
+    <section class="card" aria-labelledby={hasStandings ? 'standings-title' : 'standings-tag'}>
+      {
+        hasStandings ? (
+          <>
+            <CardHead id="standings-title" card={{ tag: league.tag, title: league.title, subtitle: league.subtitle }} />
+            <Fragment set:html={standings} />
+          </>
+        ) : (
+          <>
+            <h2 id="standings-tag" class="tag">{league.tag}</h2>
+            <p class="dt-empty">{league.empty}</p>
+          </>
+        )
+      }
+    </section>
+
+    <section id="run-in" class="card" aria-labelledby="run-in-title">
+      <CardHead id="run-in-title" card={cards.run_in} />
+      {hasFixtures && <Fragment set:html={runInTable} />}
+      <p class="dt-empty" data-run-in="empty" hidden={hasFixtures}>{fixtures.run_in_empty}</p>
+      <noscript>
+        <style is:inline>.dt-run-in tr[hidden] { display: table-row !important; }</style>
+        {hasFixtures && <p class="no-script">{NO_SCRIPT.fixtures}</p>}
+      </noscript>
+    </section>
+    <script is:inline set:html={script}></script>
+  </div>
 </Base>
+
+<style>
+  .league {
+    display: grid;
+    gap: 10px;
+  }
+
+  .no-script {
+    margin-top: 8px;
+    color: var(--ink-muted);
+    font-size: 0.8125rem;
+    line-height: 1.35;
+  }
+
+  @media (min-width: 768px) {
+    .league {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      align-items: start;
+      gap: 16px;
+    }
+  }
+</style>
