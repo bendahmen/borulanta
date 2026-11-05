@@ -1,9 +1,11 @@
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import svelte from '@astrojs/svelte';
 import { defineConfig } from 'astro/config';
 
 import { checkDataHash } from './src/lib/data-hash.js';
+import { addModulePreloads } from './src/lib/module-preload.js';
 
 const hashPaths = {
   repoRoot: fileURLToPath(new URL('..', import.meta.url)),
@@ -29,8 +31,27 @@ function staleDataCheck() {
   };
 }
 
+// Only pages with an island are changed. See src/lib/module-preload.js for why.
+function preloadIslandChunks() {
+  return {
+    name: 'borulanta:preload-island-chunks',
+    hooks: {
+      'astro:build:done': ({ dir, pages }) => {
+        const readChunk = (name) => readFileSync(new URL(`_astro/${name}`, dir), 'utf8');
+        for (const { pathname } of pages) {
+          const file = new URL(`${pathname}index.html`, dir);
+          if (!existsSync(file)) continue;
+          const html = readFileSync(file, 'utf8');
+          const updated = addModulePreloads(html, readChunk);
+          if (updated !== html) writeFileSync(file, updated);
+        }
+      },
+    },
+  };
+}
+
 export default defineConfig({
-  integrations: [svelte(), staleDataCheck()],
+  integrations: [svelte(), staleDataCheck(), preloadIslandChunks()],
   // Its bar sits on top of the bottom tabs when testing on a phone.
   devToolbar: { enabled: false },
   // Most visits are first visits from a WhatsApp link, so skip the extra round trip.

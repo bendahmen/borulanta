@@ -38,12 +38,25 @@ export const FEE_STATUS = {
 export const NO_SCRIPT = {
   fixtures: 'Your browser is not running scripts, so here is every fixture on the list.',
   balance: 'Your browser is not running scripts, so your balance cannot show here.',
+  effects: 'Your browser is not running scripts, so the player effects cannot show here.',
 };
 
 export const STUB = {
   tag: 'Prototype',
   text: 'This page is not in the prototype yet. It is all still on the live app.',
   link: 'Open the live app',
+};
+
+// The words in season_picker() in R/cards.R and player_regression_table() in R/analysis.R,
+// which write them inline and export neither, plus the new copy for a failed fetch.
+export const EFFECTS = {
+  seasons: 'Seasons',
+  player: 'Player',
+  appearances: 'Appearances',
+  playerNames: 'player names',
+  loadFailed: 'These seasons did not load.',
+  retry: 'Try again',
+  moreFor: (player) => `Other outcomes for ${player}`,
 };
 
 export const PAGES = {
