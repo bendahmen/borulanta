@@ -165,7 +165,7 @@ Scaffold `site/`, then build the shared shell and navigation, Home and Players >
 
 Build Fees (You, Everyone), League (table, run-in), Matches (Results, Trends) and Players (Roster and profile). Add shareable `/players/<slug>/` and `/matches/<date>/` pages. Each page gets its own title and description, which also sets up link previews.
 
-- [ ] Walk through `README.md` and every output in `app.R`, and list each feature as kept, changed or dropped. Ben approves anything dropped. The list is in `docs/static-site-features.md`.
+- [x] Walk through `README.md` and every output in `app.R`, and list each feature as kept, changed or dropped. Ben approves anything dropped. The list is in `docs/static-site-features.md`.
 - [x] All numbers match Shiny across all season combinations, by a script rather than by eye where practical.
 - [x] Every balance and the outstanding and credit totals match to the penny.
 
@@ -217,6 +217,7 @@ These include writes of any kind, logins, push notifications, RSVP (WhatsApp Eve
 - 4 November 2026: a repeated match date or attendance row now stops the export instead of going to the banner. Ben decided this because correct fees come first. In the Stage 1 review's test, a repeated last match published £719.56 outstanding instead of £491.55 under a quiet banner. No regression estimate had any bearing on it. Shiny is unchanged: it carries on and shows them in its banner.
 - 4 November 2026: `data_hash` covers `data/archive/*.csv` as well as `data/*.csv`, because the archived ledgers feed the balances and a stale one would otherwise pass the check. Decided while writing the export, with no bearing on any estimate.
 - 5 November 2026: Ben gave the go-ahead for Stage 3. His phone could not reach the dev server, so the real-phone check falls to Stage 5. Any-combination ticks stay. Every other data problem stays in the banner, including a player missing from the active roster, attendance with no match, unknown players and anything dated before the first season. "To pay", "Nothing to pay" and "In credit" are approved. The ridge wording stays as written. Where one axis of the attack and defence plot would collapse into a line, the axes get separate scales and the plot says so. This last change came after seeing the estimates: under ridge each outcome has its own penalty, and season 2 alone shrinks goals scored to about 1e-37.
+- 5 November 2026: Ben approved the Stage 3 feature list and the choices it raised. "Show all" buttons replace the pagers. The appearance strip uses plain squares rather than Observable Plot, because Plot costs about 93 KB on pages with no other chart, and it loses its date axis. The plots have no tooltips, and the attack and defence labels lose their white boxes. Roster keeps a picked player through tick changes and a second tap, and opens on the top row with no remembered name. Oleg's 12% tile and 13% row stay as Shiny has them. The new wording stands.
 
 ## Kickoff prompt
 
