@@ -1,0 +1,231 @@
+/* Shared tokens and the shell. Page parts keep their own styles beside them. */
+
+@font-face {
+  font-family: "Barlow";
+  src: url("/fonts/barlow-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Barlow";
+  src: url("/fonts/barlow-latin-600-normal.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Barlow Condensed";
+  src: url("/fonts/barlow-condensed-latin-700-normal.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Scaled to Barlow's widths. Without this a line that fits in Barlow wraps in the
+   system font while the file loads, and the swap moves everything below it. */
+@font-face {
+  font-family: "Barlow Fallback";
+  src: local("Helvetica Neue"), local("Arial"), local("Roboto");
+  size-adjust: 90%;
+}
+
+@font-face {
+  font-family: "Barlow Condensed Fallback";
+  src: local("Helvetica Neue"), local("Arial"), local("Roboto");
+  size-adjust: 78%;
+}
+
+/* Hex rather than the oklch in www/borulanta.css, of which these are the sRGB
+   values: an unsupported colour function would leave a token empty, and blue,
+   green and amber are APP_COLOURS in R/format.R. */
+:root {
+  color-scheme: light dark;
+
+  --bg: #f3f7f4;
+  --surface: #ffffff;
+  --border: #dbe2dd;
+  --ink: #0b191b;
+  --ink-muted: #4e5c5f;
+
+  --blue: #0850ab;
+  --blue-soft: #dce9fc;
+  --green: #006d1e;
+  --green-soft: #d2f2d6;
+  --amber: #ab4400;
+  --amber-soft: #ffdecd;
+
+  --cta: #006d1e;
+  --on-cta: #ffffff;
+
+  /* The masthead stays navy in both modes, so its text does not change either. */
+  --navy-1: #071e40;
+  --navy-2: #011429;
+  --navy-3: #003238;
+  --on-navy: #fdfdfb;
+  --on-navy-muted: #c3d0da;
+  --on-navy-accent: #59be6c;
+
+  --font-body: "Barlow", "Barlow Fallback", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Barlow Condensed", "Barlow Condensed Fallback", "Helvetica Neue", Arial, sans-serif;
+
+  --gutter: 16px;
+  --tabbar-height: 58px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #07101a;
+    --surface: #111d29;
+    --border: #2a3744;
+    --ink: #ebf0ec;
+    --ink-muted: #abbac2;
+
+    /* APP_COLOURS are too dark to read here, so these are their lighter partners. */
+    --blue: #8bb9fd;
+    --blue-soft: #1b3356;
+    --green: #73d885;
+    --green-soft: #153c1d;
+    --amber: #fba962;
+    --amber-soft: #512910;
+
+    --cta: #59be6c;
+    --on-cta: #06200d;
+
+    --navy-1: #0c264a;
+    --navy-2: #011b35;
+    --navy-3: #00373d;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Keeps a keyboard-focused link from landing under the fixed tab bar. */
+@media (max-width: 767px) {
+  html {
+    scroll-padding-bottom: calc(var(--tabbar-height) + env(safe-area-inset-bottom) + 16px);
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.4;
+  /* We ship 400, 600 and 700 condensed only, so never fake the rest. */
+  font-synthesis: none;
+}
+
+h1,
+h2,
+h3,
+p,
+dl,
+dd,
+ul {
+  margin: 0;
+}
+
+strong,
+b {
+  font-weight: 600;
+}
+
+a {
+  color: var(--blue);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: var(--gutter);
+  z-index: 20;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--blue);
+  font-weight: 600;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* A section's small heading, as .section-tag on the live site. */
+.tag {
+  color: var(--blue);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.card {
+  padding: 14px var(--gutter);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.page {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 12px max(var(--gutter), env(safe-area-inset-right))
+    calc(var(--tabbar-height) + env(safe-area-inset-bottom) + 16px)
+    max(var(--gutter), env(safe-area-inset-left));
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding-top: 20px;
+    padding-bottom: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a,
+  summary,
+  select {
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease,
+      border-color 0.15s ease;
+  }
+}

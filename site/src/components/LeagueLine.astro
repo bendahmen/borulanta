@@ -1,0 +1,41 @@
+---
+import home from '../generated/home.json';
+---
+{
+  home.league_position && (
+    <a class="card league" href="/league/">
+      <span class="position">{home.league_position}</span>
+      <span class="link">
+        {home.league_link_label}
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+          <path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </span>
+    </a>
+  )
+}
+
+<style>
+  .league {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding-block: 10px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .position {
+    font-weight: 600;
+  }
+
+  .link {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    color: var(--blue);
+    font-size: 0.9375rem;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>

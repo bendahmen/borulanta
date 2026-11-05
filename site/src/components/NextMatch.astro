@@ -1,0 +1,147 @@
+---
+// Nothing about today is in this HTML. A page built days ago must not show
+// yesterday's "Tonight", so the words are filled in by the script directly below
+// the markup, before first paint, and the slots are empty until then.
+import fixtures from '../generated/fixtures.json';
+import meta from '../generated/meta.json';
+import { moduleToInline, scriptSafeJson } from '../lib/inline.js';
+import { NO_SCRIPT } from '../lib/labels.js';
+import source from '../lib/next-match.js?raw';
+
+const { wording } = fixtures;
+const data = {
+  fixtures: fixtures.fixtures.map(({ date, date_label, opponent, kickoff_pitch }) => ({
+    date,
+    date_label,
+    opponent,
+    kickoff_pitch,
+  })),
+  have_fixtures: fixtures.have_fixtures,
+  scraped_on: fixtures.scraped_on,
+  stale_note: fixtures.stale_note,
+  stale_days: meta.stale_fixtures_days,
+  wording,
+};
+const script = `(function(){${moduleToInline(source)}
+mountNextMatch(document.getElementById("next-match"),${scriptSafeJson(data)});}());`;
+---
+<section id="next-match" class="next" aria-labelledby="next-match-tag">
+  <h2 id="next-match-tag" class="next-tag">{wording.tag}</h2>
+  <div class="next-body">
+    <p class="next-empty" data-next="empty" hidden></p>
+    <p class="next-when" data-next="when" hidden></p>
+    <p class="next-opponent" data-next="opponent" hidden></p>
+    <p class="next-meta">
+      <span data-next="date" hidden></span>
+      <span data-next="kickoff" hidden></span>
+    </p>
+    <p class="next-stale" data-next="stale" hidden></p>
+    <noscript>
+      <p class="next-noscript">{NO_SCRIPT.fixtures}</p>
+      <ul class="next-noscript">
+        {fixtures.fixtures.map((fixture) => <li>{fixture.date_label}, {fixture.opponent ?? wording.opponent_unknown}</li>)}
+      </ul>
+    </noscript>
+  </div>
+</section>
+<script is:inline set:html={script}></script>
+
+<style>
+  .next {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgb(255 255 255 / 0.14);
+  }
+
+  .next-tag {
+    color: var(--on-navy-accent);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  /* Holds the card's height for a fixture, so nothing moves if a slow connection
+     paints before the script below has run. */
+  .next-body {
+    min-height: 6.25rem;
+  }
+
+  .next-when {
+    color: var(--on-navy);
+    font-family: var(--font-display);
+    font-size: 2.75rem;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  :global(.is-today) .next-when {
+    color: var(--on-navy-accent);
+  }
+
+  .next-opponent {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.15;
+    text-transform: uppercase;
+  }
+
+  .next-meta {
+    margin-top: 3px;
+    color: var(--on-navy-muted);
+    font-size: 0.9375rem;
+  }
+
+  .next-meta span + span::before {
+    content: ' · ';
+  }
+
+  .next-empty {
+    padding-top: 6px;
+    color: var(--on-navy-muted);
+  }
+
+  .next-stale {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgb(255 255 255 / 0.14);
+    color: var(--on-navy);
+    font-size: 0.85rem;
+    line-height: 1.3;
+  }
+
+  .next-noscript {
+    padding-top: 4px;
+    font-size: 0.875rem;
+  }
+
+  ul.next-noscript {
+    padding-left: 1.1rem;
+  }
+
+  @media (min-width: 768px) {
+    .next {
+      margin-top: 6px;
+    }
+
+    .next-body {
+      min-height: 7rem;
+    }
+
+    .next-when {
+      font-size: 3.5rem;
+    }
+
+    .next-opponent {
+      font-size: 1.75rem;
+    }
+
+    .next-meta {
+      font-size: 1rem;
+    }
+  }
+</style>

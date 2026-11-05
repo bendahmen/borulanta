@@ -9,6 +9,12 @@
         "shiny::runApp('.', port = 4321, host = '127.0.0.1', launch.browser = FALSE)"
       ],
       "port": 4321
+    },
+    {
+      "name": "borulanta-site",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "site", "run", "dev", "--", "--ignore-lock"],
+      "port": 4322
     }
   ]
 }

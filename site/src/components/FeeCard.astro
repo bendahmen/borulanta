@@ -1,0 +1,243 @@
+---
+// "What do I owe" and "how do I pay" are one question, so this is one card.
+// Only feeRows() strings reach the page: fees.json stays at build time.
+import fees from '../generated/fees.json';
+import wording from '../generated/wording.json';
+import { feeRows } from '../lib/fee-rows.js';
+import { moduleToInline } from '../lib/inline.js';
+import { FEE_STATUS, NO_SCRIPT } from '../lib/labels.js';
+import source from '../lib/player-picker.js?raw';
+
+const panel = wording.fee_panel;
+const settle = wording.settle_up;
+const rows = feeRows(fees, FEE_STATUS);
+const script = `(function(){${moduleToInline(source)}
+mountPlayerPicker(document.getElementById("fee-check"),function(){return localStorage;});}());`;
+---
+<section class="card fee" aria-labelledby="fee-tag">
+  <div id="fee-check" class="fee-check">
+    <h2 id="fee-tag" class="tag">{panel.tag}</h2>
+    <div class="fee-row">
+      <div class="picker">
+        <label class="visually-hidden" for="fee-player">{panel.picker_label}</label>
+        <select id="fee-player" autocomplete="off">
+          <option value="" selected disabled>{panel.picker_label}</option>
+          {
+            rows.map((row) => (
+              <option
+                value={row.player}
+                data-balance={row.display}
+                data-status={row.status}
+                data-owed={row.owed ? '1' : '0'}
+              >
+                {row.player}
+              </option>
+            ))
+          }
+        </select>
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+          <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <div class="balance" aria-live="polite" aria-atomic="true">
+        <p class="balance-label">{panel.balance_label}</p>
+        <p class="amount-line">
+          <span class="amount" data-fee="amount"></span>
+          <span class="status" data-fee="status"></span>
+        </p>
+      </div>
+    </div>
+  </div>
+  <script is:inline set:html={script}></script>
+  <noscript><p class="footnote">{NO_SCRIPT.balance}</p></noscript>
+  <p class="footnote">{panel.footnote}</p>
+
+  <div class="settle">
+    <h3 class="tag">{settle.tag}</h3>
+    <a class="pay" href={settle.button_url} target="_blank" rel="noopener">{settle.button_label}</a>
+    <p class="settle-copy">{settle.copy}</p>
+    <details class="account">
+      <summary>
+        {settle.account_title}
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+          <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </summary>
+      <ul>
+        {settle.account_details.map((line) => <li>{line}</li>)}
+      </ul>
+    </details>
+  </div>
+</section>
+
+<style>
+  /* Holds one height with and without a balance, so restoring a player or choosing
+     one for the first time moves nothing below. */
+  .fee-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    align-items: center;
+    column-gap: 12px;
+    min-height: 62px;
+    margin-top: 6px;
+  }
+
+  :global(.has-player) .fee-row {
+    row-gap: 6px;
+  }
+
+  .picker,
+  .balance {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  /* Side by side on a phone at normal text size, with room at 375 px for "£0.00" and
+     "Nothing to pay" on one line. In rem, so enlarged text stacks them instead. */
+  :global(.has-player) .picker {
+    flex: 1 1 7.25rem;
+  }
+
+  :global(.has-player) .balance {
+    flex: 8 1 7.75rem;
+  }
+
+  .picker {
+    position: relative;
+    color: var(--ink);
+  }
+
+  select {
+    width: 100%;
+    /* Below 16px, iOS zooms the page when the control takes focus. */
+    font: 600 1rem/1.2 var(--font-body);
+    height: 46px;
+    padding: 0 34px 0 12px;
+    border: 2px solid var(--blue);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--ink);
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  :global(.has-player) select {
+    border: 1px solid var(--ink-muted);
+  }
+
+  .picker svg {
+    position: absolute;
+    top: 14px;
+    right: 10px;
+    pointer-events: none;
+  }
+
+  /* The balance stays in the page while empty, so a screen reader hears it arrive. */
+  .balance-label {
+    display: none;
+  }
+
+  :global(.has-player) .balance-label {
+    display: block;
+    color: var(--ink-muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .amount-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 8px;
+  }
+
+  .amount {
+    color: var(--green);
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.05;
+  }
+
+  :global(.is-owed) .amount {
+    color: var(--amber);
+  }
+
+  .status {
+    color: var(--ink-muted);
+    font-size: 0.8125rem;
+    line-height: 1.2;
+  }
+
+  .footnote {
+    margin-top: 8px;
+    color: var(--ink-muted);
+    font-size: 0.8125rem;
+    line-height: 1.35;
+  }
+
+  .settle {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .pay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    margin-top: 8px;
+    border-radius: 12px;
+    background: var(--cta);
+    color: var(--on-cta);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .pay:hover {
+    filter: brightness(0.95);
+  }
+
+  .settle-copy {
+    margin-top: 8px;
+    color: var(--ink-muted);
+    font-size: 0.8125rem;
+    line-height: 1.35;
+  }
+
+  .account {
+    margin-top: 4px;
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+    color: var(--blue);
+    font-weight: 600;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  details[open] summary svg {
+    transform: rotate(180deg);
+  }
+
+  .account ul {
+    padding: 0 0 6px;
+    list-style: none;
+    font-size: 0.9375rem;
+    /* The numbers get copied into a banking app. */
+    user-select: text;
+  }
+</style>

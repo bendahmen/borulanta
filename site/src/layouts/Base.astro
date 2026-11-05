@@ -1,0 +1,271 @@
+---
+import '../styles/global.css';
+
+import DataProblems from '../components/DataProblems.astro';
+import SiteNav from '../components/SiteNav.astro';
+import meta from '../generated/meta.json';
+import { SITE, SKIP_LINK } from '../lib/labels.js';
+
+const { title, description, current, strapline = false } = Astro.props;
+const pageTitle = title === SITE.name ? title : `${title} · ${SITE.name}`;
+// The page's own title is its h1 everywhere but Home.
+const BrandName = current === 'home' ? 'h1' : 'span';
+---
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#071e40" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="preload" href="/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/barlow-condensed-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{SKIP_LINK}</a>
+    <header class:list={['masthead', { 'has-hero': Astro.slots.has('hero') }]}>
+      <span class="masthead-art" aria-hidden="true"></span>
+      <div class="masthead-inner">
+        <a class="brand" href="/">
+          <span class="crest"><img src="/crest.webp" width="36" height="36" alt="" /></span>
+          <span class="brand-text">
+            <span class="kicker">{SITE.kicker}</span>
+            <BrandName class="brand-name">{SITE.name}</BrandName>
+          </span>
+        </a>
+        <SiteNav current={current} />
+        <div class="masthead-sub">
+          {strapline && <p class="strapline">{SITE.strapline}</p>}
+          {
+            meta.freshness && (
+              <p class="freshness">
+                <span class="freshness-full">{meta.freshness.full}</span>
+                <span class="freshness-short">{meta.freshness.short}</span>
+              </p>
+            )
+          }
+        </div>
+        <slot name="hero" />
+      </div>
+    </header>
+    <DataProblems />
+    <main id="main" class="page">
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style>
+  .masthead {
+    position: relative;
+    border-radius: 0 0 20px 20px;
+    background: linear-gradient(155deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+    color: var(--on-navy);
+  }
+
+  /* The live hero's ring and glow, in their own clipped layer. The masthead itself
+     cannot clip, because on a phone the tab bar inside it is fixed to the viewport. */
+  .masthead-art {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .masthead-art::before {
+    content: '';
+    position: absolute;
+    inset: -70px auto auto -70px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(66 170 90 / 0.28), transparent 70%);
+  }
+
+  /* Only where there is height for it. On a bare header it would cut through the text. */
+  .has-hero .masthead-art::after {
+    content: '';
+    position: absolute;
+    inset: auto -70px -90px auto;
+    width: 170px;
+    height: 170px;
+    border: 1px solid rgb(255 255 255 / 0.14);
+    border-radius: 50%;
+  }
+
+  /* The freshness note shares a line with the brand only while both fit. Once they do
+     not, on a narrow phone or with enlarged text, it drops below and space-between
+     leaves it at the start of its own line. */
+  .masthead-inner {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2px 12px;
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: max(9px, env(safe-area-inset-top)) max(var(--gutter), env(safe-area-inset-right)) 9px
+      max(var(--gutter), env(safe-area-inset-left));
+  }
+
+  .masthead-sub {
+    display: contents;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    min-height: 44px;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .brand:focus-visible {
+    outline-color: var(--on-navy);
+  }
+
+  /* The crest is black on white, so it keeps a white disc on the navy. */
+  .crest {
+    flex: 0 0 auto;
+    width: 42px;
+    height: 42px;
+    padding: 3px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  .crest img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .kicker {
+    color: var(--on-navy-accent);
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .brand-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .strapline {
+    display: none;
+  }
+
+  .freshness {
+    color: var(--on-navy-muted);
+    font-size: 0.72rem;
+    line-height: 1.2;
+  }
+
+  /* One is display:none, so it leaves the accessibility tree too and nothing is
+     read out twice, as freshness_note() in R/cards.R. */
+  .freshness-full {
+    display: none;
+  }
+
+  .masthead-inner > :global(.next) {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  @media (min-width: 768px) {
+    .masthead {
+      border-radius: 0 0 28px 28px;
+    }
+
+    /* Low enough to stay under the strapline and freshness row. */
+    .has-hero .masthead-art::after {
+      inset: auto -80px -130px auto;
+      width: 240px;
+      height: 240px;
+    }
+
+    .masthead-inner {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-areas:
+        'brand nav'
+        'sub sub'
+        'hero hero';
+      gap: 6px 12px;
+      padding-top: 12px;
+      padding-bottom: 14px;
+    }
+
+    .brand {
+      grid-area: brand;
+    }
+
+    .masthead-sub {
+      grid-area: sub;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px 16px;
+      align-items: baseline;
+    }
+
+    .masthead-inner > :global(.next) {
+      grid-area: hero;
+    }
+
+    .crest {
+      width: 48px;
+      height: 48px;
+    }
+
+    .kicker {
+      font-size: 0.68rem;
+    }
+
+    .brand-name {
+      font-size: 1.7rem;
+    }
+
+    .strapline {
+      display: block;
+      font-size: 0.95rem;
+      color: var(--on-navy);
+    }
+
+    .freshness {
+      margin-left: auto;
+      font-size: 0.8rem;
+      text-align: right;
+    }
+
+    .freshness-full {
+      display: inline;
+    }
+
+    .freshness-short {
+      display: none;
+    }
+  }
+</style>

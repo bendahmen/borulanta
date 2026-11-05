@@ -1,0 +1,112 @@
+---
+import home from '../generated/home.json';
+
+const played = home.last_match;
+// The live site's win, draw and loss colours, keyed on R's own badge word.
+const badgeClass = played ? `badge-${played.badge.toLowerCase()}` : '';
+---
+<section class="card last" aria-labelledby="last-match-tag">
+  <h2 id="last-match-tag" class="tag">{home.last_match_tag}</h2>
+  {
+    played ? (
+      <>
+        <p class="scoreline">
+          <span class="score">{played.result}</span>
+          <span class:list={['badge', badgeClass]}>{played.badge}</span>
+        </p>
+        <p class="meta">{played.meta_line}</p>
+        {played.details.length > 0 && (
+          <dl class="details">
+            {played.details.map((detail) => (
+              <div>
+                <dt>{detail.label}</dt>
+                <dd>{detail.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+      </>
+    ) : (
+      <p class="empty">{home.last_match_empty}</p>
+    )
+  }
+</section>
+
+<style>
+  .scoreline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 2px;
+  }
+
+  .score {
+    font-family: var(--font-display);
+    font-size: 2.75rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .badge {
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    line-height: 1.3;
+  }
+
+  .badge-win {
+    background: var(--green-soft);
+    color: var(--green);
+  }
+
+  .badge-draw {
+    background: var(--blue-soft);
+    color: var(--blue);
+  }
+
+  .badge-loss {
+    background: var(--amber-soft);
+    color: var(--amber);
+  }
+
+  .meta {
+    margin-top: 2px;
+    color: var(--ink-muted);
+    font-size: 0.9375rem;
+  }
+
+  .details {
+    display: grid;
+    gap: 3px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    font-size: 0.9375rem;
+  }
+
+  /* A label and its value share a line at normal text size. In rem, so enlarged text
+     puts the value under its label instead of pushing the card off the screen. */
+  .details div {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 12px;
+  }
+
+  dt {
+    flex: 0 0 7.5rem;
+    color: var(--ink-muted);
+  }
+
+  dd {
+    flex: 1 1 7.5rem;
+    min-width: 0;
+  }
+
+  .empty {
+    padding: 12px 0 4px;
+    color: var(--ink-muted);
+  }
+</style>

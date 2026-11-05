@@ -1,0 +1,22 @@
+{
+  "name": "borulanta-site",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "26.13.0"
+  },
+  "scripts": {
+    "predev": "bash ../scripts/site-setup.sh --mark",
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev --port 4322",
+    "prebuild": "bash ../scripts/site-setup.sh --mark",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "test": "ASTRO_TELEMETRY_DISABLED=1 node --test"
+  },
+  "dependencies": {
+    "@astrojs/svelte": "9.1.2",
+    "@observablehq/plot": "0.6.18",
+    "astro": "7.4.5",
+    "svelte": "5.57.3"
+  }
+}

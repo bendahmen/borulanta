@@ -1,0 +1,36 @@
+---
+// Stands in for a page the prototype does not cover.
+import { SITE, STUB } from '../lib/labels.js';
+
+const { title } = Astro.props;
+---
+<section class="card stub">
+  <p class="tag">{STUB.tag}</p>
+  <h1>{title}</h1>
+  <p>{STUB.text}</p>
+  <a href={SITE.liveUrl}>{STUB.link}</a>
+</section>
+
+<style>
+  h1 {
+    margin-top: 4px;
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  p:not(.tag) {
+    margin-top: 6px;
+    color: var(--ink-muted);
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+</style>

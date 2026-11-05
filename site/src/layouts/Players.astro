@@ -1,0 +1,65 @@
+---
+// Players has two sub-views. Season-scoped controls go in the page, not here.
+import { PAGES, PLAYERS_NAV, PLAYERS_NAV_LABEL } from '../lib/labels.js';
+import Base from './Base.astro';
+
+const { view } = Astro.props;
+const page = PAGES[view];
+---
+<Base title={page.title} description={page.description} current="players">
+  <nav class="subnav" aria-label={PLAYERS_NAV_LABEL}>
+    {
+      PLAYERS_NAV.map((item) => (
+        <a href={item.href} aria-current={item.id === view ? 'page' : undefined}>
+          {item.label}
+        </a>
+      ))
+    }
+  </nav>
+  <slot />
+</Base>
+
+<style>
+  .subnav {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+  }
+
+  a {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    border-radius: 9px;
+    color: var(--ink);
+    font-weight: 400;
+    text-decoration: none;
+  }
+
+  a[aria-current='page'] {
+    background: var(--blue-soft);
+    color: var(--blue);
+    font-weight: 600;
+  }
+
+  a:focus-visible {
+    outline-offset: -2px;
+  }
+
+  @media (min-width: 768px) {
+    .subnav {
+      display: inline-flex;
+    }
+
+    a {
+      flex: 0 0 auto;
+      padding: 0 22px;
+    }
+  }
+</style>

@@ -1,0 +1,134 @@
+---
+import { NAV, NAV_LABEL } from '../lib/labels.js';
+import Icon from './Icon.astro';
+
+const { current } = Astro.props;
+
+// Players has its own sub-navigation, which marks the page. Its tab marks the section.
+const currentValue = (tab) => {
+  if (tab.id !== current) return undefined;
+  return tab.id === 'players' ? 'true' : 'page';
+};
+---
+<nav class="tabs" aria-label={NAV_LABEL}>
+  {
+    NAV.map((tab) => (
+      <a href={tab.href} aria-current={currentValue(tab)}>
+        <span class="tab-icon">
+          <Icon name={tab.id} />
+        </span>
+        <span class="tab-label">{tab.label}</span>
+      </a>
+    ))
+  }
+</nav>
+
+<style>
+  /* A phone first: fixed along the bottom, within reach of a thumb. The live
+     site's two rows of pills cost about 270 px at the top of every screen. */
+  .tabs {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 10;
+    display: flex;
+    padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    /* With enlarged text the labels outgrow a fifth of the width. The bar scrolls by
+       itself then, so they stay readable and the page does not scroll sideways. */
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  a {
+    flex: 1 0 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    min-width: max-content;
+    height: var(--tabbar-height);
+    padding-inline: 6px;
+    color: var(--ink-muted);
+    font-size: 0.72rem;
+    line-height: 1.2;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  a:focus-visible {
+    outline-offset: -3px;
+  }
+
+  .tab-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 28px;
+    border-radius: 14px;
+  }
+
+  a[aria-current] {
+    color: var(--blue);
+    font-weight: 600;
+  }
+
+  /* Every tab is a full page load, so a tap on a slow connection needs an answer. */
+  a[aria-current] .tab-icon,
+  a:active .tab-icon {
+    background: var(--blue-soft);
+  }
+
+  @media (min-width: 768px) {
+    .tabs {
+      position: static;
+      grid-area: nav;
+      justify-self: end;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 4px;
+      padding: 0;
+      overflow: visible;
+      border: 0;
+      background: none;
+    }
+
+    a {
+      flex: 0 0 auto;
+      flex-direction: row;
+      gap: 6px;
+      min-width: 0;
+      height: 44px;
+      padding: 0 12px 0 10px;
+      border-radius: 12px;
+      color: var(--on-navy);
+      font-size: 0.95rem;
+    }
+
+    a:hover {
+      background: rgb(255 255 255 / 0.1);
+    }
+
+    a:focus-visible {
+      outline-color: var(--on-navy);
+      outline-offset: 2px;
+    }
+
+    .tab-icon {
+      width: auto;
+      height: auto;
+    }
+
+    a[aria-current] {
+      background: rgb(255 255 255 / 0.16);
+      color: var(--on-navy);
+    }
+
+    a[aria-current] .tab-icon,
+    a:active .tab-icon {
+      background: none;
+    }
+  }
+</style>

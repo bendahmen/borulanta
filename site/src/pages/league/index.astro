@@ -1,0 +1,10 @@
+---
+import Stub from '../../components/Stub.astro';
+import Base from '../../layouts/Base.astro';
+import { PAGES } from '../../lib/labels.js';
+
+const page = PAGES.league;
+---
+<Base title={page.title} description={page.description} current="league">
+  <Stub title={page.title} />
+</Base>

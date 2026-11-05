@@ -1,0 +1,53 @@
+---
+// Quiet by design, and absent when there is nothing wrong: data_health_banner() in R/cards.R.
+import meta from '../generated/meta.json';
+
+const problems = meta.problems ?? [];
+---
+{
+  problems.length > 0 && (
+    <div class="wrap">
+      <aside class="data-health" aria-label={meta.problems_title}>
+        <p class="title">{meta.problems_title}</p>
+        <ul>
+          {problems.map((problem) => (
+            <li>{problem}</li>
+          ))}
+        </ul>
+      </aside>
+    </div>
+  )
+}
+
+<style>
+  /* The same width and gutters as .page, so its edges line up with the cards. */
+  .wrap {
+    max-width: 1040px;
+    margin: 12px auto 0;
+    padding-inline: max(var(--gutter), env(safe-area-inset-left)) max(var(--gutter), env(safe-area-inset-right));
+  }
+
+  .data-health {
+    padding: 10px 14px;
+    border: 1px solid var(--amber);
+    border-radius: 14px;
+    background: var(--amber-soft);
+    color: var(--ink);
+  }
+
+  .title {
+    color: var(--amber);
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  ul {
+    margin-top: 4px;
+    padding-left: 1.1rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+</style>

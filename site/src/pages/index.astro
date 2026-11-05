@@ -1,0 +1,50 @@
+---
+import FeeCard from '../components/FeeCard.astro';
+import LastMatch from '../components/LastMatch.astro';
+import LeagueLine from '../components/LeagueLine.astro';
+import NextMatch from '../components/NextMatch.astro';
+import Base from '../layouts/Base.astro';
+import { PAGES } from '../lib/labels.js';
+---
+<Base title={PAGES.home.title} description={PAGES.home.description} current="home" strapline>
+  <NextMatch slot="hero" />
+  <div class="home">
+    <LastMatch />
+    <FeeCard />
+    <LeagueLine />
+  </div>
+</Base>
+
+<style>
+  /* A phone reads Last match, then the balance and how to pay, then the League line.
+     The source follows that order, so the focus order does too. */
+  .home {
+    display: grid;
+    gap: 10px;
+  }
+
+  @media (min-width: 768px) {
+    .home {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-rows: auto 1fr;
+      grid-template-areas:
+        'last fee'
+        'league fee';
+      gap: 16px;
+    }
+
+    .home :global(.last) {
+      grid-area: last;
+    }
+
+    .home :global(.fee) {
+      grid-area: fee;
+      align-self: start;
+    }
+
+    .home :global(.league) {
+      grid-area: league;
+      align-self: start;
+    }
+  }
+</style>
