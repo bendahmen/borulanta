@@ -56,6 +56,9 @@ goalscorers. **Attendance is the only thing left by hand** — one row per playe
 who turned up in `data/attendance.csv`. Record transfers in
 `data/payments.csv`.
 
+A match is not charged until its attendance is in: the sync pushes it live
+straight away, and an empty squad would bill the absent core for the whole fee.
+
 Nothing else needs touching: the season is worked out from the date, and the
 sync will not write a result it is not sure about.
 
@@ -412,6 +415,9 @@ A rule set lives in `FEE_RULE_SETS` in `R/fees.R` and is a list of:
 active players with their `core` flag. Because the function sees the whole
 match at once, rules that split a remainder across the core are natural to
 express, and the engine needs to know nothing about a rule's internals.
+
+`squad` is never empty: a match with no attendance rows is left uncharged until
+its attendance is typed.
 
 Three are defined:
 

@@ -160,7 +160,7 @@ fee_rule_set <- function(name) {
 
 # Charge engine ----
 
-#' Every charge for one season, one row per player per match.
+#' Every charge for one season, one row per player per match with attendance.
 #'
 #' Archived seasons are read back from their frozen ledger rather than repriced,
 #' so retiring a rule set never rewrites history.
@@ -174,7 +174,13 @@ season_charges <- function(season, matches, attendance, rosters) {
     filter(season_id == season$season_id, active) |>
     select(player, core)
 
-  season_matches <- matches |> filter(season_id == season$season_id)
+  # The sync records a match before anyone has typed its attendance, and its
+  # push redeploys the live app straight away. Priced in that gap, the empty
+  # squad would bill the absent core for the whole fee, so a match with no
+  # attendance rows is not charged until its attendance is in.
+  season_matches <- matches |>
+    filter(season_id == season$season_id) |>
+    semi_join(attendance, by = c("season_id", "date"))
   if (nrow(season_matches) == 0 || nrow(roster) == 0) {
     return(empty_charges())
   }
