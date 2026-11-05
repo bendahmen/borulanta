@@ -134,30 +134,30 @@ Finish each stage's checks before moving on. Show evidence rather than saying it
 
 Already prepared and tested on 4 November 2026: this worktree, the `.gitignore` entries, `scripts/site-setup.sh`, the Dropbox flags and `renv::restore()`. The existing test suite ran here with no failures.
 
-- [ ] `git branch --show-current` prints `static-site`, and `git worktree list` shows both folders.
-- [ ] `bash scripts/site-setup.sh --check` exits 0.
-- [ ] `Rscript -e 'renv::status()'` reports no issues. If not, run `renv::restore()`.
-- [ ] Commit this file, `.gitignore` and the setup script to `static-site`.
+- [x] `git branch --show-current` prints `static-site`, and `git worktree list` shows both folders.
+- [x] `bash scripts/site-setup.sh --check` exits 0.
+- [x] `Rscript -e 'renv::status()'` reports no issues. If not, run `renv::restore()`.
+- [x] Commit this file, `.gitignore` and the setup script to `static-site`.
 
 ### Stage 1: data export
 
 Write `scripts/build-site-data.R` and `tests/testthat/test-site-export.R`.
 
-- [ ] Every subset file exists, with both estimators and all four outcomes.
-- [ ] Exported balances equal `all_player_balances()` to the penny, and regression rows equal `player_regression_results()`.
-- [ ] Two runs produce byte-identical output.
-- [ ] Run the existing test suite. It must pass as it did before.
-- [ ] Report the file count and gzipped sizes. If a subset exceeds about 50 KB gzipped, split the player profiles out.
+- [x] Every subset file exists, with both estimators and all four outcomes.
+- [x] Exported balances equal `all_player_balances()` to the penny, and regression rows equal `player_regression_results()`.
+- [x] Two runs produce byte-identical output.
+- [x] Run the existing test suite. It must pass as it did before.
+- [x] Report the file count and gzipped sizes. If a subset exceeds about 50 KB gzipped, split the player profiles out.
 
 ### Stage 2: prototype
 
 Scaffold `site/`, then build the shared shell and navigation, Home and Players > Effects. Effects is included because it is the hardest page: the picker, the estimator switch, the outcome switch, plots and the table.
 
-- [ ] Run `bash scripts/site-setup.sh`, then `--check`, including after the first build.
-- [ ] Open both pages in the built-in browser at 375 px and on desktop, in light and dark, and check the console for errors.
-- [ ] Every number on the two pages matches the live Shiny app for at least three season combinations, including the empty OLS case.
-- [ ] Tell Ben how to open it on his phone with `npm run dev -- --host` over shared wifi.
-- [ ] Report the measured performance against the targets, and give Ben the list of decisions below that affect the prototype.
+- [x] Run `bash scripts/site-setup.sh`, then `--check`, including after the first build.
+- [x] Open both pages in the built-in browser at 375 px and on desktop, in light and dark, and check the console for errors.
+- [x] Every number on the two pages matches the live Shiny app for at least three season combinations, including the empty OLS case.
+- [x] Tell Ben how to open it on his phone with `npm run dev -- --host` over shared wifi.
+- [x] Report the measured performance against the targets, and give Ben the list of decisions below that affect the prototype.
 
 **Stop here.** Ben compares the prototype with the live site on his phone and decides. Iterate on design as he asks. Do not start Stage 3 without his yes.
 
@@ -215,6 +215,7 @@ These include writes of any kind, logins, push notifications, RSVP (WhatsApp Eve
 ## Change log
 
 - 4 November 2026: a repeated match date or attendance row now stops the export instead of going to the banner. Ben decided this because correct fees come first. In the Stage 1 review's test, a repeated last match published £719.56 outstanding instead of £491.55 under a quiet banner. No regression estimate had any bearing on it. Shiny is unchanged: it carries on and shows them in its banner.
+- 4 November 2026: `data_hash` covers `data/archive/*.csv` as well as `data/*.csv`, because the archived ledgers feed the balances and a stale one would otherwise pass the check. Decided while writing the export, with no bearing on any estimate.
 
 ## Kickoff prompt
 
