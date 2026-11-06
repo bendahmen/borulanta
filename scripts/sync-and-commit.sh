@@ -18,6 +18,15 @@ cd "$repo" || exit 1
 # Not inherited when this is invoked from anywhere with a thin environment.
 export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 
+# The commit below lands on whatever branch is checked out, and only main reaches
+# Shiny and the site.
+branch="$(git branch --show-current)"
+if [ "$branch" != "main" ]; then
+  echo "FAILED: this checkout is on '${branch:-a detached HEAD}', and the sync runs on main only."
+  echo "Run it in the main folder, projects/borulanta, on main."
+  exit 1
+fi
+
 log="$repo/raw/sync.log"
 mkdir -p "$(dirname "$log")"
 
