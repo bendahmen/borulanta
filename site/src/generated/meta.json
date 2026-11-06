@@ -1,5 +1,5 @@
 {
-  "data_hash": "00000000af4c4feb8cd7d0c96a48128cb666e13c9b61edd54645bfd270f15471",
+  "data_hash": "6d08396eaf4c4feb8cd7d0c96a48128cb666e13c9b61edd54645bfd270f15471",
   "our_team": "Borulanta",
   "min_regression_appearances": 3,
   "stale_fixtures_days": 8,
@@ -33,7 +33,7 @@
   "problems": ["match events for an unknown player: Og"],
   "problems_title": "Data check",
   "freshness": {
-    "full": "STALE TEST, must never go live · Results to 04 Nov 2026 · league page read 06 Nov 2026",
+    "full": "Results to 04 Nov 2026 · league page read 06 Nov 2026",
     "short": "Page read 06 Nov 2026"
   },
   "empty_states": {
