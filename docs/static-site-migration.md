@@ -191,7 +191,7 @@ The Worker is called `borulanta`, matching `site/wrangler.jsonc`, which serves `
 Only with Ben's go-ahead.
 
 - [ ] Merge `static-site` into `main`, and switch Cloudflare's production branch to `main`.
-- [ ] Run `bash scripts/site-setup.sh` in the main folder.
+- [x] Run `bash scripts/site-setup.sh` in the main folder.
 - [ ] Add a notice to the Shiny app linking to the new address. Connect Cloud offers no redirect we know of, so check this.
 - [ ] Ben posts the new link in the WhatsApp group.
 - [ ] Keep Shiny live for about four weeks and watch its credits, which stop the app if they exceed 20 a month.
