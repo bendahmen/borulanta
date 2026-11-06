@@ -260,14 +260,18 @@ left as it came and reported, so adding the mapping and re-running fixes it.
 
 Some goals count for the team and for no player. The page lists an own goal by
 the other side as `Og`, and the app credits a goal under `Og`, `O.G.` or `Own
-goal`, in any case, to nobody. A goal by a guest who shares a first name with one
-of ours goes in `data/uncredited_goals.csv`, one row per goal: `date`, `minute`
-and `player` as `match_events.csv` has them, and a `reason`. A hand edit to
-`match_events.csv` would not survive the next sync, so both stay there as the
-page has them and only the loaded data credits nobody. Such a goal is in the
-score, and so in everything built on it, and in no scorer table, player page or
-scorers line. A listed goal that stops matching, because the page has corrected
-its minute or name, is reported rather than quietly credited again.
+goal`, ignoring case, to nobody. A goal by a guest who shares a first name with
+one of ours goes in `data/uncredited_goals.csv`, one row per goal: `date`,
+`minute` and `player` as `match_events.csv` has them, and a `reason`. Both stay in
+`match_events.csv` as the page has them, because the sync would undo a hand edit
+there. Such a goal is in the score and everything built on it, and in no scorer
+table, player page or scorers line.
+
+A row is matched on all three columns. If the page later corrects the minute or
+the name, the goal goes back to the player until the row is fixed, and the data
+check names the row. It also names a row that matches more than one goal, all of
+which are credited to nobody. With nothing to list, keep the file with its header
+rather than delete it, because `manifest.json` lists it.
 
 ## The home page
 
@@ -597,7 +601,8 @@ Nothing in the stylesheet can touch the flex properties: bslib writes
 `validate_app_data()` runs at startup and warns about attendance on a date with
 no match, a match with no attendance yet, unknown players, rows dated before the first season, players who
 appeared without being on that season's active roster, events on a date with no
-match, goals that do not add up to the scoreline they belong to, a fixture dated
+match, goals that do not add up to the scoreline they belong to, a row of
+`data/uncredited_goals.csv` that matches no goal or more than one, a fixture dated
 on a match already recorded (a fixture list the sync has not caught up with),
 and our own row going missing from the league table. That last
 one matters because a partial event list looks exactly like a complete one to

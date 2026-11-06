@@ -190,22 +190,26 @@ read_uncredited_goal_file <- function(path) {
     mutate(date = parse_match_date(date))
 }
 
-#' For each row, whether `goals` has one with the same date, minute and player.
-same_goal <- function(rows, goals) {
-  found <- goals |>
-    distinct(date, minute, player) |>
-    mutate(found = TRUE)
+#' For each row, how many of `goals` have the same date, minute and player.
+#'
+#' A blank minute matches only a blank minute, so a listed row with none matches
+#' every minute-less goal by that name that night.
+same_goal_count <- function(rows, goals) {
+  counts <- goals |> count(date, minute, player, name = "n")
   rows |>
     select(date, minute, player) |>
-    left_join(found, by = c("date", "minute", "player")) |>
-    pull(found) |>
-    coalesce(FALSE)
+    left_join(counts, by = c("date", "minute", "player")) |>
+    pull(n) |>
+    coalesce(0L)
 }
 
 #' Set the player to NA on own goals and on the goals uncredited_goals.csv lists.
+#'
+#' A listed row that matches several goals credits every one of them to nobody,
+#' and validate_app_data() names the row.
 credit_nobody <- function(events, uncredited) {
   nobody <- events$event_type %in% "goal" &
-    (tolower(events$player) %in% OWN_GOAL_NAMES | same_goal(events, uncredited))
+    (tolower(events$player) %in% OWN_GOAL_NAMES | same_goal_count(events, uncredited) > 0)
   events |> mutate(player = if_else(nobody, NA_character_, player))
 }
 
@@ -236,7 +240,7 @@ load_app_data <- function(dir = "data") {
   page_events <- read_event_file(path("match_events.csv"))
   page_goals <- page_events |> filter(event_type == "goal")
   uncredited_goals <- read_uncredited_goal_file(path("uncredited_goals.csv")) |>
-    mutate(matched = same_goal(pick(date, minute, player), page_goals))
+    mutate(goals_matched = same_goal_count(pick(date, minute, player), page_goals))
 
   events <- page_events |>
     credit_nobody(uncredited_goals) |>
@@ -381,12 +385,20 @@ validate_app_data <- function(data) {
   )
   # A listed goal is matched on its date, minute and name, so a sync that corrects
   # the minute or the name on the page credits the scorer again without a sound.
-  unmatched <- data$uncredited_goals |> filter(!matched)
+  # A row that matches more than one goal, by a blank minute or two goals by one
+  # name in one minute, credits all of them to nobody, which is as quiet.
+  mismatched_listings <- data$uncredited_goals |> filter(goals_matched != 1)
   complain(
-    "goals in data/uncredited_goals.csv that match no goal event",
+    "goals in data/uncredited_goals.csv that match no goal event, or more than one",
     sprintf(
-      "%s %s minute %s",
-      unmatched$player, format(unmatched$date, "%d/%m/%Y"), unmatched$minute
+      "%s %s %s (matches %d)",
+      mismatched_listings$player,
+      format(mismatched_listings$date, "%d/%m/%Y"),
+      if_else(
+        is.na(mismatched_listings$minute), "no minute",
+        sprintf("minute %d", mismatched_listings$minute)
+      ),
+      mismatched_listings$goals_matched
     )
   )
 
