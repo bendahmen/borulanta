@@ -78,17 +78,6 @@ mountPlayerPicker(document.getElementById("fee-check"),function(){return localSt
     <h3 class="tag">{settle.tag}</h3>
     <a class="pay" href={settle.button_url} target="_blank" rel="noopener">{settle.button_label}</a>
     <p class="settle-copy">{settle.copy}</p>
-    <details class="account">
-      <summary>
-        {settle.account_title}
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
-          <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </summary>
-      <ul>
-        {settle.account_details.map((line) => <li>{line}</li>)}
-      </ul>
-    </details>
   </div>
 </section>
 
@@ -238,36 +227,5 @@ mountPlayerPicker(document.getElementById("fee-check"),function(){return localSt
     color: var(--ink-muted);
     font-size: 0.8125rem;
     line-height: 1.35;
-  }
-
-  .account {
-    margin-top: 4px;
-  }
-
-  summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 44px;
-    color: var(--blue);
-    font-weight: 600;
-    list-style: none;
-    cursor: pointer;
-  }
-
-  summary::-webkit-details-marker {
-    display: none;
-  }
-
-  details[open] summary svg {
-    transform: rotate(180deg);
-  }
-
-  .account ul {
-    padding: 0 0 6px;
-    list-style: none;
-    font-size: 0.9375rem;
-    /* The numbers get copied into a banking app. */
-    user-select: text;
   }
 </style>

@@ -47,7 +47,7 @@ This is the Stage 3 walk through `README.md` and every output in `app.R`. Each f
 | Stale fixture warning | Kept | Shows when the page is read, not when it was built |
 | Data check banner | Changed | Every page, as before, except that a repeated match date or attendance row now stops the export |
 | Fee check on Home and Fees, kept in step | Kept | Both read one remembered name |
-| Settle up: Monzo link, bank details | Changed | Merged into the fee card. Bank details sit behind a tap |
+| Settle up: Monzo link | Changed | Merged into the fee card. The bank details came off both on 6 November 2026 |
 | League position line and its link | Kept | Below the fee card on phones |
 | Season tick boxes with captions | Changed | Compact chips. Ticks also go in the URL and are remembered |
 | Roster table as the player picker | Kept | Opens on your own row where you turned out. Without a remembered name it opens on the top of the table, where Shiny opens on the first name on the fee list |

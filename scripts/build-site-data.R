@@ -683,8 +683,8 @@ export_fee_panel <- function() {
   )
 }
 
-#' The bank details and the Monzo link are public already, on the live Home page
-#' and in R/cards.R. Whether they should stay public is an open question for Ben.
+#' The Monzo link is public already, on the live Home page and in R/cards.R. The
+#' bank details came off the card on 6 November 2026, so there are none to export.
 export_settle_up <- function() {
   panel <- payment_panel_ui()
   list(
@@ -693,9 +693,7 @@ export_settle_up <- function() {
     button_label = first_text(panel, "payment-button"),
     button_url = htmltools::tagGetAttribute(
       tags_with_class(panel, "payment-button")[[1]], "href"
-    ),
-    account_title = first_text(panel, "account-title"),
-    account_details = I(tag_text(panel, "account-detail"))
+    )
   )
 }
 

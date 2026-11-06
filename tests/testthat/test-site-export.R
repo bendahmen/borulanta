@@ -1131,9 +1131,7 @@ test_that("the wording file is what the source functions return", {
   ), "fee panel")
 
   settle_up <- payment_panel_ui()
-  expect_setequal(names(wording$settle_up), c(
-    "tag", "copy", "button_label", "button_url", "account_title", "account_details"
-  ))
+  expect_setequal(names(wording$settle_up), c("tag", "copy", "button_label", "button_url"))
   expect_equal(wording$settle_up$tag, leaf_texts(settle_up, ".section-tag"))
   expect_equal(wording$settle_up$copy, leaf_texts(settle_up, ".payment-copy"))
   expect_equal(wording$settle_up$button_label, leaf_texts(settle_up, ".payment-button"))
@@ -1141,9 +1139,6 @@ test_that("the wording file is what the source functions return", {
     wording$settle_up$button_url,
     query_tags(settle_up, ".payment-button")[[1]]$attribs$href
   )
-  expect_equal(wording$settle_up$account_title, leaf_texts(settle_up, ".account-title"))
-  expect_type(wording$settle_up$account_details, "list")
-  expect_equal(unlist(wording$settle_up$account_details), leaf_texts(settle_up, ".account-detail"))
 
   control <- estimator_control
   expect_setequal(names(wording$estimator_control), c("legend", "options"))
