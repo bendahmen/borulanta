@@ -17,7 +17,8 @@ R/cards.R               the bslib cards the ui is assembled from
 R/_disable_autoload.R   stops Shiny sourcing R/ before app.R runs; see below
 R/scrape.R              reading the league page
 R/sync.R                reconciling a scrape with the files
-scripts/                the sync runner, its commit-and-push wrapper, and the manifest writer
+scripts/                the sync runner, its commit-and-push wrapper, the manifest writer,
+                        and the static site's export and publish routine
 manifest.json           what Connect Cloud installs and ships; generated, not hand-edited
 tests/testthat/         parser, sync, table and picker tests
 data/                   the source of truth, all hand-editable CSVs
@@ -45,19 +46,115 @@ second time, harmlessly, back when they only defined functions.
 
 ## Weekly routine
 
-After a game, run the sync and add the week's attendance:
+A week has three steps, and their order matters. Until cutover they use two folders:
+the main folder, `projects/borulanta` on `main`, and the site folder,
+`projects/borulanta-site` on `static-site`.
+
+First, after a game, run the sync in the main folder:
 
 ```
 bash scripts/sync-and-commit.sh
 ```
 
 That reads the league page and records the result, the opponent and the
-goalscorers. **Attendance is the only thing left by hand** — one row per player
-who turned up in `data/attendance.csv`. Record transfers in
-`data/payments.csv`.
+goalscorers. It commits and pushes `main`, and Shiny follows a minute or two later.
+
+Second, type the attendance in the main folder and commit it on `main`.
+**Attendance is the only thing left by hand** — one row per player
+who turned up in `data/attendance.csv`. Push `main` to bring it to Shiny.
+
+Finally, publish the static site from the site folder:
+
+```
+bash scripts/publish-site.sh
+```
+
+Payments arrive on any day, so they sit outside that order. Add the row to
+`data/payments.csv` in the main folder, commit it on `main`, push `main` for Shiny,
+and publish from the site folder. A payment that arrives between the sync and the
+attendance waits for the attendance, because a publish stops while a match has none.
+
+Never run the sync or add match data from `borulanta-site`. The sync commits to
+whichever branch is checked out, so its results would land on `static-site` and never
+reach Shiny.
 
 Nothing else needs touching: the season is worked out from the date, and the
 sync will not write a result it is not sure about.
+
+## Publishing the site
+
+`scripts/publish-site.sh` is how new numbers reach the static site. The site builds
+from JSON committed to the repository, so the JSON has to be regenerated whenever a
+CSV changes. The script runs the export, runs the export tests, commits the generated
+files and pushes. It takes about two minutes and asks nothing, so an agent can run it.
+
+```
+bash scripts/publish-site.sh            # publish
+bash scripts/publish-site.sh --dry-run  # say what a publish would do, change nothing
+```
+
+**Where it runs changes at cutover.** Until then it runs in `borulanta-site` on
+`static-site`. It merges `main` first, because the CSVs are kept there, and its first
+run sets the branch's upstream. Pushing `static-site` does not redeploy Shiny. After
+cutover it runs in the main folder on `main`. It has nothing to merge there. If
+`origin` has moved it pulls, or stops and says to pull by hand when there are
+uncommitted changes. Each publish there redeploys Shiny until Shiny is retired. On any
+other branch it refuses.
+
+**It commits only `site/src/generated` and `site/public/data/seasons`.** It names those
+two paths, as `scripts/sync-and-commit.sh` names its files, so nothing dirty or staged
+elsewhere is swept up, and those files stay as they were. A push sends the whole
+branch, though, so any other local commits go too. Once the branch has an upstream the
+run lists them before pushing. The first push sends everything on the branch.
+
+**Five things stop a publish.** First, the checkout is mid-merge or mid-rebase, is on
+another branch, has unresolved conflicts, or has uncommitted changes in the generated
+folders, the CSVs, `R/`, `scripts/build-site-data.R`, the export tests or their helper. The export reads all of those from the
+working tree, so JSON built from an uncommitted change would go out under a commit that
+says something else. Second, merging `main` cannot go ahead. It hits a conflict and is
+aborted, or git will not start it because something is staged or a local change is in
+the way. Third, a match has no attendance on file. Fourth, a repeated match date or
+attendance row stops the export before it writes anything. Finally, an export test fails.
+
+A run that stops leaves the checkout as it found it. The JSON goes back, and any merge
+that run made is undone, so each publish adds one merge rather than one per attempt.
+A failed push is the exception. The commit stays, the script says it committed locally
+and did not push, and running it again pushes what is waiting.
+
+**`--dry-run` runs everything short of the commit.** It runs the checks, the attendance
+guard, the export and the tests, and lists the generated files a publish would change.
+It writes its JSON to a temporary folder, so the committed JSON is never touched, and it
+commits and pushes nothing. On `static-site` it does not merge, because a run that died
+halfway would leave the branch moved. It lists what is waiting on `main` and says
+whether the merge would work. So its guard and its export see this branch's CSVs,
+which may be behind `main`. On `main` there is nothing to merge, and the preview is exact.
+
+**A CSV committed without a publish leaves the site on old numbers.** Shiny updates as
+soon as `main` is pushed. Until cutover `static-site` never sees that CSV, so nothing
+builds and the site stays where it was. After cutover the push does start a build: the
+`data_hash` in the JSON no longer matches the CSVs, the build fails and the previous
+version stays live. The site can be stale but not wrong, and publishing fixes it.
+
+### For agents adding a row
+
+1. Work in the main folder, `projects/borulanta`, on `main`. Never add a row in
+   `borulanta-site`.
+2. Add one line at the end of the file. Attendance is one row per player who turned up,
+   in `data/attendance.csv`, as `date,player`: `28/10/2026,Luca`. A payment goes in
+   `data/payments.csv`, as `date,player,amount`: `04/11/2026,Luca,40.43`. Dates are
+   `dd/mm/yyyy`. Names are as in `data/players.csv`. Amounts are in pounds with no
+   symbol, and money paid back to a player is negative.
+3. Ask Ben before committing, unless his request already says to. Commit by named path,
+   with the date written out:
+   `git commit -m "Add Luca's payment of 4 November 2026" -- data/payments.csv` or
+   `git commit -m "Add attendance for 28 October 2026" -- data/attendance.csv`.
+4. Ask Ben before pushing `main`, unless his request already says to, because that
+   redeploys Shiny.
+5. Ask Ben before publishing, unless his request already says to, because the script
+   commits and pushes. Run `bash scripts/publish-site.sh` in `borulanta-site` until
+   cutover and in the main folder after it. `--dry-run` needs no permission, since it
+   commits and pushes nothing. Allow five minutes: a killed publish can leave the JSON
+   rewritten, and the next run then refuses until that is discarded.
 
 ## The sync
 

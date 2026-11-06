@@ -1919,3 +1919,64 @@ test_that("a last match with no opponent or events drops those from the card", {
   expect_equal(strings_of(last$details, "label"), "Squad")
   expect_equal(last$details[[1]]$value, "2 players")
 })
+
+# The attendance guard in scripts/publish-site.sh ----
+
+test_that("matches_without_attendance() names matches with no row, oldest first", {
+  matches <- tibble(date = as.Date(c("2026-03-04", "2026-01-07", "2026-02-04")))
+  attendance <- tibble(date = as.Date("2026-02-04"), player = c("Ann", "Bob"))
+
+  expect_identical(
+    matches_without_attendance(matches, attendance),
+    as.Date(c("2026-01-07", "2026-03-04"))
+  )
+  expect_length(matches_without_attendance(matches[3, ], attendance), 0)
+  # Attendance with no match is a different problem, and it goes in the banner.
+  expect_length(matches_without_attendance(matches[0, ], attendance), 0)
+})
+
+test_that("a real match with its attendance taken away is named", {
+  newest <- max(shiny_data$matches$date)
+  rest <- shiny_data$attendance |> filter(date != newest)
+
+  expect_true(newest %in% matches_without_attendance(shiny_data$matches, rest))
+})
+
+# Rscript scripts/build-site-data.R --matches-without-attendance, as the guard runs it.
+ask_for_missing_attendance <- function(root) {
+  result <- run_rscript(c("scripts/build-site-data.R", "--matches-without-attendance"), root)
+  lines <- strsplit(result$text, "\n", fixed = TRUE)[[1]]
+  c(result, list(dates = grep("^[0-9]{2}/[0-9]{2}/[0-9]{4}$", lines, value = TRUE)))
+}
+
+test_that("the guard's command names the dates and writes nothing, and the export carries on", {
+  data_dir <- write_two_season_data()
+  root <- make_project_around(data_dir)
+
+  clean <- ask_for_missing_attendance(root)
+  expect_equal(clean$status, 0L, info = clean$text)
+  expect_length(clean$dates, 0)
+
+  add_row_to(data_dir, "matches.csv", "22/04/2026,,1,1,")
+  add_row_to(data_dir, "matches.csv", "15/04/2026,,1,1,")
+  missing <- ask_for_missing_attendance(root)
+  expect_equal(missing$status, 0L, info = missing$text)
+  expect_identical(missing$dates, c("15/04/2026", "22/04/2026"))
+  expect_false(file.exists(file.path(root, "site")))
+
+  # Ben's decision: only a repeated match date or attendance row stops the export.
+  exported <- run_export_command(root)
+  expect_equal(exported$status, 0L, info = exported$text)
+  expect_true(file.exists(file.path(root, "site", "src", "generated", "meta.json")))
+})
+
+test_that("the guard's command leaves a repeated row for the export to stop on", {
+  data_dir <- write_two_season_data()
+  root <- make_project_around(data_dir)
+  add_row_to(data_dir, "attendance.csv", "07/01/2026,Ann")
+
+  asked <- ask_for_missing_attendance(root)
+
+  expect_equal(asked$status, 0L, info = asked$text)
+  expect_length(asked$dates, 0)
+})

@@ -1051,6 +1051,23 @@ load_export_data <- function(data_dir) {
   data
 }
 
+#' The matches with no attendance row, as dates, oldest first.
+#'
+#' The sync writes a match and attendance is typed afterwards. Until then the fee rules
+#' price that match without its squad, so its fees are not right, and its page says there
+#' was no lineup. The export carries on, because Ben decided only a repeated row stops it.
+#' scripts/publish-site.sh stops on it instead.
+matches_without_attendance <- function(matches, attendance) {
+  sort(unique(matches$date[!matches$date %in% attendance$date]))
+}
+
+#' The same for the files on disk. Through load_app_data() rather than load_export_data(),
+#' so that a repeated row is left for the export to stop on and name.
+matches_awaiting_attendance <- function(data_dir = here::here("data")) {
+  data <- withr::with_dir(dirname(data_dir), suppressWarnings(load_app_data("data")))
+  matches_without_attendance(data$matches, data$attendance)
+}
+
 # Writing ----
 
 #' Adding 0 changes a number only if it is -0, which balance_totals() returns as
@@ -1133,6 +1150,13 @@ build_site_data <- function(data_dir = here::here("data"), out_root = here::here
 }
 
 if (sys.nframe() == 0L) {
+  # The question scripts/publish-site.sh asks before exporting. It answers with one
+  # date per line, in the style of the CSVs, and writes nothing.
+  if ("--matches-without-attendance" %in% commandArgs(trailingOnly = TRUE)) {
+    writeLines(format(matches_awaiting_attendance(), "%d/%m/%Y"))
+    quit(save = "no")
+  }
+
   built <- build_site_data()
   message("Wrote ", length(built$files), " files. data_hash ", built$data_hash)
   if (length(built$problems) > 0) {
