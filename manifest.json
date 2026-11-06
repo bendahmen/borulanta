@@ -4084,6 +4084,9 @@
     "data/seasons.csv": {
       "checksum": "13bbf0d6dd52317b9cdb17b5111a1b65"
     },
+    "data/uncredited_goals.csv": {
+      "checksum": "b9db6749bf978406737269f602a70857"
+    },
     "R/_disable_autoload.R": {
       "checksum": "8af424c88645d00a98945e75cf2b836e"
     },

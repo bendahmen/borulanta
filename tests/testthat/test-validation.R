@@ -20,6 +20,7 @@ clean_data <- function() {
       date = as.Date("2026-01-21"), player = "Ben", amount = 10, season_id = "s1"
     ),
     events = empty_events(),
+    uncredited_goals = empty_uncredited_goals(),
     fixtures = tibble(
       date = as.Date("2026-01-21"), opponent = "Brother Man FC",
       dl_match_id = "1", season_id = "s1"

@@ -106,6 +106,13 @@ NAME_MAP_COLUMNS <- readr::cols(
   player = readr::col_character()
 )
 
+UNCREDITED_GOAL_COLUMNS <- readr::cols(
+  date = readr::col_character(),
+  minute = readr::col_integer(),
+  player = readr::col_character(),
+  reason = readr::col_character()
+)
+
 read_match_file <- function(path) {
   readr::read_csv(path, col_types = MATCH_COLUMNS) |>
     mutate(date = parse_match_date(date))
@@ -158,6 +165,50 @@ read_league_result_file <- function(path) {
     mutate(date = parse_match_date(date))
 }
 
+# Goals credited to nobody ----
+#
+# Some goals count for the team and for no player: an own goal by the other side,
+# and a goal by a guest who shares a first name with one of ours, which the page
+# cannot tell apart from his. Both stay in match_events.csv as the page has them,
+# because the sync rewrites goal rows on every run and would undo a hand edit. The
+# loaded events keep the row with no player, so the goal still counts in the
+# scoreline check.
+
+# What the page writes in place of a scorer for an own goal, matched ignoring case.
+OWN_GOAL_NAMES <- c("og", "o.g.", "own goal")
+
+#' The hand-kept list of goals to credit to nobody. Absent or empty means none.
+read_uncredited_goal_file <- function(path) {
+  # A zero-byte file has no header, and readr would name its columns X1 to X4.
+  if (!file.exists(path) || file.size(path) == 0) {
+    return(tibble(
+      date = as.Date(character()), minute = integer(),
+      player = character(), reason = character()
+    ))
+  }
+  readr::read_csv(path, col_types = UNCREDITED_GOAL_COLUMNS) |>
+    mutate(date = parse_match_date(date))
+}
+
+#' For each row, whether `goals` has one with the same date, minute and player.
+same_goal <- function(rows, goals) {
+  found <- goals |>
+    distinct(date, minute, player) |>
+    mutate(found = TRUE)
+  rows |>
+    select(date, minute, player) |>
+    left_join(found, by = c("date", "minute", "player")) |>
+    pull(found) |>
+    coalesce(FALSE)
+}
+
+#' Set the player to NA on own goals and on the goals uncredited_goals.csv lists.
+credit_nobody <- function(events, uncredited) {
+  nobody <- events$event_type %in% "goal" &
+    (tolower(events$player) %in% OWN_GOAL_NAMES | same_goal(events, uncredited))
+  events |> mutate(player = if_else(nobody, NA_character_, player))
+}
+
 #' Add the "4-5" display string derived from the two goal columns.
 #'
 #' Scores are stored as two integers because that is what they are and what the
@@ -180,7 +231,15 @@ load_app_data <- function(dir = "data") {
     with_season(seasons) |>
     arrange(desc(date))
 
-  events <- read_event_file(path("match_events.csv")) |>
+  # Each listed goal is looked for among the goals as the page has them, before
+  # any is credited to nobody, so that one the sync has since changed is reported.
+  page_events <- read_event_file(path("match_events.csv"))
+  page_goals <- page_events |> filter(event_type == "goal")
+  uncredited_goals <- read_uncredited_goal_file(path("uncredited_goals.csv")) |>
+    mutate(matched = same_goal(pick(date, minute, player), page_goals))
+
+  events <- page_events |>
+    credit_nobody(uncredited_goals) |>
     with_season(seasons)
 
   attendance <- readr::read_csv(path("attendance.csv"), col_types = ATTENDANCE_COLUMNS) |>
@@ -210,6 +269,7 @@ load_app_data <- function(dir = "data") {
     rosters = rosters,
     matches = matches,
     events = events,
+    uncredited_goals = uncredited_goals,
     attendance = attendance,
     payments = payments,
     fixtures = fixtures,
@@ -318,6 +378,16 @@ validate_app_data <- function(data) {
   complain(
     "goal events that do not add up to the scoreline",
     format(mismatched$date, "%d/%m/%Y")
+  )
+  # A listed goal is matched on its date, minute and name, so a sync that corrects
+  # the minute or the name on the page credits the scorer again without a sound.
+  unmatched <- data$uncredited_goals |> filter(!matched)
+  complain(
+    "goals in data/uncredited_goals.csv that match no goal event",
+    sprintf(
+      "%s %s minute %s",
+      unmatched$player, format(unmatched$date, "%d/%m/%Y"), unmatched$minute
+    )
   )
 
   # A fixture whose date already has a result is a snapshot the sync has not

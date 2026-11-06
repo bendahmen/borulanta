@@ -156,8 +156,10 @@ scorer_table <- function(events, attendance, matches) {
     ))
   }
 
+  # A goal credited to nobody, an own goal or one in data/uncredited_goals.csv,
+  # counts in the scoreline and would otherwise be a row of its own here.
   ours <- events |>
-    filter(team == "us", date %in% coverage$dates)
+    filter(team == "us", !is.na(player), date %in% coverage$dates)
 
   tally <- function(type, name) {
     ours |>
