@@ -287,9 +287,13 @@ test('the note about a table above is on Roster and not on the player page', () 
 
 test('the profile shown is the one passed, with R strings', () => {
   const html = profileHtml('s1-s3', 'Oleg');
-  assert.ok(html.includes('3 of 24'));
-  assert.ok(html.includes('12% turnout'));
-  assert.ok(html.includes(findProfile(seasonFile('s1-s3'), 'Oleg').differential_note));
+  const profile = findProfile(seasonFile('s1-s3'), 'Oleg');
+  // Read from the export rather than written out, because each new match changes them.
+  const appearances = profile.headline.find((tile) => tile.label === 'Appearances');
+  assert.match(appearances.value, /^3 of \d+$/);
+  assert.ok(html.includes(appearances.value));
+  assert.ok(html.includes(appearances.note));
+  assert.ok(html.includes(profile.differential_note));
 });
 
 test('an ever-present has the no-comparison wording, and a blank rate on the Missed row', () => {

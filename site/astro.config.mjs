@@ -51,6 +51,8 @@ function preloadIslandChunks() {
 }
 
 export default defineConfig({
+  // The live address. Link previews need absolute image URLs, so change this with the domain.
+  site: 'https://borulanta.bendahmen.workers.dev',
   integrations: [svelte(), staleDataCheck(), preloadIslandChunks()],
   // Its bar sits on top of the bottom tabs when testing on a phone.
   devToolbar: { enabled: false },

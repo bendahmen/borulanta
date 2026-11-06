@@ -1,0 +1,4 @@
+# Read by Cloudflare, not served. Files in /_astro/ carry a hash of their content in
+# their name, so a changed file gets a new name and phones can keep these for good.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

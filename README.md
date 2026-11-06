@@ -96,6 +96,11 @@ bash scripts/publish-site.sh            # publish
 bash scripts/publish-site.sh --dry-run  # say what a publish would do, change nothing
 ```
 
+The site is live at https://borulanta.bendahmen.workers.dev/. Cloudflare builds and
+deploys it about a minute after each push to `static-site`, and shows the result as a
+check on the commit in GitHub. A build whose JSON does not match the CSVs fails, and
+the previous version stays live.
+
 **Where it runs changes at cutover.** Until then it runs in `borulanta-site` on
 `static-site`. It merges `main` first, because the CSVs are kept there, and its first
 run sets the branch's upstream. Pushing `static-site` does not redeploy Shiny. After
