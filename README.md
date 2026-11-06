@@ -271,7 +271,7 @@ is not recorded — it is only used to work out which end of the scoreline is ou
 | `player` | our players by their roster name, theirs as the site has them |
 
 It is long rather than wide so that recording something new later — assists,
-cards, own goals — is a new `event_type`, not a schema change.
+cards — is a new `event_type`, not a schema change.
 
 The sync owns `goal` and `mom` rows for any date it is looking at and rewrites
 them on every run, which is what makes a correction on the site, or a newly
@@ -359,6 +359,17 @@ records `Felix` where the roster says something else. Only our side is mapped;
 the opposition's names are kept as they came, because they are not our players
 and exist only so a goal tally reconciles with the score. An unmapped name is
 left as it came and reported, so adding the mapping and re-running fixes it.
+
+Some goals count for the team and for no player. The page lists an own goal by
+the other side as `Og`, and the app credits a goal under `Og`, `O.G.` or `Own
+goal`, in any case, to nobody. A goal by a guest who shares a first name with one
+of ours goes in `data/uncredited_goals.csv`, one row per goal: `date`, `minute`
+and `player` as `match_events.csv` has them, and a `reason`. A hand edit to
+`match_events.csv` would not survive the next sync, so both stay there as the
+page has them and only the loaded data credits nobody. Such a goal is in the
+score, and so in everything built on it, and in no scorer table, player page or
+scorers line. A listed goal that stops matching, because the page has corrected
+its minute or name, is reported rather than quietly credited again.
 
 ## The home page
 

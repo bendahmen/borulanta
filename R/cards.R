@@ -51,13 +51,6 @@ payment_panel_ui <- function() {
         target = "_blank",
         class = "payment-button",
         "Pay via Monzo"
-      ),
-      div(
-        class = "account-panel",
-        div(class = "account-title", "Bank transfer details"),
-        p(class = "account-detail", "Account Number: 94456363"),
-        p(class = "account-detail", "Sort Code: 04-00-03"),
-        p(class = "account-detail", "Name: Benjamin Dahmen")
       )
     )
   )

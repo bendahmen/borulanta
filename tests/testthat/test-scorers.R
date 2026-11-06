@@ -121,6 +121,19 @@ test_that("a scorer with no attendance row is shown rather than dropped", {
   expect_true(is.na(ghost$goals_per_appearance))
 })
 
+test_that("a goal credited to nobody is in nobody's row and has none of its own", {
+  # An own goal or a listed guest's goal: load_app_data() keeps the row with no
+  # player, so the scoreline still adds up.
+  matches <- covered_match("2026-01-14")
+  events <- bind_rows(goal("2026-01-14", "Ben"), goal("2026-01-14", NA_character_))
+
+  table <- scorer_table(events, played("2026-01-14", c("Ben", "Vitto")), matches)
+
+  expect_setequal(table$player, c("Ben", "Vitto"))
+  expect_equal(table$goals[table$player == "Ben"], 1L)
+  expect_equal(sum(table$goals), 1L)
+})
+
 test_that("a window with no covered match yields no rows rather than zeroes", {
   matches <- archive_match("2026-01-07")
 

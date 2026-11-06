@@ -293,28 +293,6 @@ a:hover {
   filter: brightness(0.95);
 }
 
-.account-panel {
-  margin-top: 1rem;
-  padding: 0.9rem 1rem;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.account-title {
-  margin-bottom: 0.35rem;
-  color: var(--green-bright);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.account-detail {
-  margin: 0.18rem 0;
-  color: #fdfdfb;
-  font-size: 0.95rem;
-}
-
 .selection-shell .form-label {
   color: var(--ink);
   font-weight: 700;
