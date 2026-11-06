@@ -5,10 +5,10 @@
     "ols": {
       "has_regression": true,
       "note": "Coefficient on each outcome, with its p-value in brackets.",
-      "explanation": ["Each column is a separate match-level regression of that outcome on indicators for the 15 players with at least 3 appearances in the selected seasons. The coefficient says how the outcome moves when that player is on the pitch, holding the rest of the lineup fixed. With this many players, a couple of p-values below 0.05 is what chance alone produces.", "Anyone below the appearance threshold has no indicator of their own and sits in the residual. There is no time trend. These are descriptive: nothing here separates a good player from one who happens to play in good teams.", "The opponent is on file for 7 of 24 matches here. Those matches also control for opponent strength: the other side's goal difference per game against everyone except us that season, centred so that 0 is an average opponent. Matches with no opponent recorded take the average and an indicator, which keeps their own level out of the player coefficients."],
+      "explanation": ["Each column is a separate match-level regression of that outcome on indicators for the 15 players with at least 3 appearances in the selected seasons. The coefficient says how the outcome moves when that player is on the pitch, holding the rest of the lineup fixed. With this many players, a couple of p-values below 0.05 is what chance alone produces.", "Anyone below the appearance threshold has no indicator of their own and sits in the residual. There is no time trend. These are descriptive: nothing here separates a good player from one who happens to play in good teams.", "The opponent is on file for 8 of 25 matches here. Those matches also control for opponent strength: the other side's goal difference per game against everyone except us that season, centred so that 0 is an average opponent. Matches with no opponent recorded take the average and an indicator, which keeps their own level out of the player coefficients."],
       "opponent_coverage": {
-        "observed": 7,
-        "total": 24
+        "observed": 8,
+        "total": 25
       },
       "players": [
         {
@@ -16,36 +16,74 @@
           "appearances": 21,
           "outcomes": {
             "points": {
-              "estimate": -0.6542845171,
-              "std_error": 0.9440395473,
-              "conf_low": -2.886583325,
-              "conf_high": 1.578014291,
-              "p_value": 0.5105994887,
-              "display": "-0.65 [0.511]"
+              "estimate": 0.352224746,
+              "std_error": 0.9763065093,
+              "conf_low": -1.899142102,
+              "conf_high": 2.603591594,
+              "p_value": 0.7276101373,
+              "display": "0.35 [0.728]"
             },
             "goals_scored": {
-              "estimate": 2.212861591,
-              "std_error": 2.334190302,
-              "conf_low": -3.306621405,
-              "conf_high": 7.732344587,
-              "p_value": 0.3746894522,
-              "display": "2.21 [0.375]"
+              "estimate": 1.934026569,
+              "std_error": 1.858482025,
+              "conf_low": -2.351640667,
+              "conf_high": 6.219693805,
+              "p_value": 0.3284645319,
+              "display": "1.93 [0.328]"
             },
             "goals_conceded": {
-              "estimate": 1.434587056,
-              "std_error": 1.387944101,
-              "conf_low": -1.847379225,
-              "conf_high": 4.716553337,
-              "p_value": 0.3357028036,
-              "display": "1.43 [0.336]"
+              "estimate": -0.1800210316,
+              "std_error": 1.468669512,
+              "conf_low": -3.566778998,
+              "conf_high": 3.206736935,
+              "p_value": 0.9054675626,
+              "display": "-0.18 [0.905]"
             },
             "goal_difference": {
-              "estimate": 0.778274535,
-              "std_error": 2.3463483,
-              "conf_low": -4.769957557,
-              "conf_high": 6.326506627,
-              "p_value": 0.7498286046,
-              "display": "0.78 [0.750]"
+              "estimate": 2.114047601,
+              "std_error": 2.047537158,
+              "conf_low": -2.607581553,
+              "conf_high": 6.835676754,
+              "p_value": 0.3320462316,
+              "display": "2.11 [0.332]"
+            }
+          }
+        },
+        {
+          "player": "Vitto",
+          "appearances": 19,
+          "outcomes": {
+            "points": {
+              "estimate": -1.981524828,
+              "std_error": 1.472926021,
+              "conf_low": -5.378098324,
+              "conf_high": 1.415048668,
+              "p_value": 0.2154148987,
+              "display": "-1.98 [0.215]"
+            },
+            "goals_scored": {
+              "estimate": -2.229131244,
+              "std_error": 2.803839275,
+              "conf_low": -8.694796207,
+              "conf_high": 4.236533718,
+              "p_value": 0.4495386052,
+              "display": "-2.23 [0.450]"
+            },
+            "goals_conceded": {
+              "estimate": 1.513956814,
+              "std_error": 2.215740159,
+              "conf_low": -3.595549155,
+              "conf_high": 6.623462784,
+              "p_value": 0.513732078,
+              "display": "1.51 [0.514]"
+            },
+            "goal_difference": {
+              "estimate": -3.743088059,
+              "std_error": 3.089061407,
+              "conf_low": -10.86647644,
+              "conf_high": 3.38030032,
+              "p_value": 0.2601907609,
+              "display": "-3.74 [0.260]"
             }
           }
         },
@@ -54,150 +92,112 @@
           "appearances": 18,
           "outcomes": {
             "points": {
-              "estimate": -0.95783219,
-              "std_error": 0.9061611654,
-              "conf_low": -3.100562858,
-              "conf_high": 1.184898477,
-              "p_value": 0.3256097718,
-              "display": "-0.96 [0.326]"
+              "estimate": -1.325323385,
+              "std_error": 1.138923035,
+              "conf_low": -3.951684614,
+              "conf_high": 1.301037844,
+              "p_value": 0.2780899776,
+              "display": "-1.33 [0.278]"
             },
             "goals_scored": {
-              "estimate": -3.142618919,
-              "std_error": 2.240533895,
-              "conf_low": -8.440639704,
-              "conf_high": 2.155401867,
-              "p_value": 0.2034905787,
-              "display": "-3.14 [0.203]"
+              "estimate": -3.550291553,
+              "std_error": 2.168036338,
+              "conf_low": -8.549792314,
+              "conf_high": 1.449209208,
+              "p_value": 0.1401483107,
+              "display": "-3.55 [0.140]"
             },
             "goals_conceded": {
-              "estimate": 0.3660017241,
-              "std_error": 1.332254615,
-              "conf_low": -2.784279849,
-              "conf_high": 3.516283297,
-              "p_value": 0.7914600772,
-              "display": "0.37 [0.791]"
+              "estimate": 0.7837190611,
+              "std_error": 1.713295489,
+              "conf_low": -3.167147421,
+              "conf_high": 4.734585543,
+              "p_value": 0.659526003,
+              "display": "0.78 [0.660]"
             },
             "goal_difference": {
-              "estimate": -3.508620643,
-              "std_error": 2.252204069,
-              "conf_low": -8.834237004,
-              "conf_high": 1.816995718,
-              "p_value": 0.1632253776,
-              "display": "-3.51 [0.163]"
-            }
-          }
-        },
-        {
-          "player": "Vitto",
-          "appearances": 18,
-          "outcomes": {
-            "points": {
-              "estimate": -0.9347134388,
-              "std_error": 1.241120828,
-              "conf_low": -3.869497848,
-              "conf_high": 2.000070971,
-              "p_value": 0.4759383941,
-              "display": "-0.93 [0.476]"
-            },
-            "goals_scored": {
-              "estimate": -1.839723524,
-              "std_error": 3.068740297,
-              "conf_low": -9.096141253,
-              "conf_high": 5.416694205,
-              "p_value": 0.5677257469,
-              "display": "-1.84 [0.568]"
-            },
-            "goals_conceded": {
-              "estimate": 0.05095995248,
-              "std_error": 1.8247184,
-              "conf_low": -4.263813428,
-              "conf_high": 4.365733333,
-              "p_value": 0.978499442,
-              "display": "0.05 [0.978]"
-            },
-            "goal_difference": {
-              "estimate": -1.890683477,
-              "std_error": 3.084724314,
-              "conf_low": -9.184897399,
-              "conf_high": 5.403530446,
-              "p_value": 0.5593090779,
-              "display": "-1.89 [0.559]"
+              "estimate": -4.334010614,
+              "std_error": 2.388581058,
+              "conf_low": -9.842088411,
+              "conf_high": 1.174067183,
+              "p_value": 0.1071551345,
+              "display": "-4.33 [0.107]"
             }
           }
         },
         {
           "player": "Berghi",
-          "appearances": 17,
+          "appearances": 18,
           "outcomes": {
             "points": {
-              "estimate": 0.7743332416,
-              "std_error": 1.356462627,
-              "conf_low": -2.433191184,
-              "conf_high": 3.981857667,
-              "p_value": 0.5859536217,
-              "display": "0.77 [0.586]"
+              "estimate": 1.471658406,
+              "std_error": 1.626355729,
+              "conf_low": -2.27872463,
+              "conf_high": 5.222041442,
+              "p_value": 0.3919638648,
+              "display": "1.47 [0.392]"
             },
             "goals_scored": {
-              "estimate": -0.2417416482,
-              "std_error": 3.353929313,
-              "conf_low": -8.172524239,
-              "conf_high": 7.689040943,
-              "p_value": 0.9445566879,
-              "display": "-0.24 [0.945]"
+              "estimate": 0.3353618926,
+              "std_error": 3.095905702,
+              "conf_low": -6.803809457,
+              "conf_high": 7.474533243,
+              "p_value": 0.9164060589,
+              "display": "0.34 [0.916]"
             },
             "goals_conceded": {
-              "estimate": 2.943467214,
-              "std_error": 1.994296009,
-              "conf_low": -1.772293495,
-              "conf_high": 7.659227923,
-              "p_value": 0.183469034,
-              "display": "2.94 [0.183]"
+              "estimate": 2.153811533,
+              "std_error": 2.446546296,
+              "conf_low": -3.487934342,
+              "conf_high": 7.795557407,
+              "p_value": 0.4043407298,
+              "display": "2.15 [0.404]"
             },
             "goal_difference": {
-              "estimate": -3.185208862,
-              "std_error": 3.371398782,
-              "conf_low": -11.15730018,
-              "conf_high": 4.786882458,
-              "p_value": 0.3762341774,
-              "display": "-3.19 [0.376]"
+              "estimate": -1.81844964,
+              "std_error": 3.410838456,
+              "conf_low": -9.683857224,
+              "conf_high": 6.046957944,
+              "p_value": 0.6084255323,
+              "display": "-1.82 [0.608]"
             }
           }
         },
         {
           "player": "Daniel",
-          "appearances": 16,
+          "appearances": 17,
           "outcomes": {
             "points": {
-              "estimate": 1.71869865,
-              "std_error": 0.7341298642,
-              "conf_low": -0.0172426301,
-              "conf_high": 3.454639931,
-              "p_value": 0.05175826008,
-              "display": "1.72 [0.052]"
+              "estimate": 1.806759384,
+              "std_error": 0.9065876099,
+              "conf_low": -0.2838353936,
+              "conf_high": 3.897354161,
+              "p_value": 0.0814036843,
+              "display": "1.81 [0.081]"
             },
             "goals_scored": {
-              "estimate": 2.980608308,
-              "std_error": 1.815176932,
-              "conf_low": -1.311603087,
-              "conf_high": 7.272819703,
-              "p_value": 0.1445832495,
-              "display": "2.98 [0.145]"
+              "estimate": 3.371498647,
+              "std_error": 1.725766203,
+              "conf_low": -0.6081253533,
+              "conf_high": 7.351122647,
+              "p_value": 0.08650637023,
+              "display": "3.37 [0.087]"
             },
             "goals_conceded": {
-              "estimate": -1.854929978,
-              "std_error": 1.07933107,
-              "conf_low": -4.4071424,
-              "conf_high": 0.6972824448,
-              "p_value": 0.1293818158,
-              "display": "-1.85 [0.129]"
+              "estimate": -1.825238212,
+              "std_error": 1.363790541,
+              "conf_low": -4.970144839,
+              "conf_high": 1.319668414,
+              "p_value": 0.2175684194,
+              "display": "-1.83 [0.218]"
             },
             "goal_difference": {
-              "estimate": 4.835538286,
-              "std_error": 1.824631567,
-              "conf_low": 0.5209702322,
-              "conf_high": 9.150106339,
-              "p_value": 0.03293475778,
-              "display": "4.84 [0.033]"
+              "estimate": 5.196736859,
+              "std_error": 1.901320744,
+              "conf_low": 0.8122833622,
+              "conf_high": 9.581190356,
+              "p_value": 0.02571722813,
+              "display": "5.20 [0.026]"
             }
           }
         },
@@ -206,112 +206,112 @@
           "appearances": 16,
           "outcomes": {
             "points": {
-              "estimate": -0.6279155626,
-              "std_error": 0.8867977505,
-              "conf_low": -2.72485903,
-              "conf_high": 1.469027904,
-              "p_value": 0.5017909754,
-              "display": "-0.63 [0.502]"
+              "estimate": -0.2499082856,
+              "std_error": 1.04573404,
+              "conf_low": -2.661375306,
+              "conf_high": 2.161558735,
+              "p_value": 0.8171303592,
+              "display": "-0.25 [0.817]"
             },
             "goals_scored": {
-              "estimate": 1.267158835,
-              "std_error": 2.192656775,
-              "conf_low": -3.91765055,
-              "conf_high": 6.45196822,
-              "p_value": 0.5814303297,
-              "display": "1.27 [0.581]"
+              "estimate": 1.141108863,
+              "std_error": 1.990643203,
+              "conf_low": -3.449322594,
+              "conf_high": 5.731540321,
+              "p_value": 0.5822352145,
+              "display": "1.14 [0.582]"
             },
             "goals_conceded": {
-              "estimate": 1.065634609,
-              "std_error": 1.303786171,
-              "conf_low": -2.017329789,
-              "conf_high": 4.148599008,
-              "p_value": 0.4406628062,
-              "display": "1.07 [0.441]"
+              "estimate": 0.4654667498,
+              "std_error": 1.573110173,
+              "conf_low": -3.162131815,
+              "conf_high": 4.093065314,
+              "p_value": 0.7748495356,
+              "display": "0.47 [0.775]"
             },
             "goal_difference": {
-              "estimate": 0.2015242258,
-              "std_error": 2.204077573,
-              "conf_low": -5.010291055,
-              "conf_high": 5.413339507,
-              "p_value": 0.9297104762,
-              "display": "0.20 [0.930]"
+              "estimate": 0.6756421137,
+              "std_error": 2.193142506,
+              "conf_low": -4.381753574,
+              "conf_high": 5.733037802,
+              "p_value": 0.7658974048,
+              "display": "0.68 [0.766]"
             }
           }
         },
         {
           "player": "Mateus",
-          "appearances": 14,
+          "appearances": 15,
           "outcomes": {
             "points": {
-              "estimate": 1.274132833,
-              "std_error": 0.7576161511,
-              "conf_low": -0.5173446909,
-              "conf_high": 3.065610358,
-              "p_value": 0.1364969058,
-              "display": "1.27 [0.136]"
+              "estimate": 0.8574145374,
+              "std_error": 0.8514136206,
+              "conf_low": -1.105948793,
+              "conf_high": 2.820777867,
+              "p_value": 0.3433963694,
+              "display": "0.86 [0.343]"
             },
             "goals_scored": {
-              "estimate": -0.7761815977,
-              "std_error": 1.873248084,
-              "conf_low": -5.205709445,
-              "conf_high": 3.65334625,
-              "p_value": 0.6910196402,
-              "display": "-0.78 [0.691]"
+              "estimate": -0.437995765,
+              "std_error": 1.620737847,
+              "conf_low": -4.175423943,
+              "conf_high": 3.299432413,
+              "p_value": 0.793812832,
+              "display": "-0.44 [0.794]"
             },
             "goals_conceded": {
-              "estimate": -1.815988354,
-              "std_error": 1.113861036,
-              "conf_low": -4.449851172,
-              "conf_high": 0.8178744635,
-              "p_value": 0.1470484027,
-              "display": "-1.82 [0.147]"
+              "estimate": -1.022887793,
+              "std_error": 1.280791651,
+              "conf_low": -3.976398638,
+              "conf_high": 1.930623051,
+              "p_value": 0.4475592519,
+              "display": "-1.02 [0.448]"
             },
             "goal_difference": {
-              "estimate": 1.039806756,
-              "std_error": 1.883005191,
-              "conf_low": -3.412792984,
-              "conf_high": 5.492406497,
-              "p_value": 0.5979878379,
-              "display": "1.04 [0.598]"
+              "estimate": 0.5848920282,
+              "std_error": 1.785608319,
+              "conf_low": -3.53272814,
+              "conf_high": 4.702512196,
+              "p_value": 0.7516525533,
+              "display": "0.58 [0.752]"
             }
           }
         },
         {
           "player": "Emiliano",
-          "appearances": 12,
+          "appearances": 13,
           "outcomes": {
             "points": {
-              "estimate": 0.5740751525,
-              "std_error": 0.87508768,
-              "conf_low": -1.495178398,
-              "conf_high": 2.643328703,
-              "p_value": 0.5327734975,
-              "display": "0.57 [0.533]"
+              "estimate": 0.8278318319,
+              "std_error": 1.037468659,
+              "conf_low": -1.564575186,
+              "conf_high": 3.22023885,
+              "p_value": 0.4479442655,
+              "display": "0.83 [0.448]"
             },
             "goals_scored": {
-              "estimate": 2.351785989,
-              "std_error": 2.163702974,
-              "conf_low": -2.764558537,
-              "conf_high": 7.468130515,
-              "p_value": 0.3130733839,
-              "display": "2.35 [0.313]"
+              "estimate": 2.277427048,
+              "std_error": 1.974909351,
+              "conf_low": -2.276722082,
+              "conf_high": 6.831576179,
+              "p_value": 0.2821248842,
+              "display": "2.28 [0.282]"
             },
             "goals_conceded": {
-              "estimate": -0.6179589706,
-              "std_error": 1.286569812,
-              "conf_low": -3.66021315,
-              "conf_high": 2.424295209,
-              "p_value": 0.6456500903,
-              "display": "-0.62 [0.646]"
+              "estimate": -1.051812115,
+              "std_error": 1.560676462,
+              "conf_low": -4.650738491,
+              "conf_high": 2.54711426,
+              "p_value": 0.5193397176,
+              "display": "-1.05 [0.519]"
             },
             "goal_difference": {
-              "estimate": 2.96974496,
-              "std_error": 2.174972962,
-              "conf_low": -2.173248852,
-              "conf_high": 8.112738771,
-              "p_value": 0.2143773667,
-              "display": "2.97 [0.214]"
+              "estimate": 3.329239164,
+              "std_error": 2.175808119,
+              "conf_low": -1.688183357,
+              "conf_high": 8.346661684,
+              "p_value": 0.1645175692,
+              "display": "3.33 [0.165]"
             }
           }
         },
@@ -320,74 +320,188 @@
           "appearances": 7,
           "outcomes": {
             "points": {
-              "estimate": 0.7811538595,
-              "std_error": 1.66611743,
-              "conf_low": -3.158587821,
-              "conf_high": 4.720895541,
-              "p_value": 0.6534298382,
-              "display": "0.78 [0.653]"
+              "estimate": 1.442009324,
+              "std_error": 2.026374633,
+              "conf_low": -3.230818958,
+              "conf_high": 6.114837606,
+              "p_value": 0.4969231028,
+              "display": "1.44 [0.497]"
             },
             "goals_scored": {
-              "estimate": -1.991472606,
-              "std_error": 4.11956804,
-              "conf_low": -11.7327031,
-              "conf_high": 7.749757887,
-              "p_value": 0.643553428,
-              "display": "-1.99 [0.644]"
+              "estimate": -1.262187776,
+              "std_error": 3.857375522,
+              "conf_low": -10.15731168,
+              "conf_high": 7.632936129,
+              "p_value": 0.7519037509,
+              "display": "-1.26 [0.752]"
             },
             "goals_conceded": {
-              "estimate": 1.191867481,
-              "std_error": 2.449556128,
-              "conf_low": -4.600412346,
-              "conf_high": 6.984147307,
-              "p_value": 0.6414304598,
-              "display": "1.19 [0.641]"
+              "estimate": 0.5102278413,
+              "std_error": 3.048299498,
+              "conf_low": -6.519163405,
+              "conf_high": 7.539619088,
+              "p_value": 0.8712238702,
+              "display": "0.51 [0.871]"
             },
             "goal_difference": {
-              "estimate": -3.183340086,
-              "std_error": 4.141025458,
-              "conf_low": -12.97530931,
-              "conf_high": 6.608629139,
-              "p_value": 0.4671910119,
-              "display": "-3.18 [0.467]"
+              "estimate": -1.772415617,
+              "std_error": 4.249769224,
+              "conf_low": -11.57240102,
+              "conf_high": 8.027569786,
+              "p_value": 0.6876000138,
+              "display": "-1.77 [0.688]"
             }
           }
         },
         {
           "player": "Pietro",
+          "appearances": 6,
+          "outcomes": {
+            "points": {
+              "estimate": 2.21721408,
+              "std_error": 1.259550548,
+              "conf_low": -0.6873146927,
+              "conf_high": 5.121742852,
+              "p_value": 0.1163897786,
+              "display": "2.22 [0.116]"
+            },
+            "goals_scored": {
+              "estimate": 3.054392148,
+              "std_error": 2.397661012,
+              "conf_low": -2.474624061,
+              "conf_high": 8.583408358,
+              "p_value": 0.2384580722,
+              "display": "3.05 [0.238]"
+            },
+            "goals_conceded": {
+              "estimate": -2.207508369,
+              "std_error": 1.894756893,
+              "conf_low": -6.5768256,
+              "conf_high": 2.161808861,
+              "p_value": 0.2775555195,
+              "display": "-2.21 [0.278]"
+            },
+            "goal_difference": {
+              "estimate": 5.261900517,
+              "std_error": 2.641564432,
+              "conf_low": -0.8295579859,
+              "conf_high": 11.35335902,
+              "p_value": 0.08152471588,
+              "display": "5.26 [0.082]"
+            }
+          }
+        },
+        {
+          "player": "Torge",
+          "appearances": 6,
+          "outcomes": {
+            "points": {
+              "estimate": -3.393560817,
+              "std_error": 3.167393763,
+              "conf_low": -10.69758393,
+              "conf_high": 3.9104623,
+              "p_value": 0.3152424113,
+              "display": "-3.39 [0.315]"
+            },
+            "goals_scored": {
+              "estimate": -0.5778254317,
+              "std_error": 6.029401955,
+              "conf_low": -14.48165127,
+              "conf_high": 13.32600041,
+              "p_value": 0.9260090885,
+              "display": "-0.58 [0.926]"
+            },
+            "goals_conceded": {
+              "estimate": 4.509130496,
+              "std_error": 4.764748168,
+              "conf_low": -6.478398482,
+              "conf_high": 15.49665947,
+              "p_value": 0.3716721122,
+              "display": "4.51 [0.372]"
+            },
+            "goal_difference": {
+              "estimate": -5.086955928,
+              "std_error": 6.642746271,
+              "conf_low": -20.4051563,
+              "conf_high": 10.23124444,
+              "p_value": 0.46579194,
+              "display": "-5.09 [0.466]"
+            }
+          }
+        },
+        {
+          "player": "Elia",
           "appearances": 5,
           "outcomes": {
             "points": {
-              "estimate": 2.272313401,
-              "std_error": 1.010667281,
-              "conf_low": -0.1175349625,
-              "conf_high": 4.662161764,
-              "p_value": 0.05934414165,
-              "display": "2.27 [0.059]"
+              "estimate": -0.7064783028,
+              "std_error": 1.572096971,
+              "conf_low": -4.331740418,
+              "conf_high": 2.918783813,
+              "p_value": 0.6650784982,
+              "display": "-0.71 [0.665]"
             },
             "goals_scored": {
-              "estimate": 2.65526372,
-              "std_error": 2.498931081,
-              "conf_low": -3.253769316,
-              "conf_high": 8.564296756,
-              "p_value": 0.3232584062,
-              "display": "2.66 [0.323]"
+              "estimate": 1.734706153,
+              "std_error": 2.992619566,
+              "conf_low": -5.166286941,
+              "conf_high": 8.635699247,
+              "p_value": 0.5780975801,
+              "display": "1.73 [0.578]"
             },
             "goals_conceded": {
-              "estimate": -2.409242202,
-              "std_error": 1.485901406,
-              "conf_low": -5.922840703,
-              "conf_high": 1.104356298,
-              "p_value": 0.1489623397,
-              "display": "-2.41 [0.149]"
+              "estimate": 1.068376312,
+              "std_error": 2.3649242,
+              "conf_low": -4.385148671,
+              "conf_high": 6.521901296,
+              "p_value": 0.6634387666,
+              "display": "1.07 [0.663]"
             },
             "goal_difference": {
-              "estimate": 5.064505922,
-              "std_error": 2.511947157,
-              "conf_low": -0.875305243,
-              "conf_high": 11.00431709,
-              "p_value": 0.08360169623,
-              "display": "5.06 [0.084]"
+              "estimate": 0.6663298409,
+              "std_error": 3.29704548,
+              "conf_low": -6.936670669,
+              "conf_high": 8.269330351,
+              "p_value": 0.8448839754,
+              "display": "0.67 [0.845]"
+            }
+          }
+        },
+        {
+          "player": "Luca",
+          "appearances": 5,
+          "outcomes": {
+            "points": {
+              "estimate": 1.289041497,
+              "std_error": 2.709958451,
+              "conf_low": -4.960133897,
+              "conf_high": 7.538216892,
+              "p_value": 0.6470282361,
+              "display": "1.29 [0.647]"
+            },
+            "goals_scored": {
+              "estimate": -4.434484382,
+              "std_error": 5.158635144,
+              "conf_low": -16.33031836,
+              "conf_high": 7.461349593,
+              "p_value": 0.4150119416,
+              "display": "-4.43 [0.415]"
+            },
+            "goals_conceded": {
+              "estimate": -2.414603786,
+              "std_error": 4.076622778,
+              "conf_low": -11.81531277,
+              "conf_high": 6.986105199,
+              "p_value": 0.5700040995,
+              "display": "-2.41 [0.570]"
+            },
+            "goal_difference": {
+              "estimate": -2.019880596,
+              "std_error": 5.683400215,
+              "conf_low": -15.12582499,
+              "conf_high": 11.0860638,
+              "p_value": 0.7314784164,
+              "display": "-2.02 [0.731]"
             }
           }
         },
@@ -396,150 +510,36 @@
           "appearances": 5,
           "outcomes": {
             "points": {
-              "estimate": 0.852420386,
-              "std_error": 0.6937509231,
-              "conf_low": -0.7880398713,
-              "conf_high": 2.492880643,
-              "p_value": 0.2588807765,
-              "display": "0.85 [0.259]"
+              "estimate": 1.037806756,
+              "std_error": 0.8320903384,
+              "conf_low": -0.8809970053,
+              "conf_high": 2.956610517,
+              "p_value": 0.2475878511,
+              "display": "1.04 [0.248]"
             },
             "goals_scored": {
-              "estimate": 1.52437637,
-              "std_error": 1.715337754,
-              "conf_low": -2.531752883,
-              "conf_high": 5.580505623,
-              "p_value": 0.4036807053,
-              "display": "1.52 [0.404]"
+              "estimate": 1.567676571,
+              "std_error": 1.583954345,
+              "conf_low": -2.084928698,
+              "conf_high": 5.220281841,
+              "p_value": 0.3512956579,
+              "display": "1.57 [0.351]"
             },
             "goals_conceded": {
-              "estimate": -1.123429624,
-              "std_error": 1.019965216,
-              "conf_low": -3.535264111,
-              "conf_high": 1.288404862,
-              "p_value": 0.3071310978,
-              "display": "-1.12 [0.307]"
+              "estimate": -1.407503022,
+              "std_error": 1.251723408,
+              "conf_low": -4.293982377,
+              "conf_high": 1.478976332,
+              "p_value": 0.2934255892,
+              "display": "-1.41 [0.293]"
             },
             "goal_difference": {
-              "estimate": 2.647805995,
-              "std_error": 1.724272361,
-              "conf_low": -1.429450246,
-              "conf_high": 6.725062235,
-              "p_value": 0.1685119302,
-              "display": "2.65 [0.169]"
-            }
-          }
-        },
-        {
-          "player": "Torge",
-          "appearances": 5,
-          "outcomes": {
-            "points": {
-              "estimate": -1.91153408,
-              "std_error": 2.891223417,
-              "conf_low": -8.748191089,
-              "conf_high": 4.925122929,
-              "p_value": 0.5296675105,
-              "display": "-1.91 [0.530]"
-            },
-            "goals_scored": {
-              "estimate": -0.1740638373,
-              "std_error": 7.148710751,
-              "conf_low": -17.07807865,
-              "conf_high": 16.72995097,
-              "p_value": 0.9812538163,
-              "display": "-0.17 [0.981]"
-            },
-            "goals_conceded": {
-              "estimate": 2.802983957,
-              "std_error": 4.250729218,
-              "conf_low": -7.248393438,
-              "conf_high": 12.85436135,
-              "p_value": 0.5307184966,
-              "display": "2.80 [0.531]"
-            },
-            "goal_difference": {
-              "estimate": -2.977047794,
-              "std_error": 7.185945936,
-              "conf_low": -19.96910983,
-              "conf_high": 14.01501424,
-              "p_value": 0.6910637662,
-              "display": "-2.98 [0.691]"
-            }
-          }
-        },
-        {
-          "player": "Elia",
-          "appearances": 4,
-          "outcomes": {
-            "points": {
-              "estimate": -0.2306445909,
-              "std_error": 1.444598345,
-              "conf_low": -3.646576872,
-              "conf_high": 3.18528769,
-              "p_value": 0.877658188,
-              "display": "-0.23 [0.878]"
-            },
-            "goals_scored": {
-              "estimate": 1.841232859,
-              "std_error": 3.571849779,
-              "conf_low": -6.604849751,
-              "conf_high": 10.28731547,
-              "p_value": 0.6220903552,
-              "display": "1.84 [0.622]"
-            },
-            "goals_conceded": {
-              "estimate": 0.6395204504,
-              "std_error": 2.123874744,
-              "conf_low": -4.382645276,
-              "conf_high": 5.661686177,
-              "p_value": 0.7720779186,
-              "display": "0.64 [0.772]"
-            },
-            "goal_difference": {
-              "estimate": 1.201712409,
-              "std_error": 3.590454321,
-              "conf_low": -7.288362952,
-              "conf_high": 9.691787769,
-              "p_value": 0.7476592825,
-              "display": "1.20 [0.748]"
-            }
-          }
-        },
-        {
-          "player": "Luca",
-          "appearances": 4,
-          "outcomes": {
-            "points": {
-              "estimate": 1.311753828,
-              "std_error": 2.404164878,
-              "conf_low": -4.373192749,
-              "conf_high": 6.996700404,
-              "p_value": 0.6022740516,
-              "display": "1.31 [0.602]"
-            },
-            "goals_scored": {
-              "estimate": -4.220881398,
-              "std_error": 5.944431417,
-              "conf_low": -18.27722809,
-              "conf_high": 9.835465292,
-              "p_value": 0.5006325204,
-              "display": "-4.22 [0.501]"
-            },
-            "goals_conceded": {
-              "estimate": -2.906646293,
-              "std_error": 3.534646902,
-              "conf_low": -11.26475808,
-              "conf_high": 5.451465491,
-              "p_value": 0.437999353,
-              "display": "-2.91 [0.438]"
-            },
-            "goal_difference": {
-              "estimate": -1.314235105,
-              "std_error": 5.975393924,
-              "conf_low": -15.44379649,
-              "conf_high": 12.81532628,
-              "p_value": 0.8321934655,
-              "display": "-1.31 [0.832]"
+              "estimate": 2.975179594,
+              "std_error": 1.745082994,
+              "conf_low": -1.048989008,
+              "conf_high": 6.999348195,
+              "p_value": 0.1266115099,
+              "display": "2.98 [0.127]"
             }
           }
         },
@@ -548,36 +548,36 @@
           "appearances": 3,
           "outcomes": {
             "points": {
-              "estimate": -0.8731706724,
-              "std_error": 1.127346028,
-              "conf_low": -3.538920431,
-              "conf_high": 1.792579086,
-              "p_value": 0.4639669087,
-              "display": "-0.87 [0.464]"
+              "estimate": -0.8104941247,
+              "std_error": 1.36092456,
+              "conf_low": -3.948791787,
+              "conf_high": 2.327803538,
+              "p_value": 0.5679394002,
+              "display": "-0.81 [0.568]"
             },
             "goals_scored": {
-              "estimate": 0.8578653895,
-              "std_error": 2.787425775,
-              "conf_low": -5.733349197,
-              "conf_high": 7.449079976,
-              "p_value": 0.7672182627,
-              "display": "0.86 [0.767]"
+              "estimate": 0.7048188858,
+              "std_error": 2.590635019,
+              "conf_low": -5.26919618,
+              "conf_high": 6.678833952,
+              "p_value": 0.7924624139,
+              "display": "0.70 [0.792]"
             },
             "goals_conceded": {
-              "estimate": -1.881877349,
-              "std_error": 1.657444621,
-              "conf_low": -5.801111096,
-              "conf_high": 2.037356397,
-              "p_value": 0.2935799417,
-              "display": "-1.88 [0.294]"
+              "estimate": -2.017025301,
+              "std_error": 2.047255026,
+              "conf_low": -6.738003858,
+              "conf_high": 2.703953255,
+              "p_value": 0.3533648834,
+              "display": "-2.02 [0.353]"
             },
             "goal_difference": {
-              "estimate": 2.739742739,
-              "std_error": 2.80194452,
-              "conf_low": -3.885803226,
-              "conf_high": 9.365288703,
-              "p_value": 0.3607478196,
-              "display": "2.74 [0.361]"
+              "estimate": 2.721844187,
+              "std_error": 2.854168828,
+              "conf_low": -3.859880932,
+              "conf_high": 9.303569306,
+              "p_value": 0.3681888745,
+              "display": "2.72 [0.368]"
             }
           }
         }
@@ -586,10 +586,10 @@
     "ridge": {
       "has_regression": true,
       "note": "Deviation from the average player, shrunk by how little we know.",
-      "explanation": ["These are ridge estimates. The plain fit spends a column on each of the 15 players over a few dozen matches, so somebody with three appearances is measured off three nights and lands at whichever extreme those nights went. Ridge pulls every estimate toward the average player by an amount inversely proportional to how much is known about them, so the thin players move a long way and the regulars barely move. A coefficient here is a deviation from the average player rather than a share of the scoreline, and there are no confidence intervals: ridge has no usable standard error.", "The estimates come out very close to zero, and that is the result rather than a display problem. The penalty is chosen by cross-validation, which is asking how much of a match the lineup predicts out of sample, and the answer here is almost none. The ordering still means something; the magnitudes are telling you not to lean on it.", "Anyone below the appearance threshold has no indicator of their own and sits in the residual. There is no time trend. These are descriptive: nothing here separates a good player from one who happens to play in good teams.", "The opponent is on file for 7 of 24 matches here. Those matches also control for opponent strength: the other side's goal difference per game against everyone except us that season, centred so that 0 is an average opponent. Matches with no opponent recorded take the average and an indicator, which keeps their own level out of the player coefficients."],
+      "explanation": ["These are ridge estimates. The plain fit spends a column on each of the 15 players over a few dozen matches, so somebody with three appearances is measured off three nights and lands at whichever extreme those nights went. Ridge pulls every estimate toward the average player by an amount inversely proportional to how much is known about them, so the thin players move a long way and the regulars barely move. A coefficient here is a deviation from the average player rather than a share of the scoreline, and there are no confidence intervals: ridge has no usable standard error.", "The estimates come out very close to zero, and that is the result rather than a display problem. The penalty is chosen by cross-validation, which is asking how much of a match the lineup predicts out of sample, and the answer here is almost none. The ordering still means something; the magnitudes are telling you not to lean on it.", "Anyone below the appearance threshold has no indicator of their own and sits in the residual. There is no time trend. These are descriptive: nothing here separates a good player from one who happens to play in good teams.", "The opponent is on file for 8 of 25 matches here. Those matches also control for opponent strength: the other side's goal difference per game against everyone except us that season, centred so that 0 is an average opponent. Matches with no opponent recorded take the average and an indicator, which keeps their own level out of the player coefficients."],
       "opponent_coverage": {
-        "observed": 7,
-        "total": 24
+        "observed": 8,
+        "total": 25
       },
       "players": [
         {
@@ -597,36 +597,74 @@
           "appearances": 21,
           "outcomes": {
             "points": {
-              "estimate": -0.1330433362,
+              "estimate": 0.03021267298,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.133"
+              "display": "0.0302"
             },
             "goals_scored": {
-              "estimate": 0.1123917578,
+              "estimate": 0.141509127,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.112"
+              "display": "0.142"
             },
             "goals_conceded": {
-              "estimate": 0.6466174653,
+              "estimate": -0.04021221858,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.647"
+              "display": "-0.0402"
             },
             "goal_difference": {
-              "estimate": 0.1429378846,
+              "estimate": 0.228036857,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.143"
+              "display": "0.228"
+            }
+          }
+        },
+        {
+          "player": "Vitto",
+          "appearances": 19,
+          "outcomes": {
+            "points": {
+              "estimate": -0.02433181432,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "-0.0243"
+            },
+            "goals_scored": {
+              "estimate": -0.09521195097,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "-0.0952"
+            },
+            "goals_conceded": {
+              "estimate": 0.03113097165,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.0311"
+            },
+            "goal_difference": {
+              "estimate": -0.1885216619,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "-0.189"
             }
           }
         },
@@ -635,150 +673,112 @@
           "appearances": 18,
           "outcomes": {
             "points": {
-              "estimate": -0.2709069841,
+              "estimate": -0.02598736022,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.271"
+              "display": "-0.026"
             },
             "goals_scored": {
-              "estimate": -0.183119899,
+              "estimate": -0.1996972442,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.183"
+              "display": "-0.2"
             },
             "goals_conceded": {
-              "estimate": -0.01876171866,
+              "estimate": -0.03235766361,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.0188"
+              "display": "-0.0324"
             },
             "goal_difference": {
-              "estimate": -0.3775556156,
+              "estimate": -0.1551313093,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.378"
-            }
-          }
-        },
-        {
-          "player": "Vitto",
-          "appearances": 18,
-          "outcomes": {
-            "points": {
-              "estimate": -0.2587291514,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "-0.259"
-            },
-            "goals_scored": {
-              "estimate": -0.1083355141,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "-0.108"
-            },
-            "goals_conceded": {
-              "estimate": 0.1643781402,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.164"
-            },
-            "goal_difference": {
-              "estimate": -0.4938937866,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "-0.494"
+              "display": "-0.155"
             }
           }
         },
         {
           "player": "Berghi",
-          "appearances": 17,
+          "appearances": 18,
           "outcomes": {
             "points": {
-              "estimate": -0.1741923179,
+              "estimate": -0.02539183007,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.174"
+              "display": "-0.0254"
             },
             "goals_scored": {
-              "estimate": 0.006958660087,
+              "estimate": 0.005271705776,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.00696"
+              "display": "0.00527"
             },
             "goals_conceded": {
-              "estimate": 1.537674453,
+              "estimate": 0.173289464,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "1.54"
+              "display": "0.173"
             },
             "goal_difference": {
-              "estimate": -0.8584753173,
+              "estimate": -0.3881960575,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.858"
+              "display": "-0.388"
             }
           }
         },
         {
           "player": "Daniel",
-          "appearances": 16,
+          "appearances": 17,
           "outcomes": {
             "points": {
-              "estimate": 0.7763062429,
+              "estimate": 0.1114115601,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.776"
+              "display": "0.111"
             },
             "goals_scored": {
-              "estimate": 0.4990605991,
+              "estimate": 0.5205318777,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.499"
+              "display": "0.521"
             },
             "goals_conceded": {
-              "estimate": -1.0641088,
+              "estimate": -0.09255675567,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-1.06"
+              "display": "-0.0926"
             },
             "goal_difference": {
-              "estimate": 1.565053286,
+              "estimate": 0.7748425288,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "1.57"
+              "display": "0.775"
             }
           }
         },
@@ -787,31 +787,335 @@
           "appearances": 16,
           "outcomes": {
             "points": {
-              "estimate": -0.2556908366,
+              "estimate": 0.009068890243,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.256"
+              "display": "0.00907"
             },
             "goals_scored": {
-              "estimate": 0.2152375889,
+              "estimate": 0.253842025,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.254"
+            },
+            "goals_conceded": {
+              "estimate": 0.02514371322,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.0251"
+            },
+            "goal_difference": {
+              "estimate": 0.2146041816,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
               "display": "0.215"
-            },
-            "goals_conceded": {
-              "estimate": 0.3716184306,
+            }
+          }
+        },
+        {
+          "player": "Mateus",
+          "appearances": 15,
+          "outcomes": {
+            "points": {
+              "estimate": 0.07473030548,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.372"
+              "display": "0.0747"
+            },
+            "goals_scored": {
+              "estimate": 0.1811882049,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.181"
+            },
+            "goals_conceded": {
+              "estimate": -0.1001682987,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "-0.1"
             },
             "goal_difference": {
-              "estimate": 0.1715640501,
+              "estimate": 0.4222626093,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.422"
+            }
+          }
+        },
+        {
+          "player": "Emiliano",
+          "appearances": 13,
+          "outcomes": {
+            "points": {
+              "estimate": 0.06801121559,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.068"
+            },
+            "goals_scored": {
+              "estimate": 0.2449541443,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.245"
+            },
+            "goals_conceded": {
+              "estimate": -0.02436334789,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "-0.0244"
+            },
+            "goal_difference": {
+              "estimate": 0.3078174806,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.308"
+            }
+          }
+        },
+        {
+          "player": "Anton",
+          "appearances": 7,
+          "outcomes": {
+            "points": {
+              "estimate": -0.02769581691,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "-0.0277"
+            },
+            "goals_scored": {
+              "estimate": -0.3227579135,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "-0.323"
+            },
+            "goals_conceded": {
+              "estimate": -0.07655520365,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "-0.0766"
+            },
+            "goal_difference": {
+              "estimate": -0.1909937653,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "-0.191"
+            }
+          }
+        },
+        {
+          "player": "Pietro",
+          "appearances": 6,
+          "outcomes": {
+            "points": {
+              "estimate": 0.01429351363,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.0143"
+            },
+            "goals_scored": {
+              "estimate": 0.009693761336,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.00969"
+            },
+            "goals_conceded": {
+              "estimate": -0.06742667458,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "-0.0674"
+            },
+            "goal_difference": {
+              "estimate": 0.1693875004,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.169"
+            }
+          }
+        },
+        {
+          "player": "Torge",
+          "appearances": 6,
+          "outcomes": {
+            "points": {
+              "estimate": 0.01912096395,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.0191"
+            },
+            "goals_scored": {
+              "estimate": 0.009462608318,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.00946"
+            },
+            "goals_conceded": {
+              "estimate": -0.01108088867,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "-0.0111"
+            },
+            "goal_difference": {
+              "estimate": 0.03233318848,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.0323"
+            }
+          }
+        },
+        {
+          "player": "Elia",
+          "appearances": 5,
+          "outcomes": {
+            "points": {
+              "estimate": 0.01403544838,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.014"
+            },
+            "goals_scored": {
+              "estimate": -0.01615354984,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "-0.0162"
+            },
+            "goals_conceded": {
+              "estimate": -0.01911068002,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "-0.0191"
+            },
+            "goal_difference": {
+              "estimate": 0.02378367869,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.0238"
+            }
+          }
+        },
+        {
+          "player": "Luca",
+          "appearances": 5,
+          "outcomes": {
+            "points": {
+              "estimate": 0.02671450555,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.0267"
+            },
+            "goals_scored": {
+              "estimate": -0.00641791244,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "-0.00642"
+            },
+            "goals_conceded": {
+              "estimate": -0.03044580093,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "-0.0304"
+            },
+            "goal_difference": {
+              "estimate": 0.06742497395,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.0674"
+            }
+          }
+        },
+        {
+          "player": "Seb",
+          "appearances": 5,
+          "outcomes": {
+            "points": {
+              "estimate": 0.03396272508,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.034"
+            },
+            "goals_scored": {
+              "estimate": 0.005011657109,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "0.00501"
+            },
+            "goals_conceded": {
+              "estimate": -0.07005839462,
+              "std_error": null,
+              "conf_low": null,
+              "conf_high": null,
+              "p_value": null,
+              "display": "-0.0701"
+            },
+            "goal_difference": {
+              "estimate": 0.1723637892,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
@@ -821,344 +1125,40 @@
           }
         },
         {
-          "player": "Mateus",
-          "appearances": 14,
-          "outcomes": {
-            "points": {
-              "estimate": 0.6396091197,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.64"
-            },
-            "goals_scored": {
-              "estimate": 0.2055769585,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.206"
-            },
-            "goals_conceded": {
-              "estimate": -1.117822553,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "-1.12"
-            },
-            "goal_difference": {
-              "estimate": 0.9374276996,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.937"
-            }
-          }
-        },
-        {
-          "player": "Emiliano",
-          "appearances": 12,
-          "outcomes": {
-            "points": {
-              "estimate": 0.3435831583,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.344"
-            },
-            "goals_scored": {
-              "estimate": 0.2430810195,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.243"
-            },
-            "goals_conceded": {
-              "estimate": -0.2884567719,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "-0.288"
-            },
-            "goal_difference": {
-              "estimate": 0.6203694703,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.62"
-            }
-          }
-        },
-        {
-          "player": "Anton",
-          "appearances": 7,
-          "outcomes": {
-            "points": {
-              "estimate": -0.1579219666,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "-0.158"
-            },
-            "goals_scored": {
-              "estimate": -0.3127214281,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "-0.313"
-            },
-            "goals_conceded": {
-              "estimate": -0.06678810484,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "-0.0668"
-            },
-            "goal_difference": {
-              "estimate": -0.4529922551,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "-0.453"
-            }
-          }
-        },
-        {
-          "player": "Pietro",
-          "appearances": 5,
-          "outcomes": {
-            "points": {
-              "estimate": 0.6556504159,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.656"
-            },
-            "goals_scored": {
-              "estimate": 0.04457171832,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.0446"
-            },
-            "goals_conceded": {
-              "estimate": -1.109747062,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "-1.11"
-            },
-            "goal_difference": {
-              "estimate": 0.8003892326,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": " 0.8"
-            }
-          }
-        },
-        {
-          "player": "Seb",
-          "appearances": 5,
-          "outcomes": {
-            "points": {
-              "estimate": 0.3323430481,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.332"
-            },
-            "goals_scored": {
-              "estimate": 0.004038586234,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.00404"
-            },
-            "goals_conceded": {
-              "estimate": -0.69136074,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "-0.691"
-            },
-            "goal_difference": {
-              "estimate": 0.4101879528,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.41"
-            }
-          }
-        },
-        {
-          "player": "Torge",
-          "appearances": 5,
-          "outcomes": {
-            "points": {
-              "estimate": 0.1768182437,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.177"
-            },
-            "goals_scored": {
-              "estimate": 0.01866168907,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.0187"
-            },
-            "goals_conceded": {
-              "estimate": -0.1201125761,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "-0.12"
-            },
-            "goal_difference": {
-              "estimate": 0.132784287,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.133"
-            }
-          }
-        },
-        {
-          "player": "Elia",
-          "appearances": 4,
-          "outcomes": {
-            "points": {
-              "estimate": 0.2550693436,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.255"
-            },
-            "goals_scored": {
-              "estimate": 0.001927058902,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.00193"
-            },
-            "goals_conceded": {
-              "estimate": -0.3570870589,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "-0.357"
-            },
-            "goal_difference": {
-              "estimate": 0.194838373,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.195"
-            }
-          }
-        },
-        {
-          "player": "Luca",
-          "appearances": 4,
-          "outcomes": {
-            "points": {
-              "estimate": 0.1514258738,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.151"
-            },
-            "goals_scored": {
-              "estimate": -0.01629790257,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "-0.0163"
-            },
-            "goals_conceded": {
-              "estimate": -0.5700527114,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "-0.57"
-            },
-            "goal_difference": {
-              "estimate": 0.1256509393,
-              "std_error": null,
-              "conf_low": null,
-              "conf_high": null,
-              "p_value": null,
-              "display": "0.126"
-            }
-          }
-        },
-        {
           "player": "Oleg",
           "appearances": 3,
           "outcomes": {
             "points": {
-              "estimate": -0.383266229,
+              "estimate": -0.06263670233,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.383"
+              "display": "-0.0626"
             },
             "goals_scored": {
-              "estimate": -0.2995674079,
+              "estimate": -0.3056637106,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.3"
+              "display": "-0.306"
             },
             "goals_conceded": {
-              "estimate": -0.6979733172,
+              "estimate": -0.01958499075,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.698"
+              "display": "-0.0196"
             },
             "goal_difference": {
-              "estimate": -0.3890311352,
+              "estimate": -0.2636131226,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.389"
+              "display": "-0.264"
             }
           }
         }
@@ -1166,6 +1166,19 @@
     }
   },
   "matches": [
+    {
+      "date": "2026-11-04",
+      "date_label": "Wed 04 Nov 2026",
+      "date_short": "04 Nov 2026",
+      "season_id": "s3",
+      "opponent": "Saffron Rangers",
+      "result": "3-3",
+      "goals_for": 3,
+      "goals_against": 3,
+      "goal_difference": 0,
+      "points": 1,
+      "badge": "DRAW"
+    },
     {
       "date": "2026-10-28",
       "date_label": "Wed 28 Oct 2026",
@@ -1839,9 +1852,75 @@
       "rolling_goals_conceded": 2,
       "rolling_goal_difference": 0.8,
       "rolling_squad_size": 7.8
+    },
+    {
+      "date": "2026-11-04",
+      "opponent": "Saffron Rangers",
+      "result": "3-3",
+      "points": 1,
+      "goals_scored": 3,
+      "goals_conceded": 3,
+      "goal_difference": 0,
+      "squad_size": 9,
+      "rolling_points": 1,
+      "rolling_goals_scored": 2.8,
+      "rolling_goals_conceded": 2.6,
+      "rolling_goal_difference": 0.2,
+      "rolling_squad_size": 8.2
     }
   ],
   "match_details": [
+    {
+      "date": "2026-11-04",
+      "summary_note": "04 November 2026 — Saffron Rangers — Draw",
+      "lineup": [
+        {
+          "player": "Vitto",
+          "season_appearances": 19,
+          "attendance_rate": 0.76
+        },
+        {
+          "player": "Berghi",
+          "season_appearances": 18,
+          "attendance_rate": 0.72
+        },
+        {
+          "player": "Daniel",
+          "season_appearances": 17,
+          "attendance_rate": 0.68
+        },
+        {
+          "player": "Mateus",
+          "season_appearances": 15,
+          "attendance_rate": 0.6
+        },
+        {
+          "player": "Emiliano",
+          "season_appearances": 13,
+          "attendance_rate": 0.52
+        },
+        {
+          "player": "Pietro",
+          "season_appearances": 6,
+          "attendance_rate": 0.24
+        },
+        {
+          "player": "Torge",
+          "season_appearances": 6,
+          "attendance_rate": 0.24
+        },
+        {
+          "player": "Elia",
+          "season_appearances": 5,
+          "attendance_rate": 0.2
+        },
+        {
+          "player": "Luca",
+          "season_appearances": 5,
+          "attendance_rate": 0.2
+        }
+      ]
+    },
     {
       "date": "2026-10-28",
       "summary_note": "28 October 2026 — The Dirty Boys — Loss",
@@ -1849,47 +1928,47 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
+        },
+        {
+          "player": "Vitto",
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
-        },
-        {
-          "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Emiliano",
-          "season_appearances": 12,
-          "attendance_rate": 0.5
+          "season_appearances": 13,
+          "attendance_rate": 0.52
         },
         {
           "player": "Pietro",
-          "season_appearances": 5,
-          "attendance_rate": 0.2083333333
+          "season_appearances": 6,
+          "attendance_rate": 0.24
         },
         {
           "player": "Torge",
-          "season_appearances": 5,
-          "attendance_rate": 0.2083333333
+          "season_appearances": 6,
+          "attendance_rate": 0.24
         },
         {
           "player": "Elia",
-          "season_appearances": 4,
-          "attendance_rate": 0.1666666667
+          "season_appearances": 5,
+          "attendance_rate": 0.2
         },
         {
           "player": "Luca",
-          "season_appearances": 4,
-          "attendance_rate": 0.1666666667
+          "season_appearances": 5,
+          "attendance_rate": 0.2
         }
       ]
     },
@@ -1900,37 +1979,37 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
         },
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Mateus",
-          "season_appearances": 14,
-          "attendance_rate": 0.5833333333
+          "season_appearances": 15,
+          "attendance_rate": 0.6
         },
         {
           "player": "Emiliano",
-          "season_appearances": 12,
-          "attendance_rate": 0.5
+          "season_appearances": 13,
+          "attendance_rate": 0.52
         },
         {
           "player": "Pietro",
-          "season_appearances": 5,
-          "attendance_rate": 0.2083333333
+          "season_appearances": 6,
+          "attendance_rate": 0.24
         },
         {
           "player": "Torge",
-          "season_appearances": 5,
-          "attendance_rate": 0.2083333333
+          "season_appearances": 6,
+          "attendance_rate": 0.24
         }
       ]
     },
@@ -1941,42 +2020,42 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Daniel",
-          "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "season_appearances": 17,
+          "attendance_rate": 0.68
         },
         {
           "player": "Mateus",
-          "season_appearances": 14,
-          "attendance_rate": 0.5833333333
+          "season_appearances": 15,
+          "attendance_rate": 0.6
         },
         {
           "player": "Emiliano",
-          "season_appearances": 12,
-          "attendance_rate": 0.5
+          "season_appearances": 13,
+          "attendance_rate": 0.52
         },
         {
           "player": "Torge",
-          "season_appearances": 5,
-          "attendance_rate": 0.2083333333
+          "season_appearances": 6,
+          "attendance_rate": 0.24
         },
         {
           "player": "Elia",
-          "season_appearances": 4,
-          "attendance_rate": 0.1666666667
+          "season_appearances": 5,
+          "attendance_rate": 0.2
         },
         {
           "player": "Luca",
-          "season_appearances": 4,
-          "attendance_rate": 0.1666666667
+          "season_appearances": 5,
+          "attendance_rate": 0.2
         }
       ]
     },
@@ -1987,42 +2066,42 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
         },
         {
           "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Daniel",
-          "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "season_appearances": 17,
+          "attendance_rate": 0.68
         },
         {
           "player": "Max",
           "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "attendance_rate": 0.64
         },
         {
           "player": "Emiliano",
-          "season_appearances": 12,
-          "attendance_rate": 0.5
+          "season_appearances": 13,
+          "attendance_rate": 0.52
         },
         {
           "player": "Torge",
-          "season_appearances": 5,
-          "attendance_rate": 0.2083333333
+          "season_appearances": 6,
+          "attendance_rate": 0.24
         },
         {
           "player": "Luca",
-          "season_appearances": 4,
-          "attendance_rate": 0.1666666667
+          "season_appearances": 5,
+          "attendance_rate": 0.2
         }
       ]
     },
@@ -2033,37 +2112,37 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Daniel",
-          "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "season_appearances": 17,
+          "attendance_rate": 0.68
         },
         {
           "player": "Pietro",
-          "season_appearances": 5,
-          "attendance_rate": 0.2083333333
+          "season_appearances": 6,
+          "attendance_rate": 0.24
         },
         {
           "player": "Torge",
-          "season_appearances": 5,
-          "attendance_rate": 0.2083333333
+          "season_appearances": 6,
+          "attendance_rate": 0.24
         },
         {
           "player": "Elia",
-          "season_appearances": 4,
-          "attendance_rate": 0.1666666667
+          "season_appearances": 5,
+          "attendance_rate": 0.2
         },
         {
           "player": "Luca",
-          "season_appearances": 4,
-          "attendance_rate": 0.1666666667
+          "season_appearances": 5,
+          "attendance_rate": 0.2
         }
       ]
     },
@@ -2074,37 +2153,37 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
         },
         {
           "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Daniel",
-          "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "season_appearances": 17,
+          "attendance_rate": 0.68
         },
         {
           "player": "Max",
           "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "attendance_rate": 0.64
         },
         {
           "player": "Mateus",
-          "season_appearances": 14,
-          "attendance_rate": 0.5833333333
+          "season_appearances": 15,
+          "attendance_rate": 0.6
         },
         {
           "player": "Dadde",
           "season_appearances": 1,
-          "attendance_rate": 0.04166666667
+          "attendance_rate": 0.04
         }
       ]
     },
@@ -2115,47 +2194,47 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
+        },
+        {
+          "player": "Vitto",
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
-        },
-        {
-          "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Daniel",
-          "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "season_appearances": 17,
+          "attendance_rate": 0.68
         },
         {
           "player": "Max",
           "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "attendance_rate": 0.64
         },
         {
           "player": "Mateus",
-          "season_appearances": 14,
-          "attendance_rate": 0.5833333333
+          "season_appearances": 15,
+          "attendance_rate": 0.6
         },
         {
           "player": "Elia",
-          "season_appearances": 4,
-          "attendance_rate": 0.1666666667
+          "season_appearances": 5,
+          "attendance_rate": 0.2
         },
         {
           "player": "Jasper",
           "season_appearances": 2,
-          "attendance_rate": 0.08333333333
+          "attendance_rate": 0.08
         }
       ]
     },
@@ -2166,42 +2245,42 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
+        },
+        {
+          "player": "Vitto",
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
-        },
-        {
-          "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Max",
           "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "attendance_rate": 0.64
         },
         {
           "player": "Mateus",
-          "season_appearances": 14,
-          "attendance_rate": 0.5833333333
+          "season_appearances": 15,
+          "attendance_rate": 0.6
         },
         {
           "player": "Emiliano",
-          "season_appearances": 12,
-          "attendance_rate": 0.5
+          "season_appearances": 13,
+          "attendance_rate": 0.52
         },
         {
           "player": "Anton",
           "season_appearances": 7,
-          "attendance_rate": 0.2916666667
+          "attendance_rate": 0.28
         },
         {
           "player": "Seb",
           "season_appearances": 5,
-          "attendance_rate": 0.2083333333
+          "attendance_rate": 0.2
         }
       ]
     },
@@ -2212,42 +2291,42 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
+        },
+        {
+          "player": "Vitto",
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
-        },
-        {
-          "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Daniel",
-          "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "season_appearances": 17,
+          "attendance_rate": 0.68
         },
         {
           "player": "Max",
           "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "attendance_rate": 0.64
         },
         {
           "player": "Mateus",
-          "season_appearances": 14,
-          "attendance_rate": 0.5833333333
+          "season_appearances": 15,
+          "attendance_rate": 0.6
         },
         {
           "player": "Emiliano",
-          "season_appearances": 12,
-          "attendance_rate": 0.5
+          "season_appearances": 13,
+          "attendance_rate": 0.52
         }
       ]
     },
@@ -2258,17 +2337,17 @@
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Oleg",
           "season_appearances": 3,
-          "attendance_rate": 0.125
+          "attendance_rate": 0.12
         }
       ]
     },
@@ -2278,18 +2357,18 @@
       "lineup": [
         {
           "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Max",
           "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "attendance_rate": 0.64
         }
       ]
     },
@@ -2300,37 +2379,37 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
         },
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Daniel",
-          "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "season_appearances": 17,
+          "attendance_rate": 0.68
         },
         {
           "player": "Max",
           "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "attendance_rate": 0.64
         },
         {
           "player": "Mateus",
-          "season_appearances": 14,
-          "attendance_rate": 0.5833333333
+          "season_appearances": 15,
+          "attendance_rate": 0.6
         },
         {
           "player": "Seb",
           "season_appearances": 5,
-          "attendance_rate": 0.2083333333
+          "attendance_rate": 0.2
         },
         {
           "player": "Jasper",
           "season_appearances": 2,
-          "attendance_rate": 0.08333333333
+          "attendance_rate": 0.08
         }
       ]
     },
@@ -2341,37 +2420,37 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
+        },
+        {
+          "player": "Vitto",
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
-        },
-        {
-          "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Daniel",
-          "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "season_appearances": 17,
+          "attendance_rate": 0.68
         },
         {
           "player": "Max",
           "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "attendance_rate": 0.64
         },
         {
           "player": "Emiliano",
-          "season_appearances": 12,
-          "attendance_rate": 0.5
+          "season_appearances": 13,
+          "attendance_rate": 0.52
         }
       ]
     },
@@ -2380,44 +2459,44 @@
       "summary_note": "26 November 2025 — Win",
       "lineup": [
         {
-          "player": "Ben",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "player": "Vitto",
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
-          "player": "Vitto",
+          "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Daniel",
-          "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "season_appearances": 17,
+          "attendance_rate": 0.68
         },
         {
           "player": "Max",
           "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "attendance_rate": 0.64
         },
         {
           "player": "Mateus",
-          "season_appearances": 14,
-          "attendance_rate": 0.5833333333
+          "season_appearances": 15,
+          "attendance_rate": 0.6
         },
         {
           "player": "Emiliano",
-          "season_appearances": 12,
-          "attendance_rate": 0.5
+          "season_appearances": 13,
+          "attendance_rate": 0.52
         },
         {
           "player": "Seb",
           "season_appearances": 5,
-          "attendance_rate": 0.2083333333
+          "attendance_rate": 0.2
         }
       ]
     },
@@ -2428,42 +2507,42 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
+        },
+        {
+          "player": "Vitto",
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
-        },
-        {
-          "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Daniel",
-          "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "season_appearances": 17,
+          "attendance_rate": 0.68
         },
         {
           "player": "Max",
           "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "attendance_rate": 0.64
         },
         {
           "player": "Mateus",
-          "season_appearances": 14,
-          "attendance_rate": 0.5833333333
+          "season_appearances": 15,
+          "attendance_rate": 0.6
         },
         {
           "player": "Emiliano",
-          "season_appearances": 12,
-          "attendance_rate": 0.5
+          "season_appearances": 13,
+          "attendance_rate": 0.52
         }
       ]
     },
@@ -2474,37 +2553,37 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
+        },
+        {
+          "player": "Vitto",
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
-        },
-        {
-          "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Daniel",
-          "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "season_appearances": 17,
+          "attendance_rate": 0.68
         },
         {
           "player": "Emiliano",
-          "season_appearances": 12,
-          "attendance_rate": 0.5
+          "season_appearances": 13,
+          "attendance_rate": 0.52
         },
         {
           "player": "Anton",
           "season_appearances": 7,
-          "attendance_rate": 0.2916666667
+          "attendance_rate": 0.28
         },
         {
           "player": "Benoit",
           "season_appearances": 1,
-          "attendance_rate": 0.04166666667
+          "attendance_rate": 0.04
         }
       ]
     },
@@ -2515,37 +2594,37 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
+        },
+        {
+          "player": "Vitto",
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
-        },
-        {
-          "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Daniel",
-          "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "season_appearances": 17,
+          "attendance_rate": 0.68
         },
         {
           "player": "Mateus",
-          "season_appearances": 14,
-          "attendance_rate": 0.5833333333
+          "season_appearances": 15,
+          "attendance_rate": 0.6
         },
         {
           "player": "Emiliano",
-          "season_appearances": 12,
-          "attendance_rate": 0.5
+          "season_appearances": 13,
+          "attendance_rate": 0.52
         },
         {
           "player": "Anton",
           "season_appearances": 7,
-          "attendance_rate": 0.2916666667
+          "attendance_rate": 0.28
         }
       ]
     },
@@ -2556,27 +2635,27 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
         },
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Max",
           "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "attendance_rate": 0.64
         },
         {
           "player": "Mateus",
-          "season_appearances": 14,
-          "attendance_rate": 0.5833333333
+          "season_appearances": 15,
+          "attendance_rate": 0.6
         }
       ]
     },
@@ -2587,37 +2666,37 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
         },
         {
           "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Daniel",
-          "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "season_appearances": 17,
+          "attendance_rate": 0.68
         },
         {
           "player": "Max",
           "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "attendance_rate": 0.64
         },
         {
           "player": "Mateus",
-          "season_appearances": 14,
-          "attendance_rate": 0.5833333333
+          "season_appearances": 15,
+          "attendance_rate": 0.6
         },
         {
           "player": "Emiliano",
-          "season_appearances": 12,
-          "attendance_rate": 0.5
+          "season_appearances": 13,
+          "attendance_rate": 0.52
         }
       ]
     },
@@ -2628,42 +2707,42 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
+        },
+        {
+          "player": "Vitto",
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
-        },
-        {
-          "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Daniel",
-          "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "season_appearances": 17,
+          "attendance_rate": 0.68
         },
         {
           "player": "Max",
           "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "attendance_rate": 0.64
         },
         {
           "player": "Mateus",
-          "season_appearances": 14,
-          "attendance_rate": 0.5833333333
+          "season_appearances": 15,
+          "attendance_rate": 0.6
         },
         {
           "player": "Seb",
           "season_appearances": 5,
-          "attendance_rate": 0.2083333333
+          "attendance_rate": 0.2
         }
       ]
     },
@@ -2674,37 +2753,37 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
+        },
+        {
+          "player": "Vitto",
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
-        },
-        {
-          "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Berghi",
-          "season_appearances": 17,
-          "attendance_rate": 0.7083333333
+          "season_appearances": 18,
+          "attendance_rate": 0.72
         },
         {
           "player": "Anton",
           "season_appearances": 7,
-          "attendance_rate": 0.2916666667
+          "attendance_rate": 0.28
         },
         {
           "player": "Seb",
           "season_appearances": 5,
-          "attendance_rate": 0.2083333333
+          "attendance_rate": 0.2
         },
         {
           "player": "Oleg",
           "season_appearances": 3,
-          "attendance_rate": 0.125
+          "attendance_rate": 0.12
         }
       ]
     },
@@ -2715,42 +2794,42 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
+        },
+        {
+          "player": "Vitto",
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
-        },
-        {
-          "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Max",
           "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "attendance_rate": 0.64
         },
         {
           "player": "Mateus",
-          "season_appearances": 14,
-          "attendance_rate": 0.5833333333
+          "season_appearances": 15,
+          "attendance_rate": 0.6
         },
         {
           "player": "Anton",
           "season_appearances": 7,
-          "attendance_rate": 0.2916666667
+          "attendance_rate": 0.28
         },
         {
           "player": "Pietro",
-          "season_appearances": 5,
-          "attendance_rate": 0.2083333333
+          "season_appearances": 6,
+          "attendance_rate": 0.24
         },
         {
           "player": "Oleg",
           "season_appearances": 3,
-          "attendance_rate": 0.125
+          "attendance_rate": 0.12
         }
       ]
     },
@@ -2761,42 +2840,42 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
+        },
+        {
+          "player": "Vitto",
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
-        },
-        {
-          "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Daniel",
-          "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "season_appearances": 17,
+          "attendance_rate": 0.68
         },
         {
           "player": "Max",
           "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "attendance_rate": 0.64
         },
         {
           "player": "Anton",
           "season_appearances": 7,
-          "attendance_rate": 0.2916666667
+          "attendance_rate": 0.28
         },
         {
           "player": "Pietro",
-          "season_appearances": 5,
-          "attendance_rate": 0.2083333333
+          "season_appearances": 6,
+          "attendance_rate": 0.24
         },
         {
           "player": "Langkun",
           "season_appearances": 2,
-          "attendance_rate": 0.08333333333
+          "attendance_rate": 0.08
         }
       ]
     },
@@ -2807,42 +2886,42 @@
         {
           "player": "Boris",
           "season_appearances": 21,
-          "attendance_rate": 0.875
+          "attendance_rate": 0.84
+        },
+        {
+          "player": "Vitto",
+          "season_appearances": 19,
+          "attendance_rate": 0.76
         },
         {
           "player": "Ben",
           "season_appearances": 18,
-          "attendance_rate": 0.75
-        },
-        {
-          "player": "Vitto",
-          "season_appearances": 18,
-          "attendance_rate": 0.75
+          "attendance_rate": 0.72
         },
         {
           "player": "Daniel",
-          "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "season_appearances": 17,
+          "attendance_rate": 0.68
         },
         {
           "player": "Max",
           "season_appearances": 16,
-          "attendance_rate": 0.6666666667
+          "attendance_rate": 0.64
         },
         {
           "player": "Anton",
           "season_appearances": 7,
-          "attendance_rate": 0.2916666667
+          "attendance_rate": 0.28
         },
         {
           "player": "Langkun",
           "season_appearances": 2,
-          "attendance_rate": 0.08333333333
+          "attendance_rate": 0.08
         },
         {
           "player": "Yelong",
           "season_appearances": 1,
-          "attendance_rate": 0.04166666667
+          "attendance_rate": 0.04
         }
       ]
     }
@@ -2850,15 +2929,23 @@
   "scorers": {
     "rows": [
       {
-        "player": "Mateus",
-        "appearances": 4,
+        "player": "Daniel",
+        "appearances": 6,
         "goals": 4,
-        "mom": 0,
-        "goals_per_appearance": 1,
-        "goals_per_appearance_rounded": 1
+        "mom": 1,
+        "goals_per_appearance": 0.6666666667,
+        "goals_per_appearance_rounded": 0.67
       },
       {
-        "player": "Daniel",
+        "player": "Mateus",
+        "appearances": 5,
+        "goals": 4,
+        "mom": 0,
+        "goals_per_appearance": 0.8,
+        "goals_per_appearance_rounded": 0.8
+      },
+      {
+        "player": "Emiliano",
         "appearances": 5,
         "goals": 3,
         "mom": 1,
@@ -2866,20 +2953,20 @@
         "goals_per_appearance_rounded": 0.6
       },
       {
-        "player": "Emiliano",
-        "appearances": 4,
-        "goals": 3,
-        "mom": 1,
-        "goals_per_appearance": 0.75,
-        "goals_per_appearance_rounded": 0.75
+        "player": "Luca",
+        "appearances": 5,
+        "goals": 2,
+        "mom": 2,
+        "goals_per_appearance": 0.4,
+        "goals_per_appearance_rounded": 0.4
       },
       {
         "player": "Vitto",
-        "appearances": 4,
+        "appearances": 5,
         "goals": 2,
         "mom": 1,
-        "goals_per_appearance": 0.5,
-        "goals_per_appearance_rounded": 0.5
+        "goals_per_appearance": 0.4,
+        "goals_per_appearance_rounded": 0.4
       },
       {
         "player": "Akash",
@@ -2891,19 +2978,11 @@
       },
       {
         "player": "Torge",
-        "appearances": 5,
+        "appearances": 6,
         "goals": 2,
         "mom": 0,
-        "goals_per_appearance": 0.4,
-        "goals_per_appearance_rounded": 0.4
-      },
-      {
-        "player": "Luca",
-        "appearances": 4,
-        "goals": 1,
-        "mom": 1,
-        "goals_per_appearance": 0.25,
-        "goals_per_appearance_rounded": 0.25
+        "goals_per_appearance": 0.3333333333,
+        "goals_per_appearance_rounded": 0.33
       },
       {
         "player": "Ameen",
@@ -2938,6 +3017,14 @@
         "goals_per_appearance_rounded": 1
       },
       {
+        "player": "Og",
+        "appearances": 0,
+        "goals": 1,
+        "mom": 0,
+        "goals_per_appearance": null,
+        "goals_per_appearance_rounded": null
+      },
+      {
         "player": "Ben",
         "appearances": 3,
         "goals": 0,
@@ -2947,7 +3034,7 @@
       },
       {
         "player": "Berghi",
-        "appearances": 7,
+        "appearances": 8,
         "goals": 0,
         "mom": 0,
         "goals_per_appearance": 0,
@@ -2955,7 +3042,7 @@
       },
       {
         "player": "Elia",
-        "appearances": 4,
+        "appearances": 5,
         "goals": 0,
         "mom": 0,
         "goals_per_appearance": 0,
@@ -2971,7 +3058,7 @@
       },
       {
         "player": "Pietro",
-        "appearances": 3,
+        "appearances": 4,
         "goals": 0,
         "mom": 0,
         "goals_per_appearance": 0,
@@ -2979,11 +3066,11 @@
       }
     ],
     "coverage": {
-      "observed": 7,
-      "total": 24,
-      "dates": ["2026-10-28", "2026-10-21", "2026-10-14", "2026-10-07", "2026-09-30", "2026-09-16", "2026-09-09"]
+      "observed": 8,
+      "total": 25,
+      "dates": ["2026-11-04", "2026-10-28", "2026-10-21", "2026-10-14", "2026-10-07", "2026-09-30", "2026-09-16", "2026-09-09"]
     },
-    "note": "7 of the 24 matches in the selected seasons have their goals on file. The rest were played before the sync existed and are left out, appearances included."
+    "note": "8 of the 25 matches in the selected seasons have their goals on file. The rest were played before the sync existed and are left out, appearances included."
   },
   "opponent_record": [
     {
@@ -3035,6 +3122,18 @@
       "points_per_match_rounded": 1
     },
     {
+      "opponent": "Saffron Rangers",
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goals_for": 3,
+      "goals_against": 3,
+      "goal_difference": 0,
+      "points_per_match": 1,
+      "points_per_match_rounded": 1
+    },
+    {
       "opponent": "Finessin FC",
       "played": 1,
       "won": 0,
@@ -3074,140 +3173,140 @@
   "attendance_list": [
     {
       "player": "Boris",
-      "attendance_rate": 0.875,
+      "attendance_rate": 0.84,
       "avg_points": 1.33,
       "avg_goals_scored": 3.81,
       "avg_goals_conceded": 3.24
     },
     {
+      "player": "Vitto",
+      "attendance_rate": 0.76,
+      "avg_points": 1.16,
+      "avg_goals_scored": 3.63,
+      "avg_goals_conceded": 3.58
+    },
+    {
       "player": "Ben",
-      "attendance_rate": 0.75,
+      "attendance_rate": 0.72,
       "avg_points": 1.06,
       "avg_goals_scored": 3.44,
       "avg_goals_conceded": 3.61
     },
     {
-      "player": "Vitto",
-      "attendance_rate": 0.75,
-      "avg_points": 1.17,
-      "avg_goals_scored": 3.67,
-      "avg_goals_conceded": 3.61
-    },
-    {
       "player": "Berghi",
-      "attendance_rate": 0.7083333333,
-      "avg_points": 1.24,
-      "avg_goals_scored": 3.65,
-      "avg_goals_conceded": 3.71
+      "attendance_rate": 0.72,
+      "avg_points": 1.22,
+      "avg_goals_scored": 3.61,
+      "avg_goals_conceded": 3.67
     },
     {
       "player": "Daniel",
-      "attendance_rate": 0.6666666667,
-      "avg_points": 1.81,
-      "avg_goals_scored": 4.69,
+      "attendance_rate": 0.68,
+      "avg_points": 1.76,
+      "avg_goals_scored": 4.59,
       "avg_goals_conceded": 2.94
     },
     {
       "player": "Max",
-      "attendance_rate": 0.6666666667,
+      "attendance_rate": 0.64,
       "avg_points": 1.31,
       "avg_goals_scored": 4.31,
       "avg_goals_conceded": 3.69
     },
     {
       "player": "Mateus",
-      "attendance_rate": 0.5833333333,
-      "avg_points": 1.79,
-      "avg_goals_scored": 4.29,
-      "avg_goals_conceded": 2.86
+      "attendance_rate": 0.6,
+      "avg_points": 1.73,
+      "avg_goals_scored": 4.2,
+      "avg_goals_conceded": 2.87
     },
     {
       "player": "Emiliano",
-      "attendance_rate": 0.5,
-      "avg_points": 1.5,
-      "avg_goals_scored": 4.17,
-      "avg_goals_conceded": 3.25
+      "attendance_rate": 0.52,
+      "avg_points": 1.46,
+      "avg_goals_scored": 4.08,
+      "avg_goals_conceded": 3.23
     },
     {
       "player": "Anton",
-      "attendance_rate": 0.2916666667,
+      "attendance_rate": 0.28,
       "avg_points": 1,
       "avg_goals_scored": 2.71,
       "avg_goals_conceded": 3.29
     },
     {
       "player": "Pietro",
-      "attendance_rate": 0.2083333333,
-      "avg_points": 1.4,
+      "attendance_rate": 0.24,
+      "avg_points": 1.33,
       "avg_goals_scored": 3,
-      "avg_goals_conceded": 2
-    },
-    {
-      "player": "Seb",
-      "attendance_rate": 0.2083333333,
-      "avg_points": 1.6,
-      "avg_goals_scored": 4,
-      "avg_goals_conceded": 3.2
+      "avg_goals_conceded": 2.17
     },
     {
       "player": "Torge",
-      "attendance_rate": 0.2083333333,
+      "attendance_rate": 0.24,
+      "avg_points": 1.33,
+      "avg_goals_scored": 2.83,
+      "avg_goals_conceded": 2.17
+    },
+    {
+      "player": "Elia",
+      "attendance_rate": 0.2,
       "avg_points": 1.4,
       "avg_goals_scored": 2.8,
       "avg_goals_conceded": 2
     },
     {
-      "player": "Elia",
-      "attendance_rate": 0.1666666667,
-      "avg_points": 1.5,
-      "avg_goals_scored": 2.75,
-      "avg_goals_conceded": 1.75
+      "player": "Luca",
+      "attendance_rate": 0.2,
+      "avg_points": 1.4,
+      "avg_goals_scored": 2.8,
+      "avg_goals_conceded": 2
     },
     {
-      "player": "Luca",
-      "attendance_rate": 0.1666666667,
-      "avg_points": 1.5,
-      "avg_goals_scored": 2.75,
-      "avg_goals_conceded": 1.75
+      "player": "Seb",
+      "attendance_rate": 0.2,
+      "avg_points": 1.6,
+      "avg_goals_scored": 4,
+      "avg_goals_conceded": 3.2
     },
     {
       "player": "Oleg",
-      "attendance_rate": 0.125,
+      "attendance_rate": 0.12,
       "avg_points": 0,
       "avg_goals_scored": 1,
       "avg_goals_conceded": 3.67
     },
     {
       "player": "Jasper",
-      "attendance_rate": 0.08333333333,
+      "attendance_rate": 0.08,
       "avg_points": 1.5,
       "avg_goals_scored": 5,
       "avg_goals_conceded": 2
     },
     {
       "player": "Langkun",
-      "attendance_rate": 0.08333333333,
+      "attendance_rate": 0.08,
       "avg_points": 1.5,
       "avg_goals_scored": 5,
       "avg_goals_conceded": 3.5
     },
     {
       "player": "Benoit",
-      "attendance_rate": 0.04166666667,
+      "attendance_rate": 0.04,
       "avg_points": 0,
       "avg_goals_scored": 4,
       "avg_goals_conceded": 5
     },
     {
       "player": "Dadde",
-      "attendance_rate": 0.04166666667,
+      "attendance_rate": 0.04,
       "avg_points": 3,
       "avg_goals_scored": 5,
       "avg_goals_conceded": 1
     },
     {
       "player": "Yelong",
-      "attendance_rate": 0.04166666667,
+      "attendance_rate": 0.04,
       "avg_points": 0,
       "avg_goals_scored": 4,
       "avg_goals_conceded": 5
@@ -3216,9 +3315,9 @@
   "profiles": [
     {
       "player": "Anton",
-      "matches": 24,
+      "matches": 25,
       "appearances": 7,
-      "attendance_rate": 0.2916666667,
+      "attendance_rate": 0.28,
       "last_appearance": "2026-01-28",
       "present": {
         "played": 7,
@@ -3231,30 +3330,30 @@
         "points_per_match_rounded": 1
       },
       "absent": {
-        "played": 17,
+        "played": 18,
         "won": 7,
-        "drawn": 3,
+        "drawn": 4,
         "lost": 7,
-        "goals_for": 70,
-        "goals_against": 58,
-        "points_per_match": 1.411764706,
-        "points_per_match_rounded": 1.41
+        "goals_for": 73,
+        "goals_against": 61,
+        "points_per_match": 1.388888889,
+        "points_per_match_rounded": 1.39
       },
-      "differential": -0.4117647059,
-      "differential_note": "The side takes 0.41 points a match worse with Anton than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": -0.3888888889,
+      "differential_note": "The side takes 0.39 points a match worse with Anton than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 0,
       "mom": 0,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "7 of 24",
-          "note": "29% turnout"
+          "value": "7 of 25",
+          "note": "28% turnout"
         },
         {
           "label": "Goals",
           "value": "0",
-          "note": "0 man of the match, over 7 recorded"
+          "note": "0 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -3377,14 +3476,19 @@
           "date": "2026-10-28",
           "points": 0,
           "played": false
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": false
         }
       ]
     },
     {
       "player": "Ben",
-      "matches": 24,
+      "matches": 25,
       "appearances": 18,
-      "attendance_rate": 0.75,
+      "attendance_rate": 0.72,
       "last_appearance": "2026-10-28",
       "present": {
         "played": 18,
@@ -3397,30 +3501,30 @@
         "points_per_match_rounded": 1.06
       },
       "absent": {
-        "played": 6,
+        "played": 7,
         "won": 4,
-        "drawn": 0,
+        "drawn": 1,
         "lost": 2,
-        "goals_for": 27,
-        "goals_against": 16,
-        "points_per_match": 2,
-        "points_per_match_rounded": 2
+        "goals_for": 30,
+        "goals_against": 19,
+        "points_per_match": 1.857142857,
+        "points_per_match_rounded": 1.86
       },
-      "differential": -0.9444444444,
-      "differential_note": "The side takes 0.94 points a match worse with Ben than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": -0.8015873016,
+      "differential_note": "The side takes 0.80 points a match worse with Ben than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 0,
       "mom": 0,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "18 of 24",
-          "note": "75% turnout"
+          "value": "18 of 25",
+          "note": "72% turnout"
         },
         {
           "label": "Goals",
           "value": "0",
-          "note": "0 man of the match, over 7 recorded"
+          "note": "0 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -3543,14 +3647,19 @@
           "date": "2026-10-28",
           "points": 0,
           "played": true
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": false
         }
       ]
     },
     {
       "player": "Benoit",
-      "matches": 24,
+      "matches": 25,
       "appearances": 1,
-      "attendance_rate": 0.04166666667,
+      "attendance_rate": 0.04,
       "last_appearance": "2025-11-12",
       "present": {
         "played": 1,
@@ -3563,30 +3672,30 @@
         "points_per_match_rounded": 0
       },
       "absent": {
-        "played": 23,
+        "played": 24,
         "won": 9,
-        "drawn": 4,
+        "drawn": 5,
         "lost": 10,
-        "goals_for": 85,
-        "goals_against": 76,
-        "points_per_match": 1.347826087,
-        "points_per_match_rounded": 1.35
+        "goals_for": 88,
+        "goals_against": 79,
+        "points_per_match": 1.333333333,
+        "points_per_match_rounded": 1.33
       },
-      "differential": -1.347826087,
-      "differential_note": "The side takes 1.35 points a match worse with Benoit than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": -1.333333333,
+      "differential_note": "The side takes 1.33 points a match worse with Benoit than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 0,
       "mom": 0,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "1 of 24",
+          "value": "1 of 25",
           "note": "4% turnout"
         },
         {
           "label": "Goals",
           "value": "0",
-          "note": "0 man of the match, over 7 recorded"
+          "note": "0 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -3709,24 +3818,29 @@
           "date": "2026-10-28",
           "points": 0,
           "played": false
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": false
         }
       ]
     },
     {
       "player": "Berghi",
-      "matches": 24,
-      "appearances": 17,
-      "attendance_rate": 0.7083333333,
-      "last_appearance": "2026-10-28",
+      "matches": 25,
+      "appearances": 18,
+      "attendance_rate": 0.72,
+      "last_appearance": "2026-11-04",
       "present": {
-        "played": 17,
+        "played": 18,
         "won": 6,
-        "drawn": 3,
+        "drawn": 4,
         "lost": 8,
-        "goals_for": 62,
-        "goals_against": 63,
-        "points_per_match": 1.235294118,
-        "points_per_match_rounded": 1.24
+        "goals_for": 65,
+        "goals_against": 66,
+        "points_per_match": 1.222222222,
+        "points_per_match_rounded": 1.22
       },
       "absent": {
         "played": 7,
@@ -3738,21 +3852,21 @@
         "points_per_match": 1.428571429,
         "points_per_match_rounded": 1.43
       },
-      "differential": -0.1932773109,
-      "differential_note": "The side takes 0.19 points a match worse with Berghi than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": -0.2063492063,
+      "differential_note": "The side takes 0.21 points a match worse with Berghi than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 0,
       "mom": 0,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "17 of 24",
-          "note": "71% turnout"
+          "value": "18 of 25",
+          "note": "72% turnout"
         },
         {
           "label": "Goals",
           "value": "0",
-          "note": "0 man of the match, over 7 recorded"
+          "note": "0 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -3875,14 +3989,19 @@
           "date": "2026-10-28",
           "points": 0,
           "played": true
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": true
         }
       ]
     },
     {
       "player": "Boris",
-      "matches": 24,
+      "matches": 25,
       "appearances": 21,
-      "attendance_rate": 0.875,
+      "attendance_rate": 0.84,
       "last_appearance": "2026-10-28",
       "present": {
         "played": 21,
@@ -3895,12 +4014,12 @@
         "points_per_match_rounded": 1.33
       },
       "absent": {
-        "played": 3,
+        "played": 4,
         "won": 1,
-        "drawn": 0,
+        "drawn": 1,
         "lost": 2,
-        "goals_for": 9,
-        "goals_against": 13,
+        "goals_for": 12,
+        "goals_against": 16,
         "points_per_match": 1,
         "points_per_match_rounded": 1
       },
@@ -3908,17 +4027,17 @@
       "differential_note": "The side takes 0.33 points a match better with Boris than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 1,
       "mom": 0,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "21 of 24",
-          "note": "88% turnout"
+          "value": "21 of 25",
+          "note": "84% turnout"
         },
         {
           "label": "Goals",
           "value": "1",
-          "note": "0 man of the match, over 7 recorded"
+          "note": "0 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -4041,14 +4160,19 @@
           "date": "2026-10-28",
           "points": 0,
           "played": true
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": false
         }
       ]
     },
     {
       "player": "Dadde",
-      "matches": 24,
+      "matches": 25,
       "appearances": 1,
-      "attendance_rate": 0.04166666667,
+      "attendance_rate": 0.04,
       "last_appearance": "2026-09-16",
       "present": {
         "played": 1,
@@ -4061,30 +4185,30 @@
         "points_per_match_rounded": 3
       },
       "absent": {
-        "played": 23,
+        "played": 24,
         "won": 8,
-        "drawn": 4,
+        "drawn": 5,
         "lost": 11,
-        "goals_for": 84,
-        "goals_against": 80,
-        "points_per_match": 1.217391304,
-        "points_per_match_rounded": 1.22
+        "goals_for": 87,
+        "goals_against": 83,
+        "points_per_match": 1.208333333,
+        "points_per_match_rounded": 1.21
       },
-      "differential": 1.782608696,
-      "differential_note": "The side takes 1.78 points a match better with Dadde than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": 1.791666667,
+      "differential_note": "The side takes 1.79 points a match better with Dadde than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 1,
       "mom": 0,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "1 of 24",
+          "value": "1 of 25",
           "note": "4% turnout"
         },
         {
           "label": "Goals",
           "value": "1",
-          "note": "0 man of the match, over 7 recorded"
+          "note": "0 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -4207,24 +4331,29 @@
           "date": "2026-10-28",
           "points": 0,
           "played": false
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": false
         }
       ]
     },
     {
       "player": "Daniel",
-      "matches": 24,
-      "appearances": 16,
-      "attendance_rate": 0.6666666667,
-      "last_appearance": "2026-10-14",
+      "matches": 25,
+      "appearances": 17,
+      "attendance_rate": 0.68,
+      "last_appearance": "2026-11-04",
       "present": {
-        "played": 16,
+        "played": 17,
         "won": 9,
-        "drawn": 2,
+        "drawn": 3,
         "lost": 5,
-        "goals_for": 75,
-        "goals_against": 47,
-        "points_per_match": 1.8125,
-        "points_per_match_rounded": 1.81
+        "goals_for": 78,
+        "goals_against": 50,
+        "points_per_match": 1.764705882,
+        "points_per_match_rounded": 1.76
       },
       "absent": {
         "played": 8,
@@ -4236,21 +4365,21 @@
         "points_per_match": 0.25,
         "points_per_match_rounded": 0.25
       },
-      "differential": 1.5625,
-      "differential_note": "The side takes 1.56 points a match better with Daniel than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
-      "goals": 3,
+      "differential": 1.514705882,
+      "differential_note": "The side takes 1.51 points a match better with Daniel than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "goals": 4,
       "mom": 1,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "16 of 24",
-          "note": "67% turnout"
+          "value": "17 of 25",
+          "note": "68% turnout"
         },
         {
           "label": "Goals",
-          "value": "3",
-          "note": "1 man of the match, over 7 recorded"
+          "value": "4",
+          "note": "1 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -4373,24 +4502,29 @@
           "date": "2026-10-28",
           "points": 0,
           "played": false
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": true
         }
       ]
     },
     {
       "player": "Elia",
-      "matches": 24,
-      "appearances": 4,
-      "attendance_rate": 0.1666666667,
-      "last_appearance": "2026-10-28",
+      "matches": 25,
+      "appearances": 5,
+      "attendance_rate": 0.2,
+      "last_appearance": "2026-11-04",
       "present": {
-        "played": 4,
+        "played": 5,
         "won": 2,
-        "drawn": 0,
+        "drawn": 1,
         "lost": 2,
-        "goals_for": 11,
-        "goals_against": 7,
-        "points_per_match": 1.5,
-        "points_per_match_rounded": 1.5
+        "goals_for": 14,
+        "goals_against": 10,
+        "points_per_match": 1.4,
+        "points_per_match_rounded": 1.4
       },
       "absent": {
         "played": 20,
@@ -4402,21 +4536,21 @@
         "points_per_match": 1.25,
         "points_per_match_rounded": 1.25
       },
-      "differential": 0.25,
-      "differential_note": "The side takes 0.25 points a match better with Elia than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": 0.15,
+      "differential_note": "The side takes 0.15 points a match better with Elia than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 0,
       "mom": 0,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "4 of 24",
-          "note": "17% turnout"
+          "value": "5 of 25",
+          "note": "20% turnout"
         },
         {
           "label": "Goals",
           "value": "0",
-          "note": "0 man of the match, over 7 recorded"
+          "note": "0 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -4539,24 +4673,29 @@
           "date": "2026-10-28",
           "points": 0,
           "played": true
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": true
         }
       ]
     },
     {
       "player": "Emiliano",
-      "matches": 24,
-      "appearances": 12,
-      "attendance_rate": 0.5,
-      "last_appearance": "2026-10-28",
+      "matches": 25,
+      "appearances": 13,
+      "attendance_rate": 0.52,
+      "last_appearance": "2026-11-04",
       "present": {
-        "played": 12,
+        "played": 13,
         "won": 5,
-        "drawn": 3,
+        "drawn": 4,
         "lost": 4,
-        "goals_for": 50,
-        "goals_against": 39,
-        "points_per_match": 1.5,
-        "points_per_match_rounded": 1.5
+        "goals_for": 53,
+        "goals_against": 42,
+        "points_per_match": 1.461538462,
+        "points_per_match_rounded": 1.46
       },
       "absent": {
         "played": 12,
@@ -4568,21 +4707,21 @@
         "points_per_match": 1.083333333,
         "points_per_match_rounded": 1.08
       },
-      "differential": 0.4166666667,
-      "differential_note": "The side takes 0.42 points a match better with Emiliano than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": 0.3782051282,
+      "differential_note": "The side takes 0.38 points a match better with Emiliano than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 3,
       "mom": 1,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "12 of 24",
-          "note": "50% turnout"
+          "value": "13 of 25",
+          "note": "52% turnout"
         },
         {
           "label": "Goals",
           "value": "3",
-          "note": "1 man of the match, over 7 recorded"
+          "note": "1 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -4705,14 +4844,19 @@
           "date": "2026-10-28",
           "points": 0,
           "played": true
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": true
         }
       ]
     },
     {
       "player": "Jasper",
-      "matches": 24,
+      "matches": 25,
       "appearances": 2,
-      "attendance_rate": 0.08333333333,
+      "attendance_rate": 0.08,
       "last_appearance": "2026-09-09",
       "present": {
         "played": 2,
@@ -4725,30 +4869,30 @@
         "points_per_match_rounded": 1.5
       },
       "absent": {
-        "played": 22,
+        "played": 23,
         "won": 8,
-        "drawn": 4,
+        "drawn": 5,
         "lost": 10,
-        "goals_for": 79,
-        "goals_against": 77,
-        "points_per_match": 1.272727273,
-        "points_per_match_rounded": 1.27
+        "goals_for": 82,
+        "goals_against": 80,
+        "points_per_match": 1.260869565,
+        "points_per_match_rounded": 1.26
       },
-      "differential": 0.2272727273,
-      "differential_note": "The side takes 0.23 points a match better with Jasper than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": 0.2391304348,
+      "differential_note": "The side takes 0.24 points a match better with Jasper than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 1,
       "mom": 0,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "2 of 24",
+          "value": "2 of 25",
           "note": "8% turnout"
         },
         {
           "label": "Goals",
           "value": "1",
-          "note": "0 man of the match, over 7 recorded"
+          "note": "0 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -4871,14 +5015,19 @@
           "date": "2026-10-28",
           "points": 0,
           "played": false
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": false
         }
       ]
     },
     {
       "player": "Langkun",
-      "matches": 24,
+      "matches": 25,
       "appearances": 2,
-      "attendance_rate": 0.08333333333,
+      "attendance_rate": 0.08,
       "last_appearance": "2025-09-17",
       "present": {
         "played": 2,
@@ -4891,30 +5040,30 @@
         "points_per_match_rounded": 1.5
       },
       "absent": {
-        "played": 22,
+        "played": 23,
         "won": 8,
-        "drawn": 4,
+        "drawn": 5,
         "lost": 10,
-        "goals_for": 79,
-        "goals_against": 74,
-        "points_per_match": 1.272727273,
-        "points_per_match_rounded": 1.27
+        "goals_for": 82,
+        "goals_against": 77,
+        "points_per_match": 1.260869565,
+        "points_per_match_rounded": 1.26
       },
-      "differential": 0.2272727273,
-      "differential_note": "The side takes 0.23 points a match better with Langkun than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": 0.2391304348,
+      "differential_note": "The side takes 0.24 points a match better with Langkun than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 0,
       "mom": 0,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "2 of 24",
+          "value": "2 of 25",
           "note": "8% turnout"
         },
         {
           "label": "Goals",
           "value": "0",
-          "note": "0 man of the match, over 7 recorded"
+          "note": "0 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -5037,24 +5186,29 @@
           "date": "2026-10-28",
           "points": 0,
           "played": false
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": false
         }
       ]
     },
     {
       "player": "Luca",
-      "matches": 24,
-      "appearances": 4,
-      "attendance_rate": 0.1666666667,
-      "last_appearance": "2026-10-28",
+      "matches": 25,
+      "appearances": 5,
+      "attendance_rate": 0.2,
+      "last_appearance": "2026-11-04",
       "present": {
-        "played": 4,
+        "played": 5,
         "won": 2,
-        "drawn": 0,
+        "drawn": 1,
         "lost": 2,
-        "goals_for": 11,
-        "goals_against": 7,
-        "points_per_match": 1.5,
-        "points_per_match_rounded": 1.5
+        "goals_for": 14,
+        "goals_against": 10,
+        "points_per_match": 1.4,
+        "points_per_match_rounded": 1.4
       },
       "absent": {
         "played": 20,
@@ -5066,21 +5220,21 @@
         "points_per_match": 1.25,
         "points_per_match_rounded": 1.25
       },
-      "differential": 0.25,
-      "differential_note": "The side takes 0.25 points a match better with Luca than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
-      "goals": 1,
-      "mom": 1,
-      "covered": 7,
+      "differential": 0.15,
+      "differential_note": "The side takes 0.15 points a match better with Luca than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "goals": 2,
+      "mom": 2,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "4 of 24",
-          "note": "17% turnout"
+          "value": "5 of 25",
+          "note": "20% turnout"
         },
         {
           "label": "Goals",
-          "value": "1",
-          "note": "1 man of the match, over 7 recorded"
+          "value": "2",
+          "note": "2 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -5203,24 +5357,29 @@
           "date": "2026-10-28",
           "points": 0,
           "played": true
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": true
         }
       ]
     },
     {
       "player": "Mateus",
-      "matches": 24,
-      "appearances": 14,
-      "attendance_rate": 0.5833333333,
-      "last_appearance": "2026-10-21",
+      "matches": 25,
+      "appearances": 15,
+      "attendance_rate": 0.6,
+      "last_appearance": "2026-11-04",
       "present": {
-        "played": 14,
+        "played": 15,
         "won": 7,
-        "drawn": 4,
+        "drawn": 5,
         "lost": 3,
-        "goals_for": 60,
-        "goals_against": 40,
-        "points_per_match": 1.785714286,
-        "points_per_match_rounded": 1.79
+        "goals_for": 63,
+        "goals_against": 43,
+        "points_per_match": 1.733333333,
+        "points_per_match_rounded": 1.73
       },
       "absent": {
         "played": 10,
@@ -5232,21 +5391,21 @@
         "points_per_match": 0.6,
         "points_per_match_rounded": 0.6
       },
-      "differential": 1.185714286,
-      "differential_note": "The side takes 1.19 points a match better with Mateus than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": 1.133333333,
+      "differential_note": "The side takes 1.13 points a match better with Mateus than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 4,
       "mom": 0,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "14 of 24",
-          "note": "58% turnout"
+          "value": "15 of 25",
+          "note": "60% turnout"
         },
         {
           "label": "Goals",
           "value": "4",
-          "note": "0 man of the match, over 7 recorded"
+          "note": "0 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -5369,14 +5528,19 @@
           "date": "2026-10-28",
           "points": 0,
           "played": false
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": true
         }
       ]
     },
     {
       "player": "Max",
-      "matches": 24,
+      "matches": 25,
       "appearances": 16,
-      "attendance_rate": 0.6666666667,
+      "attendance_rate": 0.64,
       "last_appearance": "2026-10-07",
       "present": {
         "played": 16,
@@ -5389,30 +5553,30 @@
         "points_per_match_rounded": 1.31
       },
       "absent": {
-        "played": 8,
+        "played": 9,
         "won": 3,
-        "drawn": 1,
+        "drawn": 2,
         "lost": 4,
-        "goals_for": 20,
-        "goals_against": 22,
-        "points_per_match": 1.25,
-        "points_per_match_rounded": 1.25
+        "goals_for": 23,
+        "goals_against": 25,
+        "points_per_match": 1.222222222,
+        "points_per_match_rounded": 1.22
       },
-      "differential": 0.0625,
-      "differential_note": "The side takes 0.06 points a match better with Max than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": 0.09027777778,
+      "differential_note": "The side takes 0.09 points a match better with Max than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 0,
       "mom": 0,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "16 of 24",
-          "note": "67% turnout"
+          "value": "16 of 25",
+          "note": "64% turnout"
         },
         {
           "label": "Goals",
           "value": "0",
-          "note": "0 man of the match, over 7 recorded"
+          "note": "0 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -5535,14 +5699,19 @@
           "date": "2026-10-28",
           "points": 0,
           "played": false
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": false
         }
       ]
     },
     {
       "player": "Oleg",
-      "matches": 24,
+      "matches": 25,
       "appearances": 3,
-      "attendance_rate": 0.125,
+      "attendance_rate": 0.12,
       "last_appearance": "2026-01-07",
       "present": {
         "played": 3,
@@ -5555,30 +5724,30 @@
         "points_per_match_rounded": 0
       },
       "absent": {
-        "played": 21,
+        "played": 22,
         "won": 9,
-        "drawn": 4,
+        "drawn": 5,
         "lost": 8,
-        "goals_for": 86,
-        "goals_against": 70,
-        "points_per_match": 1.476190476,
-        "points_per_match_rounded": 1.48
+        "goals_for": 89,
+        "goals_against": 73,
+        "points_per_match": 1.454545455,
+        "points_per_match_rounded": 1.45
       },
-      "differential": -1.476190476,
-      "differential_note": "The side takes 1.48 points a match worse with Oleg than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": -1.454545455,
+      "differential_note": "The side takes 1.45 points a match worse with Oleg than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 0,
       "mom": 0,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "3 of 24",
+          "value": "3 of 25",
           "note": "12% turnout"
         },
         {
           "label": "Goals",
           "value": "0",
-          "note": "0 man of the match, over 7 recorded"
+          "note": "0 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -5701,24 +5870,29 @@
           "date": "2026-10-28",
           "points": 0,
           "played": false
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": false
         }
       ]
     },
     {
       "player": "Pietro",
-      "matches": 24,
-      "appearances": 5,
-      "attendance_rate": 0.2083333333,
-      "last_appearance": "2026-10-28",
+      "matches": 25,
+      "appearances": 6,
+      "attendance_rate": 0.24,
+      "last_appearance": "2026-11-04",
       "present": {
-        "played": 5,
+        "played": 6,
         "won": 2,
-        "drawn": 1,
+        "drawn": 2,
         "lost": 2,
-        "goals_for": 15,
-        "goals_against": 10,
-        "points_per_match": 1.4,
-        "points_per_match_rounded": 1.4
+        "goals_for": 18,
+        "goals_against": 13,
+        "points_per_match": 1.333333333,
+        "points_per_match_rounded": 1.33
       },
       "absent": {
         "played": 19,
@@ -5730,21 +5904,21 @@
         "points_per_match": 1.263157895,
         "points_per_match_rounded": 1.26
       },
-      "differential": 0.1368421053,
-      "differential_note": "The side takes 0.14 points a match better with Pietro than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": 0.0701754386,
+      "differential_note": "The side takes 0.07 points a match better with Pietro than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 0,
       "mom": 0,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "5 of 24",
-          "note": "21% turnout"
+          "value": "6 of 25",
+          "note": "24% turnout"
         },
         {
           "label": "Goals",
           "value": "0",
-          "note": "0 man of the match, over 7 recorded"
+          "note": "0 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -5867,14 +6041,19 @@
           "date": "2026-10-28",
           "points": 0,
           "played": true
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": true
         }
       ]
     },
     {
       "player": "Seb",
-      "matches": 24,
+      "matches": 25,
       "appearances": 5,
-      "attendance_rate": 0.2083333333,
+      "attendance_rate": 0.2,
       "last_appearance": "2026-01-28",
       "present": {
         "played": 5,
@@ -5887,30 +6066,30 @@
         "points_per_match_rounded": 1.6
       },
       "absent": {
-        "played": 19,
+        "played": 20,
         "won": 7,
-        "drawn": 2,
+        "drawn": 3,
         "lost": 10,
-        "goals_for": 69,
-        "goals_against": 65,
-        "points_per_match": 1.210526316,
-        "points_per_match_rounded": 1.21
+        "goals_for": 72,
+        "goals_against": 68,
+        "points_per_match": 1.2,
+        "points_per_match_rounded": 1.2
       },
-      "differential": 0.3894736842,
-      "differential_note": "The side takes 0.39 points a match better with Seb than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": 0.4,
+      "differential_note": "The side takes 0.40 points a match better with Seb than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 0,
       "mom": 0,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "5 of 24",
-          "note": "21% turnout"
+          "value": "5 of 25",
+          "note": "20% turnout"
         },
         {
           "label": "Goals",
           "value": "0",
-          "note": "0 man of the match, over 7 recorded"
+          "note": "0 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -6033,24 +6212,29 @@
           "date": "2026-10-28",
           "points": 0,
           "played": false
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": false
         }
       ]
     },
     {
       "player": "Torge",
-      "matches": 24,
-      "appearances": 5,
-      "attendance_rate": 0.2083333333,
-      "last_appearance": "2026-10-28",
+      "matches": 25,
+      "appearances": 6,
+      "attendance_rate": 0.24,
+      "last_appearance": "2026-11-04",
       "present": {
-        "played": 5,
+        "played": 6,
         "won": 2,
-        "drawn": 1,
+        "drawn": 2,
         "lost": 2,
-        "goals_for": 14,
-        "goals_against": 10,
-        "points_per_match": 1.4,
-        "points_per_match_rounded": 1.4
+        "goals_for": 17,
+        "goals_against": 13,
+        "points_per_match": 1.333333333,
+        "points_per_match_rounded": 1.33
       },
       "absent": {
         "played": 19,
@@ -6062,21 +6246,21 @@
         "points_per_match": 1.263157895,
         "points_per_match_rounded": 1.26
       },
-      "differential": 0.1368421053,
-      "differential_note": "The side takes 0.14 points a match better with Torge than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": 0.0701754386,
+      "differential_note": "The side takes 0.07 points a match better with Torge than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 2,
       "mom": 0,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "5 of 24",
-          "note": "21% turnout"
+          "value": "6 of 25",
+          "note": "24% turnout"
         },
         {
           "label": "Goals",
           "value": "2",
-          "note": "0 man of the match, over 7 recorded"
+          "note": "0 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -6199,24 +6383,29 @@
           "date": "2026-10-28",
           "points": 0,
           "played": true
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": true
         }
       ]
     },
     {
       "player": "Vitto",
-      "matches": 24,
-      "appearances": 18,
-      "attendance_rate": 0.75,
-      "last_appearance": "2026-10-28",
+      "matches": 25,
+      "appearances": 19,
+      "attendance_rate": 0.76,
+      "last_appearance": "2026-11-04",
       "present": {
-        "played": 18,
+        "played": 19,
         "won": 6,
-        "drawn": 3,
+        "drawn": 4,
         "lost": 9,
-        "goals_for": 66,
-        "goals_against": 65,
-        "points_per_match": 1.166666667,
-        "points_per_match_rounded": 1.17
+        "goals_for": 69,
+        "goals_against": 68,
+        "points_per_match": 1.157894737,
+        "points_per_match_rounded": 1.16
       },
       "absent": {
         "played": 6,
@@ -6228,21 +6417,21 @@
         "points_per_match": 1.666666667,
         "points_per_match_rounded": 1.67
       },
-      "differential": -0.5,
-      "differential_note": "The side takes 0.50 points a match worse with Vitto than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": -0.5087719298,
+      "differential_note": "The side takes 0.51 points a match worse with Vitto than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 2,
       "mom": 1,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "18 of 24",
-          "note": "75% turnout"
+          "value": "19 of 25",
+          "note": "76% turnout"
         },
         {
           "label": "Goals",
           "value": "2",
-          "note": "1 man of the match, over 7 recorded"
+          "note": "1 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -6365,14 +6554,19 @@
           "date": "2026-10-28",
           "points": 0,
           "played": true
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
+          "played": true
         }
       ]
     },
     {
       "player": "Yelong",
-      "matches": 24,
+      "matches": 25,
       "appearances": 1,
-      "attendance_rate": 0.04166666667,
+      "attendance_rate": 0.04,
       "last_appearance": "2025-09-10",
       "present": {
         "played": 1,
@@ -6385,30 +6579,30 @@
         "points_per_match_rounded": 0
       },
       "absent": {
-        "played": 23,
+        "played": 24,
         "won": 9,
-        "drawn": 4,
+        "drawn": 5,
         "lost": 10,
-        "goals_for": 85,
-        "goals_against": 76,
-        "points_per_match": 1.347826087,
-        "points_per_match_rounded": 1.35
+        "goals_for": 88,
+        "goals_against": 79,
+        "points_per_match": 1.333333333,
+        "points_per_match_rounded": 1.33
       },
-      "differential": -1.347826087,
-      "differential_note": "The side takes 1.35 points a match worse with Yelong than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential": -1.333333333,
+      "differential_note": "The side takes 1.33 points a match worse with Yelong than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 0,
       "mom": 0,
-      "covered": 7,
+      "covered": 8,
       "headline": [
         {
           "label": "Appearances",
-          "value": "1 of 24",
+          "value": "1 of 25",
           "note": "4% turnout"
         },
         {
           "label": "Goals",
           "value": "0",
-          "note": "0 man of the match, over 7 recorded"
+          "note": "0 man of the match, over 8 recorded"
         }
       ],
       "timeline": [
@@ -6530,6 +6724,11 @@
         {
           "date": "2026-10-28",
           "points": 0,
+          "played": false
+        },
+        {
+          "date": "2026-11-04",
+          "points": 1,
           "played": false
         }
       ]

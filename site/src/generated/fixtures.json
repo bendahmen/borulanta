@@ -1,7 +1,7 @@
 {
   "have_fixtures": true,
-  "scraped_on": "2026-10-29",
-  "stale_note": "The fixture list was last read on 29 Oct, so this may be out of date.",
+  "scraped_on": "2026-11-06",
+  "stale_note": "The fixture list was last read on 06 Nov, so this may be out of date.",
   "wording": {
     "tag": "Next match",
     "no_fixtures_left": "No fixtures left on the league page. Run the sync once the new season is up.",
@@ -14,19 +14,6 @@
   "run_in_empty": "No fixtures left on the league page.",
   "fixtures": [
     {
-      "date": "2026-11-04",
-      "date_label": "Wed 04 Nov 2026",
-      "date_short": "04 Nov 2026",
-      "opponent": "Saffron Rangers",
-      "kickoff": "20:00",
-      "pitch": "Front Pitch",
-      "kickoff_pitch": "20:00 · Front Pitch",
-      "position": 8,
-      "played": 7,
-      "goal_difference": -8,
-      "points": 7
-    },
-    {
       "date": "2026-11-11",
       "date_label": "Wed 11 Nov 2026",
       "date_short": "11 Nov 2026",
@@ -35,8 +22,8 @@
       "pitch": "Pitch 1",
       "kickoff_pitch": "19:40 · Pitch 1",
       "position": 2,
-      "played": 7,
-      "goal_difference": 10,
+      "played": 8,
+      "goal_difference": 8,
       "points": 16
     },
     {
@@ -48,9 +35,9 @@
       "pitch": "Front Pitch",
       "kickoff_pitch": "20:00 · Front Pitch",
       "position": 9,
-      "played": 7,
-      "goal_difference": -32,
-      "points": 1
+      "played": 8,
+      "goal_difference": -30,
+      "points": 4
     },
     {
       "date": "2026-12-02",
@@ -60,9 +47,9 @@
       "kickoff": "19:00",
       "pitch": "Pitch 1",
       "kickoff_pitch": "19:00 · Pitch 1",
-      "position": 7,
-      "played": 7,
-      "goal_difference": -7,
+      "position": 8,
+      "played": 8,
+      "goal_difference": -12,
       "points": 7
     },
     {
@@ -73,10 +60,10 @@
       "kickoff": "19:40",
       "pitch": "Pitch 1",
       "kickoff_pitch": "19:40 · Pitch 1",
-      "position": 4,
-      "played": 7,
-      "goal_difference": 7,
-      "points": 11
+      "position": 3,
+      "played": 8,
+      "goal_difference": 18,
+      "points": 14
     },
     {
       "date": "2026-12-16",
@@ -86,7 +73,7 @@
       "kickoff": "20:00",
       "pitch": "Front Pitch",
       "kickoff_pitch": "20:00 · Front Pitch",
-      "position": 6,
+      "position": 7,
       "played": 8,
       "goal_difference": -8,
       "points": 8
@@ -99,9 +86,9 @@
       "kickoff": "20:20",
       "pitch": "Pitch 1",
       "kickoff_pitch": "20:20 · Pitch 1",
-      "position": 3,
-      "played": 7,
-      "goal_difference": 10,
+      "position": 5,
+      "played": 8,
+      "goal_difference": -1,
       "points": 11
     },
     {
@@ -113,9 +100,9 @@
       "pitch": "Pitch 1",
       "kickoff_pitch": "20:20 · Pitch 1",
       "position": 1,
-      "played": 7,
-      "goal_difference": 21,
-      "points": 19
+      "played": 8,
+      "goal_difference": 26,
+      "points": 22
     },
     {
       "date": "2027-01-20",
@@ -125,10 +112,10 @@
       "kickoff": "20:00",
       "pitch": "Front Pitch",
       "kickoff_pitch": "20:00 · Front Pitch",
-      "position": 8,
-      "played": 7,
+      "position": 6,
+      "played": 8,
       "goal_difference": -8,
-      "points": 7
+      "points": 8
     }
   ]
 }

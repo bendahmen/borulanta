@@ -1,5 +1,5 @@
 {
-  "data_hash": "ec861c7b15a8faf95923091434d193afb915fb0d9fe487ff7e66387a12356335",
+  "data_hash": "6d08396eaf4c4feb8cd7d0c96a48128cb666e13c9b61edd54645bfd270f15471",
   "our_team": "Borulanta",
   "min_regression_appearances": 3,
   "stale_fixtures_days": 8,
@@ -14,7 +14,7 @@
       "season_id": "s3",
       "label": "Season 3",
       "start_date": "2026-09-09",
-      "span": "Sep–Oct 2026"
+      "span": "Sep–Nov 2026"
     },
     {
       "season_id": "s2",
@@ -30,11 +30,11 @@
     }
   ],
   "subset_files": ["s1.json", "s2.json", "s3.json", "s1-s2.json", "s1-s3.json", "s2-s3.json", "s1-s2-s3.json"],
-  "problems": [],
+  "problems": ["match events for an unknown player: Og"],
   "problems_title": "Data check",
   "freshness": {
-    "full": "Results to 28 Oct 2026 · league page read 29 Oct 2026",
-    "short": "Page read 29 Oct 2026"
+    "full": "Results to 04 Nov 2026 · league page read 06 Nov 2026",
+    "short": "Page read 06 Nov 2026"
   },
   "empty_states": {
     "no_matches": "No matches in the selected seasons yet.",

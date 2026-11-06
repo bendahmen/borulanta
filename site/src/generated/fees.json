@@ -3,14 +3,14 @@
   "balances": [
     {
       "player": "Berghi",
-      "charges": 317.74,
-      "charges_display": "£317.74",
+      "charges": 326.18,
+      "charges_display": "£326.18",
       "payments": 253.35,
       "payments_display": "£253.35",
       "last_payment": "2026-09-02",
       "last_payment_display": "02 Sep 2026",
-      "balance": 64.39,
-      "balance_display": "£64.39"
+      "balance": 72.83,
+      "balance_display": "£72.83"
     },
     {
       "player": "Boris",
@@ -25,69 +25,80 @@
     },
     {
       "player": "Daniel",
-      "charges": 353.15,
-      "charges_display": "£353.15",
+      "charges": 361.6,
+      "charges_display": "£361.60",
       "payments": 304.81,
       "payments_display": "£304.81",
       "last_payment": "2026-09-08",
       "last_payment_display": "08 Sep 2026",
-      "balance": 48.34,
-      "balance_display": "£48.34"
+      "balance": 56.79,
+      "balance_display": "£56.79"
     },
     {
       "player": "Torge",
-      "charges": 224.68,
-      "charges_display": "£224.68",
+      "charges": 233.13,
+      "charges_display": "£233.13",
       "payments": 176.65,
       "payments_display": "£176.65",
       "last_payment": "2026-09-02",
       "last_payment_display": "02 Sep 2026",
-      "balance": 48.03,
-      "balance_display": "£48.03"
+      "balance": 56.48,
+      "balance_display": "£56.48"
     },
     {
       "player": "Emiliano",
-      "charges": 275.66,
-      "charges_display": "£275.66",
+      "charges": 284.1,
+      "charges_display": "£284.10",
       "payments": 235.23,
       "payments_display": "£235.23",
       "last_payment": "2026-09-02",
       "last_payment_display": "02 Sep 2026",
-      "balance": 40.43,
-      "balance_display": "£40.43"
+      "balance": 48.87,
+      "balance_display": "£48.87"
     },
     {
       "player": "Vitto",
-      "charges": 375.85,
-      "charges_display": "£375.85",
+      "charges": 384.29,
+      "charges_display": "£384.29",
       "payments": 336.16,
       "payments_display": "£336.16",
       "last_payment": "2026-09-02",
       "last_payment_display": "02 Sep 2026",
-      "balance": 39.69,
-      "balance_display": "£39.69"
+      "balance": 48.13,
+      "balance_display": "£48.13"
     },
     {
       "player": "Elia",
-      "charges": 168.54,
-      "charges_display": "£168.54",
+      "charges": 176.99,
+      "charges_display": "£176.99",
       "payments": 129.17,
       "payments_display": "£129.17",
       "last_payment": "2026-09-02",
       "last_payment_display": "02 Sep 2026",
-      "balance": 39.37,
-      "balance_display": "£39.37"
+      "balance": 47.82,
+      "balance_display": "£47.82"
     },
     {
       "player": "Mateus",
-      "charges": 363.29,
-      "charges_display": "£363.29",
+      "charges": 371.74,
+      "charges_display": "£371.74",
       "payments": 324.45,
       "payments_display": "£324.45",
       "last_payment": "2026-09-02",
       "last_payment_display": "02 Sep 2026",
-      "balance": 38.84,
-      "balance_display": "£38.84"
+      "balance": 47.29,
+      "balance_display": "£47.29"
+    },
+    {
+      "player": "Pietro",
+      "charges": 235.59,
+      "charges_display": "£235.59",
+      "payments": 198.12,
+      "payments_display": "£198.12",
+      "last_payment": "2026-09-01",
+      "last_payment_display": "01 Sep 2026",
+      "balance": 37.47,
+      "balance_display": "£37.47"
     },
     {
       "player": "Max",
@@ -112,17 +123,6 @@
       "balance_display": "£29.87"
     },
     {
-      "player": "Pietro",
-      "charges": 227.14,
-      "charges_display": "£227.14",
-      "payments": 198.12,
-      "payments_display": "£198.12",
-      "last_payment": "2026-09-01",
-      "last_payment_display": "01 Sep 2026",
-      "balance": 29.02,
-      "balance_display": "£29.02"
-    },
-    {
       "player": "Dadde",
       "charges": 49.09,
       "charges_display": "£49.09",
@@ -141,6 +141,17 @@
       "payments_display": "£31.18",
       "last_payment": "2026-09-08",
       "last_payment_display": "08 Sep 2026",
+      "balance": 8.44,
+      "balance_display": "£8.44"
+    },
+    {
+      "player": "Luca",
+      "charges": 157.95,
+      "charges_display": "£157.95",
+      "payments": 149.51,
+      "payments_display": "£149.51",
+      "last_payment": "2026-11-04",
+      "last_payment_display": "04 Nov 2026",
       "balance": 8.44,
       "balance_display": "£8.44"
     },
@@ -174,17 +185,6 @@
       "payments_display": "£19.50",
       "last_payment": "2026-03-20",
       "last_payment_display": "20 Mar 2026",
-      "balance": 0,
-      "balance_display": "£0.00"
-    },
-    {
-      "player": "Luca",
-      "charges": 149.51,
-      "charges_display": "£149.51",
-      "payments": 149.51,
-      "payments_display": "£149.51",
-      "last_payment": "2026-11-04",
-      "last_payment_display": "04 Nov 2026",
       "balance": 0,
       "balance_display": "£0.00"
     },
@@ -223,13 +223,13 @@
     }
   ],
   "totals": {
-    "outstanding": 491.55,
-    "outstanding_display": "£491.55",
+    "outstanding": 567.56,
+    "outstanding_display": "£567.56",
     "credit": 0,
     "credit_display": "£0.00",
-    "net": 491.55,
-    "net_display": "£491.55",
-    "settled": 7
+    "net": 567.56,
+    "net_display": "£567.56",
+    "settled": 6
   },
   "overviews": [
     {
@@ -241,6 +241,17 @@
       "balance": 0,
       "balance_display": "£0.00",
       "match_charges": [
+        {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": false,
+          "squad_size": 9,
+          "charge": 0,
+          "charge_display": "£0.00",
+          "explanation": "Did not play: players were charged only when present."
+        },
         {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
@@ -822,6 +833,17 @@
       "balance_display": "£29.87",
       "match_charges": [
         {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": false,
+          "squad_size": 9,
+          "charge": 0,
+          "charge_display": "£0.00",
+          "explanation": "Did not play: players were charged only when present."
+        },
+        {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
           "season": "Season 3",
@@ -1402,6 +1424,17 @@
       "balance_display": "£0.00",
       "match_charges": [
         {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": false,
+          "squad_size": 9,
+          "charge": 0,
+          "charge_display": "£0.00",
+          "explanation": "Did not play: players were charged only when present."
+        },
+        {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
           "season": "Season 3",
@@ -1974,13 +2007,24 @@
     },
     {
       "player": "Berghi",
-      "total_charges": 317.74,
-      "total_charges_display": "£317.74",
+      "total_charges": 326.18,
+      "total_charges_display": "£326.18",
       "total_payments": 253.35,
       "total_payments_display": "£253.35",
-      "balance": 64.39,
-      "balance_display": "£64.39",
+      "balance": 72.83,
+      "balance_display": "£72.83",
       "match_charges": [
+        {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": true,
+          "squad_size": 9,
+          "charge": 8.444444444,
+          "charge_display": "£8.44",
+          "explanation": "Played: £76.00 split across 9 recorded players."
+        },
         {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
@@ -2579,6 +2623,17 @@
       "balance": 64.39,
       "balance_display": "£64.39",
       "match_charges": [
+        {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": false,
+          "squad_size": 9,
+          "charge": 0,
+          "charge_display": "£0.00",
+          "explanation": "Did not play: players were charged only when present."
+        },
         {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
@@ -3190,6 +3245,17 @@
       "balance_display": "£9.50",
       "match_charges": [
         {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": false,
+          "squad_size": 9,
+          "charge": 0,
+          "charge_display": "£0.00",
+          "explanation": "Did not play: players were charged only when present."
+        },
+        {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
           "season": "Season 3",
@@ -3762,13 +3828,24 @@
     },
     {
       "player": "Daniel",
-      "total_charges": 353.15,
-      "total_charges_display": "£353.15",
+      "total_charges": 361.6,
+      "total_charges_display": "£361.60",
       "total_payments": 304.81,
       "total_payments_display": "£304.81",
-      "balance": 48.34,
-      "balance_display": "£48.34",
+      "balance": 56.79,
+      "balance_display": "£56.79",
       "match_charges": [
+        {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": true,
+          "squad_size": 9,
+          "charge": 8.444444444,
+          "charge_display": "£8.44",
+          "explanation": "Played: £76.00 split across 9 recorded players."
+        },
         {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
@@ -4372,13 +4449,24 @@
     },
     {
       "player": "Elia",
-      "total_charges": 168.54,
-      "total_charges_display": "£168.54",
+      "total_charges": 176.99,
+      "total_charges_display": "£176.99",
       "total_payments": 129.17,
       "total_payments_display": "£129.17",
-      "balance": 39.37,
-      "balance_display": "£39.37",
+      "balance": 47.82,
+      "balance_display": "£47.82",
       "match_charges": [
+        {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": true,
+          "squad_size": 9,
+          "charge": 8.444444444,
+          "charge_display": "£8.44",
+          "explanation": "Played: £76.00 split across 9 recorded players."
+        },
         {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
@@ -4958,13 +5046,24 @@
     },
     {
       "player": "Emiliano",
-      "total_charges": 275.66,
-      "total_charges_display": "£275.66",
+      "total_charges": 284.1,
+      "total_charges_display": "£284.10",
       "total_payments": 235.23,
       "total_payments_display": "£235.23",
-      "balance": 40.43,
-      "balance_display": "£40.43",
+      "balance": 48.87,
+      "balance_display": "£48.87",
       "match_charges": [
+        {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": true,
+          "squad_size": 9,
+          "charge": 8.444444444,
+          "charge_display": "£8.44",
+          "explanation": "Played: £76.00 split across 9 recorded players."
+        },
         {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
@@ -5570,6 +5669,17 @@
       "balance_display": "£8.44",
       "match_charges": [
         {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": false,
+          "squad_size": 9,
+          "charge": 0,
+          "charge_display": "£0.00",
+          "explanation": "Did not play: players were charged only when present."
+        },
+        {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
           "season": "Season 3",
@@ -6156,6 +6266,17 @@
       "balance_display": "£0.00",
       "match_charges": [
         {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": false,
+          "squad_size": 9,
+          "charge": 0,
+          "charge_display": "£0.00",
+          "explanation": "Did not play: players were charged only when present."
+        },
+        {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
           "season": "Season 3",
@@ -6728,13 +6849,24 @@
     },
     {
       "player": "Luca",
-      "total_charges": 149.51,
-      "total_charges_display": "£149.51",
+      "total_charges": 157.95,
+      "total_charges_display": "£157.95",
       "total_payments": 149.51,
       "total_payments_display": "£149.51",
-      "balance": 0,
-      "balance_display": "£0.00",
+      "balance": 8.44,
+      "balance_display": "£8.44",
       "match_charges": [
+        {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": true,
+          "squad_size": 9,
+          "charge": 8.444444444,
+          "charge_display": "£8.44",
+          "explanation": "Played: £76.00 split across 9 recorded players."
+        },
         {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
@@ -7320,13 +7452,24 @@
     },
     {
       "player": "Mateus",
-      "total_charges": 363.29,
-      "total_charges_display": "£363.29",
+      "total_charges": 371.74,
+      "total_charges_display": "£371.74",
       "total_payments": 324.45,
       "total_payments_display": "£324.45",
-      "balance": 38.84,
-      "balance_display": "£38.84",
+      "balance": 47.29,
+      "balance_display": "£47.29",
       "match_charges": [
+        {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": true,
+          "squad_size": 9,
+          "charge": 8.444444444,
+          "charge_display": "£8.44",
+          "explanation": "Played: £76.00 split across 9 recorded players."
+        },
         {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
@@ -7932,6 +8075,17 @@
       "balance_display": "£31.24",
       "match_charges": [
         {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": false,
+          "squad_size": 9,
+          "charge": 0,
+          "charge_display": "£0.00",
+          "explanation": "Did not play: players were charged only when present."
+        },
+        {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
           "season": "Season 3",
@@ -8530,6 +8684,17 @@
       "balance_display": "£0.00",
       "match_charges": [
         {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": false,
+          "squad_size": 9,
+          "charge": 0,
+          "charge_display": "£0.00",
+          "explanation": "Did not play: players were charged only when present."
+        },
+        {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
           "season": "Season 3",
@@ -9102,13 +9267,24 @@
     },
     {
       "player": "Pietro",
-      "total_charges": 227.14,
-      "total_charges_display": "£227.14",
+      "total_charges": 235.59,
+      "total_charges_display": "£235.59",
       "total_payments": 198.12,
       "total_payments_display": "£198.12",
-      "balance": 29.02,
-      "balance_display": "£29.02",
+      "balance": 37.47,
+      "balance_display": "£37.47",
       "match_charges": [
+        {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": true,
+          "squad_size": 9,
+          "charge": 8.444444444,
+          "charge_display": "£8.44",
+          "explanation": "Played: £76.00 split across 9 recorded players."
+        },
         {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
@@ -9714,6 +9890,17 @@
       "balance_display": "£0.00",
       "match_charges": [
         {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": false,
+          "squad_size": 9,
+          "charge": 0,
+          "charge_display": "£0.00",
+          "explanation": "Did not play: players were charged only when present."
+        },
+        {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
           "season": "Season 3",
@@ -10298,13 +10485,24 @@
     },
     {
       "player": "Torge",
-      "total_charges": 224.68,
-      "total_charges_display": "£224.68",
+      "total_charges": 233.13,
+      "total_charges_display": "£233.13",
       "total_payments": 176.65,
       "total_payments_display": "£176.65",
-      "balance": 48.03,
-      "balance_display": "£48.03",
+      "balance": 56.48,
+      "balance_display": "£56.48",
       "match_charges": [
+        {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": true,
+          "squad_size": 9,
+          "charge": 8.444444444,
+          "charge_display": "£8.44",
+          "explanation": "Played: £76.00 split across 9 recorded players."
+        },
         {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
@@ -10890,13 +11088,24 @@
     },
     {
       "player": "Vitto",
-      "total_charges": 375.85,
-      "total_charges_display": "£375.85",
+      "total_charges": 384.29,
+      "total_charges_display": "£384.29",
       "total_payments": 336.16,
       "total_payments_display": "£336.16",
-      "balance": 39.69,
-      "balance_display": "£39.69",
+      "balance": 48.13,
+      "balance_display": "£48.13",
       "match_charges": [
+        {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": true,
+          "squad_size": 9,
+          "charge": 8.444444444,
+          "charge_display": "£8.44",
+          "explanation": "Played: £76.00 split across 9 recorded players."
+        },
         {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",
@@ -11489,6 +11698,17 @@
       "balance": 0,
       "balance_display": "£0.00",
       "match_charges": [
+        {
+          "date": "2026-11-04",
+          "date_short": "04 Nov 2026",
+          "season": "Season 3",
+          "result": "3-3",
+          "played": false,
+          "squad_size": 9,
+          "charge": 0,
+          "charge_display": "£0.00",
+          "explanation": "Did not play: players were charged only when present."
+        },
         {
           "date": "2026-10-28",
           "date_short": "28 Oct 2026",

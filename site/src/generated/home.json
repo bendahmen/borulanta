@@ -1,16 +1,16 @@
 {
   "last_match": {
-    "date": "2026-10-28",
-    "date_label": "Wed 28 Oct 2026",
-    "result": "2-3",
-    "points": 0,
-    "badge": "LOSS",
-    "opponent": "The Dirty Boys",
+    "date": "2026-11-04",
+    "date_label": "Wed 04 Nov 2026",
+    "result": "3-3",
+    "points": 1,
+    "badge": "DRAW",
+    "opponent": "Saffron Rangers",
     "season_label": "Season 3",
-    "meta_line": "Wed 28 Oct 2026 · v The Dirty Boys · Season 3",
+    "meta_line": "Wed 04 Nov 2026 · v Saffron Rangers · Season 3",
     "squad_size": 9,
-    "scorers": "Emiliano (2)",
-    "man_of_the_match": "Emiliano",
+    "scorers": "Daniel, Luca, Og",
+    "man_of_the_match": "Luca",
     "details": [
       {
         "label": "Squad",
@@ -18,16 +18,16 @@
       },
       {
         "label": "Scorers",
-        "value": "Emiliano (2)"
+        "value": "Daniel, Luca, Og"
       },
       {
         "label": "Man of the match",
-        "value": "Emiliano"
+        "value": "Luca"
       }
     ]
   },
   "last_match_tag": "Last match",
   "last_match_empty": "No matches recorded yet.",
-  "league_position": "5th of 9 · 10 points from 7",
+  "league_position": "4th of 9 · 11 points from 8",
   "league_link_label": "League table and run-in"
 }
