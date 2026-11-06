@@ -438,10 +438,12 @@ To change the rules for a season, add a rule set and point that season's
 
 When a season is settled, freeze it so its charges survive the rules retiring:
 
-1. Write its charges to `data/archive/charges_<season_id>.csv`
+1. Check every match in the season has its attendance. A match without it is
+   charged to nobody, and freezing it then leaves it free for good.
+2. Write its charges to `data/archive/charges_<season_id>.csv`
    (`season_id, date, player, played, squad_size, charge, explanation`);
    the filename must match the id, so season `s3` needs `charges_s3.csv`.
-2. Set that season's `fee_rules` to `archived` and `status` to `closed`.
+3. Set that season's `fee_rules` to `archived` and `status` to `closed`.
 
 From then on the app reads the frozen ledger instead of repricing, so old
 balances stay exactly as they were even after the rule code is deleted. Seasons
@@ -582,7 +584,7 @@ Nothing in the stylesheet can touch the flex properties: bslib writes
 ## Data checks
 
 `validate_app_data()` runs at startup and warns about attendance on a date with
-no match, unknown players, rows dated before the first season, players who
+no match, a match with no attendance yet, unknown players, rows dated before the first season, players who
 appeared without being on that season's active roster, events on a date with no
 match, goals that do not add up to the scoreline they belong to, a fixture dated
 on a match already recorded (a fixture list the sync has not caught up with),

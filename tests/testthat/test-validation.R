@@ -37,6 +37,28 @@ test_that("data with nothing wrong with it returns no problems and warns none", 
   expect_identical(problems, character())
 })
 
+test_that("a match waiting for its attendance is named, and goes once it is typed", {
+  data <- clean_data()
+  data$matches <- bind_rows(
+    data$matches,
+    tibble(
+      date = as.Date("2026-01-28"), opponent = "Ball FC",
+      goals_for = 1L, goals_against = 1L, season_id = "s1"
+    )
+  )
+  problems <- suppressWarnings(validate_app_data(data))
+  expect_identical(
+    problems, "matches with no attendance yet, so nobody is charged for them: 28/01/2026"
+  )
+
+  data$attendance <- bind_rows(
+    data$attendance,
+    tibble(date = as.Date("2026-01-28"), player = "Vitto", season_id = "s1")
+  )
+  expect_warning(problems <- validate_app_data(data), NA)
+  expect_identical(problems, character())
+})
+
 test_that("every problem found comes back, not just the first", {
   data <- clean_data()
   # One unknown name trips two separate checks: not a player, and not on the
