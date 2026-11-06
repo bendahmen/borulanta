@@ -42,7 +42,7 @@ empty_events <- function() {
 empty_uncredited_goals <- function() {
   tibble(
     date = as.Date(character()), minute = integer(), player = character(),
-    reason = character(), matched = logical()
+    reason = character(), goals_matched = integer()
   )
 }
 

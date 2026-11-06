@@ -116,9 +116,10 @@ describe(
 
 # A scorer of ours who is neither a player we know nor a name we translate.
 # Most of the squad go by the same first name on the site, so only the ones that
-# do not are worth mentioning.
+# do not are worth mentioning. An own goal is nobody's, and mapping its name to
+# a player would credit every own goal to them without a word.
 unrecognised <- result$events |>
-  filter(team == "us", !is.na(player)) |>
+  filter(team == "us", !is.na(player), !tolower(player) %in% OWN_GOAL_NAMES) |>
   distinct(player) |>
   pull(player) |>
   setdiff(players$player)

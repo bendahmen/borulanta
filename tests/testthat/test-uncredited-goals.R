@@ -50,15 +50,16 @@ test_that("an own goal is credited to nobody and still adds up to the scoreline"
 })
 
 test_that("every spelling of an own goal is credited to nobody, and only goals", {
+  # Oleg is on the roster: the match is on the whole name, not its first letters.
   events <- tibble(
-    date = as.Date("2026-01-14"), minute = c(10L, 20L, 30L, 40L, NA),
-    event_type = c("goal", "goal", "goal", "goal", "mom"),
-    player = c("OG", "o.g.", "Own Goal", "Ben", "Og")
+    date = as.Date("2026-01-14"), minute = c(10L, 20L, 30L, 40L, 50L, NA),
+    event_type = c("goal", "goal", "goal", "goal", "goal", "mom"),
+    player = c("OG", "o.g.", "Own Goal", "Ben", "Oleg", "Og")
   )
 
   credited <- credit_nobody(events, empty_uncredited_goals())
 
-  expect_equal(credited$player, c(NA, NA, NA, "Ben", "Og"))
+  expect_equal(credited$player, c(NA, NA, NA, "Ben", "Oleg", "Og"))
 })
 
 test_that("a listed guest's goal is credited to nobody, and Daniel keeps his own", {
@@ -75,7 +76,7 @@ test_that("a listed guest's goal is credited to nobody, and Daniel keeps his own
 
   expect_identical(data$problems, character())
   expect_equal(data$events$player, c("Ben", NA, "Daniel"))
-  expect_true(data$uncredited_goals$matched)
+  expect_equal(data$uncredited_goals$goals_matched, 1L)
 
   table <- scorer_table(data$events, data$attendance, data$matches)
   expect_false(anyNA(table$player))
@@ -102,12 +103,45 @@ test_that("a listed goal that no longer matches is named in the banner", {
 
   expect_warning(data <- load_app_data(dir), "match no goal event")
 
-  expect_identical(
-    data$problems,
-    "goals in data/uncredited_goals.csv that match no goal event: Daniel 14/01/2026 minute 20"
-  )
+  expect_identical(data$problems, paste(
+    "goals in data/uncredited_goals.csv that match no goal event, or more than one:",
+    "Daniel 14/01/2026 minute 20 (matches 0)"
+  ))
   # Credited to the roster Daniel again until the list is put right.
   expect_equal(data$events$player, c("Ben", "Daniel", "Daniel"))
+})
+
+test_that("a listed row that matches more than one goal credits all of them and says so", {
+  # A blank minute matches every minute-less goal by that name that night, and a
+  # minute shared by two goals of one name matches both.
+  cases <- list(
+    list(
+      events = c("14/01/2026,1,us,,goal,Daniel", "14/01/2026,1,us,,goal,Daniel"),
+      listed = "14/01/2026,,Daniel,A guest",
+      named = "Daniel 14/01/2026 no minute (matches 2)"
+    ),
+    list(
+      events = c("14/01/2026,1,us,20,goal,Daniel", "14/01/2026,1,us,20,goal,Daniel"),
+      listed = "14/01/2026,20,Daniel,A guest",
+      named = "Daniel 14/01/2026 minute 20 (matches 2)"
+    )
+  )
+
+  for (case in cases) {
+    dir <- write_goal_data(
+      c("14/01/2026,1,us,10,goal,Ben", case$events),
+      c("date,minute,player,reason", case$listed)
+    )
+
+    expect_warning(data <- load_app_data(dir), "or more than one")
+
+    # Three goal rows still, so the scoreline adds up and this is the only problem.
+    expect_identical(data$problems, paste(
+      "goals in data/uncredited_goals.csv that match no goal event, or more than one:",
+      case$named
+    ))
+    expect_equal(data$events$player, c("Ben", NA, NA))
+  }
 })
 
 test_that("no list, an empty file or a header alone credits only own goals to nobody", {
