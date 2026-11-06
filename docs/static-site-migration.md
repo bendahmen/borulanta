@@ -208,7 +208,7 @@ Raise each one when it becomes relevant, and do not settle them yourself.
 
 1. **Season picker, at Stage 2.** We keep any-combination ticks in the prototype. Nobody has evidence anyone uses combinations, so a dropdown with an all-time option may be better on a phone. Settled 5 November 2026: any-combination ticks stay.
 2. **Privacy, before Stage 5.** Names and balances are readable in the public repo and history, and would sit in public JSON too. Ben can accept that, or add Cloudflare Access with a private repo. Whether Access covers static assets is unconfirmed, and the Connect Cloud free tier deploys only from public repos, so going private has to wait until Shiny is retired or be arranged separately. Settled 6 November 2026: the site stays public for now, and Ben revisits this at Stage 7, when the repo can go private.
-3. **Address, at Stage 5.** A default Cloudflare address costs nothing, and a custom domain costs money. Settled 6 November 2026: start on the free workers.dev address, and decide on a domain before the link goes out at cutover.
+3. **Address, at Stage 5.** A default Cloudflare address costs nothing, and a custom domain costs money. Settled 6 November 2026: start on the free workers.dev address, and decide on a domain before the link goes out at cutover. Settled 6 November 2026: Ben keeps https://borulanta.bendahmen.workers.dev/ for cutover and buys no domain.
 
 ## Out of scope until after cutover
 
