@@ -265,6 +265,13 @@ validate_app_data <- function(data) {
     "attendance for a date with no match",
     format(setdiff(data$attendance$date, data$matches$date), "%d/%m/%Y")
   )
+  # The other way round is the gap between the sync and the attendance being typed.
+  # Such a match is charged to nobody until its attendance is in, so a forgotten one
+  # would go free with nothing on the page to say so.
+  complain(
+    "matches with no attendance yet, so nobody is charged for them",
+    format(setdiff(data$matches$date, data$attendance$date), "%d/%m/%Y")
+  )
   complain(
     "attendance for an unknown player",
     setdiff(data$attendance$player, data$players$player)
