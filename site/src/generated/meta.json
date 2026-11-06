@@ -1,5 +1,5 @@
 {
-  "data_hash": "6d08396eaf4c4feb8cd7d0c96a48128cb666e13c9b61edd54645bfd270f15471",
+  "data_hash": "31a42898672e783daa20a741756c1fbcac153eebffdd30f776631240593ecfaa",
   "our_team": "Borulanta",
   "min_regression_appearances": 3,
   "stale_fixtures_days": 8,
@@ -30,7 +30,7 @@
     }
   ],
   "subset_files": ["s1.json", "s2.json", "s3.json", "s1-s2.json", "s1-s3.json", "s2-s3.json", "s1-s2-s3.json"],
-  "problems": ["match events for an unknown player: Og"],
+  "problems": [],
   "problems_title": "Data check",
   "freshness": {
     "full": "Results to 04 Nov 2026 · league page read 06 Nov 2026",

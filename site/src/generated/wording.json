@@ -9,9 +9,7 @@
     "tag": "Settle Up",
     "copy": "Balances move when I record the transfer, not when you send it.",
     "button_label": "Pay via Monzo",
-    "button_url": "https://monzo.me/benjamindahmen8?h=Njfjz9",
-    "account_title": "Bank transfer details",
-    "account_details": ["Account Number: 94456363", "Sort Code: 04-00-03", "Name: Benjamin Dahmen"]
+    "button_url": "https://monzo.me/benjamindahmen8?h=Njfjz9"
   },
   "estimator_control": {
     "legend": "Estimates",

@@ -10,7 +10,7 @@
     "season_label": "Season 3",
     "meta_line": "Wed 04 Nov 2026 · v Saffron Rangers · Season 3",
     "squad_size": 9,
-    "scorers": "Daniel, Luca, Og",
+    "scorers": "Daniel, Luca",
     "man_of_the_match": "Luca",
     "details": [
       {
@@ -19,7 +19,7 @@
       },
       {
         "label": "Scorers",
-        "value": "Daniel, Luca, Og"
+        "value": "Daniel, Luca"
       },
       {
         "label": "Man of the match",
@@ -66,7 +66,7 @@
     "season_label": "Season 3",
     "meta_line": "Wed 21 Oct 2026 · v Foireann Peile · Season 3",
     "squad_size": 7,
-    "scorers": "Boris, Daniel, Torge",
+    "scorers": "Boris, Torge",
     "man_of_the_match": null,
     "details": [
       {
@@ -75,7 +75,7 @@
       },
       {
         "label": "Scorers",
-        "value": "Boris, Daniel, Torge"
+        "value": "Boris, Torge"
       }
     ]
   },

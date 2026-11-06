@@ -1043,20 +1043,20 @@
   "scorers": {
     "rows": [
       {
-        "player": "Daniel",
-        "appearances": 6,
-        "goals": 4,
-        "mom": 1,
-        "goals_per_appearance": 0.6666666667,
-        "goals_per_appearance_rounded": 0.67
-      },
-      {
         "player": "Mateus",
         "appearances": 5,
         "goals": 4,
         "mom": 0,
         "goals_per_appearance": 0.8,
         "goals_per_appearance_rounded": 0.8
+      },
+      {
+        "player": "Daniel",
+        "appearances": 6,
+        "goals": 3,
+        "mom": 1,
+        "goals_per_appearance": 0.5,
+        "goals_per_appearance_rounded": 0.5
       },
       {
         "player": "Emiliano",
@@ -1129,14 +1129,6 @@
         "mom": 0,
         "goals_per_appearance": 1,
         "goals_per_appearance_rounded": 1
-      },
-      {
-        "player": "Og",
-        "appearances": 0,
-        "goals": 1,
-        "mom": 0,
-        "goals_per_appearance": null,
-        "goals_per_appearance_rounded": null
       },
       {
         "player": "Ben",
@@ -1757,7 +1749,7 @@
       },
       "differential": 1.166666667,
       "differential_note": "The side takes 1.17 points a match better with Daniel than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
-      "goals": 4,
+      "goals": 3,
       "mom": 1,
       "covered": 8,
       "headline": [
@@ -1768,7 +1760,7 @@
         },
         {
           "label": "Goals",
-          "value": "4",
+          "value": "3",
           "note": "1 man of the match, over 8 recorded"
         }
       ],
