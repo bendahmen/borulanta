@@ -86,11 +86,16 @@ ui <- page_fluid(
       class = "nav-pill-shell",
       navset_pill(
         id = "app_tabs",
-        # Between the pills and the tab content, and only on the tabs it
-        # scopes: a control that does nothing should not be on the page.
-        header = conditionalPanel(
-          "output.season_picker_applies",
-          div(class = "season-bar", div(class = "season-shell", season_picker(app_data)))
+        # Between the pills and the tab content. The moved notice is on every
+        # tab, and here rather than above the hero so that a tab tapped on a
+        # phone opens with it in view. The season picker is only on the tabs
+        # it scopes: a control that does nothing should not be on the page.
+        header = tagList(
+          moved_notice,
+          conditionalPanel(
+            "output.season_picker_applies",
+            div(class = "season-bar", div(class = "season-shell", season_picker(app_data)))
+          )
         ),
         # First, so it is where the app opens. Like the Fees tab, and
         # for the same reason, it ignores the season picker: it answers

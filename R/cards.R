@@ -147,6 +147,28 @@ data_health_banner <- function(problems) {
 }
 
 
+# Moved ----
+#
+# The static site has replaced this app. Shiny stays up for a few weeks so that
+# old links and bookmarks still land somewhere, and from here people are sent on.
+
+SITE_URL <- "https://borulanta.bendahmen.workers.dev/"
+
+#' The move, above every tab.
+#'
+#' A link rather than a redirect, so people see the new address and save it
+#' instead of being moved without noticing. Same tab, because this one closes.
+moved_notice <- p(
+  class = "moved-notice",
+  tags$strong("Borulanta has moved."),
+  " Use ",
+  # A break point after each dot, so a phone wraps the address between its parts
+  # rather than mid-word.
+  tags$a(href = SITE_URL, HTML(gsub(".", ".<wbr>", SITE_URL, fixed = TRUE))),
+  " from now on. This page closes in early December."
+)
+
+
 #' The last result, with as much of the detail as we happen to hold.
 #'
 #' Opponent, scorers and man of the match all came in with the sync, so nothing
