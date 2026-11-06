@@ -1719,6 +1719,10 @@ test_that("every other problem validate_app_data() can list goes in the banner",
     "date,home_team,away_team,home_goals,away_goals,dl_match_id",
     "07/01/2026,Rovers,City,2,0,9", "07/01/2026,Rovers,City,2,0,9"
   ), file.path(data_dir, "league_results.csv"))
+  writeLines(
+    c("date,minute,player,reason", "21/01/2026,30,Ann,A guest who scored no goal on file"),
+    file.path(data_dir, "uncredited_goals.csv")
+  )
   out <- withr::local_tempdir()
 
   expect_no_error(suppressWarnings(build_site_data(data_dir, out)))
@@ -1737,6 +1741,7 @@ test_that("every other problem validate_app_data() can list goes in the banner",
     "match events for an unknown player",
     "match events for a team other than ours",
     "goal events that do not add up to the scoreline",
+    "goals in data/uncredited_goals.csv that match no goal event, or more than one",
     "fixtures dated on a match already recorded",
     "missing from data/league_table.csv",
     "league results recorded more than once",
