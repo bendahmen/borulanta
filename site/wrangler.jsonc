@@ -1,0 +1,12 @@
+// Cloudflare Workers static assets. Workers Builds runs the build in site/,
+// then `wrangler deploy` uploads dist/. There is no Worker script: every
+// request is a file, and a missing one gets the site's own 404 page.
+// The name must match the Worker's name in the Cloudflare dashboard.
+{
+  "name": "borulanta",
+  "compatibility_date": "2026-11-06",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}
