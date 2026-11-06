@@ -108,6 +108,11 @@ if [ "$branch" != "main" ]; then
     "Run it in the main folder, projects/borulanta, on main."
 fi
 
+# Here rather than at the push, so that a run that could never push stops before it
+# commits anything.
+upstream="$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null)" ||
+  stop_at "step 1 (checks)" "main has no upstream. Set it with git branch -u origin/main."
+
 # Untracked files count too, because git add below would sweep them in.
 generated_dirty="$(git status --porcelain -uall -- "${generated[@]}")"
 if [ -n "$generated_dirty" ]; then
@@ -207,13 +212,17 @@ if "$dry_run"; then
     echo "A publish would commit these generated files:"
     printf '%s\n' "$changes"
   fi
-  upstream="$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null)" || upstream=""
-  if [ -z "$upstream" ]; then
-    echo "main has no upstream, so a publish would stop at the push."
+  waiting="$(git rev-list --count "$upstream..HEAD")"
+  echo "As of the last fetch, this branch has $waiting local commit(s) that $upstream lacks."
+  git log --oneline "$upstream..HEAD"
+  # The same rule as step 6: a publish pushes only for a commit of the JSON, this run's
+  # or one already waiting, and a push takes every local commit with it.
+  if [ -n "$changes" ] || [ -n "$(git rev-list "$upstream..HEAD" -- "${generated[@]}")" ]; then
+    echo "A publish would push, taking every local commit with it."
+  elif [ "$waiting" -gt 0 ]; then
+    echo "A publish would not push them: none changes the JSON, and nor would this export."
   else
-    waiting="$(git rev-list --count "$upstream..HEAD")"
-    echo "As of the last fetch, this branch has $waiting local commit(s) that $upstream lacks."
-    git log --oneline "$upstream..HEAD"
+    echo "A publish would have nothing to push."
   fi
   echo
   echo "Dry run: nothing committed or pushed, and the committed JSON was not touched."
@@ -249,12 +258,26 @@ push_failed() {
   if "$committed"; then
     echo "Committed locally but did not push, so the site has not changed."
   fi
-  echo "Run this again once that is fixed. A run with nothing new still pushes what is waiting."
+  echo "${2:-Run this again once that is fixed.}"
+  if [ -n "$(git rev-list "$upstream..HEAD" -- "${generated[@]}")" ]; then
+    echo "A run with nothing new still pushes what is waiting."
+  fi
   exit 1
 }
 
-upstream="$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null)" ||
-  push_failed "main has no upstream. Set it with git branch -u origin/main."
+# What a publish owns: a commit of the JSON, whether from this run or from one whose push
+# failed. Other local commits are not a reason to push. They do go along when one of these
+# goes, because a push sends the whole branch. Decided before the fetch, so a run with
+# nothing to publish neither pulls nor stops over a dirty file.
+to_publish="$(git rev-list "$upstream..HEAD" -- "${generated[@]}")"
+if [ -z "$to_publish" ]; then
+  other_commits="$(git rev-list --count "$upstream..HEAD")"
+  if [ "$other_commits" -gt 0 ]; then
+    echo "Not pushing $other_commits local commit(s) that do not change the JSON."
+  fi
+  echo "Nothing new to publish."
+  exit 0
+fi
 
 git fetch -q || push_failed "git fetch could not reach origin."
 
@@ -267,7 +290,9 @@ Commit or discard them, run git pull --rebase=merges by hand, then run this agai
   fi
   # --rebase=merges because plain --rebase would flatten a local merge into copies of the
   # merged commits.
-  data_before_pull="$(git rev-parse HEAD:data)"
+  # The export's inputs: the CSVs, and the code that turns them into JSON.
+  inputs=(HEAD:data HEAD:R HEAD:scripts/build-site-data.R)
+  inputs_before_pull="$(git rev-parse "${inputs[@]}")"
   pulling=true
   if ! git pull --rebase=merges; then
     leave_as_found
@@ -276,23 +301,12 @@ Run git pull --rebase=merges by hand, then run this again."
   fi
   pulling=false
   # New CSVs mean the JSON committed above is out of date, and its data_hash would fail
-  # the host's build. Running again rebuilds it from what was pulled.
-  if [ "$(git rev-parse HEAD:data)" != "$data_before_pull" ]; then
-    push_failed "That pull brought new CSVs, so the JSON here does not describe them."
+  # the host's build. New export code is worse, because the hash would still match, so
+  # JSON from the old code would go out unnoticed. Running again rebuilds it from both.
+  if [ "$(git rev-parse "${inputs[@]}")" != "$inputs_before_pull" ]; then
+    push_failed "That pull brought new CSVs or export code, so the JSON here is out of date." \
+      "Run this again to rebuild it from what was pulled."
   fi
-fi
-
-# What a publish owns: a commit of the JSON, whether from this run or from one whose push
-# failed. Other local commits are not a reason to push. They do go along when one of these
-# goes, because a push sends the whole branch.
-to_publish="$(git rev-list "$upstream..HEAD" -- "${generated[@]}")"
-if [ -z "$to_publish" ]; then
-  other_commits="$(git rev-list --count "$upstream..HEAD")"
-  if [ "$other_commits" -gt 0 ]; then
-    echo "Not pushing $other_commits local commit(s) that do not change the JSON."
-  fi
-  echo "Nothing new to publish."
-  exit 0
 fi
 
 echo "Pushing to $upstream:"
