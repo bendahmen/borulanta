@@ -184,6 +184,8 @@ Ben has to create the Cloudflare account and connect the GitHub app, because an 
 - [ ] The stale-deploy check fails a build when the JSON is out of date. Test it on purpose.
 - [ ] Ben tests the deployed site on his phone, including how a WhatsApp link previews.
 
+The Worker is called `borulanta`, matching `site/wrangler.jsonc`, which serves `dist` as static assets with the site's own 404 page. Its build settings in the dashboard are: root directory `site`, build command `npm ci && npm run build`, deploy command `npx wrangler@4.158.0 deploy`, and the build variable `SKIP_DEPENDENCY_INSTALL=true` so that `npm ci` runs once. The production branch is set under Settings → Build → Branch control, because the first build used the default branch, `main`, and failed for want of `site/`. The dashboard has no button to start a build, so a push starts one.
+
 ### Stage 6: cutover
 
 Only with Ben's go-ahead.
