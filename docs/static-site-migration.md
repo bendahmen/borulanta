@@ -179,10 +179,10 @@ The routine has to cover what really happens: the sync comes first, attendance g
 
 Ben has to create the Cloudflare account and connect the GitHub app, because an agent should not. Check Cloudflare's current setup docs at that point. It recommends Workers static assets for new projects, and the details change.
 
-- [ ] Root `site/`, build `npm ci && npm run build`, output `dist`, Node version pinned.
+- [x] Root `site/`, build `npm ci && npm run build`, output `dist`, Node version pinned.
 - [x] Deploy from `static-site` for now, to a default Cloudflare address. Live at https://borulanta.bendahmen.workers.dev/.
 - [x] The stale-deploy check fails a build when the JSON is out of date. Test it on purpose.
-- [ ] Ben tests the deployed site on his phone, including how a WhatsApp link previews.
+- [x] Ben tests the deployed site on his phone, including how a WhatsApp link previews.
 
 The Worker is called `borulanta`, matching `site/wrangler.jsonc`, which serves `dist` as static assets with the site's own 404 page. Its build settings in the dashboard are: root directory `site`, build command `npm ci && npm run build`, deploy command `npx wrangler@4.158.0 deploy`, and the build variable `SKIP_DEPENDENCY_INSTALL=true` so that `npm ci` runs once. The production branch is set under Settings → Build → Branch control, because the first build used the default branch, `main`, and failed for want of `site/`. The dashboard has no button to start a build, so a push starts one.
 
@@ -223,6 +223,7 @@ These include writes of any kind, logins, push notifications, RSVP (WhatsApp Eve
 - 6 November 2026: Stage 4 found that a match with no attendance was charged as a squad of 0, putting the whole fee on the absent core until attendance was typed. With Ben's approval, `main` now charges nobody for such a match and lists it in the banner, and closing a season first checks every match has attendance. `scripts/publish-site.sh` stops on a match with no attendance, with no override, so the routine is sync, then attendance, then publish. Tested on the week of 4 November 2026: the sync showed the banner with outstanding unchanged at £491.55. After the attendance the publish merged `main`, committed the JSON and made the first push of `static-site`, at £567.56 owed.
 - 6 November 2026: Ben chose to keep the site public for now. While the repo is public, Cloudflare Access would hide nothing the repo does not already show, and it would put a login in front of every WhatsApp link. Access does cover static assets, per Cloudflare's docs. Revisit at Stage 7, once Shiny is retired and the repo can go private.
 - 6 November 2026: the site went live on Cloudflare at https://borulanta.bendahmen.workers.dev/, built from `static-site`. All 133 files match a local build of the same commit, apart from the random ids Astro gives islands. The data check passed on the host, which also shows the build sees `data/`. A commit with a wrong `data_hash` and a marker in the freshness note failed its build, and the marker never reached the live site. Its revert built and went live. On the live site at slow 4G and 4x CPU, Home's first view takes 0.73 s with no JS. Effects reaches the plot in 2.66 s with 126 KB of JS, over the 2.5 s target, because the plot code and the fonts share the bandwidth at the start. Ben accepted that. Hashed files under `/_astro/` are now cached for a year, and link previews carry the crest. A roster test written as "3 of 24" failed once the 4 November match made it 25. It now reads the string from the export.
+- 6 November 2026: Ben checked the live site and its WhatsApp preview on his phone, and the Node version in the build log, and found all fine. Stage 5 is done.
 
 ## Kickoff prompt
 
