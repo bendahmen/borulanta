@@ -47,7 +47,8 @@ second time, harmlessly, back when they only defined functions.
 ## Weekly routine
 
 A week has three steps, and their order matters. All three run in the main folder,
-`projects/borulanta` on `main`.
+`projects/borulanta` on `main`, and the sync and the publish refuse any other branch.
+Until Shiny is retired, every push of `main` redeploys it.
 
 First, after a game, run the sync:
 
@@ -68,8 +69,7 @@ Finally, publish the static site:
 bash scripts/publish-site.sh
 ```
 
-The publish pushes `main`, attendance included. Every push of `main` still redeploys
-Shiny, until Shiny is retired.
+The publish pushes `main`, attendance included.
 
 Payments arrive on any day, so they sit outside that order. Add the row to
 `data/payments.csv`, commit it on `main`, and publish. A payment that arrives between
@@ -99,11 +99,16 @@ bash scripts/publish-site.sh --dry-run  # say what a publish would do, change no
 
 The site is live at https://borulanta.bendahmen.workers.dev/. Cloudflare builds it from
 `main` and deploys it about a minute after a push, and shows the result as a check on
-the commit in GitHub. It builds only when the push changes something in `site/`.
+the commit in GitHub. It builds only when the push changes something in `site/`, or
+carries 20 or more commits.
 
-**It runs in the main folder on `main`.** On any other branch it refuses. If `origin`
-has moved it pulls, or stops and says to pull by hand when there are uncommitted
-changes. Each publish also redeploys Shiny, until Shiny is retired.
+**It runs in the main folder on `main`.** On any other branch it refuses. It pushes
+only when there is a commit of the JSON to send, from this run or an earlier one. If
+`origin` has moved it pulls first, and stops at the push in three cases. First, there
+are uncommitted changes: commit or discard them, run `git pull --rebase=merges` by hand,
+and run it again. Second, the pull conflicts: it is undone, so pull by hand, resolve the
+conflict and run it again. Finally, the pull brought new CSVs or export code: the JSON
+commit stays local, and running it again rebuilds the JSON from what was pulled.
 
 **It commits only `site/src/generated` and `site/public/data/seasons`.** It names those
 two paths, as `scripts/sync-and-commit.sh` names its files, so nothing dirty or staged
@@ -125,7 +130,8 @@ not push, and running it again pushes what is waiting.
 **`--dry-run` runs everything short of the commit.** It runs the checks, the attendance
 guard, the export and the tests, and lists the generated files a publish would change.
 It writes its JSON to a temporary folder, so the committed JSON is never touched, and it
-commits and pushes nothing.
+commits and pushes nothing. It also lists the local commits waiting, and says whether a
+publish would push them.
 
 **A CSV committed without a publish leaves the site on old numbers.** Shiny updates as
 soon as `main` is pushed. The site does not: the push changes nothing in `site/`, so
@@ -145,8 +151,7 @@ version stays live. The site can be stale but not wrong, and publishing fixes it
    with the date written out:
    `git commit -m "Add Luca's payment of 4 November 2026" -- data/payments.csv` or
    `git commit -m "Add attendance for 28 October 2026" -- data/attendance.csv`.
-4. Ask Ben before pushing `main`, unless his request already says to, because that
-   redeploys Shiny.
+4. Ask Ben before pushing `main`, unless his request already says to.
 5. Ask Ben before publishing, unless his request already says to, because the script
    commits and pushes. Run `bash scripts/publish-site.sh`. `--dry-run` needs no
    permission, since it commits and pushes nothing. Allow five minutes: a killed
