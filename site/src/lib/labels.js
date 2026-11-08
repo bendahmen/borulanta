@@ -4,7 +4,23 @@ export const SITE = {
   name: 'Borulanta',
   // These two are the words in app.R, which writes them inline and exports neither.
   kicker: 'Wednesday Football',
-  strapline: 'Who is next, where we left off, and what you owe.',
+  strapline: 'Who is next, where we sit, and who is scoring.',
+};
+
+// New copy for the home page's two tables. The league headings are R's, in wording.json.
+export const HOME = {
+  league: { tag: 'League', title: 'Where we sit', link: 'Full table and run-in' },
+  stats: {
+    tag: 'Players',
+    title: 'Who is scoring',
+    caption: 'Player stats',
+    headings: { player: 'Player', goals: 'Goals', turnout: 'Turnout', gd_effect: 'GD effect' },
+    subtitle: ({ observed, total, minAppearances }) =>
+      `Goals from the ${observed} of ${total} matches with scorers on file. Turnout and GD effect over all seasons: ` +
+      `the OLS coefficient on goal difference, p-value underneath, for anyone with ${minAppearances} or more appearances.`,
+    effectsLink: 'All player effects',
+    pValue: (p) => `p ${p}`,
+  },
 };
 
 export const NAV = [

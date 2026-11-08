@@ -1,23 +1,39 @@
 ---
-import FeeCard from '../components/FeeCard.astro';
-import LastMatch from '../components/LastMatch.astro';
-import LeagueLine from '../components/LeagueLine.astro';
+// Next match, where we sit, and who is scoring. The home page ignores the season picker: the
+// league snippet is the current league season, and the player table is every season, because
+// the goal-difference coefficient needs more matches than one season gives.
+import '../styles/data-table.css';
+
+import LeagueSnippet from '../components/LeagueSnippet.astro';
 import NextMatch from '../components/NextMatch.astro';
+import PlayerStats from '../components/PlayerStats.svelte';
+import meta from '../generated/meta.json';
 import Base from '../layouts/Base.astro';
-import { PAGES } from '../lib/labels.js';
+import { playerStatRows } from '../lib/home-tables.js';
+import { HOME, PAGES } from '../lib/labels.js';
+import { playerPages } from '../lib/player-pages.js';
+import { readSeasonFile } from '../lib/season-files.js';
+
+const allSeasons = meta.seasons.map((season) => season.season_id).sort().join('-');
+const subset = readSeasonFile(allSeasons);
+const subsetIds = meta.subset_files.map((file) => file.replace(/\.json$/, ''));
+const pages = new Map(playerPages(subsetIds, readSeasonFile).map(({ player, slug }) => [player, `/players/${slug}/`]));
+const rows = playerStatRows(subset).map((row) => ({ ...row, href: pages.get(row.player) ?? null }));
+const subtitle = HOME.stats.subtitle({
+  observed: subset.scorers.coverage.observed,
+  total: subset.scorers.coverage.total,
+  minAppearances: meta.min_regression_appearances,
+});
 ---
 <Base title={PAGES.home.title} description={PAGES.home.description} current="home" strapline>
   <NextMatch slot="hero" />
   <div class="home">
-    <LastMatch />
-    <FeeCard />
-    <LeagueLine />
+    <LeagueSnippet />
+    {subset.has_matches && <PlayerStats client:load {rows} {subtitle} />}
   </div>
 </Base>
 
 <style>
-  /* A phone reads Last match, then the balance and how to pay, then the League line.
-     The source follows that order, so the focus order does too. */
   .home {
     display: grid;
     gap: 10px;
@@ -25,26 +41,9 @@ import { PAGES } from '../lib/labels.js';
 
   @media (min-width: 768px) {
     .home {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      grid-template-rows: auto 1fr;
-      grid-template-areas:
-        'last fee'
-        'league fee';
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      align-items: start;
       gap: 16px;
-    }
-
-    .home :global(.last) {
-      grid-area: last;
-    }
-
-    .home :global(.fee) {
-      grid-area: fee;
-      align-self: start;
-    }
-
-    .home :global(.league) {
-      grid-area: league;
-      align-self: start;
     }
   }
 </style>
