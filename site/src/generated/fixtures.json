@@ -1,7 +1,7 @@
 {
   "have_fixtures": true,
-  "scraped_on": "2026-11-06",
-  "stale_note": "The fixture list was last read on 06 Nov, so this may be out of date.",
+  "scraped_on": "2026-11-12",
+  "stale_note": "The fixture list was last read on 12 Nov, so this may be out of date.",
   "wording": {
     "tag": "Next match",
     "no_fixtures_left": "No fixtures left on the league page. Run the sync once the new season is up.",
@@ -13,19 +13,6 @@
   },
   "run_in_empty": "No fixtures left on the league page.",
   "fixtures": [
-    {
-      "date": "2026-11-11",
-      "date_label": "Wed 11 Nov 2026",
-      "date_short": "11 Nov 2026",
-      "opponent": "Shamrock Posers",
-      "kickoff": "19:40",
-      "pitch": "Pitch 1",
-      "kickoff_pitch": "19:40 · Pitch 1",
-      "position": 2,
-      "played": 8,
-      "goal_difference": 8,
-      "points": 16
-    },
     {
       "date": "2026-11-18",
       "date_label": "Wed 18 Nov 2026",
@@ -61,8 +48,8 @@
       "pitch": "Pitch 1",
       "kickoff_pitch": "19:40 · Pitch 1",
       "position": 3,
-      "played": 8,
-      "goal_difference": 18,
+      "played": 9,
+      "goal_difference": 17,
       "points": 14
     },
     {
@@ -73,10 +60,10 @@
       "kickoff": "20:00",
       "pitch": "Front Pitch",
       "kickoff_pitch": "20:00 · Front Pitch",
-      "position": 7,
-      "played": 8,
-      "goal_difference": -8,
-      "points": 8
+      "position": 5,
+      "played": 9,
+      "goal_difference": -4,
+      "points": 11
     },
     {
       "date": "2027-01-06",
@@ -86,9 +73,9 @@
       "kickoff": "20:20",
       "pitch": "Pitch 1",
       "kickoff_pitch": "20:20 · Pitch 1",
-      "position": 5,
-      "played": 8,
-      "goal_difference": -1,
+      "position": 6,
+      "played": 9,
+      "goal_difference": -5,
       "points": 11
     },
     {
@@ -100,9 +87,9 @@
       "pitch": "Pitch 1",
       "kickoff_pitch": "20:20 · Pitch 1",
       "position": 1,
-      "played": 8,
-      "goal_difference": 26,
-      "points": 22
+      "played": 9,
+      "goal_difference": 27,
+      "points": 25
     },
     {
       "date": "2027-01-20",
@@ -112,7 +99,7 @@
       "kickoff": "20:00",
       "pitch": "Front Pitch",
       "kickoff_pitch": "20:00 · Front Pitch",
-      "position": 6,
+      "position": 7,
       "played": 8,
       "goal_difference": -8,
       "points": 8
