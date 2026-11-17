@@ -161,3 +161,49 @@ test_that("no list, an empty file or a header alone credits only own goals to no
     expect_equal(nrow(data$uncredited_goals), 0)
   }
 })
+
+# ---- Goals credited to a named player ----
+
+test_that("an own goal listed in credited_goals.csv goes to that player", {
+  dir <- write_goal_data(c(
+    "14/01/2026,1,us,10,goal,Ben",
+    "14/01/2026,1,us,20,goal,Og",
+    "14/01/2026,1,us,30,goal,Daniel"
+  ))
+  writeLines(
+    c("date,minute,player,credit_to,reason", "14/01/2026,20,Og,Daniel,Agreed as his"),
+    file.path(dir, "credited_goals.csv")
+  )
+
+  expect_warning(data <- load_app_data(dir), NA)
+
+  expect_identical(data$problems, character())
+  expect_equal(data$events$player, c("Ben", "Daniel", "Daniel"))
+  expect_equal(data$credited_goals$goals_matched, 1L)
+})
+
+test_that("a credited goal that matches nothing, or names nobody we know, is reported", {
+  dir <- write_goal_data(c(
+    "14/01/2026,1,us,10,goal,Ben",
+    "14/01/2026,1,us,20,goal,Og",
+    "14/01/2026,1,us,30,goal,Daniel"
+  ))
+  writeLines(
+    c(
+      "date,minute,player,credit_to,reason",
+      "14/01/2026,25,Og,Daniel,Wrong minute",
+      "14/01/2026,10,Ben,Zed,Not a player"
+    ),
+    file.path(dir, "credited_goals.csv")
+  )
+
+  data <- suppressWarnings(load_app_data(dir))
+
+  expect_true(any(startsWith(
+    data$problems,
+    "goals in data/credited_goals.csv that match no goal event, or more than one: Og 14/01/2026 minute 25"
+  )))
+  expect_true(any(startsWith(data$problems, "match events for an unknown player: Zed")))
+  # The unmatched row leaves the own goal with nobody.
+  expect_equal(data$events$player, c("Zed", NA, "Daniel"))
+})

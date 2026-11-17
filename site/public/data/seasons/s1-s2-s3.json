@@ -16,36 +16,36 @@
           "appearances": 42,
           "outcomes": {
             "points": {
-              "estimate": 0.4999183007,
-              "std_error": 0.4795271249,
-              "conf_low": -0.4745980659,
-              "conf_high": 1.474434667,
-              "p_value": 0.3045254859,
-              "display": "0.50 [0.305]"
+              "estimate": 0.4435903487,
+              "std_error": 0.4750468107,
+              "conf_low": -0.5218209241,
+              "conf_high": 1.409001621,
+              "p_value": 0.3570007407,
+              "display": "0.44 [0.357]"
             },
             "goals_scored": {
-              "estimate": 2.439374006,
-              "std_error": 1.04365026,
-              "conf_low": 0.3184214956,
-              "conf_high": 4.560326516,
-              "p_value": 0.02544641275,
-              "display": "2.44 [0.025]"
+              "estimate": 2.374117065,
+              "std_error": 1.046473844,
+              "conf_low": 0.2474263421,
+              "conf_high": 4.500807789,
+              "p_value": 0.02975217543,
+              "display": "2.37 [0.030]"
             },
             "goals_conceded": {
-              "estimate": 0.304638496,
-              "std_error": 0.7522514734,
-              "conf_low": -1.22412043,
-              "conf_high": 1.833397422,
-              "p_value": 0.688037104,
-              "display": "0.30 [0.688]"
+              "estimate": 0.3661039493,
+              "std_error": 0.7455442732,
+              "conf_low": -1.149024306,
+              "conf_high": 1.881232205,
+              "p_value": 0.626541718,
+              "display": "0.37 [0.627]"
             },
             "goal_difference": {
-              "estimate": 2.13473551,
-              "std_error": 1.388698667,
-              "conf_low": -0.6874397319,
-              "conf_high": 4.956910752,
-              "p_value": 0.1334946568,
-              "display": "2.13 [0.133]"
+              "estimate": 2.008013116,
+              "std_error": 1.387064912,
+              "conf_low": -0.8108419348,
+              "conf_high": 4.826868167,
+              "p_value": 0.1568680076,
+              "display": "2.01 [0.157]"
             }
           }
         },
@@ -54,36 +54,36 @@
           "appearances": 37,
           "outcomes": {
             "points": {
-              "estimate": -0.8716687052,
-              "std_error": 0.4520396946,
-              "conf_low": -1.790323893,
-              "conf_high": 0.04698648218,
-              "p_value": 0.06220229882,
-              "display": "-0.87 [0.062]"
+              "estimate": -0.851511549,
+              "std_error": 0.4486380854,
+              "conf_low": -1.763253835,
+              "conf_high": 0.06023073672,
+              "p_value": 0.06621382805,
+              "display": "-0.85 [0.066]"
             },
             "goals_scored": {
-              "estimate": -1.582601797,
-              "std_error": 0.983826191,
-              "conf_low": -3.581977172,
-              "conf_high": 0.4167735777,
-              "p_value": 0.1169472546,
-              "display": "-1.58 [0.117]"
+              "estimate": -1.567107907,
+              "std_error": 0.9882984395,
+              "conf_low": -3.575571985,
+              "conf_high": 0.4413561701,
+              "p_value": 0.122074022,
+              "display": "-1.57 [0.122]"
             },
             "goals_conceded": {
-              "estimate": 0.8375894096,
-              "std_error": 0.7091309514,
-              "conf_low": -0.6035380727,
-              "conf_high": 2.278716892,
-              "p_value": 0.2457400072,
-              "display": "0.84 [0.246]"
+              "estimate": 0.8131763307,
+              "std_error": 0.7040980968,
+              "conf_low": -0.6177231605,
+              "conf_high": 2.244075822,
+              "p_value": 0.256176225,
+              "display": "0.81 [0.256]"
             },
             "goal_difference": {
-              "estimate": -2.420191207,
-              "std_error": 1.309095751,
-              "conf_low": -5.080593858,
-              "conf_high": 0.2402114447,
-              "p_value": 0.07320558698,
-              "display": "-2.42 [0.073]"
+              "estimate": -2.380284238,
+              "std_error": 1.309955424,
+              "conf_low": -5.042433956,
+              "conf_high": 0.28186548,
+              "p_value": 0.07802938323,
+              "display": "-2.38 [0.078]"
             }
           }
         },
@@ -92,36 +92,36 @@
           "appearances": 36,
           "outcomes": {
             "points": {
-              "estimate": 0.03336277961,
-              "std_error": 0.5045868082,
-              "conf_low": -0.9920809907,
-              "conf_high": 1.05880655,
-              "p_value": 0.9476703438,
-              "display": "0.03 [0.948]"
+              "estimate": 0.05291230162,
+              "std_error": 0.5009253806,
+              "conf_low": -0.9650905526,
+              "conf_high": 1.070915156,
+              "p_value": 0.9164973702,
+              "display": "0.05 [0.916]"
             },
             "goals_scored": {
-              "estimate": 0.2620909941,
-              "std_error": 1.098190543,
-              "conf_low": -1.969700706,
-              "conf_high": 2.493882695,
-              "p_value": 0.8128041197,
-              "display": "0.26 [0.813]"
+              "estimate": 0.2343501542,
+              "std_error": 1.103481376,
+              "conf_low": -2.008193814,
+              "conf_high": 2.476894122,
+              "p_value": 0.8330838028,
+              "display": "0.23 [0.833]"
             },
             "goals_conceded": {
-              "estimate": -0.861554608,
-              "std_error": 0.7915635012,
-              "conf_low": -2.470205187,
-              "conf_high": 0.747095971,
-              "p_value": 0.2840644087,
-              "display": "-0.86 [0.284]"
+              "estimate": -0.8983879868,
+              "std_error": 0.7861584171,
+              "conf_low": -2.496054113,
+              "conf_high": 0.6992781398,
+              "p_value": 0.261122909,
+              "display": "-0.90 [0.261]"
             },
             "goal_difference": {
-              "estimate": 1.123645602,
-              "std_error": 1.461270889,
-              "conf_low": -1.846014139,
-              "conf_high": 4.093305343,
-              "p_value": 0.4472313962,
-              "display": "1.12 [0.447]"
+              "estimate": 1.132738141,
+              "std_error": 1.462626426,
+              "conf_low": -1.839676382,
+              "conf_high": 4.105152664,
+              "p_value": 0.4440143865,
+              "display": "1.13 [0.444]"
             }
           }
         },
@@ -130,36 +130,36 @@
           "appearances": 36,
           "outcomes": {
             "points": {
-              "estimate": 0.6192210072,
-              "std_error": 0.4454122056,
-              "conf_low": -0.2859655019,
-              "conf_high": 1.524407516,
-              "p_value": 0.1734967969,
-              "display": "0.62 [0.173]"
+              "estimate": 0.6250336138,
+              "std_error": 0.43748774,
+              "conf_low": -0.2640484437,
+              "conf_high": 1.514115671,
+              "p_value": 0.1622170086,
+              "display": "0.63 [0.162]"
             },
             "goals_scored": {
-              "estimate": -0.2534714149,
-              "std_error": 0.9694020213,
-              "conf_low": -2.22353335,
-              "conf_high": 1.71659052,
-              "p_value": 0.7953060684,
-              "display": "-0.25 [0.795]"
+              "estimate": -0.1825390819,
+              "std_error": 0.9637355027,
+              "conf_low": -2.141085266,
+              "conf_high": 1.776007102,
+              "p_value": 0.85089937,
+              "display": "-0.18 [0.851]"
             },
             "goals_conceded": {
-              "estimate": -1.002094457,
-              "std_error": 0.6987341706,
-              "conf_low": -2.422093139,
-              "conf_high": 0.4179042248,
-              "p_value": 0.1606614624,
-              "display": "-1.00 [0.161]"
+              "estimate": -0.9886884685,
+              "std_error": 0.6865986084,
+              "conf_low": -2.38402472,
+              "conf_high": 0.4066477835,
+              "p_value": 0.1590179849,
+              "display": "-0.99 [0.159]"
             },
             "goal_difference": {
-              "estimate": 0.748623042,
-              "std_error": 1.289902707,
-              "conf_low": -1.872774651,
-              "conf_high": 3.370020735,
-              "p_value": 0.5654909721,
-              "display": "0.75 [0.565]"
+              "estimate": 0.8061493866,
+              "std_error": 1.2773981,
+              "conf_low": -1.789835889,
+              "conf_high": 3.402134662,
+              "p_value": 0.532203507,
+              "display": "0.81 [0.532]"
             }
           }
         },
@@ -168,36 +168,36 @@
           "appearances": 33,
           "outcomes": {
             "points": {
-              "estimate": -0.06008698235,
-              "std_error": 0.4044651245,
-              "conf_low": -0.8820590108,
-              "conf_high": 0.7618850461,
-              "p_value": 0.8827791543,
-              "display": "-0.06 [0.883]"
+              "estimate": -0.05811643144,
+              "std_error": 0.4000666041,
+              "conf_low": -0.871149591,
+              "conf_high": 0.7549167281,
+              "p_value": 0.8853579315,
+              "display": "-0.06 [0.885]"
             },
             "goals_scored": {
-              "estimate": 0.2745383446,
-              "std_error": 0.8802841599,
-              "conf_low": -1.514414306,
-              "conf_high": 2.063490995,
-              "p_value": 0.7570403147,
-              "display": "0.27 [0.757]"
+              "estimate": 0.3090695772,
+              "std_error": 0.8813010161,
+              "conf_low": -1.481949574,
+              "conf_high": 2.100088728,
+              "p_value": 0.7279793528,
+              "display": "0.31 [0.728]"
             },
             "goals_conceded": {
-              "estimate": 0.027711603,
-              "std_error": 0.6344990096,
-              "conf_low": -1.261745525,
-              "conf_high": 1.317168731,
-              "p_value": 0.9654191415,
-              "display": "0.03 [0.965]"
+              "estimate": 0.03548157894,
+              "std_error": 0.6278694201,
+              "conf_low": -1.240502603,
+              "conf_high": 1.311465761,
+              "p_value": 0.9552654686,
+              "display": "0.04 [0.955]"
             },
             "goal_difference": {
-              "estimate": 0.2468267416,
-              "std_error": 1.171320975,
-              "conf_low": -2.133583878,
-              "conf_high": 2.627237361,
-              "p_value": 0.834359649,
-              "display": "0.25 [0.834]"
+              "estimate": 0.2735879983,
+              "std_error": 1.168134037,
+              "conf_low": -2.100345985,
+              "conf_high": 2.647521982,
+              "p_value": 0.8162270402,
+              "display": "0.27 [0.816]"
             }
           }
         },
@@ -206,36 +206,36 @@
           "appearances": 30,
           "outcomes": {
             "points": {
-              "estimate": 0.2488823948,
-              "std_error": 0.5491215025,
-              "conf_low": -0.8670667636,
-              "conf_high": 1.364831553,
-              "p_value": 0.6532572605,
-              "display": "0.25 [0.653]"
+              "estimate": 0.2245540833,
+              "std_error": 0.5456054798,
+              "conf_low": -0.8842496573,
+              "conf_high": 1.333357824,
+              "p_value": 0.6832386819,
+              "display": "0.22 [0.683]"
             },
             "goals_scored": {
-              "estimate": -0.0852082969,
-              "std_error": 1.195116541,
-              "conf_low": -2.513977325,
-              "conf_high": 2.343560732,
-              "p_value": 0.9435790759,
-              "display": "-0.09 [0.944]"
+              "estimate": -0.07219600874,
+              "std_error": 1.20190653,
+              "conf_low": -2.514763954,
+              "conf_high": 2.370371937,
+              "p_value": 0.952453243,
+              "display": "-0.07 [0.952]"
             },
             "goals_conceded": {
-              "estimate": 2.428645296,
-              "std_error": 0.8614266803,
-              "conf_low": 0.6780156545,
-              "conf_high": 4.179274937,
-              "p_value": 0.007968831633,
-              "display": "2.43 [0.008]"
+              "estimate": 2.467865598,
+              "std_error": 0.8562799111,
+              "conf_low": 0.7276954506,
+              "conf_high": 4.208035746,
+              "p_value": 0.00679966236,
+              "display": "2.47 [0.007]"
             },
             "goal_difference": {
-              "estimate": -2.513853593,
-              "std_error": 1.59024226,
-              "conf_low": -5.745614694,
-              "conf_high": 0.7179075085,
-              "p_value": 0.1231833859,
-              "display": "-2.51 [0.123]"
+              "estimate": -2.540061607,
+              "std_error": 1.593085565,
+              "conf_low": -5.777600999,
+              "conf_high": 0.6974777844,
+              "p_value": 0.1200950532,
+              "display": "-2.54 [0.120]"
             }
           }
         },
@@ -244,36 +244,36 @@
           "appearances": 30,
           "outcomes": {
             "points": {
-              "estimate": -0.3458323687,
-              "std_error": 0.518879586,
-              "conf_low": -1.400322558,
-              "conf_high": 0.7086578209,
-              "p_value": 0.50959035,
-              "display": "-0.35 [0.510]"
+              "estimate": -0.3342892968,
+              "std_error": 0.5145372244,
+              "conf_low": -1.379954746,
+              "conf_high": 0.7113761523,
+              "p_value": 0.5202585193,
+              "display": "-0.33 [0.520]"
             },
             "goals_scored": {
-              "estimate": 0.2990320397,
-              "std_error": 1.129297566,
-              "conf_low": -1.995976737,
-              "conf_high": 2.594040817,
-              "p_value": 0.7927663271,
-              "display": "0.30 [0.793]"
+              "estimate": 0.2709135791,
+              "std_error": 1.133466713,
+              "conf_low": -2.032567924,
+              "conf_high": 2.574395083,
+              "p_value": 0.8125301952,
+              "display": "0.27 [0.813]"
             },
             "goals_conceded": {
-              "estimate": -0.3839483528,
-              "std_error": 0.8139850965,
-              "conf_low": -2.038165096,
-              "conf_high": 1.27026839,
-              "p_value": 0.6401613961,
-              "display": "-0.38 [0.640]"
+              "estimate": -0.4093078284,
+              "std_error": 0.8075210112,
+              "conf_low": -2.05038797,
+              "conf_high": 1.231772313,
+              "p_value": 0.6155180507,
+              "display": "-0.41 [0.616]"
             },
             "goal_difference": {
-              "estimate": 0.6829803925,
-              "std_error": 1.502662419,
-              "conf_low": -2.370797058,
-              "conf_high": 3.736757843,
-              "p_value": 0.6523479021,
-              "display": "0.68 [0.652]"
+              "estimate": 0.6802214075,
+              "std_error": 1.502370953,
+              "conf_low": -2.372963712,
+              "conf_high": 3.733406528,
+              "p_value": 0.6535938126,
+              "display": "0.68 [0.654]"
             }
           }
         },
@@ -282,36 +282,36 @@
           "appearances": 24,
           "outcomes": {
             "points": {
-              "estimate": -0.1849236818,
-              "std_error": 0.4703873317,
-              "conf_low": -1.140865754,
-              "conf_high": 0.7710183902,
-              "p_value": 0.6966772632,
-              "display": "-0.18 [0.697]"
+              "estimate": -0.176506139,
+              "std_error": 0.4666338091,
+              "conf_low": -1.124820135,
+              "conf_high": 0.7718078573,
+              "p_value": 0.7075933493,
+              "display": "-0.18 [0.708]"
             },
             "goals_scored": {
-              "estimate": 0.05833458373,
-              "std_error": 1.023758272,
-              "conf_low": -2.022192544,
-              "conf_high": 2.138861712,
-              "p_value": 0.9548940333,
-              "display": "0.06 [0.955]"
+              "estimate": 0.06215897937,
+              "std_error": 1.027940963,
+              "conf_low": -2.026868398,
+              "conf_high": 2.151186356,
+              "p_value": 0.952135833,
+              "display": "0.06 [0.952]"
             },
             "goals_conceded": {
-              "estimate": 1.326438541,
-              "std_error": 0.7379135505,
-              "conf_low": -0.1731822204,
-              "conf_high": 2.826059302,
-              "p_value": 0.0811344444,
-              "display": "1.33 [0.081]"
+              "estimate": 1.315429844,
+              "std_error": 0.7323408055,
+              "conf_low": -0.1728657374,
+              "conf_high": 2.803725425,
+              "p_value": 0.08135361679,
+              "display": "1.32 [0.081]"
             },
             "goal_difference": {
-              "estimate": -1.268103957,
-              "std_error": 1.362230053,
-              "conf_low": -4.036488502,
-              "conf_high": 1.500280588,
-              "p_value": 0.3584669317,
-              "display": "-1.27 [0.358]"
+              "estimate": -1.253270864,
+              "std_error": 1.362500218,
+              "conf_low": -4.022204451,
+              "conf_high": 1.515662723,
+              "p_value": 0.3641410903,
+              "display": "-1.25 [0.364]"
             }
           }
         },
@@ -320,36 +320,36 @@
           "appearances": 24,
           "outcomes": {
             "points": {
-              "estimate": -0.4841740728,
-              "std_error": 0.5815457559,
-              "conf_low": -1.666017242,
-              "conf_high": 0.6976690965,
-              "p_value": 0.4109008062,
-              "display": "-0.48 [0.411]"
+              "estimate": -0.4533366621,
+              "std_error": 0.578195928,
+              "conf_low": -1.628372162,
+              "conf_high": 0.7216988378,
+              "p_value": 0.4384370657,
+              "display": "-0.45 [0.438]"
             },
             "goals_scored": {
-              "estimate": -0.1569367267,
-              "std_error": 1.265685188,
-              "conf_low": -2.729118501,
-              "conf_high": 2.415245047,
-              "p_value": 0.9020505799,
-              "display": "-0.16 [0.902]"
+              "estimate": -0.1619830088,
+              "std_error": 1.273699563,
+              "conf_low": -2.750451952,
+              "conf_high": 2.426485935,
+              "p_value": 0.8995509026,
+              "display": "-0.16 [0.900]"
             },
             "goals_conceded": {
-              "estimate": -0.2579396451,
-              "std_error": 0.9122917745,
-              "conf_low": -2.111939595,
-              "conf_high": 1.596060305,
-              "p_value": 0.7790918462,
-              "display": "-0.26 [0.779]"
+              "estimate": -0.3041319529,
+              "std_error": 0.907427759,
+              "conf_low": -2.148247034,
+              "conf_high": 1.539983128,
+              "p_value": 0.739564837,
+              "display": "-0.30 [0.740]"
             },
             "goal_difference": {
-              "estimate": 0.1010029184,
-              "std_error": 1.684142094,
-              "conf_low": -3.321585605,
-              "conf_high": 3.523591442,
-              "p_value": 0.9525283368,
-              "display": "0.10 [0.953]"
+              "estimate": 0.1421489441,
+              "std_error": 1.688244749,
+              "conf_low": -3.288777178,
+              "conf_high": 3.573075066,
+              "p_value": 0.9333918378,
+              "display": "0.14 [0.933]"
             }
           }
         },
@@ -358,36 +358,36 @@
           "appearances": 23,
           "outcomes": {
             "points": {
-              "estimate": 0.6409296945,
-              "std_error": 0.4706134327,
-              "conf_low": -0.3154718701,
-              "conf_high": 1.597331259,
-              "p_value": 0.1821845895,
-              "display": "0.64 [0.182]"
+              "estimate": 0.6788380768,
+              "std_error": 0.4693086519,
+              "conf_low": -0.2749118543,
+              "conf_high": 1.632588008,
+              "p_value": 0.1572038061,
+              "display": "0.68 [0.157]"
             },
             "goals_scored": {
-              "estimate": 0.9421675169,
-              "std_error": 1.024250362,
-              "conf_low": -1.139359658,
-              "conf_high": 3.023694692,
-              "p_value": 0.3641262104,
-              "display": "0.94 [0.364]"
+              "estimate": 0.9390668592,
+              "std_error": 1.033833336,
+              "conf_low": -1.161935261,
+              "conf_high": 3.040068979,
+              "p_value": 0.3700950965,
+              "display": "0.94 [0.370]"
             },
             "goals_conceded": {
-              "estimate": -0.4009308222,
-              "std_error": 0.7382682434,
-              "conf_low": -1.901272406,
-              "conf_high": 1.099410762,
-              "p_value": 0.5906249197,
-              "display": "-0.40 [0.591]"
+              "estimate": -0.4567604921,
+              "std_error": 0.7365387366,
+              "conf_low": -1.953587296,
+              "conf_high": 1.040066311,
+              "p_value": 0.5392971817,
+              "display": "-0.46 [0.539]"
             },
             "goal_difference": {
-              "estimate": 1.343098339,
-              "std_error": 1.362884836,
-              "conf_low": -1.426616885,
-              "conf_high": 4.112813564,
-              "p_value": 0.331348826,
-              "display": "1.34 [0.331]"
+              "estimate": 1.395827351,
+              "std_error": 1.370310355,
+              "conf_low": -1.388978344,
+              "conf_high": 4.180633047,
+              "p_value": 0.3155766442,
+              "display": "1.40 [0.316]"
             }
           }
         },
@@ -396,36 +396,36 @@
           "appearances": 18,
           "outcomes": {
             "points": {
-              "estimate": 0.4864952992,
-              "std_error": 0.6621769755,
-              "conf_low": -0.8592102234,
-              "conf_high": 1.832200822,
-              "p_value": 0.4675651662,
-              "display": "0.49 [0.468]"
+              "estimate": 0.4967953423,
+              "std_error": 0.6568815658,
+              "conf_low": -0.8381486132,
+              "conf_high": 1.831739298,
+              "p_value": 0.4546818163,
+              "display": "0.50 [0.455]"
             },
             "goals_scored": {
-              "estimate": -0.3738802294,
-              "std_error": 1.441172223,
-              "conf_low": -3.302694567,
-              "conf_high": 2.554934108,
-              "p_value": 0.7968695532,
-              "display": "-0.37 [0.797]"
+              "estimate": -0.3871458389,
+              "std_error": 1.447035032,
+              "conf_low": -3.327874838,
+              "conf_high": 2.553583161,
+              "p_value": 0.790666529,
+              "display": "-0.39 [0.791]"
             },
             "goals_conceded": {
-              "estimate": -1.173108884,
-              "std_error": 1.038780873,
-              "conf_low": -3.28416561,
-              "conf_high": 0.9379478414,
-              "p_value": 0.2666707447,
-              "display": "-1.17 [0.267]"
+              "estimate": -1.192099915,
+              "std_error": 1.030917961,
+              "conf_low": -3.287177281,
+              "conf_high": 0.9029774513,
+              "p_value": 0.2555995414,
+              "display": "-1.19 [0.256]"
             },
             "goal_difference": {
-              "estimate": 0.7992286547,
-              "std_error": 1.917648107,
-              "conf_low": -3.097901182,
-              "conf_high": 4.696358492,
-              "p_value": 0.6794623192,
-              "display": "0.80 [0.679]"
+              "estimate": 0.804954076,
+              "std_error": 1.917994923,
+              "conf_low": -3.092880575,
+              "conf_high": 4.702788727,
+              "p_value": 0.6773556203,
+              "display": "0.80 [0.677]"
             }
           }
         },
@@ -434,36 +434,36 @@
           "appearances": 15,
           "outcomes": {
             "points": {
-              "estimate": 1.097943828,
-              "std_error": 0.6467606511,
-              "conf_low": -0.216431954,
-              "conf_high": 2.41231961,
-              "p_value": 0.09871903827,
-              "display": "1.10 [0.099]"
+              "estimate": 1.097571951,
+              "std_error": 0.6411311254,
+              "conf_low": -0.205363258,
+              "conf_high": 2.400507161,
+              "p_value": 0.0960181019,
+              "display": "1.10 [0.096]"
             },
             "goals_scored": {
-              "estimate": 1.809017308,
-              "std_error": 1.407619896,
-              "conf_low": -1.051610497,
-              "conf_high": 4.669645113,
-              "p_value": 0.2074221894,
-              "display": "1.81 [0.207]"
+              "estimate": 1.783883659,
+              "std_error": 1.412338612,
+              "conf_low": -1.08633373,
+              "conf_high": 4.654101048,
+              "p_value": 0.2151571631,
+              "display": "1.78 [0.215]"
             },
             "goals_conceded": {
-              "estimate": -0.3982037396,
-              "std_error": 1.01459673,
-              "conf_low": -2.460112373,
-              "conf_high": 1.663704893,
-              "p_value": 0.6971570922,
-              "display": "-0.40 [0.697]"
+              "estimate": -0.4053970493,
+              "std_error": 1.006199027,
+              "conf_low": -2.450239498,
+              "conf_high": 1.639445399,
+              "p_value": 0.6895444959,
+              "display": "-0.41 [0.690]"
             },
             "goal_difference": {
-              "estimate": 2.207221047,
-              "std_error": 1.873002814,
-              "conf_low": -1.599178637,
-              "conf_high": 6.013620732,
-              "p_value": 0.2468033446,
-              "display": "2.21 [0.247]"
+              "estimate": 2.189280709,
+              "std_error": 1.872006017,
+              "conf_low": -1.61509324,
+              "conf_high": 5.993654657,
+              "p_value": 0.2503422604,
+              "display": "2.19 [0.250]"
             }
           }
         },
@@ -472,36 +472,36 @@
           "appearances": 8,
           "outcomes": {
             "points": {
-              "estimate": -0.1626644102,
-              "std_error": 0.7335421579,
-              "conf_low": -1.653401433,
-              "conf_high": 1.328072612,
-              "p_value": 0.8258335305,
-              "display": "-0.16 [0.826]"
+              "estimate": -0.1680083584,
+              "std_error": 0.7270303581,
+              "conf_low": -1.645511812,
+              "conf_high": 1.309495095,
+              "p_value": 0.8186310712,
+              "display": "-0.17 [0.819]"
             },
             "goals_scored": {
-              "estimate": -1.692812004,
-              "std_error": 1.596492511,
-              "conf_low": -4.937275143,
-              "conf_high": 1.551651136,
-              "p_value": 0.2964681872,
-              "display": "-1.69 [0.296]"
+              "estimate": -1.656040902,
+              "std_error": 1.601564806,
+              "conf_low": -4.910812186,
+              "conf_high": 1.598730382,
+              "p_value": 0.3084285707,
+              "display": "-1.66 [0.308]"
             },
             "goals_conceded": {
-              "estimate": 0.8494718868,
-              "std_error": 1.150734005,
-              "conf_low": -1.489100977,
-              "conf_high": 3.188044751,
-              "p_value": 0.4654580485,
-              "display": "0.85 [0.465]"
+              "estimate": 0.8685192983,
+              "std_error": 1.141010333,
+              "conf_low": -1.450292687,
+              "conf_high": 3.187331283,
+              "p_value": 0.451794335,
+              "display": "0.87 [0.452]"
             },
             "goal_difference": {
-              "estimate": -2.54228389,
-              "std_error": 2.124319907,
-              "conf_low": -6.859421356,
-              "conf_high": 1.774853576,
-              "p_value": 0.2396816499,
-              "display": "-2.54 [0.240]"
+              "estimate": -2.5245602,
+              "std_error": 2.122818797,
+              "conf_low": -6.838647045,
+              "conf_high": 1.789526645,
+              "p_value": 0.2425810562,
+              "display": "-2.52 [0.243]"
             }
           }
         },
@@ -510,36 +510,36 @@
           "appearances": 6,
           "outcomes": {
             "points": {
-              "estimate": 1.15002085,
-              "std_error": 0.6754455817,
-              "conf_low": -0.2226497244,
-              "conf_high": 2.522691425,
-              "p_value": 0.09776809985,
-              "display": "1.15 [0.098]"
+              "estimate": 1.113019728,
+              "std_error": 0.6714258101,
+              "conf_low": -0.2514816882,
+              "conf_high": 2.477521144,
+              "p_value": 0.1065788811,
+              "display": "1.11 [0.107]"
             },
             "goals_scored": {
-              "estimate": 1.469182261,
-              "std_error": 1.470050223,
-              "conf_low": -1.518319234,
-              "conf_high": 4.456683755,
-              "p_value": 0.3246563765,
-              "display": "1.47 [0.325]"
+              "estimate": 1.512841588,
+              "std_error": 1.479074341,
+              "conf_low": -1.49299912,
+              "conf_high": 4.518682296,
+              "p_value": 0.3136110562,
+              "display": "1.51 [0.314]"
             },
             "goals_conceded": {
-              "estimate": 1.102565762,
-              "std_error": 1.059595814,
-              "conf_low": -1.050792012,
-              "conf_high": 3.255923536,
-              "p_value": 0.305426207,
-              "display": "1.10 [0.305]"
+              "estimate": 1.169558784,
+              "std_error": 1.053743876,
+              "conf_low": -0.9719064219,
+              "conf_high": 3.311023991,
+              "p_value": 0.274827196,
+              "display": "1.17 [0.275]"
             },
             "goal_difference": {
-              "estimate": 0.3666164987,
-              "std_error": 1.956073662,
-              "conf_low": -3.608603461,
-              "conf_high": 4.341836458,
-              "p_value": 0.8524416965,
-              "display": "0.37 [0.852]"
+              "estimate": 0.3432828038,
+              "std_error": 1.960461919,
+              "conf_low": -3.640855166,
+              "conf_high": 4.327420774,
+              "p_value": 0.862037315,
+              "display": "0.34 [0.862]"
             }
           }
         },
@@ -548,36 +548,36 @@
           "appearances": 5,
           "outcomes": {
             "points": {
-              "estimate": 0.2784818735,
-              "std_error": 0.6637885671,
-              "conf_low": -1.070498797,
-              "conf_high": 1.627462544,
-              "p_value": 0.6774650232,
-              "display": "0.28 [0.677]"
+              "estimate": 0.2879433722,
+              "std_error": 0.658488619,
+              "conf_low": -1.050266508,
+              "conf_high": 1.626153253,
+              "p_value": 0.6646739238,
+              "display": "0.29 [0.665]"
             },
             "goals_scored": {
-              "estimate": 0.2361767672,
-              "std_error": 1.444679716,
-              "conf_low": -2.699765654,
-              "conf_high": 3.172119188,
-              "p_value": 0.871108132,
-              "display": "0.24 [0.871]"
+              "estimate": 0.2337827392,
+              "std_error": 1.450575187,
+              "conf_low": -2.71414072,
+              "conf_high": 3.181706198,
+              "p_value": 0.8729168752,
+              "display": "0.23 [0.873]"
             },
             "goals_conceded": {
-              "estimate": -0.7654767515,
-              "std_error": 1.041309035,
-              "conf_low": -2.88167132,
-              "conf_high": 1.350717817,
-              "p_value": 0.4673131033,
-              "display": "-0.77 [0.467]"
+              "estimate": -0.7799095874,
+              "std_error": 1.03344009,
+              "conf_low": -2.880112536,
+              "conf_high": 1.320293361,
+              "p_value": 0.4556408642,
+              "display": "-0.78 [0.456]"
             },
             "goal_difference": {
-              "estimate": 1.001653519,
-              "std_error": 1.922315237,
-              "conf_low": -2.904961066,
-              "conf_high": 4.908268104,
-              "p_value": 0.6056981082,
-              "display": "1.00 [0.606]"
+              "estimate": 1.013692327,
+              "std_error": 1.922687275,
+              "conf_low": -2.893678332,
+              "conf_high": 4.921062985,
+              "p_value": 0.6014596617,
+              "display": "1.01 [0.601]"
             }
           }
         },
@@ -586,36 +586,36 @@
           "appearances": 4,
           "outcomes": {
             "points": {
-              "estimate": 0.3219828659,
-              "std_error": 0.822120655,
-              "conf_low": -1.348767321,
-              "conf_high": 1.992733053,
-              "p_value": 0.6977614599,
-              "display": "0.32 [0.698]"
+              "estimate": 0.3091259682,
+              "std_error": 0.8139816744,
+              "conf_low": -1.34508382,
+              "conf_high": 1.963335757,
+              "p_value": 0.7064779399,
+              "display": "0.31 [0.706]"
             },
             "goals_scored": {
-              "estimate": 1.419082371,
-              "std_error": 1.789276124,
-              "conf_low": -2.217164208,
-              "conf_high": 5.055328949,
-              "p_value": 0.4332171005,
-              "display": "1.42 [0.433]"
+              "estimate": 1.364488401,
+              "std_error": 1.793108621,
+              "conf_low": -2.279546749,
+              "conf_high": 5.00852355,
+              "p_value": 0.4519251303,
+              "display": "1.36 [0.452]"
             },
             "goals_conceded": {
-              "estimate": 2.910203362,
-              "std_error": 1.289690284,
-              "conf_low": 0.2892373626,
-              "conf_high": 5.53116936,
-              "p_value": 0.03058021193,
-              "display": "2.91 [0.031]"
+              "estimate": 2.912020649,
+              "std_error": 1.277472792,
+              "conf_low": 0.3158835808,
+              "conf_high": 5.508157717,
+              "p_value": 0.02903198994,
+              "display": "2.91 [0.029]"
             },
             "goal_difference": {
-              "estimate": -1.491120991,
-              "std_error": 2.380841039,
-              "conf_low": -6.329572119,
-              "conf_high": 3.347330138,
-              "p_value": 0.5353006493,
-              "display": "-1.49 [0.535]"
+              "estimate": -1.547532248,
+              "std_error": 2.376703504,
+              "conf_low": -6.377574893,
+              "conf_high": 3.282510397,
+              "p_value": 0.5193422948,
+              "display": "-1.55 [0.519]"
             }
           }
         },
@@ -624,36 +624,36 @@
           "appearances": 3,
           "outcomes": {
             "points": {
-              "estimate": -1.203985335,
-              "std_error": 0.9860237064,
-              "conf_low": -3.207826599,
-              "conf_high": 0.7998559279,
-              "p_value": 0.2304667902,
-              "display": "-1.20 [0.230]"
+              "estimate": -1.174485828,
+              "std_error": 0.9785352356,
+              "conf_low": -3.163108687,
+              "conf_high": 0.8141370321,
+              "p_value": 0.2383390289,
+              "display": "-1.17 [0.238]"
             },
             "goals_scored": {
-              "estimate": -1.804990236,
-              "std_error": 2.145997263,
-              "conf_low": -6.16618139,
-              "conf_high": 2.556200919,
-              "p_value": 0.4061707979,
-              "display": "-1.80 [0.406]"
+              "estimate": -1.794539628,
+              "std_error": 2.155601314,
+              "conf_low": -6.175248563,
+              "conf_high": 2.586169306,
+              "p_value": 0.41093603,
+              "display": "-1.79 [0.411]"
             },
             "goals_conceded": {
-              "estimate": -1.163075612,
-              "std_error": 1.546810905,
-              "conf_low": -4.30657358,
-              "conf_high": 1.980422356,
-              "p_value": 0.4572740771,
-              "display": "-1.16 [0.457]"
+              "estimate": -1.202564016,
+              "std_error": 1.535725163,
+              "conf_low": -4.323533047,
+              "conf_high": 1.918405015,
+              "p_value": 0.4390128429,
+              "display": "-1.20 [0.439]"
             },
             "goal_difference": {
-              "estimate": -0.6419146239,
-              "std_error": 2.855500213,
-              "conf_low": -6.444989253,
-              "conf_high": 5.161160005,
-              "p_value": 0.8234809667,
-              "display": "-0.64 [0.823]"
+              "estimate": -0.5919756119,
+              "std_error": 2.85717504,
+              "conf_low": -6.398453898,
+              "conf_high": 5.214502674,
+              "p_value": 0.8370980865,
+              "display": "-0.59 [0.837]"
             }
           }
         }
@@ -673,36 +673,36 @@
           "appearances": 42,
           "outcomes": {
             "points": {
-              "estimate": 0.1267297259,
+              "estimate": 0.1262573615,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.127"
+              "display": "0.126"
             },
             "goals_scored": {
-              "estimate": 0.3379479303,
+              "estimate": 0.3087539211,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.338"
+              "display": "0.309"
             },
             "goals_conceded": {
-              "estimate": -0.1059340559,
+              "estimate": -0.1178488004,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.106"
+              "display": "-0.118"
             },
             "goal_difference": {
-              "estimate": 0.4219245818,
+              "estimate": 0.4170475579,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.422"
+              "display": "0.417"
             }
           }
         },
@@ -711,36 +711,36 @@
           "appearances": 37,
           "outcomes": {
             "points": {
-              "estimate": -0.328414109,
+              "estimate": -0.3448244366,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.328"
+              "display": "-0.345"
             },
             "goals_scored": {
-              "estimate": -0.5081719525,
+              "estimate": -0.4749745434,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.508"
+              "display": "-0.475"
             },
             "goals_conceded": {
-              "estimate": 0.02274032804,
+              "estimate": 0.02231679762,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.0227"
+              "display": "0.0223"
             },
             "goal_difference": {
-              "estimate": -0.4610091729,
+              "estimate": -0.4585101882,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.461"
+              "display": "-0.459"
             }
           }
         },
@@ -749,36 +749,36 @@
           "appearances": 36,
           "outcomes": {
             "points": {
-              "estimate": -0.0136912144,
+              "estimate": 0.004809470896,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.0137"
+              "display": "0.00481"
             },
             "goals_scored": {
-              "estimate": -0.07932233199,
+              "estimate": -0.07919090104,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.0793"
+              "display": "-0.0792"
             },
             "goals_conceded": {
-              "estimate": -0.0822509331,
+              "estimate": -0.1010583242,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.0823"
+              "display": "-0.101"
             },
             "goal_difference": {
-              "estimate": 0.04603115322,
+              "estimate": 0.05054733997,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.046"
+              "display": "0.0505"
             }
           }
         },
@@ -787,36 +787,36 @@
           "appearances": 36,
           "outcomes": {
             "points": {
-              "estimate": 0.3489963185,
+              "estimate": 0.3822813483,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.349"
+              "display": "0.382"
             },
             "goals_scored": {
-              "estimate": 0.05912222175,
+              "estimate": 0.061908674,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.0591"
+              "display": "0.0619"
             },
             "goals_conceded": {
-              "estimate": -0.1012238551,
+              "estimate": -0.1177966789,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.101"
+              "display": "-0.118"
             },
             "goal_difference": {
-              "estimate": 0.1921576351,
+              "estimate": 0.1998800751,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.192"
+              "display": " 0.2"
             }
           }
         },
@@ -825,36 +825,36 @@
           "appearances": 33,
           "outcomes": {
             "points": {
-              "estimate": 0.1285673491,
+              "estimate": 0.1314824772,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.129"
+              "display": "0.131"
             },
             "goals_scored": {
-              "estimate": 0.2636999678,
+              "estimate": 0.251803984,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.264"
+              "display": "0.252"
             },
             "goals_conceded": {
-              "estimate": -0.01706941268,
+              "estimate": -0.01815483174,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.0171"
+              "display": "-0.0182"
             },
             "goal_difference": {
-              "estimate": 0.2488792972,
+              "estimate": 0.2518031015,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.249"
+              "display": "0.252"
             }
           }
         },
@@ -863,36 +863,36 @@
           "appearances": 30,
           "outcomes": {
             "points": {
-              "estimate": -0.0353873408,
+              "estimate": -0.03395711365,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.0354"
+              "display": "-0.034"
             },
             "goals_scored": {
-              "estimate": -0.1063605959,
+              "estimate": -0.09903476312,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.106"
+              "display": "-0.099"
             },
             "goals_conceded": {
-              "estimate": 0.107717776,
+              "estimate": 0.1225156007,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.108"
+              "display": "0.123"
             },
             "goal_difference": {
-              "estimate": -0.2277405,
+              "estimate": -0.2315216876,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.228"
+              "display": "-0.232"
             }
           }
         },
@@ -901,36 +901,36 @@
           "appearances": 30,
           "outcomes": {
             "points": {
-              "estimate": -0.0548969701,
+              "estimate": -0.05652045694,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.0549"
+              "display": "-0.0565"
             },
             "goals_scored": {
-              "estimate": 0.1011951208,
+              "estimate": 0.09231657848,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.101"
+              "display": "0.0923"
             },
             "goals_conceded": {
-              "estimate": 0.107140702,
+              "estimate": 0.1197862041,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.107"
+              "display": "0.12"
             },
             "goal_difference": {
-              "estimate": -0.05184040327,
+              "estimate": -0.05391167597,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.0518"
+              "display": "-0.0539"
             }
           }
         },
@@ -939,36 +939,36 @@
           "appearances": 24,
           "outcomes": {
             "points": {
-              "estimate": -0.07646757649,
+              "estimate": -0.08050295395,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.0765"
+              "display": "-0.0805"
             },
             "goals_scored": {
-              "estimate": -0.006394964854,
+              "estimate": -0.001094102519,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.00639"
+              "display": "-0.00109"
             },
             "goals_conceded": {
-              "estimate": 0.04794451017,
+              "estimate": 0.05458557854,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.0479"
+              "display": "0.0546"
             },
             "goal_difference": {
-              "estimate": -0.06731031135,
+              "estimate": -0.06454712155,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.0673"
+              "display": "-0.0645"
             }
           }
         },
@@ -977,36 +977,36 @@
           "appearances": 24,
           "outcomes": {
             "points": {
-              "estimate": 0.08052943459,
+              "estimate": 0.0807489679,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.0805"
+              "display": "0.0807"
             },
             "goals_scored": {
-              "estimate": 0.2263144747,
+              "estimate": 0.2178211758,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.226"
+              "display": "0.218"
             },
             "goals_conceded": {
-              "estimate": -0.05628541897,
+              "estimate": -0.0653145626,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.0563"
+              "display": "-0.0653"
             },
             "goal_difference": {
-              "estimate": 0.2685688563,
+              "estimate": 0.2762136235,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.269"
+              "display": "0.276"
             }
           }
         },
@@ -1015,36 +1015,36 @@
           "appearances": 23,
           "outcomes": {
             "points": {
-              "estimate": 0.2632818345,
+              "estimate": 0.3126758586,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.263"
+              "display": "0.313"
             },
             "goals_scored": {
-              "estimate": 0.1876280584,
+              "estimate": 0.1804032586,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.188"
+              "display": "0.18"
             },
             "goals_conceded": {
-              "estimate": -0.1199505355,
+              "estimate": -0.1465193847,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.12"
+              "display": "-0.147"
             },
             "goal_difference": {
-              "estimate": 0.3185693712,
+              "estimate": 0.3377149211,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.319"
+              "display": "0.338"
             }
           }
         },
@@ -1053,36 +1053,36 @@
           "appearances": 18,
           "outcomes": {
             "points": {
-              "estimate": 0.3165030447,
+              "estimate": 0.3475284117,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.317"
+              "display": "0.348"
             },
             "goals_scored": {
-              "estimate": 0.01622348536,
+              "estimate": 0.01747210852,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.0162"
+              "display": "0.0175"
             },
             "goals_conceded": {
-              "estimate": -0.193137426,
+              "estimate": -0.2248228791,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.193"
+              "display": "-0.225"
             },
             "goal_difference": {
-              "estimate": 0.2772317637,
+              "estimate": 0.285803038,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.277"
+              "display": "0.286"
             }
           }
         },
@@ -1091,36 +1091,36 @@
           "appearances": 15,
           "outcomes": {
             "points": {
-              "estimate": 0.4388503293,
+              "estimate": 0.486555939,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.439"
+              "display": "0.487"
             },
             "goals_scored": {
-              "estimate": 0.2017198035,
+              "estimate": 0.1907049828,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.202"
+              "display": "0.191"
             },
             "goals_conceded": {
-              "estimate": -0.1670810107,
+              "estimate": -0.1951095537,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.167"
+              "display": "-0.195"
             },
             "goal_difference": {
-              "estimate": 0.3921354115,
+              "estimate": 0.403819472,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.392"
+              "display": "0.404"
             }
           }
         },
@@ -1129,36 +1129,36 @@
           "appearances": 8,
           "outcomes": {
             "points": {
-              "estimate": -0.2334965092,
+              "estimate": -0.2449879188,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.233"
+              "display": "-0.245"
             },
             "goals_scored": {
-              "estimate": -0.360805233,
+              "estimate": -0.339219915,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.361"
+              "display": "-0.339"
             },
             "goals_conceded": {
-              "estimate": -0.04470983349,
+              "estimate": -0.0524724573,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.0447"
+              "display": "-0.0525"
             },
             "goal_difference": {
-              "estimate": -0.2386869919,
+              "estimate": -0.2419919131,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.239"
+              "display": "-0.242"
             }
           }
         },
@@ -1167,36 +1167,36 @@
           "appearances": 6,
           "outcomes": {
             "points": {
-              "estimate": 0.3204178537,
+              "estimate": 0.348876406,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.32"
+              "display": "0.349"
             },
             "goals_scored": {
-              "estimate": 0.2113332707,
+              "estimate": 0.1983746197,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.211"
+              "display": "0.198"
             },
             "goals_conceded": {
-              "estimate": -0.006465027555,
+              "estimate": -0.004080089949,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.00647"
+              "display": "-0.00408"
             },
             "goal_difference": {
-              "estimate": 0.1856178007,
+              "estimate": 0.1839568401,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.186"
+              "display": "0.184"
             }
           }
         },
@@ -1205,36 +1205,36 @@
           "appearances": 5,
           "outcomes": {
             "points": {
-              "estimate": 0.04491978213,
+              "estimate": 0.05763056109,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.0449"
+              "display": "0.0576"
             },
             "goals_scored": {
-              "estimate": -0.04653595126,
+              "estimate": -0.04504356982,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.0465"
+              "display": "-0.045"
             },
             "goals_conceded": {
-              "estimate": -0.05004047002,
+              "estimate": -0.05990995054,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.05"
+              "display": "-0.0599"
             },
             "goal_difference": {
-              "estimate": 0.03052900485,
+              "estimate": 0.03228874348,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.0305"
+              "display": "0.0323"
             }
           }
         },
@@ -1243,36 +1243,36 @@
           "appearances": 4,
           "outcomes": {
             "points": {
-              "estimate": 0.006666946528,
+              "estimate": 0.01126965413,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.00667"
+              "display": "0.0113"
             },
             "goals_scored": {
-              "estimate": 0.03536323959,
+              "estimate": 0.03109431492,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.0354"
+              "display": "0.0311"
             },
             "goals_conceded": {
-              "estimate": 0.07273117998,
+              "estimate": 0.08439631314,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "0.0727"
+              "display": "0.0844"
             },
             "goal_difference": {
-              "estimate": -0.07586093348,
+              "estimate": -0.07688141655,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.0759"
+              "display": "-0.0769"
             }
           }
         },
@@ -1281,36 +1281,36 @@
           "appearances": 3,
           "outcomes": {
             "points": {
-              "estimate": -0.2469159011,
+              "estimate": -0.268835864,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.247"
+              "display": "-0.269"
             },
             "goals_scored": {
-              "estimate": -0.2816296058,
+              "estimate": -0.2639836539,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.282"
+              "display": "-0.264"
             },
             "goals_conceded": {
-              "estimate": -0.008643661477,
+              "estimate": -0.01170459363,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.00864"
+              "display": "-0.0117"
             },
             "goal_difference": {
-              "estimate": -0.2170995376,
+              "estimate": -0.2200535642,
               "std_error": null,
               "conf_low": null,
               "conf_high": null,
               "p_value": null,
-              "display": "-0.217"
+              "display": "-0.22"
             }
           }
         }
@@ -5020,10 +5020,10 @@
       {
         "player": "Daniel",
         "appearances": 7,
-        "goals": 5,
+        "goals": 6,
         "mom": 1,
-        "goals_per_appearance": 0.7142857143,
-        "goals_per_appearance_rounded": 0.71
+        "goals_per_appearance": 0.8571428571,
+        "goals_per_appearance_rounded": 0.86
       },
       {
         "player": "Mateus",
@@ -5045,7 +5045,7 @@
         "player": "Luca",
         "appearances": 5,
         "goals": 2,
-        "mom": 2,
+        "mom": 3,
         "goals_per_appearance": 0.4,
         "goals_per_appearance_rounded": 0.4
       },
@@ -5072,6 +5072,14 @@
         "mom": 0,
         "goals_per_appearance": 0.2857142857,
         "goals_per_appearance_rounded": 0.29
+      },
+      {
+        "player": "Jasper",
+        "appearances": 1,
+        "goals": 1,
+        "mom": 1,
+        "goals_per_appearance": 1,
+        "goals_per_appearance_rounded": 1
       },
       {
         "player": "Ameen",
@@ -5104,14 +5112,6 @@
         "mom": 0,
         "goals_per_appearance": 0.1666666667,
         "goals_per_appearance_rounded": 0.17
-      },
-      {
-        "player": "Jasper",
-        "appearances": 1,
-        "goals": 1,
-        "mom": 0,
-        "goals_per_appearance": 1,
-        "goals_per_appearance_rounded": 1
       },
       {
         "player": "Ben",
@@ -7288,7 +7288,7 @@
       },
       "differential": 0.3681818182,
       "differential_note": "The side takes 0.37 points a match better with Daniel than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
-      "goals": 5,
+      "goals": 6,
       "mom": 1,
       "covered": 9,
       "headline": [
@@ -7299,7 +7299,7 @@
         },
         {
           "label": "Goals",
-          "value": "5",
+          "value": "6",
           "note": "1 man of the match, over 9 recorded"
         }
       ],
@@ -8222,7 +8222,7 @@
       "differential": -0.193877551,
       "differential_note": "The side takes 0.19 points a match worse with Jasper than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 1,
-      "mom": 0,
+      "mom": 1,
       "covered": 9,
       "headline": [
         {
@@ -8233,7 +8233,7 @@
         {
           "label": "Goals",
           "value": "1",
-          "note": "0 man of the match, over 9 recorded"
+          "note": "1 man of the match, over 9 recorded"
         }
       ],
       "timeline": [
@@ -8844,7 +8844,7 @@
       "differential": 0.8192982456,
       "differential_note": "The side takes 0.82 points a match better with Luca than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
       "goals": 2,
-      "mom": 2,
+      "mom": 3,
       "covered": 9,
       "headline": [
         {
@@ -8855,7 +8855,7 @@
         {
           "label": "Goals",
           "value": "2",
-          "note": "2 man of the match, over 9 recorded"
+          "note": "3 man of the match, over 9 recorded"
         }
       ],
       "timeline": [

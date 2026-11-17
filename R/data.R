@@ -113,6 +113,14 @@ UNCREDITED_GOAL_COLUMNS <- readr::cols(
   reason = readr::col_character()
 )
 
+CREDITED_GOAL_COLUMNS <- readr::cols(
+  date = readr::col_character(),
+  minute = readr::col_integer(),
+  player = readr::col_character(),
+  credit_to = readr::col_character(),
+  reason = readr::col_character()
+)
+
 read_match_file <- function(path) {
   readr::read_csv(path, col_types = MATCH_COLUMNS) |>
     mutate(date = parse_match_date(date))
@@ -213,6 +221,44 @@ credit_nobody <- function(events, uncredited) {
   events |> mutate(player = if_else(nobody, NA_character_, player))
 }
 
+# Goals credited to someone other than the page says ----
+#
+# The other way round from the above: a goal the page gives to nobody of ours, or
+# to the wrong one, that we credit to a named player, such as an own goal the team
+# has agreed was his. Kept out of match_events.csv for the same reason.
+
+#' The hand-kept list of goals to credit to another player. Absent or empty means none.
+read_credited_goal_file <- function(path) {
+  if (!file.exists(path) || file.size(path) == 0) {
+    return(tibble(
+      date = as.Date(character()), minute = integer(), player = character(),
+      credit_to = character(), reason = character()
+    ))
+  }
+  readr::read_csv(path, col_types = CREDITED_GOAL_COLUMNS) |>
+    mutate(date = parse_match_date(date))
+}
+
+#' Replace the scorer on the goals credited_goals.csv lists.
+#'
+#' Runs before credit_nobody(), so an own goal listed here goes to the named player
+#' rather than to nobody. Matched on date, minute and the page's name, as there.
+credit_to_player <- function(events, credited) {
+  if (nrow(credited) == 0) {
+    return(events)
+  }
+  credit_to <- events |>
+    select(date, minute, player) |>
+    left_join(
+      credited |> distinct(date, minute, player, .keep_all = TRUE) |>
+        select(date, minute, player, credit_to),
+      by = c("date", "minute", "player")
+    ) |>
+    pull(credit_to)
+  events |>
+    mutate(player = if_else(event_type %in% "goal" & !is.na(credit_to), credit_to, player))
+}
+
 #' Add the "4-5" display string derived from the two goal columns.
 #'
 #' Scores are stored as two integers because that is what they are and what the
@@ -241,8 +287,11 @@ load_app_data <- function(dir = "data") {
   page_goals <- page_events |> filter(event_type == "goal")
   uncredited_goals <- read_uncredited_goal_file(path("uncredited_goals.csv")) |>
     mutate(goals_matched = same_goal_count(pick(date, minute, player), page_goals))
+  credited_goals <- read_credited_goal_file(path("credited_goals.csv")) |>
+    mutate(goals_matched = same_goal_count(pick(date, minute, player), page_goals))
 
   events <- page_events |>
+    credit_to_player(credited_goals) |>
     credit_nobody(uncredited_goals) |>
     with_season(seasons)
 
@@ -274,6 +323,7 @@ load_app_data <- function(dir = "data") {
     matches = matches,
     events = events,
     uncredited_goals = uncredited_goals,
+    credited_goals = credited_goals,
     attendance = attendance,
     payments = payments,
     fixtures = fixtures,
@@ -399,6 +449,22 @@ validate_app_data <- function(data) {
         sprintf("minute %d", mismatched_listings$minute)
       ),
       mismatched_listings$goals_matched
+    )
+  )
+  mismatched_credits <- data$credited_goals %||%
+    mutate(read_credited_goal_file(""), goals_matched = integer())
+  mismatched_credits <- mismatched_credits |> filter(goals_matched != 1)
+  complain(
+    "goals in data/credited_goals.csv that match no goal event, or more than one",
+    sprintf(
+      "%s %s %s (matches %d)",
+      mismatched_credits$player,
+      format(mismatched_credits$date, "%d/%m/%Y"),
+      if_else(
+        is.na(mismatched_credits$minute), "no minute",
+        sprintf("minute %d", mismatched_credits$minute)
+      ),
+      mismatched_credits$goals_matched
     )
   )
 

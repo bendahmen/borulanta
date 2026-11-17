@@ -34,7 +34,7 @@
     "season_label": "Season 3",
     "meta_line": "Wed 04 Nov 2026 · v Saffron Rangers · Season 3",
     "squad_size": 9,
-    "scorers": "Daniel, Luca",
+    "scorers": "Daniel (2), Luca",
     "man_of_the_match": "Luca",
     "details": [
       {
@@ -43,7 +43,7 @@
       },
       {
         "label": "Scorers",
-        "value": "Daniel, Luca"
+        "value": "Daniel (2), Luca"
       },
       {
         "label": "Man of the match",
@@ -91,7 +91,7 @@
     "meta_line": "Wed 21 Oct 2026 · v Foireann Peile · Season 3",
     "squad_size": 7,
     "scorers": "Boris, Torge",
-    "man_of_the_match": null,
+    "man_of_the_match": "Jasper",
     "details": [
       {
         "label": "Squad",
@@ -100,6 +100,10 @@
       {
         "label": "Scorers",
         "value": "Boris, Torge"
+      },
+      {
+        "label": "Man of the match",
+        "value": "Jasper"
       }
     ]
   },
@@ -115,7 +119,7 @@
     "meta_line": "Wed 14 Oct 2026 · v Dynamo Mickey CF · Season 3",
     "squad_size": 8,
     "scorers": "Mateus (3), Emiliano",
-    "man_of_the_match": null,
+    "man_of_the_match": "Luca",
     "details": [
       {
         "label": "Squad",
@@ -124,6 +128,10 @@
       {
         "label": "Scorers",
         "value": "Mateus (3), Emiliano"
+      },
+      {
+        "label": "Man of the match",
+        "value": "Luca"
       }
     ]
   },

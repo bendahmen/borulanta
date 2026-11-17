@@ -1,7 +1,7 @@
 {
   "have_fixtures": true,
-  "scraped_on": "2026-11-12",
-  "stale_note": "The fixture list was last read on 12 Nov, so this may be out of date.",
+  "scraped_on": "2026-11-17",
+  "stale_note": "The fixture list was last read on 17 Nov, so this may be out of date.",
   "wording": {
     "tag": "Next match",
     "no_fixtures_left": "No fixtures left on the league page. Run the sync once the new season is up.",
@@ -35,8 +35,8 @@
       "pitch": "Pitch 1",
       "kickoff_pitch": "19:00 · Pitch 1",
       "position": 8,
-      "played": 8,
-      "goal_difference": -12,
+      "played": 9,
+      "goal_difference": -16,
       "points": 7
     },
     {
@@ -73,7 +73,7 @@
       "kickoff": "20:20",
       "pitch": "Pitch 1",
       "kickoff_pitch": "20:20 · Pitch 1",
-      "position": 6,
+      "position": 7,
       "played": 9,
       "goal_difference": -5,
       "points": 11
@@ -99,10 +99,10 @@
       "kickoff": "20:00",
       "pitch": "Front Pitch",
       "kickoff_pitch": "20:00 · Front Pitch",
-      "position": 7,
-      "played": 8,
-      "goal_difference": -8,
-      "points": 8
+      "position": 6,
+      "played": 9,
+      "goal_difference": -4,
+      "points": 11
     }
   ]
 }

@@ -369,6 +369,12 @@ check names the row. It also names a row that matches more than one goal, all of
 which are credited to nobody. With nothing to list, keep the file with its header
 rather than delete it, because `manifest.json` lists it.
 
+The other way round, a goal the page gives to nobody of ours or to the wrong
+player, goes in `data/credited_goals.csv`: `date`, `minute` and `player` as
+`match_events.csv` has them, `credit_to`, and a `reason`. It is applied before
+own goals are credited to nobody, so an `Og` listed there goes to `credit_to`.
+Rows are matched and checked the same way as in `uncredited_goals.csv`.
+
 ## The home page
 
 The tab the app opens on, and the only one that answers a question in the

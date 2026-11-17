@@ -1,8 +1,8 @@
 {
-  "scraped_on": "2026-11-12",
+  "scraped_on": "2026-11-17",
   "tag": "League table",
   "title": "Where we sit",
-  "subtitle": "From the league's own page, as it stood on 12 November 2026.",
+  "subtitle": "From the league's own page, as it stood on 17 November 2026.",
   "empty": "No league table yet — run the sync to pull one in.",
   "rows": [
     {
@@ -16,20 +16,20 @@
       "goals_against": 12,
       "goal_difference": 27,
       "points": 25,
-      "scraped_on": "2026-11-12"
+      "scraped_on": "2026-11-17"
     },
     {
       "position": 2,
       "team": "Shamrock Posers",
-      "played": 8,
-      "won": 5,
+      "played": 9,
+      "won": 6,
       "drawn": 1,
       "lost": 2,
-      "goals_for": 25,
-      "goals_against": 17,
-      "goal_difference": 8,
-      "points": 16,
-      "scraped_on": "2026-11-12"
+      "goals_for": 29,
+      "goals_against": 20,
+      "goal_difference": 9,
+      "points": 19,
+      "scraped_on": "2026-11-17"
     },
     {
       "position": 3,
@@ -42,20 +42,20 @@
       "goals_against": 20,
       "goal_difference": 17,
       "points": 14,
-      "scraped_on": "2026-11-12"
+      "scraped_on": "2026-11-17"
     },
     {
       "position": 4,
       "team": "Borulanta",
-      "played": 8,
+      "played": 9,
       "won": 3,
       "drawn": 2,
-      "lost": 3,
-      "goals_for": 24,
-      "goals_against": 17,
-      "goal_difference": 7,
+      "lost": 4,
+      "goals_for": 27,
+      "goals_against": 21,
+      "goal_difference": 6,
       "points": 11,
-      "scraped_on": "2026-11-12"
+      "scraped_on": "2026-11-17"
     },
     {
       "position": 5,
@@ -68,10 +68,23 @@
       "goals_against": 24,
       "goal_difference": -4,
       "points": 11,
-      "scraped_on": "2026-11-12"
+      "scraped_on": "2026-11-17"
     },
     {
       "position": 6,
+      "team": "Saffron Rangers",
+      "played": 9,
+      "won": 3,
+      "drawn": 2,
+      "lost": 4,
+      "goals_for": 17,
+      "goals_against": 21,
+      "goal_difference": -4,
+      "points": 11,
+      "scraped_on": "2026-11-17"
+    },
+    {
+      "position": 7,
       "team": "Foireann Peile",
       "played": 9,
       "won": 3,
@@ -81,33 +94,20 @@
       "goals_against": 37,
       "goal_difference": -5,
       "points": 11,
-      "scraped_on": "2026-11-12"
-    },
-    {
-      "position": 7,
-      "team": "Saffron Rangers",
-      "played": 8,
-      "won": 2,
-      "drawn": 2,
-      "lost": 4,
-      "goals_for": 13,
-      "goals_against": 21,
-      "goal_difference": -8,
-      "points": 8,
-      "scraped_on": "2026-11-12"
+      "scraped_on": "2026-11-17"
     },
     {
       "position": 8,
       "team": "Ball FC",
-      "played": 8,
+      "played": 9,
       "won": 2,
       "drawn": 1,
-      "lost": 5,
+      "lost": 6,
       "goals_for": 12,
-      "goals_against": 24,
-      "goal_difference": -12,
+      "goals_against": 28,
+      "goal_difference": -16,
       "points": 7,
-      "scraped_on": "2026-11-12"
+      "scraped_on": "2026-11-17"
     },
     {
       "position": 9,
@@ -120,7 +120,7 @@
       "goals_against": 40,
       "goal_difference": -30,
       "points": 4,
-      "scraped_on": "2026-11-12"
+      "scraped_on": "2026-11-17"
     }
   ]
 }

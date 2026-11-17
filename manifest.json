@@ -4043,7 +4043,7 @@
   },
   "files": {
     "app.R": {
-      "checksum": "67a9f9c6ed26aa57f83b5872cf363d2f"
+      "checksum": "91310396911174cfe6739fd31de82860"
     },
     "data/archive/charges_s1.csv": {
       "checksum": "1e3817a41325e8d62416e07a0cf34b1a"
@@ -4052,34 +4052,37 @@
       "checksum": "e7c456af58b851f85d659cbe7a7148a6"
     },
     "data/attendance.csv": {
-      "checksum": "bc82b5c9205dfa1f97262a0eed3b7ac0"
+      "checksum": "3a8a4be1f00c9851561a5347708fe00b"
+    },
+    "data/credited_goals.csv": {
+      "checksum": "99627afc040646cceac5069bddbdb9d8"
     },
     "data/fixtures.csv": {
-      "checksum": "1b667bf68e138200225b2044a4d05e9a"
+      "checksum": "574c5f421906484ae1e25a5c9d223138"
     },
     "data/league_results.csv": {
-      "checksum": "414309ad332f066a3be4a1e3bf772bc2"
+      "checksum": "2aaad30180dccf0387e608054efd3314"
     },
     "data/league_table.csv": {
-      "checksum": "4f50766227c1f795905f16f99565b9d7"
+      "checksum": "20641c67faf868f000fe904cb136d7f9"
     },
     "data/match_events.csv": {
-      "checksum": "44da453b5796e8c2aab48e9c772dff99"
+      "checksum": "ba380ee34145297f830771ceddd5f623"
     },
     "data/matches.csv": {
-      "checksum": "935bab384a9316394e29e55ddb99f195"
+      "checksum": "a8ebebc4fbc34853858fb1104b42d062"
     },
     "data/name_map.csv": {
-      "checksum": "b1ee951e9f11dbcba4a2bd00a2ecad17"
+      "checksum": "78593467b105b29d1f17d6bb408f4880"
     },
     "data/payments.csv": {
-      "checksum": "50f7f5d8df55bef3263dbed634e8407f"
+      "checksum": "a3efd1002688a78d7b74cd8b665da7a1"
     },
     "data/player_seasons.csv": {
       "checksum": "7d77013af67bcebb050a6d5473577e78"
     },
     "data/players.csv": {
-      "checksum": "035a878cb04a7c22475d7cb2a4b9eccc"
+      "checksum": "d3eed276e42fff49b88a35a64f5a2578"
     },
     "data/seasons.csv": {
       "checksum": "13bbf0d6dd52317b9cdb17b5111a1b65"
@@ -4091,28 +4094,28 @@
       "checksum": "8af424c88645d00a98945e75cf2b836e"
     },
     "R/analysis.R": {
-      "checksum": "82e53012ca5e3d89f426e446c08b584a"
+      "checksum": "876e883a041916c67557095783ae67ef"
     },
     "R/cards.R": {
-      "checksum": "da341102c21ece3bf97cbea7d5d29b21"
+      "checksum": "f779795ea34baad743f9e70bab8b57cd"
     },
     "R/data.R": {
-      "checksum": "61c2adbfa1e2a9230ea1d45258c4c8f9"
+      "checksum": "90909e27f361bac4b026567e62f83ce5"
     },
     "R/fees.R": {
-      "checksum": "5584875e897951cc208e6b19d3614d57"
+      "checksum": "118b2d54aadd76fa44af304f051c3c1b"
     },
     "R/format.R": {
-      "checksum": "be00b1d6bd652045c8facc19294e9c36"
+      "checksum": "36ee742d8646d031397a9fe56cf4a978"
     },
     "R/plots.R": {
-      "checksum": "a4bdad0b532fee096633d7be46f2c816"
+      "checksum": "9bee11636c72e6983f404805a240d8ee"
     },
     "R/seasons.R": {
-      "checksum": "2e7cbe66232325d2c2e52a2eb4aea4d3"
+      "checksum": "c7aab071df4d4948b1b3e854d6f7dc7b"
     },
     "R/tables.R": {
-      "checksum": "a7063366edddf3cef1a7a7adecc7afaa"
+      "checksum": "bd930294782fd41ea77b25b3c90c132a"
     },
     "renv.lock": {
       "checksum": "a84b5dfc849ba53e7370b62717e3c857"
@@ -4121,7 +4124,7 @@
       "checksum": "a0dcb498352f25105daea5d7ced96de3"
     },
     "www/borulanta.css": {
-      "checksum": "12c31927f10305c5e269fdaa493773a1"
+      "checksum": "0509f4ac36aaf6c01070504e39999e5b"
     }
   },
   "users": null
