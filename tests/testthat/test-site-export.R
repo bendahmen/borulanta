@@ -184,7 +184,7 @@ write_tiny_data <- function(with_matches = TRUE, ghost = TRUE, env = parent.fram
   )
   write_file("players.csv", "player,guest", "Ann,FALSE", "Bob,FALSE")
   write_file(
-    "player_seasons.csv", "season_id,player,core,active", "s1,Ann,TRUE,TRUE", "s1,Bob,TRUE,TRUE"
+    "player_seasons.csv", "season_id,player,core", "s1,Ann,TRUE", "s1,Bob,TRUE"
   )
   write_file(
     "matches.csv", "date,opponent,goals_for,goals_against,dl_match_id",
@@ -225,8 +225,8 @@ write_two_season_data <- function(env = parent.frame()) {
   )
   write_file("players.csv", "player,guest", paste0(c("Ann", "Bob", "Cy", "Di"), ",FALSE"))
   write_file(
-    "player_seasons.csv", "season_id,player,core,active",
-    paste0(rep(c("s1", "s2"), each = 4), ",", rep(c("Ann", "Bob", "Cy", "Di"), 2), ",TRUE,TRUE")
+    "player_seasons.csv", "season_id,player,core",
+    paste0(rep(c("s1", "s2"), each = 4), ",", rep(c("Ann", "Bob", "Cy", "Di"), 2), ",TRUE")
   )
   write_file(
     "matches.csv", "date,opponent,goals_for,goals_against,dl_match_id",
@@ -701,7 +701,7 @@ test_that("the totals equal balance_totals()", {
 test_that("each player's charges and payments equal player_fee_overview()", {
   fees <- read_generated("fees")
   everyone <- union(
-    shiny_data$rosters |> filter(active) |> pull(player),
+    shiny_data$rosters |> pull(player),
     all_player_balances(shiny_data$charges, shiny_data$payments)$player
   )
   expect_equal(strings_of(fees$overviews, "player"), sort(everyone, method = "radix"))
@@ -746,7 +746,7 @@ test_that("each player's charges and payments equal player_fee_overview()", {
 
 test_that("fee_players is what app.R offers, and the empty wording is the tables'", {
   fees <- read_generated("fees")
-  expected <- shiny_data$rosters |> filter(active) |> pull(player) |> unique() |> sort()
+  expected <- shiny_data$rosters |> pull(player) |> unique() |> sort()
   expect_equal(unlist(fees$fee_players), expected)
 
   balances <- all_player_balances(shiny_data$charges, shiny_data$payments)
@@ -1745,7 +1745,7 @@ test_that("every other problem validate_app_data() can list goes in the banner",
     "fixtures dated on a match already recorded",
     "missing from data/league_table.csv",
     "league results recorded more than once",
-    "players in attendance but not on that season's active roster"
+    "players in attendance but not on that season's roster"
   )) {
     expect_true(any(startsWith(problems, kind)), label = kind)
   }

@@ -86,8 +86,7 @@ PLAYER_COLUMNS <- readr::cols(
 ROSTER_COLUMNS <- readr::cols(
   season_id = readr::col_character(),
   player = readr::col_character(),
-  core = readr::col_logical(),
-  active = readr::col_logical()
+  core = readr::col_logical()
 )
 
 ATTENDANCE_COLUMNS <- readr::cols(
@@ -492,15 +491,15 @@ validate_app_data <- function(data) {
     format(duplicated_results$date, "%d/%m/%Y")
   )
 
-  # Someone who played but was not on that season's active roster is charged
+  # Someone who played but was not on that season's roster is charged
   # nothing, which is almost always a missing roster row rather than a freebie.
   unrostered <- data$attendance |>
     anti_join(
-      data$rosters |> filter(active),
+      data$rosters,
       by = c("season_id", "player")
     ) |>
     pull(player)
-  complain("players in attendance but not on that season's active roster", unrostered)
+  complain("players in attendance but not on that season's roster", unrostered)
 
   invisible(problems)
 }

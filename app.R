@@ -252,7 +252,6 @@ server <- function(input, output, session) {
   # scopes the results and statistics tabs only.
   fee_players <- reactive({
     app_data$rosters |>
-      filter(active) |>
       pull(player) |>
       unique() |>
       sort()
@@ -267,7 +266,7 @@ server <- function(input, output, session) {
   observeEvent(fee_players(), {
     players <- fee_players()
     current <- selected_fee_player()
-    # head() rather than [[1]]: an empty active roster leaves nobody chosen
+    # head() rather than [[1]]: an empty roster leaves nobody chosen
     # and the fee cards waiting, where [[1]] would end the session.
     chosen <- if (isTruthy(current) && current %in% players) current else head(players, 1)
 
@@ -441,7 +440,7 @@ server <- function(input, output, session) {
   # The roster table is the picker, and the page under it is one row of that
   # table opened up. It offers whoever turned out in the ticked seasons,
   # which is deliberately not the fee picker's list: that one offers the
-  # active roster and ignores seasons because a balance is a running total,
+  # roster and ignores seasons because a balance is a running total,
   # while this is a page about matches that happened. A player who has left
   # still has a page; a new signing who has not played yet does not.
   roster_list <- reactive({

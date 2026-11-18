@@ -15,7 +15,7 @@ write_goal_data <- function(events, uncredited = NULL, env = parent.frame()) {
   )
   write_file("players.csv", "player,guest", "Ben,FALSE", "Daniel,FALSE")
   write_file(
-    "player_seasons.csv", "season_id,player,core,active", "s1,Ben,TRUE,TRUE", "s1,Daniel,TRUE,TRUE"
+    "player_seasons.csv", "season_id,player,core", "s1,Ben,TRUE", "s1,Daniel,TRUE"
   )
   write_file(
     "matches.csv", "date,opponent,goals_for,goals_against,dl_match_id", "14/01/2026,Ball FC,3,1,1"

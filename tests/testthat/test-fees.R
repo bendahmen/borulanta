@@ -113,7 +113,7 @@ FIRST <- as.Date("2026-10-28")
 SECOND <- as.Date("2026-11-04")
 s3 <- tibble(season_id = "s3", fee_rules = "min_denominator")
 synced <- tibble(season_id = "s3", date = c(FIRST, SECOND))
-on_roster <- big_roster |> mutate(season_id = "s3", active = TRUE)
+on_roster <- big_roster |> mutate(season_id = "s3")
 present_at <- function(date, squad) tibble(season_id = "s3", date = date, player = squad)
 
 test_that("a match with no attendance rows is not charged until it has some", {
@@ -179,7 +179,7 @@ test_that("every balance on file is unchanged by holding back unattended matches
       return(transmute(ledger, season_id, date = parse_match_date(date), player, charge))
     }
     rules <- fee_rule_set(season$fee_rules)
-    roster <- data$rosters |> filter(season_id == season$season_id, active)
+    roster <- data$rosters |> filter(season_id == season$season_id)
     dates <- data$matches$date[data$matches$season_id %in% season$season_id]
     map_dfr(as.list(dates), function(date) {
       squad <- data$attendance$player[data$attendance$date == date]

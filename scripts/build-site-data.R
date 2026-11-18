@@ -628,13 +628,12 @@ export_fee_overview <- function(player, data) {
 export_fees <- function(data) {
   balances <- all_player_balances(data$charges, data$payments)
   totals <- balance_totals(balances)
-  # As app.R's fee_players(): active anywhere.
+  # As app.R's fee_players(): on any season's roster.
   fee_players <- data$rosters |>
-    filter(active) |>
     pull(player) |>
     unique() |>
     sort()
-  # Everyone the two views can offer. The picker lists the active roster and the
+  # Everyone the two views can offer. The picker lists the roster and the
   # Everyone table lists anyone with a charge or a payment. Neither has to contain
   # the other: a signing with no match yet is only on the first, and a payment from
   # somebody on no roster is only on the second.

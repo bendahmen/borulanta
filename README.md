@@ -490,7 +490,7 @@ square. The charge table carries a season column instead.
 The Fees tab shows everyone's balance as well as your own, because "who owes
 me" is the question the person collecting the money actually has and the picker
 made you click through the whole roster to answer it. That table lists anyone
-with a charge or a payment on file rather than the current active roster —
+with a charge or a payment on file rather than the current roster —
 somebody who has left still owing is exactly the row worth keeping. Outstanding
 and credit are totalled apart rather than netted: the net is what the pot is
 short, but a credit belongs to somebody who cannot be asked for money they have
@@ -508,7 +508,6 @@ that season's players to `data/player_seasons.csv`.
 | `season_id` | which season this entry describes |
 | `player` | must exist in `data/players.csv` |
 | `core` | subject to the core-player rules that season |
-| `active` | on the roster; drives the fee picker and who gets charged |
 
 Core status is per season rather than a column per rule change, so a player
 moving in or out of the core is one cell, not a schema change.
@@ -529,7 +528,7 @@ A rule set lives in `FEE_RULE_SETS` in `R/fees.R` and is a list of:
   one row per rostered player, zero charges included
 
 `squad` is the character vector of players present; `roster` is that season's
-active players with their `core` flag. Because the function sees the whole
+rostered players with their `core` flag. Because the function sees the whole
 match at once, rules that split a remainder across the core are natural to
 express, and the engine needs to know nothing about a rule's internals.
 
@@ -616,7 +615,7 @@ An ever-present has no comparison rather than a zero one. `NaN` would print as a
 number and read as "no difference", which is a claim about a player rather than
 an absence of evidence.
 
-Its picker is deliberately not the fee picker. That one offers the active roster
+Its picker is deliberately not the fee picker. That one offers the roster
 and ignores seasons, because a balance is a running total; this is a page about
 matches that happened, so it lists whoever turned out in the ticked seasons — a
 player who has left still has a page, and a new signing who has not played yet
@@ -702,7 +701,7 @@ Nothing in the stylesheet can touch the flex properties: bslib writes
 
 `validate_app_data()` runs at startup and warns about attendance on a date with
 no match, a match with no attendance yet, unknown players, rows dated before the first season, players who
-appeared without being on that season's active roster, events on a date with no
+appeared without being on that season's roster, events on a date with no
 match, goals that do not add up to the scoreline they belong to, a row of
 `data/uncredited_goals.csv` that matches no goal or more than one, a fixture dated
 on a match already recorded (a fixture list the sync has not caught up with),

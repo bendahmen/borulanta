@@ -6,7 +6,7 @@
 #   charge : function(squad, roster, params) -> tibble(player, charge, explanation)
 #
 # `squad`  is the character vector of players recorded present at one match.
-# `roster` is the season roster: tibble(player, core, active).
+# `roster` is the season roster: tibble(player, core).
 # The function must return one row per rostered player, charge 0 included, so
 # the engine never has to know anything about a rule's internals.
 #
@@ -171,7 +171,7 @@ season_charges <- function(season, matches, attendance, rosters) {
 
   rules <- fee_rule_set(season$fee_rules)
   roster <- rosters |>
-    filter(season_id == season$season_id, active) |>
+    filter(season_id == season$season_id) |>
     select(player, core)
 
   # The sync records a match before anyone has typed its attendance, and its
@@ -257,7 +257,7 @@ all_charges <- function(seasons, matches, attendance, rosters) {
 #' the picker made you click through the whole roster to assemble.
 #'
 #' The population is anyone with a charge or a payment on file rather than the
-#' current active roster. Someone who has left still owing is exactly the row
+#' current roster. Someone who has left still owing is exactly the row
 #' worth keeping, and dropping them would quietly change the total.
 #'
 #' Rounded per player rather than at the end, so the column adds up to the

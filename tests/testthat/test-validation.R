@@ -10,7 +10,7 @@ clean_data <- function() {
       start_date = as.Date("2026-01-07"), fee_rules = "even_split", status = "open"
     ),
     players = tibble(player = c("Ben", "Vitto")),
-    rosters = tibble(season_id = "s1", player = c("Ben", "Vitto"), core = TRUE, active = TRUE),
+    rosters = tibble(season_id = "s1", player = c("Ben", "Vitto"), core = TRUE),
     matches = tibble(
       date = as.Date("2026-01-14"), opponent = "Shamrock Posers",
       goals_for = 2L, goals_against = 1L, season_id = "s1"
