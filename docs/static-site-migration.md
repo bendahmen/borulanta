@@ -1,6 +1,6 @@
 # Static site migration plan
 
-Written 4 November 2026. Read this whole file before doing anything, then read `README.md`.
+Written 4 November 2026. Stage 7 rewritten 19 November 2026. Read this whole file before doing anything, then read `README.md`.
 
 ## The goal
 
@@ -21,11 +21,13 @@ Do not reopen these without new evidence.
 | Statistics and fee rules | Stay in R. No regression or fee arithmetic in JS |
 | Backend | None. No logins, database, functions or writes in this migration |
 | The sync | Stays local and manual. The bot check on the league site blocks automation |
-| Shiny | Stays live and untouched on `main` until cutover |
+| Shiny | Retired at Stage 7, below |
 
 The debate behind these rejected Quarto, Django and Supabase. webR is also out: its smallest useful setup downloads about 29 MB.
 
 ## Repo logistics
+
+**This section describes Stages 0 to 5.** Since cutover, `main` holds the site. Stage 7 has its own rules under "Where the sessions work", and they override anything here, including the Shiny entry in `launch.json`, the manifest and the kickoff prompt's permissions. The Dropbox rules still hold.
 
 ### Folders and branches
 
@@ -92,7 +94,12 @@ Reuse the existing functions in `R/analysis.R`, `R/fees.R`, `R/data.R`, `R/seaso
 
 **Empty results.** OLS returns no rows for season 3 alone, and a window can have no matches. Keep the current empty states and wording from `app.R` rather than showing zeros.
 
-**Numbers on the page.** Export the value and R's formatted string for money and estimates. `format_estimate()` and `format_fee_amount()` stay the only formatters of those. JS sorts on the value and shows the string.
+**Numbers on the page.** R formats values and the site writes the words, except dates, which the site formats. Decided 18 November 2026 in issue 6, replacing a rule that covered only money and estimates.
+
+- R exports the value and a `*_display` string for money (`format_fee_amount()`), regression estimates (`format_estimate()`), the three rounded columns (goals per game, points per match by opponent, points per match played and missed), the with-and-without gap and the headline turnout. JS sorts on the value, shows the string and never rounds.
+- R keeps two kinds of text that are data: the `validate_app_data()` banner messages, which the export's stop rule matches on, and the charge explanations, which closed seasons' ledgers already store.
+- R exports dates as ISO strings, and the site formats them through `site/src/lib/dates.js`. It splits the string by hand and uses hand-written English names, with no `Intl`, because Node's en-GB gives `Wed, 09 Sept 2026` where R gives `Wed 09 Sep 2026`.
+- Every other word on the page belongs to the site: labels, headings, empty states, small composed strings such as the ordinal and the scorer list, and the data-dependent sentences, which use R's display strings for the values inside them.
 
 **Reproducibility.** Output must be byte-identical across two runs on the same data. `RIDGE_SEED` handles the ridge folds. Sort every array, fix numeric precision, and write no build timestamps. `scraped_on` and the last match date provide the freshness note.
 
@@ -192,22 +199,140 @@ Only with Ben's go-ahead.
 
 - [x] Merge `static-site` into `main`, and switch Cloudflare's production branch to `main`.
 - [x] Run `bash scripts/site-setup.sh` in the main folder.
-- [ ] Add a notice to the Shiny app linking to the new address. Connect Cloud offers no redirect we know of, so check this.
-- [ ] Ben posts the new link in the WhatsApp group.
-- [ ] Keep Shiny live for about four weeks and watch its credits, which stop the app if they exceed 20 a month.
+- [x] Add a notice to the Shiny app linking to the new address. Connect Cloud offers no redirect we know of, so check this.
+- [x] Ben posts the new link in the WhatsApp group. It is also in the Borulanta Core group description.
+- [x] Keep Shiny live for about four weeks and watch its credits, which stop the app if they exceed 20 a month. Superseded 18 November 2026: Shiny may go before 4 December.
 
 ### Stage 7: retire Shiny
 
-Only after that overlap, and only with Ben's go-ahead.
+Stage 7 removes Shiny and leaves the live site exactly as it is. Ben settled it on 18 and 19 November 2026 through the map "Retire the Shiny app" (issue 2) and its tickets: the old address (issue 3), the checks (issue 4), the inventory of Shiny-side code (issue 5), formatting (issue 6) and this spec (issue 7). Issue 5's resolution comment lists every function, string, test file and package by name, so read it before starting any session.
 
-Remove the Connect Cloud content, `app.R`, `manifest.json`, `scripts/write-manifest.R`, `www/` and whichever parts of `R/` and `tests/` only the Shiny UI used. Check what the export still needs before deleting anything, particularly in `R/tables.R` and `R/cards.R`. Prune `renv.lock`, rewrite `README.md`, and remove the worktree.
+The work comes in five steps, strictly in order. Ben closes the old address first. Then four agent sessions follow, each with its own GitHub issue labelled `ready-for-agent` and blocked by the one before it (issues 8 to 11):
+
+| Step | Who | What | Changes `site/`? |
+|---|---|---|---|
+| 0 | Ben | Delete the Connect Cloud content and send the closing message | No |
+| A1 | agent | Fixed wording moves into the site | Yes, so it builds |
+| A2 | agent | Formatting and data-dependent wording move into the site | Yes, so it builds |
+| B | agent | Delete Shiny and the code only it used | No |
+| C | agent | Docs and clean-up | No |
+
+The wording has to move before the deletion, because today the export builds its strings from `R/cards.R`, `R/tables.R` and `R/plots.R`. The repo stays public, and new site features stay out of scope.
+
+#### Where the sessions work
+
+Sessions A1 to C work in the `borulanta-site` worktree on a branch `stage-7`, cut from `main`. The main folder stays on `main` for the sync, attendance, payments and the weekly publish. Committing on `main` directly would be unsafe: `publish-site.sh` pushes `main`, so a Wednesday publish would push a session's half-done commits.
+
+- A1 starts in the worktree with `git switch -c stage-7 main`, then `bash scripts/site-setup.sh` and `Rscript -e 'renv::status()'`. Later sessions continue on the same branch.
+- Never run the sync, add match data or run `publish-site.sh` from the worktree.
+- Each session may commit on `stage-7` as it goes. Pushing needs Ben's direct yes every time.
+- To push, the session rebases `stage-7` onto `main` if `main` has moved, then fast-forwards `main` in the main folder with `git merge --ff-only stage-7` and pushes `main`. `stage-7` itself is never pushed.
+- A rebase that clashes in `site/src/generated` or `site/public/data/seasons` is settled by rerunning the export on `main`'s CSVs, never by hand. A rebase that brings new CSVs means the session's checks run again against the new base.
+- Any check that fails, and any `dist` difference outside what is allowed, stops the session and goes to Ben.
+- Each session records its check results in the change log below and in its issue's resolution comment, then closes the issue.
+
+#### Step 0: Ben closes the old address
+
+Ben does this himself, because an agent should not, and chose on 18 November 2026 to do it before any code work.
+
+1. Delete the Connect Cloud content in the dashboard. No stub, no frozen bundle, no grace period. This kills `bendahmen-borulanta.share.connect.posit.cloud` and the older `01a08745-…` address that redirects to it.
+2. Remove `bendahmen/borulanta` from the Connect Cloud GitHub App under GitHub → Settings → Applications, or uninstall the app. Keep the Posit account.
+3. Send the closing message to Borulanta Core: *"The old Borulanta page on posit.cloud is now closed. Everything is at https://borulanta.bendahmen.workers.dev/"*. It goes after the deletion so that it is true when read. No one-to-one messages go to the people who were sent the old link privately.
+4. Tell an agent the content is gone. It rewrites the agent memory note `borulanta-live-url` to cover the site only, and records that both posit.cloud addresses are dead from that date.
+
+Step 0 is a hard prerequisite for B's push. Auto-publish on push is on until the content is gone, so pushing the deletion while it exists would redeploy a broken bundle. A1 and A2 do not depend on it, because neither changes what Shiny runs.
+
+#### Session A1: fixed wording moves into the site
+
+A1 moves every string that does not depend on the data out of the export and into the site. That is all of `wording.json`, the strings copied from `app.R` (`APP_EMPTY_STATES`, `APP_PLAYER_NOTE_AFTER_NAME`), the table headings, the plot labels, the fixed empty states and fallbacks, and the Monzo link.
+
+- Each string goes into the component that shows it. A string used in two or more places goes in `site/src/lib/labels.js`.
+- The export stops writing `wording.json` and every fixed-string field. Delete the file and its readers, and keep the strings word for word.
+- Reword the 25 comments in 19 files under `site/` that cite Shiny or `app.R`, so each stands alone: keep the reason, drop the reference. They change here because B must not touch `site/`.
+- In `test-site-export.R`, delete the tests that compare fixed wording with `R/cards.R` or `app.R`, and take `wording.json` out of the file-list test. A fixed string gets no new test.
+- Leave `R/cards.R`, `R/tables.R`, `R/plots.R` and `R/format.R` in place. A2 still reads some of them, and B deletes them.
+
+Checks: part 1 below, then the live check after the push.
+
+#### Session A2: formatting and data-dependent wording move into the site
+
+A2 carries out the formatting rule under "Numbers on the page". Afterwards the export no longer sources `R/cards.R`, `R/tables.R` or `R/plots.R`, and it calls none of the `R/format.R` functions that B deletes.
+
+R side:
+
+- Export raw values: dates as ISO strings, `first_match` and `last_match` per season for the spans, the league position and the team count, scorers as `[{player, goals}]`, points, kickoff and pitch, and outcome ids (`points`, `goals_scored`, …) in place of labels.
+- Key `player_regression_table()`'s display columns by outcome id instead of by label.
+- Keep the `*_display` strings for money, estimates, the three rounded columns, the with-and-without gap (`format(round(abs(x), 2), nsmall = 2)`) and the headline turnout (`round(rate * 100)`). They live in `R/format.R` as small named functions, except `format_estimate()`, which stays in `R/analysis.R` beside `player_regression_table()`.
+- Move `STALE_FIXTURES_DAYS` to `R/analysis.R` beside `run_in()`. `season_span()` returns dates only.
+- The `validate_app_data()` messages and the charge explanations stay as R's text. The `has_regression` gate, which copies `app.R`'s `req()`, stays in the export.
+- Rewrite the remaining mixed tests in `test-site-export.R`, about 25, so they keep the numbers and drop the wording. Rename `shiny_data` to `app_data`.
+
+Site side:
+
+- Write `site/src/lib/dates.js` with all six formats R uses: `%a %d %b %Y`, `%d %b %Y`, `%d %B %Y`, `%d %b`, `%b %Y` and `%b`. Its unit test checks every date on file against R's output.
+- Season spans, with `season_span()`'s three cases.
+- The small composed strings: the ordinal, the scorer list, the result badge, the kickoff line, fallbacks such as "Opponent to be confirmed", and "—" for a missing value. Also `OUTCOME_LABELS`.
+- The data-dependent sentences: the freshness note, the scorer coverage note, the with-and-without note, the regression explanation and estimator note, the league position line, "Tonight / Tomorrow / In {days} days", the last-match details, the stale-fixture note and the banner title. Each keeps R's careful wording word for word.
+- Data-dependent wording gets a site test: plurals, "3 of 24", which empty state shows, and "To pay" against "In credit".
+
+Checks: part 1 below, then the live check after the push.
+
+#### Session B: delete Shiny
+
+B starts only after A2 is live, and pushes only once Ben confirms that Step 0 is done. Its push must change nothing under `site/`, so it starts no Cloudflare build.
+
+Delete:
+
+- `app.R`, `R/_disable_autoload.R`, `manifest.json`, `scripts/write-manifest.R` and `www/`.
+- `R/cards.R`, `R/tables.R` and `R/plots.R`.
+- From `R/format.R`: `APP_COLOURS`, `ordinal`, `format_match_date`, `result_badge`, `listed_scorers` and `estimate_label`.
+- From `R/analysis.R`: `REGRESSION_TABLE_COLUMNS`, `next_fixture()` and `season_record()`, which is already dead.
+- `tests/testthat/test-moved-notice.R`, `test-pickers.R` and `test-tables.R`.
+
+Trim:
+
+- `test-home.R`: the league-strip and ordinal tests, the four `next_fixture()` tests and the two `season_record()` tests.
+- `helper-borulanta.R`: the `library()` calls for shiny, bslib, DT and ggplot2, and the deleted files in its source loop.
+- `scripts/build-site-data.R`'s source list, its comment that cites `app.R`, and the comment in `tests/testthat.R` that names `app.R`.
+- The `.gitignore` comment that cites `scripts/write-manifest.R`.
+- `renv.lock`: remove the 72 packages that only Shiny-side code needs, which issue 5 lists. The diff must hold only removals, the 67 survivors keep their versions, and `renv::status()` must report no issues afterwards.
+
+Stays: everything else in `R/`, `scripts/sync.R`, `scripts/sync-and-commit.sh`, `scripts/publish-site.sh`, `scripts/site-setup.sh`, `data/` and the remaining tests.
+
+Checks: part 2 below. A `grep` for every deleted symbol and file name outside `docs/` must find nothing.
+
+#### Session C: docs and clean-up
+
+C describes what is left and removes the scaffolding of the migration.
+
+- `README.md`: rewrite only the parts tied to Shiny. These are the opening line, Layout, the `R/_disable_autoload.R` note, Deploying (Connect Cloud and the manifest become Cloudflare and the publish), the Shiny paragraphs of The home page, Tables, and "runs at startup" in Data checks. Describe the export, the site and Cloudflare as they are, leave every other section alone, and match the README's own voice. Ben reviews the diff.
+- `.claude/launch.json`: drop the Shiny `borulanta` entry and keep `borulanta-site`.
+- Write four ADRs in `docs/adr/`, in the domain-modeling format. First, a static Astro site replaces Shiny, with no backend. Second, R computes every number, and the site does no statistics or fee arithmetic. Third, R formats values and the site writes the words, with dates formatted in JS. Finally, the data checks at build time: `data_hash` and the export's stop on a repeated match date or attendance row.
+- Delete `docs/static-site-features.md` and this file, and repoint their references: `README.md` line 80 and the comment in `scripts/build-site-data.R`. Git keeps the history.
+- Check that the memory note matches Step 0.
+
+After C's push, from the main folder and with Ben's yes: `git worktree remove ../borulanta-site`, delete the local branches `stage-7`, `static-site` and `ui-refresh-sporty-mobile`, and delete the last two on GitHub with `git push origin --delete static-site ui-refresh-sporty-mobile`. Both are fully merged into `main`.
+
+#### Checks
+
+These come from issue 4. Each is a one-off check recorded in the change log and in the session's issue, not committed as a test.
+
+**Part 1, for A1 and A2: moving the wording leaves the site unchanged.**
+
+1. **The HTML diff.** Build `dist` at the session's base commit and again at its last commit, on the same CSVs. Compare every file after normalising Astro's random island ids and the hashed `/_astro/*` filenames. Anything under `data/` may differ, because the JSON changes shape. Every other byte must match.
+2. **States that only JS renders.** Render each island's component in Node with `svelte/server`, as the site tests already do, for every season file, before and after, and compare the output. This covers the 6 non-default tick combinations and what clicks reveal. No headless browser is added.
+3. **Wording the real data doesn't show.** Repeat both checks on one throwaway copy of `data/`, doctored to trigger the banner and a window with no matches. Keep the copy in the session's scratchpad and never commit it.
+4. **The suites.** The R tests and the site tests pass, including the export tests that `publish-site.sh` runs as its step 4.
+5. **The live site.** Once the push has built, compare the deployed site with a local build of the same commit. Every file matches apart from island ids.
+
+**Part 2, for B: deleting Shiny breaks nothing.** Rerun the export after the deletion. Every JSON file must be byte-identical to its version before the deletion. Then run the R and site test suites. The push changes nothing under `site/`, so it needs no live check.
 
 ## Questions for Ben
 
 Raise each one when it becomes relevant, and do not settle them yourself.
 
 1. **Season picker, at Stage 2.** We keep any-combination ticks in the prototype. Nobody has evidence anyone uses combinations, so a dropdown with an all-time option may be better on a phone. Settled 5 November 2026: any-combination ticks stay.
-2. **Privacy, before Stage 5.** Names and balances are readable in the public repo and history, and would sit in public JSON too. Ben can accept that, or add Cloudflare Access with a private repo. Whether Access covers static assets is unconfirmed, and the Connect Cloud free tier deploys only from public repos, so going private has to wait until Shiny is retired or be arranged separately. Settled 6 November 2026: the site stays public for now, and Ben revisits this at Stage 7, when the repo can go private.
+2. **Privacy, before Stage 5.** Names and balances are readable in the public repo and history, and would sit in public JSON too. Ben can accept that, or add Cloudflare Access with a private repo. Whether Access covers static assets is unconfirmed, and the Connect Cloud free tier deploys only from public repos, so going private has to wait until Shiny is retired or be arranged separately. Settled 6 November 2026: the site stays public for now, and Ben revisits this at Stage 7, when the repo can go private. Settled 18 November 2026: the repo stays public, with no Cloudflare Access.
 3. **Address, at Stage 5.** A default Cloudflare address costs nothing, and a custom domain costs money. Settled 6 November 2026: start on the free workers.dev address, and decide on a domain before the link goes out at cutover. Settled 6 November 2026: Ben keeps https://borulanta.bendahmen.workers.dev/ for cutover and buys no domain.
 
 ## Out of scope until after cutover
@@ -226,9 +351,12 @@ These include writes of any kind, logins, push notifications, RSVP (WhatsApp Eve
 - 6 November 2026: Ben checked the live site and its WhatsApp preview on his phone, and the Node version in the build log, and found all fine. Stage 5 is done.
 - 6 November 2026: Ben settled the open data questions on `main`. His bank details are off the Settle up card in Shiny and on the site, leaving the Monzo link, though they stay in the public repo's history. An own goal, which the league page lists as scorer "Og", counts in the score and everything built on it but for no player, and no longer shows in the banner. The 21 October goal by a guest also called Daniel is listed in `data/uncredited_goals.csv` and credited to nobody, which the sync cannot undo. The site keeps the workers.dev address.
 - 6 November 2026: with Ben's go-ahead, `static-site` was fast-forwarded into `main`, so `main` now holds the site, and `scripts/site-setup.sh` ran in the main folder. `scripts/publish-site.sh` and `scripts/sync-and-commit.sh` now run on `main` only and refuse any other branch, and the publish no longer merges. Shiny shows a notice at the top of every tab: "Borulanta has moved. Use https://borulanta.bendahmen.workers.dev/ from now on. This page closes in early December." It is a link, not a redirect, because Connect Cloud's content settings offer none, only a custom name or, on paid plans, a custom domain. Ben switched Cloudflare's production branch to `main` and set its build watch paths to `site/*` only, so a push that changes only CSVs or R code builds nothing rather than failing the data check.
+- 19 November 2026: Ben signed off the Stage 7 spec, built on the map "Retire the Shiny app" (issue 2). Shiny may go before 4 December, and Ben deletes the Connect Cloud content before any code work. The wording moves into the site in two sessions, before anything is deleted. "Numbers on the page" now says that R formats values and the site writes the words, with dates formatted in JS. The sessions work on a `stage-7` branch in the old worktree so that a weekly publish cannot push half-done work. Once Stage 7 is done, this file and the features list are deleted, and four ADRs keep the lasting decisions. The repo stays public.
 
-## Kickoff prompt
+## Kickoff prompts
 
-Start a new session in `projects/borulanta-site`, and paste this.
+For Stage 7, start each session in `projects/borulanta-site` once the one before it has closed its issue, and paste its prompt. `<X>` is A1, A2, B or C, and `<N>` is that session's issue number: A1 is issue 8, A2 is issue 9, B is issue 10 and C is issue 11.
 
-> Read `docs/static-site-migration.md` in full and then `README.md`. Carry out Stages 0 to 2, working only in this folder on the `static-site` branch. You may commit on `static-site` as you go. Do not push, do not touch `main` and do not run the sync. Stop at the Stage 2 gate and report to me with evidence.
+> Read `docs/static-site-migration.md` in full, then `README.md`, then the resolution comment on issue 5. Work issue `<N>`, which is Stage 7 session `<X>`, and nothing else. Follow "Where the sessions work": you may commit on `stage-7` as you go, but never run the sync or the publish, and ask me before any push. Run the session's checks, record them in the change log and as the issue's resolution comment, and stop with evidence if anything fails or differs.
+
+The Stages 0 to 2 prompt, kept for the record: *Read `docs/static-site-migration.md` in full and then `README.md`. Carry out Stages 0 to 2, working only in this folder on the `static-site` branch. You may commit on `static-site` as you go. Do not push, do not touch `main` and do not run the sync. Stop at the Stage 2 gate and report to me with evidence.*
