@@ -49,15 +49,12 @@ filter_season <- function(data, season_ids) {
   data |> filter(.data$season_id %in% .env$season_ids)
 }
 
-#' When a season actually ran, as a short caption for the picker.
+#' When a season actually ran: its first and last match, or NA for both before any.
 #'
-#' Seasons here are a few months long and irregular, so the useful caption is
-#' the span of matches actually played rather than the nominal boundaries. A
-#' season with no matches yet is described by its start date instead.
+#' Seasons here are a few months long and irregular, so the useful caption is the span
+#' of matches actually played rather than the nominal boundaries. The site writes the
+#' caption from these dates, and from the start date for a season with no matches yet.
 season_span <- function(seasons, matches) {
-  month <- function(date) format(date, "%b")
-  month_year <- function(date) format(date, "%b %Y")
-
   played <- matches |>
     filter(!is.na(season_id)) |>
     group_by(season_id) |>
@@ -65,15 +62,5 @@ season_span <- function(seasons, matches) {
 
   seasons |>
     left_join(played, by = "season_id") |>
-    mutate(
-      span = case_when(
-        is.na(first_match) ~ paste("from", month_year(start_date)),
-        month_year(first_match) == month_year(last_match) ~ month_year(first_match),
-        # Within one calendar year the year only needs saying once.
-        format(first_match, "%Y") == format(last_match, "%Y") ~
-          paste0(month(first_match), "\u2013", month_year(last_match)),
-        TRUE ~ paste(month_year(first_match), "\u2013", month_year(last_match))
-      )
-    ) |>
-    select(season_id, label, start_date, span)
+    select(season_id, label, start_date, first_match, last_match)
 }

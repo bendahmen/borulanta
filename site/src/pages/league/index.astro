@@ -14,10 +14,11 @@ import { moduleToInline } from '../../lib/inline.js';
 import { LEAGUE_CARDS, NO_SCRIPT, PAGES } from '../../lib/labels.js';
 import { leagueColumns, runInColumns } from '../../lib/league-table.js';
 import runIn from '../../lib/run-in.js?raw';
+import { leagueSubtitle } from '../../lib/wording.js';
 
 const page = PAGES.league;
 const cards = LEAGUE_CARDS;
-const standingsCard = { ...cards.standings, subtitle: league.subtitle };
+const standingsCard = { ...cards.standings, subtitle: leagueSubtitle(league.scraped_on) };
 const hasStandings = league.rows.length > 0;
 const hasFixtures = fixtures.fixtures.length > 0;
 

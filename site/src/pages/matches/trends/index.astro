@@ -4,13 +4,14 @@ import SeasonTicksScript from '../../../components/SeasonTicksScript.astro';
 import meta from '../../../generated/meta.json';
 import Matches from '../../../layouts/Matches.astro';
 import { EMPTY_STATES, MATCHES_CARDS, NO_SCRIPT, SEASON_FORM_LABELS } from '../../../lib/labels.js';
+import { pickerSeasons } from '../../../lib/wording.js';
 
 const { season_form, scorers, head_to_head } = MATCHES_CARDS;
 ---
 <Matches view="trends">
   <TrendsPage
     client:load
-    seasons={meta.seasons}
+    seasons={pickerSeasons(meta.seasons)}
     emptyStates={EMPTY_STATES}
     cards={{ season_form, scorers, head_to_head }}
     plotLabels={SEASON_FORM_LABELS}

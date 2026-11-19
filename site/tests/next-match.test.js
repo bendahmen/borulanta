@@ -8,6 +8,7 @@ import { daysBetween, londonDate, upcomingFixtures } from '../src/lib/fixture-da
 import { moduleToInline, scriptSafeJson } from '../src/lib/inline.js';
 import { NEXT_MATCH } from '../src/lib/labels.js';
 import { isStale, nextMatchView, whenWord } from '../src/lib/next-match.js';
+import { fixtureWords, kickoffPitch } from '../src/lib/wording.js';
 
 const wording = {
   tonight: 'Tonight',
@@ -151,15 +152,16 @@ test('a missing opponent or kickoff degrades as the R card does', () => {
 test('a run over the real fixtures.json with a pinned today', (t) => {
   const real = JSON.parse(readFileSync(new URL('../src/generated/fixtures.json', import.meta.url)));
   if (real.fixtures.length === 0) return t.skip('no fixtures on file');
-  const realData = { ...real, stale_days: 8, wording: NEXT_MATCH };
+  const realData = { ...real, fixtures: fixtureWords(real.fixtures), stale_days: 8, wording: NEXT_MATCH };
   const [first] = real.fixtures;
   const last = real.fixtures.at(-1);
 
   const onTheDay = nextMatchView(realData, first.date);
   assert.equal(onTheDay.when, NEXT_MATCH.tonight);
   assert.equal(onTheDay.opponent, first.opponent);
-  assert.equal(onTheDay.dateLabel, first.date_label);
-  assert.equal(onTheDay.kickoffPitch, first.kickoff_pitch);
+  assert.equal(onTheDay.dateLabel, realData.fixtures[0].date_label);
+  assert.equal(onTheDay.kickoffPitch, kickoffPitch(first));
+  assert.match(onTheDay.dateLabel, /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) \d\d [A-Z][a-z]{2} \d{4}$/);
 
   const dayBefore = new Date(`${first.date}T12:00:00Z`);
   dayBefore.setUTCDate(dayBefore.getUTCDate() - 1);

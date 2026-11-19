@@ -37,8 +37,8 @@ test('each sortable column keys on the field it shows, so a sort means what the 
   assert.deepEqual(roster.filter((column) => column.unsorted).map((column) => column.key), ['page']);
 });
 
-test('each column of With and without reads its own field, and the rate is the rounded one', () => {
-  const row = { side: 'word', played: 1, won: 2, drawn: 3, lost: 4, goals_for: 5, goals_against: 6, points_per_match: 7, points_per_match_rounded: 8 };
+test('each column of With and without reads its own field, and the rate is R\'s rounded string', () => {
+  const row = { side: 'word', played: 1, won: 2, drawn: 3, lost: 4, goals_for: 5, goals_against: 6, points_per_match: 7, points_per_match_display: '8' };
   assert.deepEqual(shownBy(withWithout, row), {
     side: 'word',
     played: 1,
@@ -47,7 +47,7 @@ test('each column of With and without reads its own field, and the rate is the r
     lost: 4,
     goals_for: 5,
     goals_against: 6,
-    points_per_match: 8,
+    points_per_match: '8',
   });
 });
 
@@ -82,8 +82,8 @@ test('nothing in a row can write markup', () => {
   assert.ok(!html.includes('<script>'));
 });
 
-const emptySide = { played: 0, won: 0, drawn: 0, lost: 0, goals_for: 0, goals_against: 0, points_per_match: null, points_per_match_rounded: null };
-const fullSide = { played: 7, won: 3, drawn: 1, lost: 3, goals_for: 20, goals_against: 18, points_per_match: 1.4285714, points_per_match_rounded: 1.43 };
+const emptySide = { played: 0, won: 0, drawn: 0, lost: 0, goals_for: 0, goals_against: 0, points_per_match: null, points_per_match_display: null };
+const fullSide = { played: 7, won: 3, drawn: 1, lost: 3, goals_for: 20, goals_against: 18, points_per_match: 1.4285714, points_per_match_display: '1.43' };
 
 test('an empty side shows a blank rate, not 0 or NaN, and its counts stay', () => {
   const [, missed] = withWithoutRows({ present: fullSide, absent: emptySide }, cards.with_without.sides);
@@ -96,7 +96,7 @@ test('an empty side shows a blank rate, not 0 or NaN, and its counts stay', () =
 });
 
 test('a rate of nought shows as nought: it is a rate, not a gap', () => {
-  const [played] = withWithoutRows({ present: { ...fullSide, points_per_match_rounded: 0 }, absent: emptySide }, cards.with_without.sides);
+  const [played] = withWithoutRows({ present: { ...fullSide, points_per_match: 0, points_per_match_display: '0' }, absent: emptySide }, cards.with_without.sides);
   assert.equal(cellHtml(withWithout.at(-1), played), '0');
 });
 

@@ -14,8 +14,9 @@
 //   unsorted gives it no sort button, in a table that has them
 //
 // A row that opens is a <details>, so it needs no script at all. Nothing here formats a
-// number: value() returns R's own strings. A table a page changes in place, by sorting it or
-// picking a row, is src/components/DataTable.svelte, with the same classes and cells.
+// number: value() returns R's own display strings. A table a page changes in place, by
+// sorting it or picking a row, is src/components/DataTable.svelte, with the same classes and
+// cells.
 
 const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 

@@ -4,6 +4,7 @@ import SeasonTicksScript from '../../../components/SeasonTicksScript.astro';
 import meta from '../../../generated/meta.json';
 import Players from '../../../layouts/Players.astro';
 import { EMPTY_STATES, NO_SCRIPT, PAGES } from '../../../lib/labels.js';
+import { pickerSeasons } from '../../../lib/wording.js';
 
 const outcomeLabels = {
   points: 'Points',
@@ -77,7 +78,7 @@ const plotLabels = {
   <h1 class="visually-hidden">{PAGES.effects.title}</h1>
   <EffectsPage
     client:load
-    seasons={meta.seasons}
+    seasons={pickerSeasons(meta.seasons)}
     emptyStates={{ no_matches: EMPTY_STATES.no_matches, no_regression: EMPTY_STATES.no_regression }}
     {outcomeLabels}
     {estimatorControl}

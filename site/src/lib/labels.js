@@ -28,8 +28,8 @@ export const NEXT_MATCH = {
   in_days: 'In {days} days',
 };
 
-// The League tab's two cards. The standings' subtitle depends on the scrape date, so it is in
-// league.json. Home's snippet uses the same headings.
+// The League tab's two cards. The standings' subtitle depends on the scrape date, so it is
+// leagueSubtitle() in wording.js. Home's snippet uses the same headings.
 export const LEAGUE_CARDS = {
   standings: {
     tag: 'League table',
@@ -124,7 +124,7 @@ export const MATCHES_CARDS = {
       { value: 'squad_size', label: 'Squad size' },
     ],
   },
-  // The subtitle is the coverage line, which is in each season file as scorers.note.
+  // The subtitle is the coverage line, scorerCoverage() in wording.js.
   scorers: {
     tag: 'Scorers',
     title: 'Goals and man of the match',
@@ -218,7 +218,7 @@ export const PLAYERS_CARDS = {
       missed: 'Missed',
     },
   },
-  // The subtitle is the note in each player's profile.
+  // The subtitle is differentialNote() in wording.js, for each player's profile.
   with_without: {
     tag: 'With and without',
     title: 'How the side does either way',
@@ -309,8 +309,7 @@ export const NO_SCRIPT = {
   player: 'Your browser is not running scripts, so this player cannot show here.',
 };
 
-// Any page with the season picker. The legend is the word in season_picker() in R/cards.R,
-// which writes it inline and does not export it. The rest is new copy for a failed fetch.
+// Any page with the season picker: its legend, and the words for a failed fetch.
 export const SEASON_SCOPE = {
   legend: 'Seasons',
   loadFailed: 'These seasons did not load.',
@@ -338,8 +337,8 @@ export const FEES = {
   noPayments: 'No payments recorded yet.',
 };
 
-// New copy for Matches and the match pages. match_lineup_table() sets no empty wording of
-// its own, and a synced match has no lineup until the attendance is typed in.
+// Words on Matches and the match pages beyond the cards' own. A synced match has no lineup
+// until the attendance is typed in.
 export const MATCHES = {
   showAll: 'Show all {count}',
   showFewer: 'Show the first {count}',
@@ -364,7 +363,7 @@ export const PLAYERS = {
   playerPage: 'Player page',
   playerPageFor: (player) => `Player page for ${player}`,
   // A synced match has no attendance until it is typed in, so a window can have matches and
-  // nobody in them. attendance_table() sets no empty wording of its own.
+  // nobody in them.
   noRoster: 'Nobody has a turnout on file for these seasons yet.',
   didNotPlay: (player) => `${player} did not turn out in the selected seasons.`,
   backToRoster: 'Roster',

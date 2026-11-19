@@ -3,13 +3,15 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import vm from 'node:vm';
 
-import { balanceColumns, balanceRowClass, balanceState, feeBreakdown } from '../src/lib/fee-rows.js';
+import { balanceColumns, balanceRowClass, balanceState, feeBreakdown, feeFileOverview } from '../src/lib/fee-rows.js';
 import { chargeColumns, chargesHtml, feeFile, FIRST_CHARGES, moreChargesLabel, paymentColumns, paymentsHtml } from '../src/lib/fee-history.js';
 import { moduleToInline, scriptSafeJson } from '../src/lib/inline.js';
 import { EVERYONE_CARD, FEE_HISTORY_CARDS as cards, FEE_STATUS, FEES } from '../src/lib/labels.js';
 
 const read = (path) => JSON.parse(readFileSync(new URL(path, import.meta.url)));
 const fees = read('../src/generated/fees.json');
+// What Fees > You fetches: each player's overview as src/pages/data/fees/[slug].json.js writes it.
+const feeFiles = fees.overviews.map(feeFileOverview);
 const count = (html, pattern) => (html.match(pattern) ?? []).length;
 
 const words = FEES;
@@ -30,14 +32,26 @@ test('Everyone says in words what the row says in colour, and only where it says
   assert.equal(player.cue({ balance: 0 }), '');
 });
 
-test('Everyone keeps all five of balance_table()s columns, and a phone keeps Player and Balance', () => {
+test('Everyone keeps all five columns, and a phone keeps Player and Balance', () => {
   const columns = balanceColumns(EVERYONE_CARD.headings, FEE_STATUS);
   assert.deepEqual(columns.map((column) => column.label), ['Player', 'Charges', 'Payments', 'Last payment', 'Balance']);
   assert.deepEqual(columns.filter((column) => !column.folds).map((column) => column.label), ['Player', 'Balance']);
   const [row] = fees.balances;
-  assert.deepEqual(columns.map((column) => column.value(row)), [
-    row.player, row.charges_display, row.payments_display, row.last_payment_display, row.balance_display,
-  ]);
+  const values = columns.map((column) => column.value(row));
+  assert.deepEqual(values.toSpliced(3, 1), [row.player, row.charges_display, row.payments_display, row.balance_display]);
+  assert.equal(columns[3].value({ last_payment: '2026-09-02' }), '02 Sep 2026');
+  // Somebody who has never paid.
+  assert.equal(columns[3].value({ last_payment: null }), '—');
+});
+
+test('a player\'s file writes out each date beside it and changes nothing else', () => {
+  const overview = { player: 'A', match_charges: [{ date: '2026-09-09', charge: 1 }], payment_history: [{ date: '2026-10-01', amount: 2 }] };
+  assert.deepEqual(feeFileOverview(overview), {
+    player: 'A',
+    match_charges: [{ date: '2026-09-09', date_short: '09 Sep 2026', charge: 1 }],
+    payment_history: [{ date: '2026-10-01', date_short: '01 Oct 2026', amount: 2 }],
+  });
+  assert.deepEqual(overview.match_charges[0], { date: '2026-09-09', charge: 1 });
 });
 
 test('the charges keep all seven columns in their order, and a phone keeps three', () => {
@@ -46,7 +60,7 @@ test('the charges keep all seven columns in their order, and a phone keeps three
     'Date', 'Season', 'Result', 'Played?', 'Squad size', 'Charge', 'Explanation',
   ]);
   assert.deepEqual(columns.filter((column) => !column.folds).map((column) => column.label), ['Date', 'Result', 'Charge']);
-  const row = fees.overviews[0].match_charges[0];
+  const row = feeFiles[0].match_charges[0];
   const values = columns.map((column) => column.value(row));
   assert.deepEqual(values, [
     row.date_short, row.season, row.result, row.played ? 'Yes' : 'No', row.squad_size, row.charge_display, row.explanation,
@@ -63,7 +77,7 @@ test('payments show Date and Payment, as R writes them', () => {
 });
 
 test('the export keeps both tables newest first, and the page does not reorder them', () => {
-  for (const overview of fees.overviews) {
+  for (const overview of feeFiles) {
     const dates = overview.match_charges.map((row) => row.date);
     assert.deepEqual(dates, [...dates].sort().reverse(), overview.player);
     const paid = overview.payment_history.map((row) => row.date);
@@ -75,7 +89,7 @@ test('the export keeps both tables newest first, and the page does not reorder t
 });
 
 test('the first twelve charges show and the rest wait for the button, as the pager had it', () => {
-  const overview = fees.overviews[0];
+  const overview = feeFiles[0];
   const html = chargesHtml(overview, cards.charges, words);
   assert.equal(FIRST_CHARGES, 12);
   assert.equal(count(html, /data-later hidden/g), Math.max(overview.match_charges.length - 12, 0));
@@ -92,7 +106,7 @@ test('nothing to show says so, in the empty-state words for payments', () => {
 });
 
 test('a real payments table holds every payment, to the string', () => {
-  for (const overview of fees.overviews) {
+  for (const overview of feeFiles) {
     const html = paymentsHtml(overview, cards.payments, words);
     if (overview.payment_history.length === 0) continue;
     assert.equal(count(html, /class="dt-row"/g), overview.payment_history.length);

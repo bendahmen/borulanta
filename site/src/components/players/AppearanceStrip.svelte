@@ -1,5 +1,5 @@
 <script>
-  // Which matches a player played, as appearance_timeline_plot() draws them. A filled square
+  // Which matches a player played, oldest first. A filled square
   // for played and a hollow one for missed, so colour is not what says which. Plain HTML rather
   // than Plot, which costs 93 KB and would be the only chart on the page.
   //

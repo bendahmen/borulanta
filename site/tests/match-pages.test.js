@@ -3,7 +3,7 @@ import { test } from 'node:test';
 
 import { matchDescription, matchPages, matchTitle } from '../src/lib/match-pages.js';
 
-const match = (date, season_id = 's3', extra = {}) => ({ date, season_id, date_label: `Wed ${date}`, result: '2-3', opponent: 'The Dirty Boys', meta_line: 'line', details: [{ label: 'Squad', value: '9 players' }], ...extra });
+const match = (date, season_id = 's3', extra = {}) => ({ date, season_id, result: '2-3', points: 0, opponent: 'The Dirty Boys', season_label: 'Season 3', squad_size: 9, scorers: [], man_of_the_match: null, ...extra });
 const season = (...dates) => ({ match_details: dates.map((date) => ({ date, lineup: [{ player: `P${date}` }] })) });
 const files = { s3: season('2026-10-28', '2026-10-21', '2026-10-14'), s1: season('2025-09-10') };
 const read = (id) => files[id];
@@ -65,18 +65,11 @@ test('a name that would take a page of the site fails the build', () => {
 
 test('the title says who played, or when where the opponent is not on file', () => {
   assert.equal(matchTitle(match('2026-10-28'), 'Borulanta'), 'Borulanta 2-3 The Dirty Boys');
-  assert.equal(matchTitle(match('2025-09-10', 's1', { opponent: null, date_label: 'Wed 10 Sep 2025' }), 'Borulanta'), 'Borulanta 2-3, Wed 10 Sep 2025');
+  assert.equal(matchTitle(match('2025-09-10', 's1', { opponent: null }), 'Borulanta'), 'Borulanta 2-3, Wed 10 Sep 2025');
 });
 
-test('the description is R line and the squad, and it names nobody', () => {
-  const played = match('2026-10-28', 's3', {
-    meta_line: 'Wed 28 Oct 2026 · v The Dirty Boys · Season 3',
-    details: [
-      { label: 'Squad', value: '9 players' },
-      { label: 'Scorers', value: 'Emiliano (2)' },
-      { label: 'Man of the match', value: 'Emiliano' },
-    ],
-  });
+test('the description is the card\'s line and the squad, and it names nobody', () => {
+  const played = match('2026-10-28', 's3', { scorers: [{ player: 'Emiliano', goals: 2 }], man_of_the_match: 'Emiliano' });
   assert.equal(matchDescription(played), 'Wed 28 Oct 2026 · v The Dirty Boys · Season 3 · 9 players');
-  assert.equal(matchDescription(match('2026-10-28', 's3', { details: [] })), 'line');
+  assert.equal(matchDescription(match('2025-09-10', 's1', { opponent: null, squad_size: 0 })), 'Wed 10 Sep 2025 · Season 3 · 0 players');
 });

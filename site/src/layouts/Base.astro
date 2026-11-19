@@ -5,12 +5,14 @@ import DataProblems from '../components/DataProblems.astro';
 import SiteNav from '../components/SiteNav.astro';
 import meta from '../generated/meta.json';
 import { SITE, SKIP_LINK } from '../lib/labels.js';
+import { freshnessNote } from '../lib/wording.js';
 
 const { title, description, current, strapline = false } = Astro.props;
 // A title that already leads with the name, as Home's and a match page's do, needs no second one.
 const pageTitle = title.startsWith(SITE.name) ? title : `${title} · ${SITE.name}`;
 // The page's own title is its h1 everywhere but Home.
 const BrandName = current === 'home' ? 'h1' : 'span';
+const freshness = freshnessNote(meta.freshness);
 ---
 <!doctype html>
 <html lang="en-GB">
@@ -50,10 +52,10 @@ const BrandName = current === 'home' ? 'h1' : 'span';
         <div class="masthead-sub">
           {strapline && <p class="strapline">{SITE.strapline}</p>}
           {
-            meta.freshness && (
+            freshness && (
               <p class="freshness">
-                <span class="freshness-full">{meta.freshness.full}</span>
-                <span class="freshness-short">{meta.freshness.short}</span>
+                <span class="freshness-full">{freshness.full}</span>
+                <span class="freshness-short">{freshness.short}</span>
               </p>
             )
           }
@@ -194,7 +196,7 @@ const BrandName = current === 'home' ? 'h1' : 'span';
   }
 
   /* One is display:none, so it leaves the accessibility tree too and nothing is
-     read out twice, as freshness_note() in R/cards.R. */
+     read out twice. */
   .freshness-full {
     display: none;
   }

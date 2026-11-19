@@ -1,23 +1,26 @@
 ---
-// The result of one match: the score and badge, R's line under them, and the details the
-// card has, each dropped where the export dropped it. On Home and on each match's own page.
+// The result of one match: the score and badge, the line under them, and the details we hold
+// about it, each dropped where we hold nothing. On Home and on each match's own page.
 // `heading` makes the score the page's h1, read in full, as "Borulanta 2-3 The Dirty Boys".
 import { badgeClass } from '../lib/match-tables.js';
+import { matchDetails, matchMetaLine, resultBadge } from '../lib/wording.js';
 
 const { played, heading = null } = Astro.props;
 const Score = heading ? 'h1' : 'p';
+const badge = resultBadge(played.points);
+const details = matchDetails(played);
 ---
 <Score class="scoreline">
   {heading && <span class="visually-hidden">{heading.before} </span>}
   <span class="score">{played.result}</span>
   {heading?.after && <span class="visually-hidden"> {heading.after} </span>}
-  <span class={badgeClass(played.badge)}>{played.badge}</span>
+  <span class={badgeClass(badge)}>{badge}</span>
 </Score>
-<p class="meta">{played.meta_line}</p>
+<p class="meta">{matchMetaLine(played)}</p>
 {
-  played.details.length > 0 && (
+  details.length > 0 && (
     <dl class="details">
-      {played.details.map((detail) => (
+      {details.map((detail) => (
         <div>
           <dt>{detail.label}</dt>
           <dd>{detail.value}</dd>

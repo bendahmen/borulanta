@@ -1,7 +1,7 @@
 # The export is the only road from R's numbers to the static site, and the site
 # has no way to notice a wrong one. So every field here is held against the
-# function it came from, recomputed the way app.R computes it rather than read
-# back through the export's own helpers, on the real files. expect_rows() and the
+# function it came from, recomputed from R/ rather than read back through the
+# export's own helpers, on the real files. expect_rows() and the
 # names() checks fail on any exported field that has no source to be held against.
 #
 # Nothing below hard-codes a count from the data, because it runs again every
@@ -43,9 +43,9 @@ data_after <- snapshot_folder(here::here("data"))
 # on that order at this tolerance.
 withr::local_locale(EXPORT_LOCALE)
 
-# What Shiny loads: from the project root, because archived_charges() reads
+# What the app loads: from the project root, because archived_charges() reads
 # data/archive relative to the working directory.
-shiny_data <- withr::with_dir(here::here(), suppressWarnings(load_app_data()))
+app_data <- withr::with_dir(here::here(), suppressWarnings(load_app_data()))
 
 read_exported <- function(...) {
   jsonlite::fromJSON(file.path(run_one, "site", ...), simplifyVector = FALSE)
@@ -54,7 +54,7 @@ read_exported <- function(...) {
 read_generated <- function(name) read_exported("src", "generated", paste0(name, ".json"))
 
 season_subset_ids <- function() {
-  ids <- sort(shiny_data$seasons$season_id, method = "radix")
+  ids <- sort(app_data$seasons$season_id, method = "radix")
   unlist(
     lapply(seq_along(ids), function(size) combn(ids, size, simplify = FALSE)),
     recursive = FALSE
@@ -68,16 +68,16 @@ read_subset <- function(ids) {
 # As app.R's scoped().
 scoped_like_app <- function(ids) {
   list(
-    matches = filter_season(shiny_data$matches, ids),
-    attendance = filter_season(shiny_data$attendance, ids),
-    events = filter_season(shiny_data$events, ids)
+    matches = filter_season(app_data$matches, ids),
+    attendance = filter_season(app_data$attendance, ids),
+    events = filter_season(app_data$events, ids)
   )
 }
 
 expected_results <- function(ids, estimator) {
   scope <- scoped_like_app(ids)
   suppressWarnings(player_regression_results(
-    scope$attendance, scope$matches, shiny_data$opponent_strength, estimator = estimator
+    scope$attendance, scope$matches, app_data$opponent_strength, estimator = estimator
   ))
 }
 
@@ -112,21 +112,6 @@ run_rscript <- function(args, dir, timeout = CHILD_TIMEOUT_SECONDS) {
 }
 
 fee_strings_of <- function(amounts) unname(vapply(amounts, format_fee_amount, character(1)))
-
-# Wording read off the tags another way than tag_text() does, so that the two check
-# each other. Each tag selected has one child, which is the string.
-query_tags <- function(tag, selector) {
-  unname(htmltools::tagQuery(div(tag))$find(selector)$selectedTags())
-}
-
-leaf_texts <- function(tag, selector) {
-  map_chr(query_tags(tag, selector), ~ as.character(.x$children[[1]]))
-}
-
-leaf_text_or_na <- function(tag, selector) {
-  found <- leaf_texts(tag, selector)
-  if (length(found) == 0) NA_character_ else found[[1]]
-}
 
 # Per element and relative. An overall tolerance would pass a 6e-53 estimate
 # exported as 0, and all.equal() scales by the mean of the column.
@@ -247,7 +232,7 @@ read_from <- function(out, ...) jsonlite::fromJSON(file.path(out, ...), simplify
 # Files ----
 
 test_that("every combination of seasons has a file and nothing else does", {
-  ids <- shiny_data$seasons$season_id
+  ids <- app_data$seasons$season_id
   expected <- paste0(map_chr(season_subset_ids(), paste, collapse = "-"), ".json")
 
   # 7 today.
@@ -349,10 +334,10 @@ test_that("a subset filters every table the way app.R's scoped() does", {
   # filter events to the covered dates themselves, so most windows would come out
   # the same with events left unscoped.
   for (ids in season_subset_ids()) {
-    scope <- scope_to_seasons(shiny_data, ids)
+    scope <- scope_to_seasons(app_data, ids)
     for (table in c("matches", "attendance", "events", "payments", "charges")) {
       expect_true(all(scope[[table]]$season_id %in% ids), label = table)
-      expect_equal(nrow(scope[[table]]), sum(shiny_data[[table]]$season_id %in% ids), label = table)
+      expect_equal(nrow(scope[[table]]), sum(app_data[[table]]$season_id %in% ids), label = table)
     }
   }
 })
@@ -379,11 +364,10 @@ test_that("each subset holds both estimators and all four outcomes", {
       block <- exported$regression[[estimator]]
 
       expect_setequal(names(block), c(
-        "has_regression", "note", "explanation", "opponent_coverage", "players"
+        "has_regression", "min_appearances", "opponent_coverage", "players"
       ))
       expect_equal(block$has_regression, nrow(results) > 0, label = label)
-      expect_equal(block$note, estimate_label(estimator), label = label)
-      expect_type(block$explanation, "list")
+      expect_equal(block$min_appearances, MIN_REGRESSION_APPEARANCES, label = label)
       expect_length(block$players, n_distinct(results$player))
       for (row in block$players) {
         expect_setequal(names(row), c("player", "appearances", "outcomes"))
@@ -409,7 +393,6 @@ test_that("a window with no fit is empty rather than zero, under that estimator 
         block <- exported$regression[[estimator]]
         expect_false(block$has_regression)
         expect_length(block$players, 0)
-        expect_length(block$explanation, 0)
       }
     }
   }
@@ -452,37 +435,29 @@ test_that("rows and their display strings are player_regression_table()", {
       for (this_outcome in REGRESSION_OUTCOMES) {
         expect_equal(
           vapply(rows, function(row) row$outcomes[[this_outcome]]$display, character(1)),
-          shown[[OUTCOME_LABELS[[this_outcome]]]]
+          shown[[this_outcome]]
         )
       }
     }
   }
 })
 
-test_that("the explanation and the opponent coverage come from the cards", {
+test_that("the opponent coverage is opponent_coverage()", {
   for (ids in season_subset_ids()) {
     exported <- read_subset(ids)
     scope <- scoped_like_app(ids)
-    coverage <- opponent_coverage(scope$matches, shiny_data$opponent_strength)
+    coverage <- opponent_coverage(scope$matches, app_data$opponent_strength)
     for (estimator in c("ols", "ridge")) {
-      results <- expected_results(ids, estimator)
       block <- exported$regression[[estimator]]
       expect_equal(block$opponent_coverage$observed, coverage$observed)
       expect_equal(block$opponent_coverage$total, coverage$total)
-      if (nrow(results) == 0) next
-
-      card <- regression_explanation_ui(
-        results, MIN_REGRESSION_APPEARANCES, coverage, estimator
-      )
-      paragraphs <- htmltools::tagQuery(card)$find("p")$selectedTags()
-      expect_equal(unlist(block$explanation), unname(map_chr(paragraphs, ~ .x$children[[1]])))
     }
   }
 })
 
 # Everything else the season picker scopes ----
 
-test_that("matches come newest first with R's strings", {
+test_that("matches come newest first", {
   for (ids in season_subset_ids()) {
     matches <- scoped_like_app(ids)$matches
     rows <- read_subset(ids)$matches
@@ -490,19 +465,14 @@ test_that("matches come newest first with R's strings", {
 
     expect_rows(rows, tibble(
       date = format(expected$date, "%Y-%m-%d"),
-      date_label = format_match_date(expected$date),
-      date_short = match_table(expected)$x$data$Date,
       season_id = expected$season_id,
       opponent = expected$opponent,
       result = expected$result,
       goals_for = expected$goals_for,
       goals_against = expected$goals_against,
       goal_difference = expected$goal_difference,
-      points = expected$points,
-      badge = case_when(expected$points == 3 ~ "WIN", expected$points == 1 ~ "DRAW", TRUE ~ "LOSS")
+      points = expected$points
     ), paste(ids, collapse = "-"))
-    # English whatever the locale the run was started in.
-    expect_true(all(grepl("^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) ", strings_of(rows, "date_label"))))
   }
 })
 
@@ -529,12 +499,8 @@ test_that("season form and lineups equal the functions they come from", {
     )
     for (detail in exported$match_details) {
       expected <- match_detail_data(form, scope$attendance, detail$date)
-      expect_setequal(names(detail), c("date", "summary_note", "lineup"))
+      expect_setequal(names(detail), c("date", "lineup"))
       expect_rows(detail$lineup, expected$lineup, paste(detail$date, "lineup"))
-      expect_equal(
-        detail$summary_note,
-        leaf_texts(match_summary_ui(expected$match), ".match-detail-note")
-      )
     }
   }
 })
@@ -546,10 +512,10 @@ test_that("scorers, opponents and the roster equal the functions they come from"
 
     scorers <- scorer_table(scope$events, scope$attendance, scope$matches)
     coverage <- event_coverage(scope$matches)
-    expect_setequal(names(exported$scorers), c("rows", "coverage", "note"))
+    expect_setequal(names(exported$scorers), c("rows", "coverage"))
     expect_rows(
       exported$scorers$rows,
-      scorers |> mutate(goals_per_appearance_rounded = round(goals_per_appearance, 2)),
+      scorers |> mutate(goals_per_appearance_display = format_rate(goals_per_appearance)),
       "scorers"
     )
     expect_setequal(names(exported$scorers$coverage), c("observed", "total", "dates"))
@@ -559,12 +525,11 @@ test_that("scorers, opponents and the roster equal the functions they come from"
       as.character(unlist(exported$scorers$coverage$dates)),
       format(sort(coverage$dates, decreasing = TRUE), "%Y-%m-%d")
     )
-    expect_equal(exported$scorers$note, leaf_texts(scorer_coverage_ui(coverage), "p"))
 
     expect_rows(
       exported$opponent_record,
       opponent_record(scope$matches) |>
-        mutate(points_per_match_rounded = round(points_per_match, 2)),
+        mutate(points_per_match_display = format_rate(points_per_match)),
       "opponent record"
     )
 
@@ -576,7 +541,7 @@ test_that("scorers, opponents and the roster equal the functions they come from"
   }
 })
 
-test_that("every roster player has a profile, with its wording and its timeline", {
+test_that("every roster player has a profile, with its display strings and its timeline", {
   for (ids in season_subset_ids()) {
     scope <- scoped_like_app(ids)
     exported <- read_subset(ids)
@@ -591,23 +556,17 @@ test_that("every roster player has a profile, with its wording and its timeline"
       profile <- player_profile(row$player, scope$attendance, scope$matches, scope$events)
       label <- paste(c(ids, row$player), collapse = " ")
 
-      expect_setequal(names(row), c(
-        "player", "matches", "appearances", "attendance_rate", "last_appearance", "present",
-        "absent", "differential", "differential_note", "goals", "mom", "covered", "headline",
-        "timeline"
-      ))
       expect_rows(
-        list(row[c(
-          "player", "matches", "appearances", "attendance_rate", "last_appearance",
-          "differential", "goals", "mom", "covered"
-        )]),
+        list(row[setdiff(names(row), c("present", "absent", "timeline"))]),
         tibble(
           player = profile$player,
           matches = profile$matches,
           appearances = profile$appearances,
           attendance_rate = profile$attendance_rate,
+          turnout_display = format_turnout(profile$attendance_rate),
           last_appearance = format(profile$last_appearance, "%Y-%m-%d"),
           differential = profile$differential,
+          differential_display = format_gap(profile$differential),
           goals = profile$goals,
           mom = profile$mom,
           covered = profile$covered
@@ -616,25 +575,14 @@ test_that("every roster player has a profile, with its wording and its timeline"
       )
       expect_rows(
         list(row$present),
-        profile$present |> mutate(points_per_match_rounded = round(points_per_match, 2)),
+        profile$present |> mutate(points_per_match_display = format_rate(points_per_match)),
         paste(label, "present")
       )
       expect_rows(
         list(row$absent),
-        profile$absent |> mutate(points_per_match_rounded = round(points_per_match, 2)),
+        profile$absent |> mutate(points_per_match_display = format_rate(points_per_match)),
         paste(label, "absent")
       )
-      expect_equal(
-        row$differential_note, as.character(differential_note(profile)$children[[1]]),
-        label = label
-      )
-
-      headline <- player_headline_ui(profile)
-      expect_rows(row$headline, tibble(
-        label = leaf_texts(headline, ".match-detail-label"),
-        value = leaf_texts(headline, ".match-detail-value"),
-        note = leaf_texts(headline, ".match-detail-note")
-      ), paste(label, "headline"))
       expect_rows(
         row$timeline, profile$timeline |> mutate(date = format(date, "%Y-%m-%d")),
         paste(label, "timeline")
@@ -647,11 +595,11 @@ test_that("every roster player has a profile, with its wording and its timeline"
 
 test_that("every balance equals all_player_balances() to the penny", {
   fees <- read_generated("fees")
-  expected <- all_player_balances(shiny_data$charges, shiny_data$payments)
+  expected <- all_player_balances(app_data$charges, app_data$payments)
 
   # Closed seasons are read from the archive relative to the working directory,
   # and this test does not run from the project root. This is what would go.
-  expect_gt(sum(shiny_data$charges$season_id %in% c("s1", "s2")), 0)
+  expect_gt(sum(app_data$charges$season_id %in% c("s1", "s2")), 0)
 
   expect_setequal(names(fees), c("fee_players", "balances", "totals", "overviews"))
   expect_equal(strings_of(fees$balances, "player"), expected$player)
@@ -666,7 +614,6 @@ test_that("every balance equals all_player_balances() to the penny", {
     payments = expected$payments,
     payments_display = fee_strings_of(expected$payments),
     last_payment = format(expected$last_payment, "%Y-%m-%d"),
-    last_payment_display = balance_table(expected)$x$data[["Last payment"]],
     balance = expected$balance,
     balance_display = fee_strings_of(expected$balance)
   ), "balances")
@@ -675,13 +622,13 @@ test_that("every balance equals all_player_balances() to the penny", {
 # The Everyone table and the Home picker read the first and Shiny's card reads the second.
 # One rounds before subtracting and the other after, so a half-penny can part them.
 test_that("all_player_balances() and player_fee_overview() give every player one balance", {
-  balances <- all_player_balances(shiny_data$charges, shiny_data$payments)
-  expect_equal(fee_strings_of(balances$balance), map_chr(balances$player, ~ format_fee_amount(player_fee_overview(.x, shiny_data$charges, shiny_data$payments, shiny_data$seasons)$balance)))
+  balances <- all_player_balances(app_data$charges, app_data$payments)
+  expect_equal(fee_strings_of(balances$balance), map_chr(balances$player, ~ format_fee_amount(player_fee_overview(.x, app_data$charges, app_data$payments, app_data$seasons)$balance)))
 })
 
 test_that("the totals equal balance_totals()", {
   totals <- read_generated("fees")$totals
-  expected <- balance_totals(all_player_balances(shiny_data$charges, shiny_data$payments))
+  expected <- balance_totals(all_player_balances(app_data$charges, app_data$payments))
 
   expect_same_money(totals$outstanding, expected$outstanding, "outstanding")
   expect_same_money(totals$credit, expected$credit, "credit")
@@ -700,14 +647,14 @@ test_that("the totals equal balance_totals()", {
 test_that("each player's charges and payments equal player_fee_overview()", {
   fees <- read_generated("fees")
   everyone <- union(
-    shiny_data$rosters |> pull(player),
-    all_player_balances(shiny_data$charges, shiny_data$payments)$player
+    app_data$rosters |> pull(player),
+    all_player_balances(app_data$charges, app_data$payments)$player
   )
   expect_equal(strings_of(fees$overviews, "player"), sort(everyone, method = "radix"))
 
   for (row in fees$overviews) {
     expected <- player_fee_overview(
-      row$player, shiny_data$charges, shiny_data$payments, shiny_data$seasons
+      row$player, app_data$charges, app_data$payments, app_data$seasons
     )
     charges <- expected$match_charges
     payments <- expected$payment_history
@@ -725,7 +672,6 @@ test_that("each player's charges and payments equal player_fee_overview()", {
 
     expect_rows(row$match_charges, tibble(
       date = format(charges$date, "%Y-%m-%d"),
-      date_short = match_charge_table(charges)$x$data$Date,
       season = charges$season,
       result = charges$result,
       played = charges$played,
@@ -736,7 +682,6 @@ test_that("each player's charges and payments equal player_fee_overview()", {
     ), paste(row$player, "charges"))
     expect_rows(row$payment_history, tibble(
       date = format(payments$date, "%Y-%m-%d"),
-      date_short = payment_history_table(payments)$x$data$Date,
       amount = payments$amount,
       amount_display = fee_strings_of(payments$amount)
     ), paste(row$player, "payments"))
@@ -745,7 +690,7 @@ test_that("each player's charges and payments equal player_fee_overview()", {
 
 test_that("fee_players is what app.R offers", {
   fees <- read_generated("fees")
-  expected <- shiny_data$rosters |> pull(player) |> unique() |> sort()
+  expected <- app_data$rosters |> pull(player) |> unique() |> sort()
   expect_equal(unlist(fees$fee_players), expected)
 })
 
@@ -781,11 +726,9 @@ test_that("the fixtures hold every unplayed fixture, whatever today is", {
   expect_equal(rows[[2]]$opponent, "Rovers")
   expect_equal(rows[[2]]$kickoff, "20:00")
   expect_equal(rows[[2]]$pitch, "Pitch 1")
-  expect_equal(rows[[2]]$kickoff_pitch, "20:00 \u00b7 Pitch 1")
   expect_equal(rows[[2]]$position, 1)
   expect_equal(rows[[2]]$goal_difference, 5)
   expect_equal(rows[[2]]$points, 10)
-  expect_equal(rows[[2]]$date_label, format_match_date(as.Date("2031-03-05")))
 })
 
 test_that("a fixture dated on a recorded match is left out", {
@@ -804,36 +747,30 @@ test_that("a fixture the standings do not carry keeps its row, with those column
   expect_null(long_gone$position)
   expect_equal(long_gone$kickoff, "19:00")
   expect_null(unnamed$opponent)
-  expect_null(unnamed$kickoff_pitch)
+  expect_null(unnamed$kickoff)
+  expect_null(unnamed$pitch)
 })
 
 test_that("the real fixtures equal run_in() from the far past", {
   rows <- read_generated("fixtures")$fixtures
   expected <- run_in(
-    shiny_data$fixtures, shiny_data$matches, shiny_data$league_table,
+    app_data$fixtures, app_data$matches, app_data$league_table,
     today = as.Date("1900-01-01")
   ) |>
     left_join(
-      shiny_data$fixtures |> select(date, opponent, kickoff, pitch),
+      app_data$fixtures |> select(date, opponent, kickoff, pitch),
       by = c("date", "opponent")
     ) |>
     arrange(date, opponent)
   # With today's date it can only be fewer.
-  live <- run_in(shiny_data$fixtures, shiny_data$matches, shiny_data$league_table)
+  live <- run_in(app_data$fixtures, app_data$matches, app_data$league_table)
   expect_gte(length(rows), nrow(live))
 
   expect_rows(rows, tibble(
     date = format(expected$date, "%Y-%m-%d"),
-    date_label = format_match_date(expected$date),
-    date_short = run_in_table(expected)$x$data$Date,
     opponent = expected$opponent,
     kickoff = expected$kickoff,
     pitch = expected$pitch,
-    # The page does not always give these, and the line is dropped when it gives neither.
-    kickoff_pitch = map_chr(
-      seq_len(nrow(expected)),
-      ~ leaf_text_or_na(kickoff_pitch_line(expected[.x, ]), ".home-card-meta")
-    ),
     position = expected$position,
     played = expected$played,
     goal_difference = expected$goal_difference,
@@ -841,116 +778,99 @@ test_that("the real fixtures equal run_in() from the far past", {
   ), "fixtures")
 })
 
-test_that("the stale note is written once, for the browser to show when it applies", {
+test_that("the fixtures carry the scrape date the browser judges staleness by", {
   exported <- read_generated("fixtures")
 
-  expect_setequal(names(exported), c("have_fixtures", "scraped_on", "stale_note", "fixtures"))
-  expect_equal(exported$have_fixtures, nrow(shiny_data$fixtures) > 0)
-  expect_equal(exported$scraped_on, format(max(shiny_data$league_table$scraped_on), "%Y-%m-%d"))
+  expect_setequal(names(exported), c("have_fixtures", "scraped_on", "fixtures"))
+  expect_equal(exported$have_fixtures, nrow(app_data$fixtures) > 0)
+  expect_equal(exported$scraped_on, format(max(app_data$league_table$scraped_on), "%Y-%m-%d"))
 
-  scraped_on <- shiny_data$league_table$scraped_on
-  expect_equal(
-    exported$stale_note,
-    tag_text(
-      stale_fixture_note(scraped_on, max(scraped_on) + STALE_FIXTURES_DAYS + 1L),
-      "home-stale"
-    )
-  )
-  # Not on the far side of the threshold, which is why the browser has to choose.
-  expect_null(stale_fixture_note(scraped_on, max(scraped_on) + STALE_FIXTURES_DAYS))
+  none <- crafted_fixture_data()
+  none$league_table <- none$league_table[0, ]
+  expect_null(round_trip(export_fixtures(none))$scraped_on)
 })
 
 # Home, league and meta ----
 
-# The card drops what a match does not have, so each of these can be absent, and a
-# week with no man of the match is an ordinary week.
-expect_home_is_the_card <- function(home, data) {
+# The card drops what a match does not have, so the site has to be told what is
+# missing: a week with no man of the match, or no goals on file, is an ordinary week.
+expect_home_is_the_summary <- function(home, data) {
   summary <- last_match_summary(data$matches, data$attendance, data$events)
   played <- summary$match
-  card <- last_match_card_ui(summary, data$seasons)
   last <- home$last_match
 
   expect_setequal(names(last), c(
-    "date", "date_label", "result", "points", "badge", "opponent", "season_label", "meta_line",
-    "squad_size", "scorers", "man_of_the_match", "details"
+    "date", "result", "points", "opponent", "season_label", "squad_size", "scorers",
+    "man_of_the_match"
   ))
   expect_equal(last$date, format(played$date, "%Y-%m-%d"))
-  expect_equal(last$date_label, format_match_date(played$date))
   expect_equal(last$result, played$result)
   expect_equal(last$points, played$points)
-  expect_equal(
-    last$badge,
-    case_when(played$points == 3 ~ "WIN", played$points == 1 ~ "DRAW", TRUE ~ "LOSS")
-  )
   expect_equal(last$opponent, if (!is.na(played$opponent)) played$opponent)
   expect_equal(
     last$season_label,
     data$seasons$label[match(played$season_id, data$seasons$season_id)]
   )
-  expect_equal(last$meta_line, leaf_texts(card, ".home-card-meta"))
   expect_equal(last$squad_size, summary$squad_size)
-  expect_equal(last$scorers, if (nrow(summary$scorers) > 0) listed_scorers(summary$scorers))
+  expect_rows(last$scorers, summary$scorers, "last match scorers")
   expect_equal(last$man_of_the_match, if (!is.na(summary$mom)) summary$mom)
-
-  lines <- query_tags(card, ".home-detail")
-  expect_rows(last$details, tibble(
-    label = map_chr(lines, ~ .x$children[[1]]$children[[1]]),
-    value = map_chr(lines, ~ as.character(.x$children[[2]]$children[[1]]))
-  ), "last match details")
 }
 
-test_that("home is what the cards show", {
+test_that("home is the last match and our row of the table", {
   home <- read_generated("home")
   expect_setequal(names(home), c("last_match", "league_position"))
-  expect_home_is_the_card(home, shiny_data)
+  expect_home_is_the_summary(home, app_data)
 
-  strip <- query_tags(league_position_ui(shiny_data$league_table), "span")
-  expect_equal(home$league_position, as.character(strip[[1]]$children[[1]]))
+  us <- app_data$league_table |> filter(team == OUR_TEAM)
+  expect_equal(home$league_position, list(
+    position = us$position, teams = nrow(app_data$league_table), points = us$points,
+    played = us$played
+  ))
 })
 
 test_that("home drops what the last match does not have", {
-  last_date <- max(shiny_data$matches$date)
+  last_date <- max(app_data$matches$date)
 
   for (types in list("mom", "goal", c("goal", "mom"))) {
-    data <- shiny_data
+    data <- app_data
     data$events <- data$events |> filter(!(date == last_date & event_type %in% types))
     home <- round_trip(export_home(data))
 
-    expect_home_is_the_card(home, data)
+    expect_home_is_the_summary(home, data)
     if ("mom" %in% types) expect_null(home$last_match$man_of_the_match)
-    if ("goal" %in% types) expect_null(home$last_match$scorers)
+    if ("goal" %in% types) expect_length(home$last_match$scorers, 0)
   }
 })
 
-test_that("the league position line follows the table", {
-  data <- shiny_data
+test_that("the league position follows the table", {
+  data <- app_data
   data$league_table <- tibble(
     position = 1:3, team = c("Rovers", OUR_TEAM, "City"), played = c(4L, 4L, 3L),
     points = c(10L, 9L, 1L), scraped_on = as.Date("2031-03-01")
   )
-  expect_equal(export_home(data)$league_position, "2nd of 3 \u00b7 9 points from 4")
+  expect_equal(
+    export_home(data)$league_position,
+    list(position = 2L, teams = 3L, points = 9L, played = 4L)
+  )
 
   # Absent when the table does not list us, as the card is.
   data$league_table <- data$league_table[-2, ]
-  expect_identical(export_home(data)$league_position, NA_character_)
+  expect_null(round_trip(export_home(data))$league_position)
 })
 
-test_that("league rows and the subtitle come from the table and the card", {
+test_that("league rows and the scrape date come from the table", {
   league <- read_generated("league")
-  standings <- shiny_data$league_table
-  card <- league_table_ui(standings)
+  standings <- app_data$league_table
 
-  expect_setequal(names(league), c("scraped_on", "subtitle", "rows"))
+  expect_setequal(names(league), c("scraped_on", "rows"))
   expect_rows(
     league$rows, standings |> mutate(scraped_on = format(scraped_on, "%Y-%m-%d")), "league"
   )
   expect_equal(league$scraped_on, format(max(standings$scraped_on), "%Y-%m-%d"))
-  expect_equal(league$subtitle, leaf_texts(card, ".table-subtitle"))
 })
 
 test_that("meta carries what the app holds as constants", {
   meta <- read_generated("meta")
-  freshness <- freshness_note(shiny_data$matches, shiny_data$league_table)
 
   expect_setequal(names(meta), c(
     "data_hash", "our_team", "min_regression_appearances", "stale_fixtures_days",
@@ -959,63 +879,41 @@ test_that("meta carries what the app holds as constants", {
   expect_equal(meta$our_team, OUR_TEAM)
   expect_equal(meta$min_regression_appearances, MIN_REGRESSION_APPEARANCES)
   expect_equal(meta$stale_fixtures_days, STALE_FIXTURES_DAYS)
-  expect_equal(as.character(unlist(meta$problems)), as.character(shiny_data$problems))
-  expect_setequal(names(meta$freshness), c("full", "short"))
-  expect_equal(meta$freshness$full, leaf_texts(freshness, ".freshness-full"))
-  expect_equal(meta$freshness$short, leaf_texts(freshness, ".freshness-short"))
+  expect_equal(as.character(unlist(meta$problems)), as.character(app_data$problems))
+  expect_equal(meta$freshness, list(
+    last_result = format(max(app_data$matches$date), "%Y-%m-%d"),
+    scraped_on = format(max(app_data$league_table$scraped_on), "%Y-%m-%d")
+  ))
 
-  spans <- season_span(shiny_data$seasons, shiny_data$matches) |> arrange(desc(start_date))
+  spans <- season_span(app_data$seasons, app_data$matches) |> arrange(desc(start_date))
   expect_rows(
-    meta$seasons, spans |> mutate(start_date = format(start_date, "%Y-%m-%d")), "seasons"
+    meta$seasons,
+    spans |> mutate(across(c(start_date, first_match, last_match), ~ format(.x, "%Y-%m-%d"))),
+    "seasons"
   )
 })
 
-# Reading wording out of tags ----
+test_that("season_span() gives each season its first and last match, or none", {
+  seasons <- tibble(
+    season_id = c("s1", "s2"), label = c("Season 1", "Season 2"),
+    start_date = as.Date(c("2026-01-01", "2026-06-01"))
+  )
+  matches <- tibble(
+    date = as.Date(c("2025-12-01", "2026-01-07", "2026-03-04", "2026-02-11")),
+    season_id = c(NA, "s1", "s1", "s1")
+  )
+  spans <- season_span(seasons, matches)
 
-test_that("tag_text reads a real card", {
-  card <- next_match_card_ui(NULL, have_fixtures = TRUE)
-  empty <- "No fixtures left on the league page. Run the sync once the new season is up."
-
-  expect_equal(tag_text(card, "empty-state"), empty)
-  expect_equal(tag_text(card), c("Next match", empty))
-  expect_equal(first_text(card, "section-tag"), "Next match")
-  expect_identical(first_text(card, "no-such-class"), NA_character_)
-  expect_identical(tag_text(NULL), character())
-  expect_identical(tag_text(NULL, "empty-state"), character())
+  expect_equal(spans$first_match, as.Date(c("2026-01-07", NA)))
+  expect_equal(spans$last_match, as.Date(c("2026-03-04", NA)))
 })
 
-test_that("tag_text skips code, and finds a class among several", {
-  markup <- div(
-    class = "outer first",
-    tags$script("var notWording = 1;"),
-    tags$style(".also-not {}"),
-    tagList(span(class = "a b", "one"), span(class = "b", "two", span("three"))),
-    NULL,
-    12L
-  )
-
-  expect_equal(tag_text(markup), c("one", "two", "three", "12"))
-  expect_equal(tag_text(markup, "b"), c("one", "two three"))
-  expect_equal(tag_text(markup, "first"), "one two three 12")
-})
-
-test_that("stat_tiles reads the tiles, a dropped note included", {
-  profile <- list(
-    appearances = 3L, matches = 7L, attendance_rate = 3 / 7, covered = 0L,
-    goals = 0L, mom = 0L
-  )
-  tiles <- stat_tiles(player_headline_ui(profile))
-
-  # A window before the sync has no goals tile: the card drops it.
-  expect_length(tiles, 1)
-  expect_equal(tiles[[1]]$label, "Appearances")
-  expect_equal(tiles[[1]]$value, "3 of 7")
-  expect_equal(tiles[[1]]$note, "43% turnout")
-
-  fee_tiles <- stat_tiles(
-    fee_overview_summary(list(total_charges = 1, total_payments = 2)), "fee-overview"
-  )
-  expect_identical(fee_tiles[[1]]$note, NA_character_)
+test_that("the display strings round as R does and keep a missing value missing", {
+  expect_equal(format_rate(c(0.5, 2 / 3, 3, NA)), c("0.5", "0.67", "3", NA))
+  # Always two places, and the sign is in the words around it.
+  expect_equal(format_gap(c(-0.4, 1 / 3, 0, NA)), c("0.40", "0.33", "0.00", NA))
+  # R's round() takes a tie to the even number, so 12.5% shows as 12%.
+  expect_equal(format_turnout(c(0.125, 3 / 7, 1, NA)), c("12%", "43%", "100%", NA))
 })
 
 # The stale-deploy check ----
@@ -1116,7 +1014,6 @@ test_that("a season with no matches exports empty states rather than zeros", {
   }
   expect_length(empty$scorers$rows, 0)
   expect_equal(empty$scorers$coverage$observed, 0)
-  expect_match(empty$scorers$note, "No match in the selected seasons", fixed = TRUE)
 
   # The raw text as well: an empty array has to be [] and not {} in the file.
   text <- paste(readLines(file.path(out, "public", "data", "seasons", "s2.json")), collapse = "\n")
@@ -1377,15 +1274,16 @@ test_that("a fresh checkout with nothing played and no snapshots still exports",
   expect_false(fixtures$have_fixtures)
   expect_length(fixtures$fixtures, 0)
   expect_null(fixtures$scraped_on)
-  expect_null(fixtures$stale_note)
 
   league <- read("league")
   expect_length(league$rows, 0)
-  expect_null(league$subtitle)
+  expect_null(league$scraped_on)
 
   meta <- read("meta")
   expect_length(meta$problems, 0)
-  expect_null(meta$freshness$full)
+  expect_null(meta$freshness$last_result)
+  expect_null(meta$freshness$scraped_on)
+  expect_null(meta$seasons[[1]]$first_match)
 
   # Ann paid without having been charged, so she is in credit.
   fees <- read("fees")
@@ -1395,27 +1293,24 @@ test_that("a fresh checkout with nothing played and no snapshots still exports",
   expect_equal(fees$totals$credit, 10)
 })
 
-test_that("each match page's card is what the last-match card would say on that night", {
+test_that("each match page is what the last match would be on that night", {
   rows <- read_generated("matches")
-  played <- shiny_data$matches |> filter(!is.na(season_id))
+  played <- app_data$matches |> filter(!is.na(season_id))
 
   expect_equal(strings_of(rows, "date"), format(sort(played$date, decreasing = TRUE), "%Y-%m-%d"))
 
   for (row in rows) {
     summary <- last_match_summary(
-      played |> filter(date == as.Date(row$date)), shiny_data$attendance, shiny_data$events
+      played |> filter(date == as.Date(row$date)), app_data$attendance, app_data$events
     )
-    card <- last_match_card_ui(summary, shiny_data$seasons)
     expect_setequal(names(row), c(
-      "season_id", "date", "date_label", "result", "points", "badge", "opponent",
-      "season_label", "meta_line", "squad_size", "scorers", "man_of_the_match", "details"
+      "season_id", "date", "result", "points", "opponent", "season_label", "squad_size",
+      "scorers", "man_of_the_match"
     ))
 
     expect_equal(row$season_id, summary$match$season_id)
-    expect_equal(row$date_label, format_match_date(summary$match$date))
     expect_equal(row$result, summary$match$result)
     expect_equal(row$points, summary$match$points)
-    expect_equal(row$badge, leaf_texts(result_badge(summary$match$points), "span"))
     if (is.na(summary$match$opponent)) {
       expect_null(row$opponent)
     } else {
@@ -1423,36 +1318,23 @@ test_that("each match page's card is what the last-match card would say on that 
     }
     expect_equal(
       row$season_label,
-      shiny_data$seasons$label[match(summary$match$season_id, shiny_data$seasons$season_id)]
+      app_data$seasons$label[match(summary$match$season_id, app_data$seasons$season_id)]
     )
-    expect_equal(row$meta_line, leaf_texts(card, ".home-card-meta"))
     expect_equal(row$squad_size, summary$squad_size)
     expect_equal(row$squad_size, n_distinct(
-      shiny_data$attendance$player[shiny_data$attendance$date == as.Date(row$date)]
+      app_data$attendance$player[app_data$attendance$date == as.Date(row$date)]
     ))
 
-    # What the card shows, and what it drops.
-    if (nrow(summary$scorers) > 0) {
-      expect_equal(row$scorers, listed_scorers(summary$scorers))
-    } else {
-      expect_null(row$scorers)
-    }
+    # Each can be missing, and the site leaves out what is.
+    expect_rows(row$scorers, summary$scorers, paste(row$date, "scorers"))
     if (is.na(summary$mom)) {
       expect_null(row$man_of_the_match)
     } else {
       expect_equal(row$man_of_the_match, summary$mom)
     }
-    lines <- query_tags(card, ".home-detail")
-    expect_equal(length(row$details), length(lines))
-    for (index in seq_along(lines)) {
-      expect_equal(
-        c(row$details[[index]]$label, row$details[[index]]$value),
-        as.character(unlist(tag_text(lines[[index]])))
-      )
-    }
   }
 
-  # The newest is the card Home shows, field for field.
+  # The newest is the match Home shows, field for field.
   home_last <- read_generated("home")$last_match
   rows[[1]]$season_id <- NULL
   expect_equal(rows[[1]], home_last)
@@ -1466,17 +1348,17 @@ test_that("every match page's lineup has its entry in that match's own season fi
 })
 
 test_that("a match dated before the first season stays out of the match pages", {
-  data <- shiny_data
+  data <- app_data
   early <- data$matches |> slice(1) |> mutate(date = as.Date("2001-01-03"), season_id = NA_character_)
   data$matches <- bind_rows(data$matches, early)
 
   rows <- export_match_pages(data)
   expect_false("2001-01-03" %in% map_chr(rows, "date"))
-  expect_equal(length(rows), sum(!is.na(shiny_data$matches$season_id)))
+  expect_equal(length(rows), sum(!is.na(app_data$matches$season_id)))
 })
 
 test_that("a synced match with no attendance yet has its page, with nobody in the lineup", {
-  data <- shiny_data
+  data <- app_data
   newest <- max(data$matches$date)
   data$attendance <- data$attendance |> filter(date != newest)
 
@@ -1492,7 +1374,7 @@ test_that("a synced match with no attendance yet has its page, with nobody in th
   expect_length(details[[1]]$lineup, 0)
 })
 
-test_that("a last match with no opponent or events drops those from the card", {
+test_that("a last match with no opponent or events has none of them", {
   data_dir <- write_tiny_data()
   out <- withr::local_tempdir()
   build_site_data(data_dir, out)
@@ -1501,13 +1383,12 @@ test_that("a last match with no opponent or events drops those from the card", {
   )$last_match
 
   expect_equal(last$result, "2-2")
-  expect_equal(last$badge, "DRAW")
+  expect_equal(last$points, 1)
   expect_null(last$opponent)
-  expect_null(last$scorers)
+  expect_length(last$scorers, 0)
   expect_null(last$man_of_the_match)
   expect_equal(last$season_label, "Season 1")
-  expect_equal(strings_of(last$details, "label"), "Squad")
-  expect_equal(last$details[[1]]$value, "2 players")
+  expect_equal(last$squad_size, 2)
 })
 
 # The attendance guard in scripts/publish-site.sh ----
@@ -1526,10 +1407,10 @@ test_that("matches_without_attendance() names matches with no row, oldest first"
 })
 
 test_that("a real match with its attendance taken away is named", {
-  newest <- max(shiny_data$matches$date)
-  rest <- shiny_data$attendance |> filter(date != newest)
+  newest <- max(app_data$matches$date)
+  rest <- app_data$attendance |> filter(date != newest)
 
-  expect_true(newest %in% matches_without_attendance(shiny_data$matches, rest))
+  expect_true(newest %in% matches_without_attendance(app_data$matches, rest))
 })
 
 # Rscript scripts/build-site-data.R --matches-without-attendance, as the guard runs it.

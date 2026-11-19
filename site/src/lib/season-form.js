@@ -1,4 +1,4 @@
-// Which columns each Season form metric draws, as season_form_plot() in R/plots.R. Pure, so
+// Which columns each Season form metric draws: the rolling averages R exports. Pure, so
 // that it can be tested, and away from Plot, so that it can be read before Plot arrives.
 
 const METRICS = {

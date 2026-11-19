@@ -1,15 +1,16 @@
 # Export the numbers for the static site ----
 #
-# R stays the only source of numbers. This reads the CSVs through the functions
-# Shiny uses and writes what the Astro site renders:
+# R stays the only source of numbers. This reads the CSVs through the functions in
+# R/ and writes what the Astro site renders:
 #
 #   site/src/generated/*.json        read at build time, for pages with no season picker
 #   site/public/data/seasons/*.json  one file per season combination, fetched when ticks change
 #
-# It adds no statistics, no fee arithmetic and no formatting. Numbers and strings
-# come from R/, and the wording that depends on the data comes out of the tags
-# R/cards.R builds, so there is one copy of each. Fixed wording belongs to the
-# site. See docs/static-site-migration.md.
+# It adds no statistics and no fee arithmetic. It writes raw values, dates as ISO
+# strings, and a *_display string beside each figure the site shows rounded or as
+# money, made by the formatters in R/. Every word on the page belongs to the site,
+# apart from the validate_app_data() messages and the charge explanations, which are
+# data. See "Numbers on the page" in docs/static-site-migration.md.
 #
 #   Rscript scripts/build-site-data.R
 #
@@ -21,12 +22,6 @@ suppressPackageStartupMessages({
   library(dplyr)
   library(tidyr)
   library(purrr)
-  # R/cards.R builds bslib cards at load time, and R/tables.R returns DT widgets.
-  library(shiny)
-  library(bslib)
-  library(DT)
-  # R/plots.R is read for what it calls its axes.
-  library(ggplot2)
 })
 
 # parse() rather than source(). source() re-encodes a file to the session's
@@ -36,18 +31,16 @@ source_utf8 <- function(path) {
   eval(parse(path, encoding = "UTF-8", keep.source = FALSE), envir = globalenv())
 }
 
-# The same order as app.R, for the same reasons. scrape.R and sync.R are left out
-# because nothing here syncs.
-for (r_file in c(
-  "fees.R", "seasons.R", "analysis.R", "data.R", "format.R", "plots.R", "tables.R", "cards.R"
-)) {
+# fees.R first, because seasons.R needs its parse_match_date() at load time. scrape.R
+# and sync.R are left out because nothing here syncs.
+for (r_file in c("fees.R", "seasons.R", "analysis.R", "data.R", "format.R")) {
   source_utf8(here::here("R", r_file))
 }
 
-# Date names and sort order are locale-dependent, and base sort() is what
-# player_regression_results() and fee_players use. LC_CTYPE stays as it is,
-# because the strings are marked UTF-8 and are written out as bytes.
-EXPORT_LOCALE <- c(LC_TIME = "C", LC_COLLATE = "C")
+# Sort order is locale-dependent, and base sort() is what player_regression_results()
+# and fee_players use. No date name is written here, so LC_TIME has no say. LC_CTYPE
+# stays as it is, because the strings are marked UTF-8 and are written out as bytes.
+EXPORT_LOCALE <- c(LC_COLLATE = "C")
 
 # Significant digits, not decimal places: ridge estimates here go as small as
 # 6e-53, and rounding to decimal places would write them as 0.
@@ -58,77 +51,7 @@ JSON_SIGNIFICANT_DIGITS <- 10L
 # otherwise freeze the answer on the day it ran.
 FAR_PAST <- as.Date("1900-01-01")
 
-# Pulling wording out of tags ----
-
-#' Every text node under a tag, in document order, one string per node.
-#'
-#' Scripts and styles are code rather than wording, and a bslib card carries an
-#' init script. HTML dependencies are lists, so they have to be stepped around.
-text_nodes <- function(x) {
-  if (is.null(x) || is.function(x) || inherits(x, "html_dependency")) {
-    return(character())
-  }
-  if (inherits(x, "shiny.tag")) {
-    if (x$name %in% c("script", "style")) {
-      return(character())
-    }
-    return(text_nodes(x$children))
-  }
-  if (is.list(x)) {
-    return(as.character(unlist(lapply(x, text_nodes), use.names = FALSE)))
-  }
-  as.character(x)
-}
-
-#' The outermost tags carrying a class, in document order.
-tags_with_class <- function(x, class) {
-  if (inherits(x, "shiny.tag")) {
-    own <- htmltools::tagGetAttribute(x, "class")
-    if (!is.null(own) && class %in% strsplit(own, "\\s+")[[1]]) {
-      return(list(x))
-    }
-    return(tags_with_class(x$children, class))
-  }
-  if (is.list(x) && !inherits(x, "html_dependency")) {
-    return(unlist(lapply(x, tags_with_class, class), recursive = FALSE) %||% list())
-  }
-  list()
-}
-
-#' The text of a tag tree: every node, or one string per tag carrying `class`.
-tag_text <- function(x, class = NULL) {
-  if (is.null(class)) {
-    return(text_nodes(x))
-  }
-  vapply(
-    tags_with_class(x, class),
-    function(tag) paste(text_nodes(tag), collapse = " "),
-    character(1),
-    USE.NAMES = FALSE
-  )
-}
-
-#' The first tag carrying `class`, as a string, or NA where the card dropped it.
-first_text <- function(x, class) {
-  found <- tag_text(x, class)
-  if (length(found) == 0) NA_character_ else found[[1]]
-}
-
-#' The tiles stat_tile() builds, as label, value and note.
-stat_tiles <- function(x, family = "match-detail") {
-  map(tags_with_class(x, paste0(family, "-stat")), function(tile) {
-    list(
-      label = first_text(tile, paste0(family, "-label")),
-      value = first_text(tile, paste0(family, "-value")),
-      note = first_text(tile, paste0(family, "-note"))
-    )
-  })
-}
-
-# R/tables.R is "the only place display naming happens", so its strings and its
-# rounding are read off the frame a widget was built from rather than repeated.
-table_column <- function(widget, column) widget$x$data[[column]]
-
+#' NA stays NA, which the JSON writes as null.
 iso_date <- function(date) format(date, "%Y-%m-%d")
 
 #' format_fee_amount() takes one amount at a time.
@@ -166,7 +89,7 @@ regression_rows <- function(results) {
         conf_low = estimate$conf_low,
         conf_high = estimate$conf_high,
         p_value = estimate$p_value,
-        display = shown[[OUTCOME_LABELS[[this_outcome]]]][[row]]
+        display = shown[[this_outcome]][[row]]
       )
     })
     list(
@@ -187,27 +110,20 @@ muffle_glmnet_folds <- function(code) {
   })
 }
 
+#' The site writes the estimator note and the explanation from the estimator, the
+#' number of players, the appearance threshold and the opponent coverage.
 export_regression <- function(scope, strength, estimator) {
   results <- muffle_glmnet_folds(
     player_regression_results(scope$attendance, scope$matches, strength, estimator = estimator)
   )
+  # The site shows the player effects only with a fit, as app.R req()s one, and
+  # player_regression_table() cannot pivot an empty frame.
   has_regression <- nrow(results) > 0
   coverage <- opponent_coverage(scope$matches, strength)
 
   list(
     has_regression = has_regression,
-    note = estimate_label(estimator),
-    # app.R req()s a regression before rendering these two, and
-    # player_regression_table() cannot pivot an empty frame.
-    explanation = I(
-      if (has_regression) {
-        tag_text(regression_explanation_ui(
-          results, MIN_REGRESSION_APPEARANCES, coverage, estimator
-        ))
-      } else {
-        character()
-      }
-    ),
+    min_appearances = MIN_REGRESSION_APPEARANCES,
     opponent_coverage = list(observed = coverage$observed, total = coverage$total),
     players = if (has_regression) regression_rows(results) else list()
   )
@@ -218,16 +134,13 @@ export_matches <- function(matches) {
 
   tibble(
     date = iso_date(outcomes$date),
-    date_label = format_match_date(outcomes$date),
-    date_short = table_column(match_table(outcomes), "Date"),
     season_id = outcomes$season_id,
     opponent = outcomes$opponent,
     result = outcomes$result,
     goals_for = outcomes$goals_for,
     goals_against = outcomes$goals_against,
     goal_difference = outcomes$goal_difference,
-    points = outcomes$points,
-    badge = map_chr(outcomes$points, ~ tag_text(result_badge(.x)))
+    points = outcomes$points
   )
 }
 
@@ -240,67 +153,63 @@ export_season_form <- function(form) {
     )
 }
 
+#' The site writes each match's summary line from its row in `matches`.
 export_match_details <- function(form, attendance) {
   newest_first <- as.character(sort(form$date, decreasing = TRUE))
 
   map(newest_first, function(selected_date) {
     detail <- match_detail_data(form, attendance, selected_date)
-    list(
-      date = selected_date,
-      summary_note = first_text(match_summary_ui(detail$match), "match-detail-note"),
-      lineup = detail$lineup
-    )
+    list(date = selected_date, lineup = detail$lineup)
   })
 }
 
+#' The site writes the coverage line from `coverage`.
 export_scorers <- function(scope) {
   scorers <- scorer_table(scope$events, scope$attendance, scope$matches)
   coverage <- event_coverage(scope$matches)
 
   list(
     rows = scorers |>
-      mutate(
-        goals_per_appearance_rounded = table_column(
-          scorer_display_table(scorers), "Goals per game"
-        )
-      ),
+      mutate(goals_per_appearance_display = format_rate(goals_per_appearance)),
     coverage = list(
       observed = coverage$observed,
       total = coverage$total,
       dates = I(iso_date(sort(coverage$dates, decreasing = TRUE)))
-    ),
-    note = tag_text(scorer_coverage_ui(coverage))
+    )
   )
 }
 
 export_opponent_record <- function(matches) {
-  record <- opponent_record(matches)
-  record |>
-    mutate(points_per_match_rounded = table_column(opponent_record_table(record), "Pts/match"))
+  opponent_record(matches) |>
+    mutate(points_per_match_display = format_rate(points_per_match))
 }
 
+with_rate_display <- function(side) {
+  c(as.list(side), list(points_per_match_display = format_rate(side$points_per_match)))
+}
+
+#' The site writes the headline tiles and the with-and-without note from these.
 export_profile <- function(player, scope) {
   profile <- player_profile(player, scope$attendance, scope$matches, scope$events)
-  rounded <- table_column(with_without_table(profile), "Pts/match")
 
   list(
     player = profile$player,
     matches = profile$matches,
     appearances = profile$appearances,
     attendance_rate = profile$attendance_rate,
+    turnout_display = format_turnout(profile$attendance_rate),
     last_appearance = if (is.na(profile$last_appearance)) {
       NA_character_
     } else {
       iso_date(profile$last_appearance)
     },
-    present = c(as.list(profile$present), list(points_per_match_rounded = rounded[[1]])),
-    absent = c(as.list(profile$absent), list(points_per_match_rounded = rounded[[2]])),
+    present = with_rate_display(profile$present),
+    absent = with_rate_display(profile$absent),
     differential = profile$differential,
-    differential_note = tag_text(differential_note(profile)),
+    differential_display = format_gap(profile$differential),
     goals = profile$goals,
     mom = profile$mom,
     covered = profile$covered,
-    headline = stat_tiles(player_headline_ui(profile)),
     timeline = profile$timeline |> mutate(date = iso_date(date))
   )
 }
@@ -385,48 +294,44 @@ data_hash <- function(data_dir) {
   digest::digest(charToRaw(manifest), algo = "sha256", serialize = FALSE)
 }
 
-export_meta <- function(data, data_dir) {
-  freshness <- freshness_note(data$matches, data$league_table)
+#' The latest date in a column, as ISO, or NA with no rows.
+latest_date <- function(dates) if (length(dates) > 0) iso_date(max(dates)) else NA_character_
 
+export_meta <- function(data, data_dir) {
   list(
     data_hash = data_hash(data_dir),
     our_team = OUR_TEAM,
     min_regression_appearances = MIN_REGRESSION_APPEARANCES,
     stale_fixtures_days = STALE_FIXTURES_DAYS,
-    # Newest first, as season_picker() shows them.
+    # Newest first, as the picker shows them, with the dates the site writes each
+    # caption from.
     seasons = season_span(data$seasons, data$matches) |>
       arrange(desc(start_date)) |>
-      mutate(start_date = iso_date(start_date)),
+      mutate(across(c(start_date, first_match, last_match), iso_date)),
     subset_files = I(map_chr(season_subsets(data$seasons$season_id), subset_file_name)),
     problems = I(data$problems),
+    # The two dates that bound the data, for the line under the strapline.
     freshness = list(
-      full = first_text(freshness, "freshness-full"),
-      short = first_text(freshness, "freshness-short")
+      last_result = latest_date(data$matches$date),
+      scraped_on = latest_date(data$league_table$scraped_on)
     )
   )
 }
 
-#' The last-match card's contents for one summary, each absent where the card drops it.
+#' What the last-match card shows about one summary, each absent where we hold nothing.
 export_match_summary <- function(summary, seasons) {
   played <- summary$match
-  card <- last_match_card_ui(summary, seasons)
 
   list(
     date = iso_date(played$date),
-    date_label = format_match_date(played$date),
     result = played$result,
     points = played$points,
-    badge = tag_text(result_badge(played$points)),
     opponent = played$opponent,
     season_label = seasons$label[match(played$season_id, seasons$season_id)],
-    meta_line = first_text(card, "home-card-meta"),
     squad_size = summary$squad_size,
-    scorers = if (nrow(summary$scorers) > 0) listed_scorers(summary$scorers) else NA_character_,
-    man_of_the_match = summary$mom,
-    details = map(tags_with_class(card, "home-detail"), function(line) {
-      parts <- tag_text(line)
-      list(label = parts[[1]], value = parts[[2]])
-    })
+    # In the order last_match_summary() gives them, which is the order they are listed.
+    scorers = summary$scorers |> select(player, goals),
+    man_of_the_match = summary$mom
   )
 }
 
@@ -441,8 +346,8 @@ export_last_match <- function(data) {
 #' What the last-match card would say about every match, newest first, for /matches/<date>/.
 #'
 #' Each page is about its own night, so last_match_summary() is given that match alone.
-#' A match dated before the first season is in no season file and no tick's table, in
-#' Shiny as here. It stays a note in the banner and gets no page.
+#' A match dated before the first season is in no season file and no tick's table.
+#' It stays a note in the banner and gets no page.
 export_match_pages <- function(data) {
   played <- data$matches |> filter(!is.na(season_id))
 
@@ -454,21 +359,28 @@ export_match_pages <- function(data) {
   })
 }
 
-export_home <- function(data) {
-  position <- tag_text(league_position_ui(data$league_table))
+#' Our row of the table and the team count, or NA when the table does not list us
+#' exactly once, as the League tab says why.
+export_league_position <- function(league_table) {
+  us <- league_table[league_table$team == OUR_TEAM, ]
+  if (nrow(us) != 1) {
+    return(NA)
+  }
+  list(position = us$position, teams = nrow(league_table), points = us$points, played = us$played)
+}
 
+export_home <- function(data) {
   list(
     last_match = export_last_match(data),
-    # The strip holds the line and then the link to the League tab, and is
-    # absent when the table does not list us.
-    league_position = if (length(position) > 0) position[[1]] else NA_character_
+    league_position = export_league_position(data$league_table)
   )
 }
 
 #' Every unplayed fixture, whatever today is, with its standings columns.
 #'
 #' run_in() drops kickoff and pitch, so they are joined back. On the opponent as
-#' well as the date, so that two fixtures on one date could not fan out.
+#' well as the date, so that two fixtures on one date could not fan out. The site
+#' says the fixture list is stale once scraped_on is over stale_fixtures_days old.
 export_fixtures <- function(data) {
   fixtures <- run_in(data$fixtures, data$matches, data$league_table, today = FAR_PAST) |>
     left_join(
@@ -477,26 +389,14 @@ export_fixtures <- function(data) {
     ) |>
     arrange(date, opponent)
 
-  scraped_on <- data$league_table$scraped_on
-  past_threshold <- if (length(scraped_on) > 0) max(scraped_on) + STALE_FIXTURES_DAYS + 1L
-
   list(
     have_fixtures = nrow(data$fixtures) > 0,
-    scraped_on = if (length(scraped_on) > 0) iso_date(max(scraped_on)) else NA_character_,
-    # Depends on when the page was read and not on today, so it can be written
-    # once. The browser shows it once scraped_on is over stale_fixtures_days old.
-    stale_note = first_text(stale_fixture_note(scraped_on, past_threshold), "home-stale"),
+    scraped_on = latest_date(data$league_table$scraped_on),
     fixtures = tibble(
       date = iso_date(fixtures$date),
-      date_label = format_match_date(fixtures$date),
-      date_short = table_column(run_in_table(fixtures), "Date"),
       opponent = fixtures$opponent,
       kickoff = fixtures$kickoff,
       pitch = fixtures$pitch,
-      kickoff_pitch = map_chr(
-        seq_len(nrow(fixtures)),
-        ~ first_text(kickoff_pitch_line(fixtures[.x, ]), "home-card-meta")
-      ),
       position = fixtures$position,
       played = fixtures$played,
       goal_difference = fixtures$goal_difference,
@@ -507,12 +407,9 @@ export_fixtures <- function(data) {
 
 export_league <- function(data) {
   standings <- data$league_table
-  card <- league_table_ui(standings)
 
   list(
-    scraped_on = if (nrow(standings) > 0) iso_date(max(standings$scraped_on)) else NA_character_,
-    # Carries the scrape date, and is absent with no table.
-    subtitle = first_text(card, "table-subtitle"),
+    scraped_on = latest_date(standings$scraped_on),
     rows = standings |> mutate(scraped_on = iso_date(scraped_on))
   )
 }
@@ -532,7 +429,6 @@ export_fee_overview <- function(player, data) {
     balance_display = format_fee_amount(overview$balance),
     match_charges = tibble(
       date = iso_date(charges$date),
-      date_short = table_column(match_charge_table(charges), "Date"),
       season = charges$season,
       result = charges$result,
       played = charges$played,
@@ -543,7 +439,6 @@ export_fee_overview <- function(player, data) {
     ),
     payment_history = tibble(
       date = iso_date(payments$date),
-      date_short = table_column(payment_history_table(payments), "Date"),
       amount = payments$amount,
       amount_display = fee_strings(payments$amount)
     )
@@ -573,7 +468,6 @@ export_fees <- function(data) {
       payments = balances$payments,
       payments_display = fee_strings(balances$payments),
       last_payment = iso_date(balances$last_payment),
-      last_payment_display = table_column(balance_table(balances), "Last payment"),
       balance = balances$balance,
       balance_display = fee_strings(balances$balance)
     ),

@@ -1,12 +1,14 @@
 ---
 import home from '../generated/home.json';
+import { leaguePosition } from '../lib/wording.js';
 
 const linkLabel = 'League table and run-in';
+const position = leaguePosition(home.league_position);
 ---
 {
-  home.league_position && (
+  position && (
     <a class="card league" href="/league/">
-      <span class="position">{home.league_position}</span>
+      <span class="position">{position}</span>
       <span class="link">
         {linkLabel}
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">

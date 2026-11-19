@@ -8,25 +8,28 @@
       "season_id": "s3",
       "label": "Season 3",
       "start_date": "2026-09-09",
-      "span": "Sep–Nov 2026"
+      "first_match": "2026-09-09",
+      "last_match": "2026-11-11"
     },
     {
       "season_id": "s2",
       "label": "Season 2",
       "start_date": "2026-02-01",
-      "span": "Feb–Aug 2026"
+      "first_match": "2026-02-04",
+      "last_match": "2026-08-19"
     },
     {
       "season_id": "s1",
       "label": "Season 1",
       "start_date": "2025-09-10",
-      "span": "Sep 2025 – Jan 2026"
+      "first_match": "2025-09-10",
+      "last_match": "2026-01-28"
     }
   ],
   "subset_files": ["s1.json", "s2.json", "s3.json", "s1-s2.json", "s1-s3.json", "s2-s3.json", "s1-s2-s3.json"],
   "problems": [],
   "freshness": {
-    "full": "Results to 11 Nov 2026 · league page read 17 Nov 2026",
-    "short": "Page read 17 Nov 2026"
+    "last_result": "2026-11-11",
+    "scraped_on": "2026-11-17"
   }
 }

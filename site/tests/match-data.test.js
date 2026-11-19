@@ -23,8 +23,9 @@ test('a window with no matches has nothing selected', () => {
 
 test('the detail is the row and the lineup for that date', () => {
   const lineup = [{ player: 'Boris' }];
-  const subset = { matches, match_details: [{ date: '2026-10-21', summary_note: 'note', lineup }] };
-  assert.deepEqual(matchDetail(subset, '2026-10-21'), { match: { date: '2026-10-21' }, summaryNote: 'note', lineup });
+  const match = { date: '2026-10-21', opponent: 'Ball FC', points: 3 };
+  const subset = { matches: [match], match_details: [{ date: '2026-10-21', lineup }] };
+  assert.deepEqual(matchDetail(subset, '2026-10-21'), { match, summaryNote: '21 October 2026 — Ball FC — Win', lineup });
 });
 
 test('no file yet, no date, or a date with no entry has no detail', () => {

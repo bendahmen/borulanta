@@ -1,12 +1,13 @@
 // The small decisions behind Players > Roster and the player pages. Nothing here computes a
 // statistic: every figure is R's, and these only say who is on show and what goes where.
+import { formatDate } from './dates.js';
 import { PLAYERS } from './labels.js';
 import { firstRows } from './match-data.js';
 import { readPlayer } from './player-picker.js';
 import { scopeView } from './season-scope.js';
 import { sortOnField } from './table-sort.js';
 
-// The parts of a season's file these pages use. The matches are there for R's date strings.
+// The parts of a season's file these pages use. The matches are there for the strip's dates.
 export const pickPlayers = ({ has_matches, matches, attendance_list, profiles }) => ({
   has_matches,
   matches,
@@ -14,7 +15,7 @@ export const pickPlayers = ({ has_matches, matches, attendance_list, profiles })
   profiles,
 });
 
-// The page length attendance_table() gives its pager, and the order it opens in.
+// How many rows of the roster show before "Show all", and the order it opens in.
 export const FIRST_ROSTER = 15;
 export const ROSTER_SORT = { key: 'attendance_rate', direction: 'descending' };
 
@@ -52,7 +53,7 @@ export function createRosterSelection({ getStorage, onchange = () => {} }) {
 }
 
 // From R's order rather than from the screen, so the marks stay on the same people through
-// a sort, as rank_class in attendance_table() does.
+// a sort.
 export const topThree = (roster) => new Set(roster.slice(0, 3).map((row) => row.player));
 
 // The first rows of the table as sorted, and the selected player's row after them if it would
@@ -87,8 +88,8 @@ export function playerPageView(state, player) {
   return { view: view === 'ready' && !profile ? 'did-not-play' : view, profile };
 }
 
-// With and without, as with_without_table() lays it out. An empty side has no rate, which
-// reaches the table as null and shows as a blank cell.
+// With and without, the side that played first. An empty side has no rate, which reaches the
+// table as null and shows as a blank cell.
 export function withWithoutRows(profile, sides) {
   return [
     { side: sides.played, ...profile.present },
@@ -96,10 +97,10 @@ export function withWithoutRows(profile, sides) {
   ];
 }
 
-// The appearance strip, oldest first as R sorts it, with R's date strings: for each square, and
+// The appearance strip, oldest first as R sorts it, with each match's date: for each square, and
 // as the two lists that say the same thing in words. `keyWords` are the strip's Played and Missed.
 export function stripModel(timeline, matches, keyWords) {
-  const dateStrings = new Map(matches.map((match) => [match.date, match.date_short]));
+  const dateStrings = new Map(matches.map((match) => [match.date, formatDate(match.date, '%d %b %Y')]));
   const squares = timeline.map(({ date, played }) => {
     const dateShort = dateStrings.get(date) ?? date;
     return { date, played, dateShort, label: PLAYERS.stripSquare(dateShort, played ? keyWords.played : keyWords.missed) };

@@ -6,10 +6,11 @@ import SeasonTicksScript from '../../../components/SeasonTicksScript.astro';
 import meta from '../../../generated/meta.json';
 import Players from '../../../layouts/Players.astro';
 import { EMPTY_STATES, NO_SCRIPT, PAGES, PLAYERS_CARDS } from '../../../lib/labels.js';
+import { pickerSeasons } from '../../../lib/wording.js';
 ---
 <Players view="roster">
   <h1 class="visually-hidden">{PAGES.roster.title}</h1>
-  <RosterPage client:load seasons={meta.seasons} noMatches={EMPTY_STATES.no_matches} cards={PLAYERS_CARDS} />
+  <RosterPage client:load seasons={pickerSeasons(meta.seasons)} noMatches={EMPTY_STATES.no_matches} cards={PLAYERS_CARDS} />
   <SeasonTicksScript />
   <noscript>
     <style is:inline>astro-island { display: none; }</style>

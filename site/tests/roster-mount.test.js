@@ -14,6 +14,8 @@ import { FIRST_ROSTER, ROSTER_SORT, createRosterSelection, findProfile, pickPlay
 import { rosterColumns } from '../src/lib/player-tables.js';
 import { redirectScript } from '../src/lib/redirect.js';
 import { createSeasonScope } from '../src/lib/season-scope.js';
+import { formatDate } from '../src/lib/dates.js';
+import { differentialNote, headlineTiles } from '../src/lib/wording.js';
 import { fakeElement } from './helpers/fake-dom.js';
 
 const { default: DataTable } = await import('../src/components/DataTable.svelte');
@@ -28,7 +30,7 @@ const seasonFile = (id) => JSON.parse(read(`../public/data/seasons/${id}.json`))
 // ---- The page's logic, on the same season scope the page uses ----
 
 const row = (player, attendance_rate) => ({ player, attendance_rate, avg_points: 1, avg_goals_scored: 2, avg_goals_conceded: 3 });
-const profile = (player) => ({ player, headline: [], timeline: [] });
+const profile = (player) => ({ player, appearances: 0, matches: 0, turnout_display: null, covered: 0, timeline: [] });
 const fileOf = (...names) => ({
   has_matches: true,
   matches: [],
@@ -284,15 +286,15 @@ test('the note about a table above is on Roster and not on the player page', () 
   assert.ok(!onPage.includes(cards.player.title));
 });
 
-test('the profile shown is the one passed, with R strings', () => {
+test('the profile shown is the one passed, with its tiles and its note', () => {
   const html = profileHtml('s1-s3', 'Oleg');
   const profile = findProfile(seasonFile('s1-s3'), 'Oleg');
   // Read from the export rather than written out, because each new match changes them.
-  const appearances = profile.headline.find((tile) => tile.label === 'Appearances');
+  const appearances = headlineTiles(profile).find((tile) => tile.label === 'Appearances');
   assert.match(appearances.value, /^3 of \d+$/);
   assert.ok(html.includes(appearances.value));
-  assert.ok(html.includes(appearances.note));
-  assert.ok(html.includes(profile.differential_note));
+  assert.ok(html.includes(`${profile.turnout_display} turnout`));
+  assert.ok(html.includes(differentialNote(profile)));
 });
 
 test('an ever-present has the no-comparison wording, and a blank rate on the Missed row', () => {
@@ -321,8 +323,7 @@ test('the dates are there in words, behind one control', () => {
   assert.equal(html.split('<summary').length - 1, 1);
   const dates = html.slice(html.indexOf('<details'), html.indexOf('</details>')).replaceAll('\u00a0', ' ');
   assert.ok(html.includes('24\u00a0Sep\u00a02025'), 'a date does not break across lines');
-  const short = new Map(file.matches.map((match) => [match.date, match.date_short]));
-  const on = (played) => oleg.timeline.filter((square) => square.played === played).map((square) => short.get(square.date)).join(', ');
+  const on = (played) => oleg.timeline.filter((square) => square.played === played).map((square) => formatDate(square.date, '%d %b %Y')).join(', ');
   assert.ok(dates.includes(on(true)));
   assert.ok(dates.includes(on(false)));
 });
@@ -400,7 +401,7 @@ test('a player page looks up the player it was built for', () => {
   assert.match(read('../src/components/players/PlayerPage.svelte'), /profile=\{page\.profile\}/);
   const page = read('../src/pages/players/[slug].astro');
   assert.match(page, /params: \{ slug \}, props: \{ player \}/);
-  assert.match(page, /<PlayerPage client:load seasons=\{meta\.seasons\} player=\{player\}/);
+  assert.match(page, /<PlayerPage client:load seasons=\{pickerSeasons\(meta\.seasons\)\} player=\{player\}/);
   assert.match(page, /<h1>\{player\}<\/h1>/);
   assert.match(page, /<Base title=\{player\} description=\{PLAYERS\.description\(player\)\}/);
 });

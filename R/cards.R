@@ -793,7 +793,20 @@ player_effects_page <- tagList(
 
 #' Season tick boxes, newest first, each captioned with when that season ran.
 season_picker <- function(app_data) {
+  # The caption, as the site's seasonSpan() writes it. Within one calendar year the year
+  # only needs saying once.
+  month <- function(date) format(date, "%b")
+  month_year <- function(date) format(date, "%b %Y")
   spans <- season_span(app_data$seasons, app_data$matches) |>
+    mutate(
+      span = case_when(
+        is.na(first_match) ~ paste("from", month_year(start_date)),
+        month_year(first_match) == month_year(last_match) ~ month_year(first_match),
+        format(first_match, "%Y") == format(last_match, "%Y") ~
+          paste0(month(first_match), "\u2013", month_year(last_match)),
+        TRUE ~ paste(month_year(first_match), "\u2013", month_year(last_match))
+      )
+    ) |>
     arrange(desc(start_date))
 
   checkboxGroupInput(

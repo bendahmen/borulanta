@@ -1,11 +1,12 @@
 <script>
   // Players > Effects. Every number comes from R's JSON: this file sorts them and hands
-  // them to the plots, and shows R's own strings.
+  // them to the plots, and shows R's own display strings.
   import { onMount, untrack } from 'svelte';
 
   import { scopeView } from '../../lib/season-scope.js';
   import { DEFAULT_SORT } from '../../lib/table-sort.js';
   import { useSeasonScope } from '../../lib/use-season-scope.svelte.js';
+  import { estimatorNote, regressionExplanation } from '../../lib/wording.js';
   import AttackDefencePlot from './AttackDefencePlot.svelte';
   import CardHead from '../CardHead.svelte';
   import CoefficientPlot from './CoefficientPlot.svelte';
@@ -39,6 +40,7 @@
   const busy = $derived(scope.state.busy);
   const regression = $derived(subset?.regression[estimator] ?? null);
   const players = $derived(regression?.players ?? []);
+  const explanation = $derived(regression?.has_regression ? regressionExplanation(regression, estimator) : []);
 
   const view = $derived.by(() => {
     const state = scopeView(scope.state);
@@ -130,7 +132,7 @@
       <section class="card" aria-labelledby="player-effects-title">
         <CardHead id="player-effects-title" card={cards.player_effects} />
         {#if regression}
-          <p class="note">{regression.note}</p>
+          <p class="note">{estimatorNote(estimator)}</p>
           <PlayerTable
             {players}
             {outcome}
@@ -160,7 +162,7 @@
         <CardHead id="method-title" card={cards.method} />
         {#if regression}
           <div class="method">
-            {#each regression.explanation as paragraph, index (index)}
+            {#each explanation as paragraph, index (index)}
               <p>{paragraph}</p>
             {/each}
           </div>

@@ -100,7 +100,7 @@ test('an opponent the standings do not carry keeps its row with the league colum
   const html = tableHtml({
     caption: 'c',
     columns: runInColumns(LEAGUE_CARDS.run_in.headings),
-    rows: [{ date_short: '11 Nov 2026', opponent: 'Newcomers FC', position: null }],
+    rows: [{ date: '2026-11-11', opponent: 'Newcomers FC', position: null }],
   });
   assert.match(html, /Newcomers FC/);
   assert.match(html, /<td role="cell" class="col-position dt-num"><\/td>/);

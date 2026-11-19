@@ -6,20 +6,19 @@ import fixtures from '../generated/fixtures.json';
 import meta from '../generated/meta.json';
 import { moduleToInline, scriptSafeJson } from '../lib/inline.js';
 import { NEXT_MATCH, NO_SCRIPT } from '../lib/labels.js';
+import { fixtureWords, staleFixtureNote } from '../lib/wording.js';
 import dates from '../lib/fixture-dates.js?raw';
 import source from '../lib/next-match.js?raw';
 
 const wording = NEXT_MATCH;
+// The words that do not depend on today are written here, at build time. The stale note
+// depends on when the page was read, so it is written once and the script shows it once the
+// list is over stale_days old.
 const data = {
-  fixtures: fixtures.fixtures.map(({ date, date_label, opponent, kickoff_pitch }) => ({
-    date,
-    date_label,
-    opponent,
-    kickoff_pitch,
-  })),
+  fixtures: fixtureWords(fixtures.fixtures),
   have_fixtures: fixtures.have_fixtures,
   scraped_on: fixtures.scraped_on,
-  stale_note: fixtures.stale_note,
+  stale_note: staleFixtureNote(fixtures.scraped_on),
   stale_days: meta.stale_fixtures_days,
   wording,
 };
@@ -41,7 +40,7 @@ mountNextMatch(document.getElementById("next-match"),${scriptSafeJson(data)});}(
     <noscript>
       <p class="next-noscript">{NO_SCRIPT.fixtures}</p>
       <ul class="next-noscript">
-        {fixtures.fixtures.map((fixture) => <li>{fixture.date_label}, {fixture.opponent ?? wording.opponent_unknown}</li>)}
+        {data.fixtures.map((fixture) => <li>{fixture.date_label}, {fixture.opponent ?? wording.opponent_unknown}</li>)}
       </ul>
     </noscript>
   </div>

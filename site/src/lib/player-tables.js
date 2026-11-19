@@ -1,12 +1,12 @@
-// The columns of the Players tables, each with R's headings. Each key is the exported field
-// the column sorts on, and each value is R's: Turnout goes through formatTurnout(), and the
-// averages are already rounded in the export. Nothing here rounds them again.
+// The columns of the Players tables. Each key is the exported field the column sorts on, and
+// each value is R's: Turnout goes through formatTurnout(), and the averages are already
+// rounded in the export. Nothing here rounds them again.
 import { escapeHtml } from './data-table.js';
 import { GO } from './match-tables.js';
 import { playerHref } from './slug.js';
 import { formatTurnout } from './turnout.js';
 
-// All five of attendance_table(), then the way to the player's page. A phone keeps the name,
+// The roster's five columns, then the way to the player's page. A phone keeps the name,
 // Turnout and Avg points, and the goals open under the row. `top` is who gets the top three's
 // mark, from topThree().
 export function rosterColumns(headings, words, top) {
@@ -27,8 +27,8 @@ export function rosterColumns(headings, words, top) {
   ];
 }
 
-// All eight of with_without_table(), whose first heading is blank. The rate is R's rounded
-// one, or nothing on an empty side.
+// The eight columns of With and without, whose first heading is blank. The rate is R's
+// rounded string, or nothing on an empty side.
 export function withWithoutColumns(headings, words) {
   return [
     { key: 'side', label: words.sideHeading, hideLabel: true, value: (row) => row.side, lead: true },
@@ -38,6 +38,6 @@ export function withWithoutColumns(headings, words) {
     { key: 'lost', label: headings.lost, value: (row) => row.lost, number: true },
     { key: 'goals_for', label: headings.goals_for, value: (row) => row.goals_for, number: true },
     { key: 'goals_against', label: headings.goals_against, value: (row) => row.goals_against, number: true },
-    { key: 'points_per_match', label: headings.points_per_match, value: (row) => row.points_per_match_rounded, number: true },
+    { key: 'points_per_match', label: headings.points_per_match, value: (row) => row.points_per_match_display, number: true },
   ];
 }

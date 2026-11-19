@@ -1,5 +1,6 @@
 ---
 import home from '../generated/home.json';
+import { formatDate } from '../lib/dates.js';
 import { MATCHES } from '../lib/labels.js';
 import { matchHref } from '../lib/match-data.js';
 import MatchSummary from './MatchSummary.astro';
@@ -17,7 +18,7 @@ const href = played?.season_label ? matchHref(played.date) : null;
       <>
         <MatchSummary played={played} />
         {href && (
-          <a class="to-match" href={href} aria-label={MATCHES.matchPageFor(played.date_label)}>
+          <a class="to-match" href={href} aria-label={MATCHES.matchPageFor(formatDate(played.date, '%a %d %b %Y'))}>
             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
               <path d="m9 6 6 6-6 6" />
             </svg>

@@ -1,26 +1,27 @@
 {
   "last_match": {
     "date": "2026-11-11",
-    "date_label": "Wed 11 Nov 2026",
     "result": "3-4",
     "points": 0,
-    "badge": "LOSS",
     "opponent": "Shamrock Posers",
     "season_label": "Season 3",
-    "meta_line": "Wed 11 Nov 2026 · v Shamrock Posers · Season 3",
     "squad_size": 7,
-    "scorers": "Daniel (2), Elia",
-    "man_of_the_match": null,
-    "details": [
+    "scorers": [
       {
-        "label": "Squad",
-        "value": "7 players"
+        "player": "Daniel",
+        "goals": 2
       },
       {
-        "label": "Scorers",
-        "value": "Daniel (2), Elia"
+        "player": "Elia",
+        "goals": 1
       }
-    ]
+    ],
+    "man_of_the_match": null
   },
-  "league_position": "4th of 9 · 11 points from 9"
+  "league_position": {
+    "position": 4,
+    "teams": 9,
+    "points": 11,
+    "played": 9
+  }
 }

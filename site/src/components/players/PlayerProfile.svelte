@@ -1,10 +1,11 @@
 <script>
-  // One player over the ticked seasons, as player_page has it: the headline tiles and the
-  // appearance strip, then the side with and without them. On Roster and on the player's own
-  // page. Every string is R's, and with `profile` null the cards wait with their headings.
+  // One player over the ticked seasons: the headline tiles and the appearance strip, then the
+  // side with and without them. On Roster and on the player's own page. Every figure is R's,
+  // and with `profile` null the cards wait with their headings.
   import { PLAYERS } from '../../lib/labels.js';
   import { withWithoutRows } from '../../lib/player-data.js';
   import { withWithoutColumns } from '../../lib/player-tables.js';
+  import { differentialNote, headlineTiles } from '../../lib/wording.js';
   import CardHead from '../CardHead.svelte';
   import DataTable from '../DataTable.svelte';
   import AppearanceStrip from './AppearanceStrip.svelte';
@@ -13,7 +14,7 @@
 
   // The note goes with a table above, so a page with no table has no card head.
   const playerCard = $derived(note === null ? null : { ...cards.player, subtitle: note });
-  const withWithoutCard = $derived({ ...cards.with_without, subtitle: profile?.differential_note ?? null });
+  const withWithoutCard = $derived({ ...cards.with_without, subtitle: profile ? differentialNote(profile) : null });
 </script>
 
 <div class="profile">
@@ -26,7 +27,7 @@
     {/if}
     {#if profile}
       <dl class="tiles">
-        {#each profile.headline as tile (tile.label)}
+        {#each headlineTiles(profile) as tile (tile.label)}
           <div class="tile">
             <dt>{tile.label}</dt>
             <dd class="value">{tile.value}</dd>

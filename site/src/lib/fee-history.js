@@ -5,7 +5,7 @@
 import { escapeHtml, moreRowsLabel, tableHtml } from './data-table.js';
 import { createSubsetLoader } from './subset-loader.js';
 
-// The page length match_charge_table() gives its pager.
+// How many charges show before "Show all".
 export const FIRST_CHARGES = 12;
 
 export function feeFile(slug) {
@@ -19,7 +19,7 @@ export function paymentColumns(headings) {
   ];
 }
 
-// All seven of match_charge_table(), in its order. A phone keeps three and the rest open
+// All seven columns of the charges. A phone keeps three and the rest open
 // under the row.
 export function chargeColumns(headings, played) {
   return [

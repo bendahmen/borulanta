@@ -24,6 +24,28 @@ format_fee_amount <- function(amount) {
 }
 
 
+# Display strings for the site ----
+#
+# R formats values and the site writes the words around them, so each figure the site
+# shows as rounded has its string made here, and the site never rounds. Each takes a
+# vector and keeps NA as NA.
+
+#' Goals per game and points per match, to two places as R prints them: 0.5, not 0.50.
+format_rate <- function(rate) {
+  if_else(is.na(rate), NA_character_, as.character(round(rate, 2)))
+}
+
+#' The with-and-without gap, unsigned and always to two places, as in "0.40 points a match".
+format_gap <- function(gap) {
+  if_else(is.na(gap), NA_character_, format(round(abs(gap), 2), nsmall = 2))
+}
+
+#' A player's turnout as a whole percentage, with R's rounding: 12.5% shows as 12%.
+format_turnout <- function(rate) {
+  if_else(is.na(rate), NA_character_, paste0(round(rate * 100), "%"))
+}
+
+
 # Home page cards ----
 
 #' 1st, 2nd, 3rd, 4th, ... 11th, 12th, 13th, 21st.
@@ -41,11 +63,6 @@ ordinal <- function(n) {
 #' "Wed 19 Aug 2026" — the weekday earns its place on a game that is always
 #' on a Wednesday, because a fixture that is not is worth noticing.
 format_match_date <- function(date) format(date, "%a %d %b %Y")
-
-
-# A match week without a sync. The game is weekly and the sync runs after it,
-# so a fixture list older than this has missed at least one.
-STALE_FIXTURES_DAYS <- 8L
 
 
 result_badge <- function(points) {

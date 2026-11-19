@@ -17,7 +17,7 @@ export function coefficientHeight(playerCount) {
   return playerCount * COEFFICIENT_ROW + COEFFICIENT_MARGIN.top + COEFFICIENT_MARGIN.bottom;
 }
 
-// The one mapping allowed in JS: the sign flip for the y axis, as attack_defence_plot().
+// The one mapping allowed in JS: the sign flip for the y axis, so that up is fewer conceded.
 export function attackDefenceRows(players) {
   return players.map((player) => ({
     player: player.player,

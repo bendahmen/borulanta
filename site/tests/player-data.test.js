@@ -6,6 +6,7 @@ import { needsReveal, revealElement } from '../src/lib/match-data.js';
 import { FIRST_ROSTER, ROSTER_SORT, findProfile, pickPlayers, playerPageView, profileNeedsReveal, selectedPlayer, shownRoster, stripModel, topThree, withWithoutRows } from '../src/lib/player-data.js';
 import { createSeasonScope, scopeView } from '../src/lib/season-scope.js';
 import { sortOnField } from '../src/lib/table-sort.js';
+import { headlineTiles } from '../src/lib/wording.js';
 
 const roster = (...names) => names.map((player) => ({ player }));
 const table = roster('Boris', 'Vitto', 'Ben', 'Mateus');
@@ -136,10 +137,10 @@ test('pickPlayers keeps only what these pages use', () => {
 const sides = { played: 'Played', missed: 'Missed' };
 
 test('with and without is two rows, played first, each from its own side', () => {
-  const rows = withWithoutRows({ present: { played: 7, points_per_match_rounded: 1.5 }, absent: { played: 2, points_per_match_rounded: 0.5 } }, sides);
+  const rows = withWithoutRows({ present: { played: 7, points_per_match_display: '1.5' }, absent: { played: 2, points_per_match_display: '0.5' } }, sides);
   assert.deepEqual(rows, [
-    { side: 'Played', played: 7, points_per_match_rounded: 1.5 },
-    { side: 'Missed', played: 2, points_per_match_rounded: 0.5 },
+    { side: 'Played', played: 7, points_per_match_display: '1.5' },
+    { side: 'Missed', played: 2, points_per_match_display: '0.5' },
   ]);
 });
 
@@ -147,17 +148,17 @@ const keyWords = { played: 'Played', missed: 'Missed' };
 
 test('the strip keeps R order and says which squares were played', () => {
   const timeline = [{ date: '2026-01-01', points: 3, played: true }, { date: '2026-01-08', points: 0, played: false }, { date: '2026-01-15', points: 1, played: true }];
-  const matches = [{ date: '2026-01-15', date_short: '15 Jan' }, { date: '2026-01-08', date_short: '8 Jan' }, { date: '2026-01-01', date_short: '1 Jan' }];
+  const matches = [{ date: '2026-01-15' }, { date: '2026-01-08' }, { date: '2026-01-01' }];
   const strip = stripModel(timeline, matches, keyWords);
   assert.deepEqual(strip.squares, [
-    { date: '2026-01-01', played: true, dateShort: '1 Jan', label: '1 Jan: Played' },
-    { date: '2026-01-08', played: false, dateShort: '8 Jan', label: '8 Jan: Missed' },
-    { date: '2026-01-15', played: true, dateShort: '15 Jan', label: '15 Jan: Played' },
+    { date: '2026-01-01', played: true, dateShort: '01 Jan 2026', label: '01 Jan 2026: Played' },
+    { date: '2026-01-08', played: false, dateShort: '08 Jan 2026', label: '08 Jan 2026: Missed' },
+    { date: '2026-01-15', played: true, dateShort: '15 Jan 2026', label: '15 Jan 2026: Played' },
   ]);
-  assert.equal(strip.first, '1 Jan');
-  assert.equal(strip.last, '15 Jan');
-  assert.deepEqual(strip.playedDates, ['1 Jan', '15 Jan']);
-  assert.deepEqual(strip.missedDates, ['8 Jan']);
+  assert.equal(strip.first, '01 Jan 2026');
+  assert.equal(strip.last, '15 Jan 2026');
+  assert.deepEqual(strip.playedDates, ['01 Jan 2026', '15 Jan 2026']);
+  assert.deepEqual(strip.missedDates, ['08 Jan 2026']);
 });
 
 test('an empty strip has no dates', () => {
@@ -259,7 +260,7 @@ test('from arriving, through a pick and every tick change, the selection follows
 const seasonsFolder = new URL('../public/data/seasons/', import.meta.url);
 const files = readdirSync(seasonsFolder).map((name) => JSON.parse(readFileSync(new URL(name, seasonsFolder))));
 
-test('every profile strip agrees with its headline, in date order, in all seven files', () => {
+test('every profile strip agrees with its headline tile, in date order, in all seven files', () => {
   assert.equal(files.length, 7);
   let checked = 0;
   for (const file of files) {
@@ -267,7 +268,7 @@ test('every profile strip agrees with its headline, in date order, in all seven 
       const played = profile.timeline.filter((square) => square.played).length;
       assert.equal(played, profile.appearances, profile.player);
       assert.equal(profile.timeline.length, profile.matches, profile.player);
-      assert.equal(profile.headline[0].value, `${played} of ${profile.timeline.length}`, profile.player);
+      assert.equal(headlineTiles(profile)[0].value, `${played} of ${profile.timeline.length}`, profile.player);
       const dates = profile.timeline.map((square) => square.date);
       assert.deepEqual(dates, [...dates].sort(), profile.player);
       const strip = stripModel(profile.timeline, file.matches, keyWords);
@@ -284,7 +285,7 @@ test('every side with no matches has no rate, and only those', () => {
   for (const file of files) {
     for (const profile of file.profiles) {
       for (const side of [profile.present, profile.absent]) {
-        assert.equal(side.points_per_match_rounded === null, side.played === 0, profile.player);
+        assert.equal(side.points_per_match_display === null, side.played === 0, profile.player);
       }
     }
   }

@@ -1,4 +1,4 @@
-// The Season form plot, per season_form_plot() in R/plots.R. A separate chunk, imported only
+// The Season form plot. A separate chunk, imported only
 // by Trends, with only the Plot parts named here. Colours are CSS tokens, so a change of light
 // or dark needs no redraw.
 import { axisX, axisY, dot, gridY, line, plot, ruleY } from '@observablehq/plot';

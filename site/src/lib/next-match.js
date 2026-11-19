@@ -1,8 +1,8 @@
 // Which fixture is next, worked out in the browser on each visit. This is the one
-// date logic allowed to duplicate R: upcoming_fixtures(), next_match_card_ui() and
-// stale_fixture_note() in R/. It is imported by the unit tests and inlined into the
-// page by moduleToInline(), after fixture-dates.js, so keep it plain: one-line imports
-// and no multi-line strings.
+// date logic allowed to duplicate R: upcoming_fixtures() in R/analysis.R, and the
+// staleness threshold beside run_in(). It is imported by the unit tests and inlined into
+// the page by moduleToInline(), after fixture-dates.js, so keep it plain: one-line
+// imports and no multi-line strings.
 
 import { daysBetween, onReturn, londonDate, upcomingFixtures } from './fixture-dates.js';
 

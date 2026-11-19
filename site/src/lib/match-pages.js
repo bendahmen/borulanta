@@ -1,6 +1,8 @@
 // What each /matches/<date>/ page is built from, worked out once at build time. Any match
 // the export wrote and these cannot place fails the build here, so a broken page never ships.
+import { formatDate } from './dates.js';
 import { playerSlugs } from './slug.js';
+import { matchDetails, matchMetaLine } from './wording.js';
 
 // Newest first, as the export writes them. Each lineup is read from that match's own season,
 // because a shared link cannot depend on what somebody has ticked. `readSeason` takes a
@@ -33,12 +35,12 @@ export function matchPages(matches, readSeason, otherNames = []) {
 // date is what tells one 4-5 from another.
 export function matchTitle(match, ourTeam) {
   const score = `${ourTeam} ${match.result}`;
-  return match.opponent ? `${score} ${match.opponent}` : `${score}, ${match.date_label}`;
+  return match.opponent ? `${score} ${match.opponent}` : `${score}, ${formatDate(match.date, '%a %d %b %Y')}`;
 }
 
-// R's own line and squad size for a link preview. The squad is always the card's first
+// The card's own line and squad size for a link preview. The squad is always the card's first
 // detail. No names: the scorers can stay on the page.
 export function matchDescription(match) {
-  const [squad] = match.details;
-  return squad ? `${match.meta_line} · ${squad.value}` : match.meta_line;
+  const [squad] = matchDetails(match);
+  return `${matchMetaLine(match)} · ${squad.value}`;
 }

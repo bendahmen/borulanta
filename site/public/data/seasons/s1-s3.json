@@ -4,8 +4,7 @@
   "regression": {
     "ols": {
       "has_regression": true,
-      "note": "Coefficient on each outcome, with its p-value in brackets.",
-      "explanation": ["Each column is a separate match-level regression of that outcome on indicators for the 15 players with at least 3 appearances in the selected seasons. The coefficient says how the outcome moves when that player is on the pitch, holding the rest of the lineup fixed. With this many players, a couple of p-values below 0.05 is what chance alone produces.", "Anyone below the appearance threshold has no indicator of their own and sits in the residual. There is no time trend. These are descriptive: nothing here separates a good player from one who happens to play in good teams.", "The opponent is on file for 9 of 26 matches here. Those matches also control for opponent strength: the other side's goal difference per game against everyone except us that season, centred so that 0 is an average opponent. Matches with no opponent recorded take the average and an indicator, which keeps their own level out of the player coefficients."],
+      "min_appearances": 3,
       "opponent_coverage": {
         "observed": 9,
         "total": 26
@@ -585,8 +584,7 @@
     },
     "ridge": {
       "has_regression": true,
-      "note": "Deviation from the average player, shrunk by how little we know.",
-      "explanation": ["These are ridge estimates. The plain fit spends a column on each of the 15 players over a few dozen matches, so somebody with three appearances is measured off three nights and lands at whichever extreme those nights went. Ridge pulls every estimate toward the average player by an amount inversely proportional to how much is known about them, so the thin players move a long way and the regulars barely move. A coefficient here is a deviation from the average player rather than a share of the scoreline, and there are no confidence intervals: ridge has no usable standard error.", "The estimates come out very close to zero, and that is the result rather than a display problem. The penalty is chosen by cross-validation, which is asking how much of a match the lineup predicts out of sample, and the answer here is almost none. The ordering still means something; the magnitudes are telling you not to lean on it.", "Anyone below the appearance threshold has no indicator of their own and sits in the residual. There is no time trend. These are descriptive: nothing here separates a good player from one who happens to play in good teams.", "The opponent is on file for 9 of 26 matches here. Those matches also control for opponent strength: the other side's goal difference per game against everyone except us that season, centred so that 0 is an average opponent. Matches with no opponent recorded take the average and an indicator, which keeps their own level out of the player coefficients."],
+      "min_appearances": 3,
       "opponent_coverage": {
         "observed": 9,
         "total": 26
@@ -1168,341 +1166,263 @@
   "matches": [
     {
       "date": "2026-11-11",
-      "date_label": "Wed 11 Nov 2026",
-      "date_short": "11 Nov 2026",
       "season_id": "s3",
       "opponent": "Shamrock Posers",
       "result": "3-4",
       "goals_for": 3,
       "goals_against": 4,
       "goal_difference": -1,
-      "points": 0,
-      "badge": "LOSS"
+      "points": 0
     },
     {
       "date": "2026-11-04",
-      "date_label": "Wed 04 Nov 2026",
-      "date_short": "04 Nov 2026",
       "season_id": "s3",
       "opponent": "Saffron Rangers",
       "result": "3-3",
       "goals_for": 3,
       "goals_against": 3,
       "goal_difference": 0,
-      "points": 1,
-      "badge": "DRAW"
+      "points": 1
     },
     {
       "date": "2026-10-28",
-      "date_label": "Wed 28 Oct 2026",
-      "date_short": "28 Oct 2026",
       "season_id": "s3",
       "opponent": "The Dirty Boys",
       "result": "2-3",
       "goals_for": 2,
       "goals_against": 3,
       "goal_difference": -1,
-      "points": 0,
-      "badge": "LOSS"
+      "points": 0
     },
     {
       "date": "2026-10-21",
-      "date_label": "Wed 21 Oct 2026",
-      "date_short": "21 Oct 2026",
       "season_id": "s3",
       "opponent": "Foireann Peile",
       "result": "3-3",
       "goals_for": 3,
       "goals_against": 3,
       "goal_difference": 0,
-      "points": 1,
-      "badge": "DRAW"
+      "points": 1
     },
     {
       "date": "2026-10-14",
-      "date_label": "Wed 14 Oct 2026",
-      "date_short": "14 Oct 2026",
       "season_id": "s3",
       "opponent": "Dynamo Mickey CF",
       "result": "4-1",
       "goals_for": 4,
       "goals_against": 1,
       "goal_difference": 3,
-      "points": 3,
-      "badge": "WIN"
+      "points": 3
     },
     {
       "date": "2026-10-07",
-      "date_label": "Wed 07 Oct 2026",
-      "date_short": "07 Oct 2026",
       "season_id": "s3",
       "opponent": "Finessin FC",
       "result": "2-3",
       "goals_for": 2,
       "goals_against": 3,
       "goal_difference": -1,
-      "points": 0,
-      "badge": "LOSS"
+      "points": 0
     },
     {
       "date": "2026-09-30",
-      "date_label": "Wed 30 Sep 2026",
-      "date_short": "30 Sep 2026",
       "season_id": "s3",
       "opponent": "Ball FC",
       "result": "3-0",
       "goals_for": 3,
       "goals_against": 0,
       "goal_difference": 3,
-      "points": 3,
-      "badge": "WIN"
+      "points": 3
     },
     {
       "date": "2026-09-16",
-      "date_label": "Wed 16 Sep 2026",
-      "date_short": "16 Sep 2026",
       "season_id": "s3",
       "opponent": "Brother Man FC",
       "result": "5-1",
       "goals_for": 5,
       "goals_against": 1,
       "goal_difference": 4,
-      "points": 3,
-      "badge": "WIN"
+      "points": 3
     },
     {
       "date": "2026-09-09",
-      "date_label": "Wed 09 Sep 2026",
-      "date_short": "09 Sep 2026",
       "season_id": "s3",
       "opponent": "Shamrock Posers",
       "result": "2-3",
       "goals_for": 2,
       "goals_against": 3,
       "goal_difference": -1,
-      "points": 0,
-      "badge": "LOSS"
+      "points": 0
     },
     {
       "date": "2026-01-28",
-      "date_label": "Wed 28 Jan 2026",
-      "date_short": "28 Jan 2026",
       "season_id": "s1",
       "opponent": null,
       "result": "2-2",
       "goals_for": 2,
       "goals_against": 2,
       "goal_difference": 0,
-      "points": 1,
-      "badge": "DRAW"
+      "points": 1
     },
     {
       "date": "2026-01-21",
-      "date_label": "Wed 21 Jan 2026",
-      "date_short": "21 Jan 2026",
       "season_id": "s1",
       "opponent": null,
       "result": "6-5",
       "goals_for": 6,
       "goals_against": 5,
       "goal_difference": 1,
-      "points": 3,
-      "badge": "WIN"
+      "points": 3
     },
     {
       "date": "2026-01-07",
-      "date_label": "Wed 07 Jan 2026",
-      "date_short": "07 Jan 2026",
       "season_id": "s1",
       "opponent": null,
       "result": "2-3",
       "goals_for": 2,
       "goals_against": 3,
       "goal_difference": -1,
-      "points": 0,
-      "badge": "LOSS"
+      "points": 0
     },
     {
       "date": "2025-12-17",
-      "date_label": "Wed 17 Dec 2025",
-      "date_short": "17 Dec 2025",
       "season_id": "s1",
       "opponent": null,
       "result": "1-7",
       "goals_for": 1,
       "goals_against": 7,
       "goal_difference": -6,
-      "points": 0,
-      "badge": "LOSS"
+      "points": 0
     },
     {
       "date": "2025-12-10",
-      "date_label": "Wed 10 Dec 2025",
-      "date_short": "10 Dec 2025",
       "season_id": "s1",
       "opponent": null,
       "result": "8-1",
       "goals_for": 8,
       "goals_against": 1,
       "goal_difference": 7,
-      "points": 3,
-      "badge": "WIN"
+      "points": 3
     },
     {
       "date": "2025-12-03",
-      "date_label": "Wed 03 Dec 2025",
-      "date_short": "03 Dec 2025",
       "season_id": "s1",
       "opponent": null,
       "result": "5-7",
       "goals_for": 5,
       "goals_against": 7,
       "goal_difference": -2,
-      "points": 0,
-      "badge": "LOSS"
+      "points": 0
     },
     {
       "date": "2025-11-26",
-      "date_label": "Wed 26 Nov 2025",
-      "date_short": "26 Nov 2025",
       "season_id": "s1",
       "opponent": null,
       "result": "6-3",
       "goals_for": 6,
       "goals_against": 3,
       "goal_difference": 3,
-      "points": 3,
-      "badge": "WIN"
+      "points": 3
     },
     {
       "date": "2025-11-19",
-      "date_label": "Wed 19 Nov 2025",
-      "date_short": "19 Nov 2025",
       "season_id": "s1",
       "opponent": null,
       "result": "2-2",
       "goals_for": 2,
       "goals_against": 2,
       "goal_difference": 0,
-      "points": 1,
-      "badge": "DRAW"
+      "points": 1
     },
     {
       "date": "2025-11-12",
-      "date_label": "Wed 12 Nov 2025",
-      "date_short": "12 Nov 2025",
       "season_id": "s1",
       "opponent": null,
       "result": "4-5",
       "goals_for": 4,
       "goals_against": 5,
       "goal_difference": -1,
-      "points": 0,
-      "badge": "LOSS"
+      "points": 0
     },
     {
       "date": "2025-11-05",
-      "date_label": "Wed 05 Nov 2025",
-      "date_short": "05 Nov 2025",
       "season_id": "s1",
       "opponent": null,
       "result": "2-1",
       "goals_for": 2,
       "goals_against": 1,
       "goal_difference": 1,
-      "points": 3,
-      "badge": "WIN"
+      "points": 3
     },
     {
       "date": "2025-10-22",
-      "date_label": "Wed 22 Oct 2025",
-      "date_short": "22 Oct 2025",
       "season_id": "s1",
       "opponent": null,
       "result": "3-8",
       "goals_for": 3,
       "goals_against": 8,
       "goal_difference": -5,
-      "points": 0,
-      "badge": "LOSS"
+      "points": 0
     },
     {
       "date": "2025-10-15",
-      "date_label": "Wed 15 Oct 2025",
-      "date_short": "15 Oct 2025",
       "season_id": "s1",
       "opponent": null,
       "result": "12-4",
       "goals_for": 12,
       "goals_against": 4,
       "goal_difference": 8,
-      "points": 3,
-      "badge": "WIN"
+      "points": 3
     },
     {
       "date": "2025-10-08",
-      "date_label": "Wed 08 Oct 2025",
-      "date_short": "08 Oct 2025",
       "season_id": "s1",
       "opponent": null,
       "result": "4-4",
       "goals_for": 4,
       "goals_against": 4,
       "goal_difference": 0,
-      "points": 1,
-      "badge": "DRAW"
+      "points": 1
     },
     {
       "date": "2025-10-01",
-      "date_label": "Wed 01 Oct 2025",
-      "date_short": "01 Oct 2025",
       "season_id": "s1",
       "opponent": null,
       "result": "0-6",
       "goals_for": 0,
       "goals_against": 6,
       "goal_difference": -6,
-      "points": 0,
-      "badge": "LOSS"
+      "points": 0
     },
     {
       "date": "2025-09-24",
-      "date_label": "Wed 24 Sep 2025",
-      "date_short": "24 Sep 2025",
       "season_id": "s1",
       "opponent": null,
       "result": "1-2",
       "goals_for": 1,
       "goals_against": 2,
       "goal_difference": -1,
-      "points": 0,
-      "badge": "LOSS"
+      "points": 0
     },
     {
       "date": "2025-09-17",
-      "date_label": "Wed 17 Sep 2025",
-      "date_short": "17 Sep 2025",
       "season_id": "s1",
       "opponent": null,
       "result": "6-2",
       "goals_for": 6,
       "goals_against": 2,
       "goal_difference": 4,
-      "points": 3,
-      "badge": "WIN"
+      "points": 3
     },
     {
       "date": "2025-09-10",
-      "date_label": "Wed 10 Sep 2025",
-      "date_short": "10 Sep 2025",
       "season_id": "s1",
       "opponent": null,
       "result": "4-5",
       "goals_for": 4,
       "goals_against": 5,
       "goal_difference": -1,
-      "points": 0,
-      "badge": "LOSS"
+      "points": 0
     }
   ],
   "season_form": [
@@ -1900,7 +1820,6 @@
   "match_details": [
     {
       "date": "2026-11-11",
-      "summary_note": "11 November 2026 — Shamrock Posers — Loss",
       "lineup": [
         {
           "player": "Boris",
@@ -1941,7 +1860,6 @@
     },
     {
       "date": "2026-11-04",
-      "summary_note": "04 November 2026 — Saffron Rangers — Draw",
       "lineup": [
         {
           "player": "Berghi",
@@ -1992,7 +1910,6 @@
     },
     {
       "date": "2026-10-28",
-      "summary_note": "28 October 2026 — The Dirty Boys — Loss",
       "lineup": [
         {
           "player": "Boris",
@@ -2043,7 +1960,6 @@
     },
     {
       "date": "2026-10-21",
-      "summary_note": "21 October 2026 — Foireann Peile — Draw",
       "lineup": [
         {
           "player": "Boris",
@@ -2084,7 +2000,6 @@
     },
     {
       "date": "2026-10-14",
-      "summary_note": "14 October 2026 — Dynamo Mickey CF — Win",
       "lineup": [
         {
           "player": "Boris",
@@ -2130,7 +2045,6 @@
     },
     {
       "date": "2026-10-07",
-      "summary_note": "07 October 2026 — Finessin FC — Loss",
       "lineup": [
         {
           "player": "Boris",
@@ -2176,7 +2090,6 @@
     },
     {
       "date": "2026-09-30",
-      "summary_note": "30 September 2026 — Ball FC — Win",
       "lineup": [
         {
           "player": "Boris",
@@ -2217,7 +2130,6 @@
     },
     {
       "date": "2026-09-16",
-      "summary_note": "16 September 2026 — Brother Man FC — Win",
       "lineup": [
         {
           "player": "Boris",
@@ -2258,7 +2170,6 @@
     },
     {
       "date": "2026-09-09",
-      "summary_note": "09 September 2026 — Shamrock Posers — Loss",
       "lineup": [
         {
           "player": "Boris",
@@ -2309,7 +2220,6 @@
     },
     {
       "date": "2026-01-28",
-      "summary_note": "28 January 2026 — Draw",
       "lineup": [
         {
           "player": "Boris",
@@ -2355,7 +2265,6 @@
     },
     {
       "date": "2026-01-21",
-      "summary_note": "21 January 2026 — Win",
       "lineup": [
         {
           "player": "Boris",
@@ -2401,7 +2310,6 @@
     },
     {
       "date": "2026-01-07",
-      "summary_note": "07 January 2026 — Loss",
       "lineup": [
         {
           "player": "Ben",
@@ -2422,7 +2330,6 @@
     },
     {
       "date": "2025-12-17",
-      "summary_note": "17 December 2025 — Loss",
       "lineup": [
         {
           "player": "Berghi",
@@ -2443,7 +2350,6 @@
     },
     {
       "date": "2025-12-10",
-      "summary_note": "10 December 2025 — Win",
       "lineup": [
         {
           "player": "Boris",
@@ -2484,7 +2390,6 @@
     },
     {
       "date": "2025-12-03",
-      "summary_note": "03 December 2025 — Loss",
       "lineup": [
         {
           "player": "Boris",
@@ -2525,7 +2430,6 @@
     },
     {
       "date": "2025-11-26",
-      "summary_note": "26 November 2025 — Win",
       "lineup": [
         {
           "player": "Ben",
@@ -2571,7 +2475,6 @@
     },
     {
       "date": "2025-11-19",
-      "summary_note": "19 November 2025 — Draw",
       "lineup": [
         {
           "player": "Boris",
@@ -2617,7 +2520,6 @@
     },
     {
       "date": "2025-11-12",
-      "summary_note": "12 November 2025 — Loss",
       "lineup": [
         {
           "player": "Boris",
@@ -2658,7 +2560,6 @@
     },
     {
       "date": "2025-11-05",
-      "summary_note": "05 November 2025 — Win",
       "lineup": [
         {
           "player": "Boris",
@@ -2699,7 +2600,6 @@
     },
     {
       "date": "2025-10-22",
-      "summary_note": "22 October 2025 — Loss",
       "lineup": [
         {
           "player": "Boris",
@@ -2730,7 +2630,6 @@
     },
     {
       "date": "2025-10-15",
-      "summary_note": "15 October 2025 — Win",
       "lineup": [
         {
           "player": "Boris",
@@ -2771,7 +2670,6 @@
     },
     {
       "date": "2025-10-08",
-      "summary_note": "08 October 2025 — Draw",
       "lineup": [
         {
           "player": "Boris",
@@ -2817,7 +2715,6 @@
     },
     {
       "date": "2025-10-01",
-      "summary_note": "01 October 2025 — Loss",
       "lineup": [
         {
           "player": "Boris",
@@ -2858,7 +2755,6 @@
     },
     {
       "date": "2025-09-24",
-      "summary_note": "24 September 2025 — Loss",
       "lineup": [
         {
           "player": "Boris",
@@ -2904,7 +2800,6 @@
     },
     {
       "date": "2025-09-17",
-      "summary_note": "17 September 2025 — Win",
       "lineup": [
         {
           "player": "Boris",
@@ -2950,7 +2845,6 @@
     },
     {
       "date": "2025-09-10",
-      "summary_note": "10 September 2025 — Loss",
       "lineup": [
         {
           "player": "Boris",
@@ -3003,7 +2897,7 @@
         "goals": 6,
         "mom": 1,
         "goals_per_appearance": 0.8571428571,
-        "goals_per_appearance_rounded": 0.86
+        "goals_per_appearance_display": "0.86"
       },
       {
         "player": "Mateus",
@@ -3011,7 +2905,7 @@
         "goals": 4,
         "mom": 0,
         "goals_per_appearance": 0.8,
-        "goals_per_appearance_rounded": 0.8
+        "goals_per_appearance_display": "0.8"
       },
       {
         "player": "Emiliano",
@@ -3019,7 +2913,7 @@
         "goals": 3,
         "mom": 1,
         "goals_per_appearance": 0.6,
-        "goals_per_appearance_rounded": 0.6
+        "goals_per_appearance_display": "0.6"
       },
       {
         "player": "Luca",
@@ -3027,7 +2921,7 @@
         "goals": 2,
         "mom": 3,
         "goals_per_appearance": 0.4,
-        "goals_per_appearance_rounded": 0.4
+        "goals_per_appearance_display": "0.4"
       },
       {
         "player": "Vitto",
@@ -3035,7 +2929,7 @@
         "goals": 2,
         "mom": 1,
         "goals_per_appearance": 0.4,
-        "goals_per_appearance_rounded": 0.4
+        "goals_per_appearance_display": "0.4"
       },
       {
         "player": "Akash",
@@ -3043,7 +2937,7 @@
         "goals": 2,
         "mom": 0,
         "goals_per_appearance": null,
-        "goals_per_appearance_rounded": null
+        "goals_per_appearance_display": null
       },
       {
         "player": "Torge",
@@ -3051,7 +2945,7 @@
         "goals": 2,
         "mom": 0,
         "goals_per_appearance": 0.2857142857,
-        "goals_per_appearance_rounded": 0.29
+        "goals_per_appearance_display": "0.29"
       },
       {
         "player": "Jasper",
@@ -3059,7 +2953,7 @@
         "goals": 1,
         "mom": 1,
         "goals_per_appearance": 1,
-        "goals_per_appearance_rounded": 1
+        "goals_per_appearance_display": "1"
       },
       {
         "player": "Ameen",
@@ -3067,7 +2961,7 @@
         "goals": 1,
         "mom": 0,
         "goals_per_appearance": null,
-        "goals_per_appearance_rounded": null
+        "goals_per_appearance_display": null
       },
       {
         "player": "Boris",
@@ -3075,7 +2969,7 @@
         "goals": 1,
         "mom": 0,
         "goals_per_appearance": 0.125,
-        "goals_per_appearance_rounded": 0.12
+        "goals_per_appearance_display": "0.12"
       },
       {
         "player": "Dadde",
@@ -3083,7 +2977,7 @@
         "goals": 1,
         "mom": 0,
         "goals_per_appearance": 1,
-        "goals_per_appearance_rounded": 1
+        "goals_per_appearance_display": "1"
       },
       {
         "player": "Elia",
@@ -3091,7 +2985,7 @@
         "goals": 1,
         "mom": 0,
         "goals_per_appearance": 0.1666666667,
-        "goals_per_appearance_rounded": 0.17
+        "goals_per_appearance_display": "0.17"
       },
       {
         "player": "Ben",
@@ -3099,7 +2993,7 @@
         "goals": 0,
         "mom": 0,
         "goals_per_appearance": 0,
-        "goals_per_appearance_rounded": 0
+        "goals_per_appearance_display": "0"
       },
       {
         "player": "Berghi",
@@ -3107,7 +3001,7 @@
         "goals": 0,
         "mom": 0,
         "goals_per_appearance": 0,
-        "goals_per_appearance_rounded": 0
+        "goals_per_appearance_display": "0"
       },
       {
         "player": "Max",
@@ -3115,7 +3009,7 @@
         "goals": 0,
         "mom": 0,
         "goals_per_appearance": 0,
-        "goals_per_appearance_rounded": 0
+        "goals_per_appearance_display": "0"
       },
       {
         "player": "Pietro",
@@ -3123,15 +3017,14 @@
         "goals": 0,
         "mom": 0,
         "goals_per_appearance": 0,
-        "goals_per_appearance_rounded": 0
+        "goals_per_appearance_display": "0"
       }
     ],
     "coverage": {
       "observed": 9,
       "total": 26,
       "dates": ["2026-11-11", "2026-11-04", "2026-10-28", "2026-10-21", "2026-10-14", "2026-10-07", "2026-09-30", "2026-09-16", "2026-09-09"]
-    },
-    "note": "9 of the 26 matches in the selected seasons have their goals on file. The rest were played before the sync existed and are left out, appearances included."
+    }
   },
   "opponent_record": [
     {
@@ -3144,7 +3037,7 @@
       "goals_against": 1,
       "goal_difference": 4,
       "points_per_match": 3,
-      "points_per_match_rounded": 3
+      "points_per_match_display": "3"
     },
     {
       "opponent": "Ball FC",
@@ -3156,7 +3049,7 @@
       "goals_against": 0,
       "goal_difference": 3,
       "points_per_match": 3,
-      "points_per_match_rounded": 3
+      "points_per_match_display": "3"
     },
     {
       "opponent": "Dynamo Mickey CF",
@@ -3168,7 +3061,7 @@
       "goals_against": 1,
       "goal_difference": 3,
       "points_per_match": 3,
-      "points_per_match_rounded": 3
+      "points_per_match_display": "3"
     },
     {
       "opponent": "Foireann Peile",
@@ -3180,7 +3073,7 @@
       "goals_against": 3,
       "goal_difference": 0,
       "points_per_match": 1,
-      "points_per_match_rounded": 1
+      "points_per_match_display": "1"
     },
     {
       "opponent": "Saffron Rangers",
@@ -3192,7 +3085,7 @@
       "goals_against": 3,
       "goal_difference": 0,
       "points_per_match": 1,
-      "points_per_match_rounded": 1
+      "points_per_match_display": "1"
     },
     {
       "opponent": "Finessin FC",
@@ -3204,7 +3097,7 @@
       "goals_against": 3,
       "goal_difference": -1,
       "points_per_match": 0,
-      "points_per_match_rounded": 0
+      "points_per_match_display": "0"
     },
     {
       "opponent": "The Dirty Boys",
@@ -3216,7 +3109,7 @@
       "goals_against": 3,
       "goal_difference": -1,
       "points_per_match": 0,
-      "points_per_match_rounded": 0
+      "points_per_match_display": "0"
     },
     {
       "opponent": "Shamrock Posers",
@@ -3228,7 +3121,7 @@
       "goals_against": 7,
       "goal_difference": -2,
       "points_per_match": 0,
-      "points_per_match_rounded": 0
+      "points_per_match_display": "0"
     }
   ],
   "attendance_list": [
@@ -3379,6 +3272,7 @@
       "matches": 26,
       "appearances": 7,
       "attendance_rate": 0.2692307692,
+      "turnout_display": "27%",
       "last_appearance": "2026-01-28",
       "present": {
         "played": 7,
@@ -3388,7 +3282,7 @@
         "goals_for": 19,
         "goals_against": 23,
         "points_per_match": 1,
-        "points_per_match_rounded": 1
+        "points_per_match_display": "1"
       },
       "absent": {
         "played": 19,
@@ -3398,25 +3292,13 @@
         "goals_for": 76,
         "goals_against": 65,
         "points_per_match": 1.315789474,
-        "points_per_match_rounded": 1.32
+        "points_per_match_display": "1.32"
       },
       "differential": -0.3157894737,
-      "differential_note": "The side takes 0.32 points a match worse with Anton than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "0.32",
       "goals": 0,
       "mom": 0,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "7 of 26",
-          "note": "27% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "0",
-          "note": "0 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -3555,6 +3437,7 @@
       "matches": 26,
       "appearances": 19,
       "attendance_rate": 0.7307692308,
+      "turnout_display": "73%",
       "last_appearance": "2026-11-11",
       "present": {
         "played": 19,
@@ -3564,7 +3447,7 @@
         "goals_for": 65,
         "goals_against": 69,
         "points_per_match": 1,
-        "points_per_match_rounded": 1
+        "points_per_match_display": "1"
       },
       "absent": {
         "played": 7,
@@ -3574,25 +3457,13 @@
         "goals_for": 30,
         "goals_against": 19,
         "points_per_match": 1.857142857,
-        "points_per_match_rounded": 1.86
+        "points_per_match_display": "1.86"
       },
       "differential": -0.8571428571,
-      "differential_note": "The side takes 0.86 points a match worse with Ben than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "0.86",
       "goals": 0,
       "mom": 0,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "19 of 26",
-          "note": "73% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "0",
-          "note": "0 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -3731,6 +3602,7 @@
       "matches": 26,
       "appearances": 1,
       "attendance_rate": 0.03846153846,
+      "turnout_display": "4%",
       "last_appearance": "2025-11-12",
       "present": {
         "played": 1,
@@ -3740,7 +3612,7 @@
         "goals_for": 4,
         "goals_against": 5,
         "points_per_match": 0,
-        "points_per_match_rounded": 0
+        "points_per_match_display": "0"
       },
       "absent": {
         "played": 25,
@@ -3750,25 +3622,13 @@
         "goals_for": 91,
         "goals_against": 83,
         "points_per_match": 1.28,
-        "points_per_match_rounded": 1.28
+        "points_per_match_display": "1.28"
       },
       "differential": -1.28,
-      "differential_note": "The side takes 1.28 points a match worse with Benoit than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "1.28",
       "goals": 0,
       "mom": 0,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "1 of 26",
-          "note": "4% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "0",
-          "note": "0 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -3907,6 +3767,7 @@
       "matches": 26,
       "appearances": 19,
       "attendance_rate": 0.7307692308,
+      "turnout_display": "73%",
       "last_appearance": "2026-11-11",
       "present": {
         "played": 19,
@@ -3916,7 +3777,7 @@
         "goals_for": 68,
         "goals_against": 70,
         "points_per_match": 1.157894737,
-        "points_per_match_rounded": 1.16
+        "points_per_match_display": "1.16"
       },
       "absent": {
         "played": 7,
@@ -3926,25 +3787,13 @@
         "goals_for": 27,
         "goals_against": 18,
         "points_per_match": 1.428571429,
-        "points_per_match_rounded": 1.43
+        "points_per_match_display": "1.43"
       },
       "differential": -0.2706766917,
-      "differential_note": "The side takes 0.27 points a match worse with Berghi than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "0.27",
       "goals": 0,
       "mom": 0,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "19 of 26",
-          "note": "73% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "0",
-          "note": "0 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -4083,6 +3932,7 @@
       "matches": 26,
       "appearances": 22,
       "attendance_rate": 0.8461538462,
+      "turnout_display": "85%",
       "last_appearance": "2026-11-11",
       "present": {
         "played": 22,
@@ -4092,7 +3942,7 @@
         "goals_for": 83,
         "goals_against": 72,
         "points_per_match": 1.272727273,
-        "points_per_match_rounded": 1.27
+        "points_per_match_display": "1.27"
       },
       "absent": {
         "played": 4,
@@ -4102,25 +3952,13 @@
         "goals_for": 12,
         "goals_against": 16,
         "points_per_match": 1,
-        "points_per_match_rounded": 1
+        "points_per_match_display": "1"
       },
       "differential": 0.2727272727,
-      "differential_note": "The side takes 0.27 points a match better with Boris than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "0.27",
       "goals": 1,
       "mom": 0,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "22 of 26",
-          "note": "85% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "1",
-          "note": "0 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -4259,6 +4097,7 @@
       "matches": 26,
       "appearances": 1,
       "attendance_rate": 0.03846153846,
+      "turnout_display": "4%",
       "last_appearance": "2026-09-16",
       "present": {
         "played": 1,
@@ -4268,7 +4107,7 @@
         "goals_for": 5,
         "goals_against": 1,
         "points_per_match": 3,
-        "points_per_match_rounded": 3
+        "points_per_match_display": "3"
       },
       "absent": {
         "played": 25,
@@ -4278,25 +4117,13 @@
         "goals_for": 90,
         "goals_against": 87,
         "points_per_match": 1.16,
-        "points_per_match_rounded": 1.16
+        "points_per_match_display": "1.16"
       },
       "differential": 1.84,
-      "differential_note": "The side takes 1.84 points a match better with Dadde than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "1.84",
       "goals": 1,
       "mom": 0,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "1 of 26",
-          "note": "4% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "1",
-          "note": "0 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -4435,6 +4262,7 @@
       "matches": 26,
       "appearances": 18,
       "attendance_rate": 0.6923076923,
+      "turnout_display": "69%",
       "last_appearance": "2026-11-11",
       "present": {
         "played": 18,
@@ -4444,7 +4272,7 @@
         "goals_for": 81,
         "goals_against": 54,
         "points_per_match": 1.666666667,
-        "points_per_match_rounded": 1.67
+        "points_per_match_display": "1.67"
       },
       "absent": {
         "played": 8,
@@ -4454,25 +4282,13 @@
         "goals_for": 14,
         "goals_against": 34,
         "points_per_match": 0.25,
-        "points_per_match_rounded": 0.25
+        "points_per_match_display": "0.25"
       },
       "differential": 1.416666667,
-      "differential_note": "The side takes 1.42 points a match better with Daniel than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "1.42",
       "goals": 6,
       "mom": 1,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "18 of 26",
-          "note": "69% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "6",
-          "note": "1 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -4611,6 +4427,7 @@
       "matches": 26,
       "appearances": 6,
       "attendance_rate": 0.2307692308,
+      "turnout_display": "23%",
       "last_appearance": "2026-11-11",
       "present": {
         "played": 6,
@@ -4620,7 +4437,7 @@
         "goals_for": 17,
         "goals_against": 14,
         "points_per_match": 1.166666667,
-        "points_per_match_rounded": 1.17
+        "points_per_match_display": "1.17"
       },
       "absent": {
         "played": 20,
@@ -4630,25 +4447,13 @@
         "goals_for": 78,
         "goals_against": 74,
         "points_per_match": 1.25,
-        "points_per_match_rounded": 1.25
+        "points_per_match_display": "1.25"
       },
       "differential": -0.08333333333,
-      "differential_note": "The side takes 0.08 points a match worse with Elia than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "0.08",
       "goals": 1,
       "mom": 0,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "6 of 26",
-          "note": "23% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "1",
-          "note": "0 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -4787,6 +4592,7 @@
       "matches": 26,
       "appearances": 13,
       "attendance_rate": 0.5,
+      "turnout_display": "50%",
       "last_appearance": "2026-11-04",
       "present": {
         "played": 13,
@@ -4796,7 +4602,7 @@
         "goals_for": 53,
         "goals_against": 42,
         "points_per_match": 1.461538462,
-        "points_per_match_rounded": 1.46
+        "points_per_match_display": "1.46"
       },
       "absent": {
         "played": 13,
@@ -4806,25 +4612,13 @@
         "goals_for": 42,
         "goals_against": 46,
         "points_per_match": 1,
-        "points_per_match_rounded": 1
+        "points_per_match_display": "1"
       },
       "differential": 0.4615384615,
-      "differential_note": "The side takes 0.46 points a match better with Emiliano than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "0.46",
       "goals": 3,
       "mom": 1,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "13 of 26",
-          "note": "50% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "3",
-          "note": "1 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -4963,6 +4757,7 @@
       "matches": 26,
       "appearances": 2,
       "attendance_rate": 0.07692307692,
+      "turnout_display": "8%",
       "last_appearance": "2026-09-09",
       "present": {
         "played": 2,
@@ -4972,7 +4767,7 @@
         "goals_for": 10,
         "goals_against": 4,
         "points_per_match": 1.5,
-        "points_per_match_rounded": 1.5
+        "points_per_match_display": "1.5"
       },
       "absent": {
         "played": 24,
@@ -4982,25 +4777,13 @@
         "goals_for": 85,
         "goals_against": 84,
         "points_per_match": 1.208333333,
-        "points_per_match_rounded": 1.21
+        "points_per_match_display": "1.21"
       },
       "differential": 0.2916666667,
-      "differential_note": "The side takes 0.29 points a match better with Jasper than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "0.29",
       "goals": 1,
       "mom": 1,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "2 of 26",
-          "note": "8% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "1",
-          "note": "1 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -5139,6 +4922,7 @@
       "matches": 26,
       "appearances": 2,
       "attendance_rate": 0.07692307692,
+      "turnout_display": "8%",
       "last_appearance": "2025-09-17",
       "present": {
         "played": 2,
@@ -5148,7 +4932,7 @@
         "goals_for": 10,
         "goals_against": 7,
         "points_per_match": 1.5,
-        "points_per_match_rounded": 1.5
+        "points_per_match_display": "1.5"
       },
       "absent": {
         "played": 24,
@@ -5158,25 +4942,13 @@
         "goals_for": 85,
         "goals_against": 81,
         "points_per_match": 1.208333333,
-        "points_per_match_rounded": 1.21
+        "points_per_match_display": "1.21"
       },
       "differential": 0.2916666667,
-      "differential_note": "The side takes 0.29 points a match better with Langkun than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "0.29",
       "goals": 0,
       "mom": 0,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "2 of 26",
-          "note": "8% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "0",
-          "note": "0 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -5315,6 +5087,7 @@
       "matches": 26,
       "appearances": 5,
       "attendance_rate": 0.1923076923,
+      "turnout_display": "19%",
       "last_appearance": "2026-11-04",
       "present": {
         "played": 5,
@@ -5324,7 +5097,7 @@
         "goals_for": 14,
         "goals_against": 10,
         "points_per_match": 1.4,
-        "points_per_match_rounded": 1.4
+        "points_per_match_display": "1.4"
       },
       "absent": {
         "played": 21,
@@ -5334,25 +5107,13 @@
         "goals_for": 81,
         "goals_against": 78,
         "points_per_match": 1.19047619,
-        "points_per_match_rounded": 1.19
+        "points_per_match_display": "1.19"
       },
       "differential": 0.2095238095,
-      "differential_note": "The side takes 0.21 points a match better with Luca than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "0.21",
       "goals": 2,
       "mom": 3,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "5 of 26",
-          "note": "19% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "2",
-          "note": "3 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -5491,6 +5252,7 @@
       "matches": 26,
       "appearances": 15,
       "attendance_rate": 0.5769230769,
+      "turnout_display": "58%",
       "last_appearance": "2026-11-04",
       "present": {
         "played": 15,
@@ -5500,7 +5262,7 @@
         "goals_for": 63,
         "goals_against": 43,
         "points_per_match": 1.733333333,
-        "points_per_match_rounded": 1.73
+        "points_per_match_display": "1.73"
       },
       "absent": {
         "played": 11,
@@ -5510,25 +5272,13 @@
         "goals_for": 32,
         "goals_against": 45,
         "points_per_match": 0.5454545455,
-        "points_per_match_rounded": 0.55
+        "points_per_match_display": "0.55"
       },
       "differential": 1.187878788,
-      "differential_note": "The side takes 1.19 points a match better with Mateus than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "1.19",
       "goals": 4,
       "mom": 0,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "15 of 26",
-          "note": "58% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "4",
-          "note": "0 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -5667,6 +5417,7 @@
       "matches": 26,
       "appearances": 16,
       "attendance_rate": 0.6153846154,
+      "turnout_display": "62%",
       "last_appearance": "2026-10-07",
       "present": {
         "played": 16,
@@ -5676,7 +5427,7 @@
         "goals_for": 69,
         "goals_against": 59,
         "points_per_match": 1.3125,
-        "points_per_match_rounded": 1.31
+        "points_per_match_display": "1.31"
       },
       "absent": {
         "played": 10,
@@ -5686,25 +5437,13 @@
         "goals_for": 26,
         "goals_against": 29,
         "points_per_match": 1.1,
-        "points_per_match_rounded": 1.1
+        "points_per_match_display": "1.1"
       },
       "differential": 0.2125,
-      "differential_note": "The side takes 0.21 points a match better with Max than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "0.21",
       "goals": 0,
       "mom": 0,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "16 of 26",
-          "note": "62% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "0",
-          "note": "0 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -5843,6 +5582,7 @@
       "matches": 26,
       "appearances": 3,
       "attendance_rate": 0.1153846154,
+      "turnout_display": "12%",
       "last_appearance": "2026-01-07",
       "present": {
         "played": 3,
@@ -5852,7 +5592,7 @@
         "goals_for": 3,
         "goals_against": 11,
         "points_per_match": 0,
-        "points_per_match_rounded": 0
+        "points_per_match_display": "0"
       },
       "absent": {
         "played": 23,
@@ -5862,25 +5602,13 @@
         "goals_for": 92,
         "goals_against": 77,
         "points_per_match": 1.391304348,
-        "points_per_match_rounded": 1.39
+        "points_per_match_display": "1.39"
       },
       "differential": -1.391304348,
-      "differential_note": "The side takes 1.39 points a match worse with Oleg than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "1.39",
       "goals": 0,
       "mom": 0,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "3 of 26",
-          "note": "12% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "0",
-          "note": "0 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -6019,6 +5747,7 @@
       "matches": 26,
       "appearances": 7,
       "attendance_rate": 0.2692307692,
+      "turnout_display": "27%",
       "last_appearance": "2026-11-11",
       "present": {
         "played": 7,
@@ -6028,7 +5757,7 @@
         "goals_for": 21,
         "goals_against": 17,
         "points_per_match": 1.142857143,
-        "points_per_match_rounded": 1.14
+        "points_per_match_display": "1.14"
       },
       "absent": {
         "played": 19,
@@ -6038,25 +5767,13 @@
         "goals_for": 74,
         "goals_against": 71,
         "points_per_match": 1.263157895,
-        "points_per_match_rounded": 1.26
+        "points_per_match_display": "1.26"
       },
       "differential": -0.1203007519,
-      "differential_note": "The side takes 0.12 points a match worse with Pietro than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "0.12",
       "goals": 0,
       "mom": 0,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "7 of 26",
-          "note": "27% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "0",
-          "note": "0 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -6195,6 +5912,7 @@
       "matches": 26,
       "appearances": 5,
       "attendance_rate": 0.1923076923,
+      "turnout_display": "19%",
       "last_appearance": "2026-01-28",
       "present": {
         "played": 5,
@@ -6204,7 +5922,7 @@
         "goals_for": 20,
         "goals_against": 16,
         "points_per_match": 1.6,
-        "points_per_match_rounded": 1.6
+        "points_per_match_display": "1.6"
       },
       "absent": {
         "played": 21,
@@ -6214,25 +5932,13 @@
         "goals_for": 75,
         "goals_against": 72,
         "points_per_match": 1.142857143,
-        "points_per_match_rounded": 1.14
+        "points_per_match_display": "1.14"
       },
       "differential": 0.4571428571,
-      "differential_note": "The side takes 0.46 points a match better with Seb than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "0.46",
       "goals": 0,
       "mom": 0,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "5 of 26",
-          "note": "19% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "0",
-          "note": "0 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -6371,6 +6077,7 @@
       "matches": 26,
       "appearances": 7,
       "attendance_rate": 0.2692307692,
+      "turnout_display": "27%",
       "last_appearance": "2026-11-11",
       "present": {
         "played": 7,
@@ -6380,7 +6087,7 @@
         "goals_for": 20,
         "goals_against": 17,
         "points_per_match": 1.142857143,
-        "points_per_match_rounded": 1.14
+        "points_per_match_display": "1.14"
       },
       "absent": {
         "played": 19,
@@ -6390,25 +6097,13 @@
         "goals_for": 75,
         "goals_against": 71,
         "points_per_match": 1.263157895,
-        "points_per_match_rounded": 1.26
+        "points_per_match_display": "1.26"
       },
       "differential": -0.1203007519,
-      "differential_note": "The side takes 0.12 points a match worse with Torge than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "0.12",
       "goals": 2,
       "mom": 0,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "7 of 26",
-          "note": "27% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "2",
-          "note": "0 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -6547,6 +6242,7 @@
       "matches": 26,
       "appearances": 19,
       "attendance_rate": 0.7307692308,
+      "turnout_display": "73%",
       "last_appearance": "2026-11-04",
       "present": {
         "played": 19,
@@ -6556,7 +6252,7 @@
         "goals_for": 69,
         "goals_against": 68,
         "points_per_match": 1.157894737,
-        "points_per_match_rounded": 1.16
+        "points_per_match_display": "1.16"
       },
       "absent": {
         "played": 7,
@@ -6566,25 +6262,13 @@
         "goals_for": 26,
         "goals_against": 20,
         "points_per_match": 1.428571429,
-        "points_per_match_rounded": 1.43
+        "points_per_match_display": "1.43"
       },
       "differential": -0.2706766917,
-      "differential_note": "The side takes 0.27 points a match worse with Vitto than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "0.27",
       "goals": 2,
       "mom": 1,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "19 of 26",
-          "note": "73% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "2",
-          "note": "1 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",
@@ -6723,6 +6407,7 @@
       "matches": 26,
       "appearances": 1,
       "attendance_rate": 0.03846153846,
+      "turnout_display": "4%",
       "last_appearance": "2025-09-10",
       "present": {
         "played": 1,
@@ -6732,7 +6417,7 @@
         "goals_for": 4,
         "goals_against": 5,
         "points_per_match": 0,
-        "points_per_match_rounded": 0
+        "points_per_match_display": "0"
       },
       "absent": {
         "played": 25,
@@ -6742,25 +6427,13 @@
         "goals_for": 91,
         "goals_against": 83,
         "points_per_match": 1.28,
-        "points_per_match_rounded": 1.28
+        "points_per_match_display": "1.28"
       },
       "differential": -1.28,
-      "differential_note": "The side takes 1.28 points a match worse with Yelong than without. That is a description of how those nights went, not of what they did: it holds nothing else about the match fixed. The Effects view does hold the rest of the lineup fixed.",
+      "differential_display": "1.28",
       "goals": 0,
       "mom": 0,
       "covered": 9,
-      "headline": [
-        {
-          "label": "Appearances",
-          "value": "1 of 26",
-          "note": "4% turnout"
-        },
-        {
-          "label": "Goals",
-          "value": "0",
-          "note": "0 man of the match, over 9 recorded"
-        }
-      ],
       "timeline": [
         {
           "date": "2025-09-10",

@@ -182,7 +182,7 @@ export function coefficientChart({ rows, width, title, description }) {
     marks: [
       gridX({ ticks: 5, stroke: 'var(--border)', strokeOpacity: 1 }),
       ruleX([0], { stroke: 'var(--ink-muted)', strokeWidth: 1 }),
-      // Ridge has no standard error, so it has no bars, as coefficient_plot().
+      // Ridge has no standard error, so it has no bars.
       hasInterval ? ruleY(rows, { y: 'player', x1: 'conf_low', x2: 'conf_high', stroke: 'var(--ink-muted)', strokeWidth: 1.25 }) : null,
       dot(rows, { x: 'estimate', y: 'player', r: 4.5, fill: 'var(--blue)', stroke: 'var(--surface)', strokeWidth: 0.75 }),
       axisX({ ticks: 5, tickSize: 0, tickFormat: axisTickFormat(domain), label: null }),

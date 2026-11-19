@@ -10,6 +10,7 @@
   import { scopeView } from '../../lib/season-scope.js';
   import { sortOnField } from '../../lib/table-sort.js';
   import { useSeasonScope } from '../../lib/use-season-scope.svelte.js';
+  import { scorerCoverage } from '../../lib/wording.js';
   import CardHead from '../CardHead.svelte';
   import DataTable from '../DataTable.svelte';
   import ScopeMessage from '../ScopeMessage.svelte';
@@ -24,7 +25,7 @@
   const earlyMetric = typeof document === 'undefined' ? undefined : document.querySelector('input[name="form-metric"]:checked')?.value;
 
   let metric = $state('points');
-  // On Goals, as scorer_display_table() orders it.
+  // On Goals, the most first.
   let scorerSort = $state.raw({ key: 'goals', direction: 'descending' });
   let showAllScorers = $state(false);
   let charts = $state.raw(null);
@@ -34,7 +35,7 @@
   const scorers = $derived(sortOnField(subset?.scorers.rows ?? [], scorerSort));
   const shownScorers = $derived(firstRows(scorers, FIRST_SCORERS, showAllScorers));
   const moreScorers = $derived(moreRowsLabel(scorers.length, FIRST_SCORERS, showAllScorers, MATCHES));
-  const scorerCard = $derived({ ...cards.scorers, subtitle: subset?.scorers.note ?? null });
+  const scorerCard = $derived({ ...cards.scorers, subtitle: subset ? scorerCoverage(subset.scorers.coverage) : null });
   const opponents = $derived(
     tableHtml({
       className: 'dt-opponents',

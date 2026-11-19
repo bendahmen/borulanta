@@ -1,5 +1,6 @@
 // The small decisions behind Results, Trends and the match pages. Nothing here computes a
 // statistic: every figure is R's, and these only say which row is on show and where it goes.
+import { matchSummaryNote } from './wording.js';
 
 // The parts of a season's file these pages use. The rest is for Effects and the roster.
 export const pickMatches = ({ has_matches, matches, season_form, match_details, scorers, opponent_record }) => ({
@@ -11,7 +12,7 @@ export const pickMatches = ({ has_matches, matches, season_form, match_details, 
   opponent_record,
 });
 
-// The page lengths match_table() and scorer_display_table() give their pagers.
+// How many results and scorers show before "Show all".
 export const FIRST_RESULTS = 10;
 export const FIRST_SCORERS = 15;
 
@@ -33,7 +34,7 @@ export function selectedMatchDate(matches, picked) {
 export function matchDetail(subset, date) {
   const match = subset?.matches.find((row) => row.date === date);
   const detail = subset?.match_details.find((row) => row.date === date);
-  return match && detail ? { match, summaryNote: detail.summary_note, lineup: detail.lineup } : null;
+  return match && detail ? { match, summaryNote: matchSummaryNote(match), lineup: detail.lineup } : null;
 }
 
 // The detail sits above the table. A tap well down the table would otherwise change a card

@@ -12,6 +12,7 @@ import Base from '../../layouts/Base.astro';
 import { EMPTY_STATES, NO_SCRIPT, PLAYERS, PLAYERS_CARDS } from '../../lib/labels.js';
 import { playerPages } from '../../lib/player-pages.js';
 import { readSeasonFile } from '../../lib/season-files.js';
+import { pickerSeasons } from '../../lib/wording.js';
 
 export function getStaticPaths() {
   const subsetIds = meta.subset_files.map((file) => file.replace(/\.json$/, ''));
@@ -39,7 +40,7 @@ const cards = { player: { tag, appearances_title, strip_key }, with_without: PLA
     <p class="tag">{tag}</p>
     <h1>{player}</h1>
   </div>
-  <PlayerPage client:load seasons={meta.seasons} player={player} noMatches={EMPTY_STATES.no_matches} cards={cards} />
+  <PlayerPage client:load seasons={pickerSeasons(meta.seasons)} player={player} noMatches={EMPTY_STATES.no_matches} cards={cards} />
   <SeasonTicksScript />
   <noscript>
     <style is:inline>astro-island { display: none; }</style>

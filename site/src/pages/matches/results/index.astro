@@ -4,13 +4,14 @@ import SeasonTicksScript from '../../../components/SeasonTicksScript.astro';
 import meta from '../../../generated/meta.json';
 import Matches from '../../../layouts/Matches.astro';
 import { EMPTY_STATES, MATCHES_CARDS, NO_SCRIPT } from '../../../lib/labels.js';
+import { pickerSeasons } from '../../../lib/wording.js';
 
 const { every_result, match_detail } = MATCHES_CARDS;
 ---
 <Matches view="results">
   <ResultsPage
     client:load
-    seasons={meta.seasons}
+    seasons={pickerSeasons(meta.seasons)}
     noMatches={EMPTY_STATES.no_matches}
     cards={{ every_result, match_detail }}
   />

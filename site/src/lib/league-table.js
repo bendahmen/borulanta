@@ -1,6 +1,7 @@
-// The two tables on the League page, drawn at build time. Both take R's headings.
+// The two tables on the League page, drawn at build time.
+import { formatDate } from './dates.js';
 
-// All eight of league_table_table(). Enlarged text folds what the five middle ones say.
+// All eight columns of the standings. Enlarged text folds what the five middle ones say.
 export function leagueColumns(headings) {
   return [
     { key: 'position', label: headings.position, value: (row) => row.position, number: true },
@@ -14,11 +15,11 @@ export function leagueColumns(headings) {
   ];
 }
 
-// As run_in_table(). An opponent the standings do not carry has no position, and keeps
-// its row with that cell empty.
+// An opponent the standings do not carry has no position, and keeps its row with that cell
+// empty.
 export function runInColumns(headings) {
   return [
-    { key: 'date', label: headings.date, value: (row) => row.date_short, lead: true },
+    { key: 'date', label: headings.date, value: (row) => formatDate(row.date, '%d %b %Y'), lead: true },
     { key: 'opponent', label: headings.opponent, value: (row) => row.opponent },
     { key: 'position', label: headings.position, value: (row) => row.position, number: true },
   ];

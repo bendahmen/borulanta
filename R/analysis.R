@@ -498,6 +498,8 @@ format_estimate <- function(estimate, p_value) {
   )
 }
 
+#' One row per player, with each outcome's estimate as format_estimate() writes it, in a
+#' column named by the outcome's id.
 player_regression_table <- function(regression_results) {
   regression_results |>
     select(player, appearances, outcome, estimate, p_value) |>
@@ -509,12 +511,10 @@ player_regression_table <- function(regression_results) {
     transmute(
       Player = player,
       Appearances = appearances,
-      Points = format_estimate(estimate_points, p_value_points),
-      `Goals scored` = format_estimate(estimate_goals_scored, p_value_goals_scored),
-      `Goals conceded` = format_estimate(estimate_goals_conceded, p_value_goals_conceded),
-      `Goal difference` = format_estimate(
-        estimate_goal_difference, p_value_goal_difference
-      ),
+      points = format_estimate(estimate_points, p_value_points),
+      goals_scored = format_estimate(estimate_goals_scored, p_value_goals_scored),
+      goals_conceded = format_estimate(estimate_goals_conceded, p_value_goals_conceded),
+      goal_difference = format_estimate(estimate_goal_difference, p_value_goal_difference),
       # Hidden in the table, and there only so that clicking a column sorts on
       # the coefficient rather than on the string that displays it.
       sort_points = estimate_points,
@@ -526,7 +526,7 @@ player_regression_table <- function(regression_results) {
 }
 
 # The columns above, paired: the one you see and the one it sorts on.
-REGRESSION_TABLE_COLUMNS <- setNames(paste0("sort_", REGRESSION_OUTCOMES), OUTCOME_LABELS)
+REGRESSION_TABLE_COLUMNS <- setNames(paste0("sort_", REGRESSION_OUTCOMES), REGRESSION_OUTCOMES)
 
 # The home page ----
 #
@@ -705,6 +705,10 @@ opponent_record <- function(matches) {
     ) |>
     arrange(desc(points_per_match), desc(goal_difference), opponent)
 }
+
+# A match week without a sync. The game is weekly and the sync runs after it,
+# so a fixture list older than this has missed at least one.
+STALE_FIXTURES_DAYS <- 8L
 
 #' The fixtures still to come, with what the table says about who we are facing.
 #'
