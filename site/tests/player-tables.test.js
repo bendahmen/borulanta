@@ -51,7 +51,7 @@ test('each column of With and without reads its own field, and the rate is the r
   });
 });
 
-test('Turnout rounds as DT does and the averages are not rounded again', () => {
+test('Turnout rounds a tie up and the averages are not rounded again', () => {
   const row = { player: 'Oleg', attendance_rate: 0.125, avg_points: 1.5, avg_goals_scored: 4.61, avg_goals_conceded: 2 };
   const shown = shownBy(roster, row);
   assert.equal(shown.attendance_rate, '13%');

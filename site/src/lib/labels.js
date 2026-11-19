@@ -1,5 +1,6 @@
-// Every fixed word used in two or more places. A word used in one place sits in the
-// component that shows it. The only words in src/generated/ are ones that depend on the data.
+// The site's fixed words: all of them used in two or more places, and others that belong with
+// a set here, such as the navigation. A word used in one place can sit in the component that
+// shows it instead. The only words in src/generated/ are ones that depend on the data.
 
 export const SITE = {
   name: 'Borulanta',
@@ -326,7 +327,7 @@ export const EFFECTS = {
   separateAxes: 'The two axes use different scales here: one set of estimates is far smaller than the other.',
 };
 
-// Fees > You. noPayments is the table's empty state, and noCharges is new copy.
+// Fees > You, around its two tables. noPayments and noCharges are their empty states.
 export const FEES = {
   loading: 'Loading',
   loadFailed: 'Your charges and payments did not load.',
@@ -353,7 +354,7 @@ export const MATCHES = {
   lineupSeason: (season) => `Season appearances and Turnout are counted over ${season} alone.`,
 };
 
-// New copy for Roster and the player pages. The cards' own wording is R's, in wording.json.
+// Words on Roster and the player pages beyond the cards' own, which are PLAYERS_CARDS.
 export const PLAYERS = {
   // Beside the name, so the top three are not carried by the tint alone.
   topThree: 'Top 3',

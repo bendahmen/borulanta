@@ -39,7 +39,7 @@ export function sortRows(rows, sort) {
 }
 
 // Any other table, whose keys are its rows' own fields. The rows arrive in R's order, and a
-// stable sort leaves ties in that order, which is what DT's own sorting does with them.
+// stable sort leaves ties in that order, so equal rows keep R's order.
 // Missing values go last whichever way the column runs.
 export function sortOnField(rows, { key, direction }) {
   const sign = direction === 'descending' ? -1 : 1;

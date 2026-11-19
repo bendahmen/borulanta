@@ -33,7 +33,7 @@ test('head to head shows the rounded points and folds only the goals', () => {
 
 const lineupRow = { player: 'Émile Zola', season_appearances: 2, attendance_rate: 0.125 };
 
-test('a lineup shows Turnout as DT does and links a name by its slug', () => {
+test('a lineup shows Turnout rounded to a whole percent and links a name by its slug', () => {
   const html = tableHtml({ caption: 'c', columns: lineupColumns(cards.match_detail.headings), rows: [lineupRow] });
   assert.ok(html.includes('13%'));
   assert.ok(html.includes('<a href="/players/emile-zola/">Émile Zola</a>'));

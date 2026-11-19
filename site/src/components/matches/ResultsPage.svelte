@@ -1,6 +1,6 @@
 <script>
   // Matches > Results: every result, and the one you pick out of it. The detail stays above the
-  // table, because R's wording says so. No Plot on this page.
+  // table, because the table's subtitle says so. No Plot on this page.
   import { onMount, tick, untrack } from 'svelte';
 
   import { moreRowsLabel, tableHtml } from '../../lib/data-table.js';
@@ -38,7 +38,7 @@
     }),
   );
 
-  // A change of ticks falls back to the newest match, as any new table starts from its top row.
+  // A change of ticks falls back to the newest match. See selectedMatchDate() for why it never empties.
   function changeTick(id, checked) {
     picked = null;
     showingAll = false;

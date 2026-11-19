@@ -84,7 +84,7 @@ test('the first twelve charges show and the rest wait for the button, as the pag
   assert.equal(moreChargesLabel(13, true, FEES), 'Show the latest 12');
 });
 
-test('nothing to show says so, in R\'s words for payments', () => {
+test('nothing to show says so, in the empty-state words for payments', () => {
   const empty = { match_charges: [], payment_history: [] };
   assert.match(paymentsHtml(empty, cards.payments, words), new RegExp(FEES.noPayments));
   assert.match(chargesHtml(empty, cards.charges, words), new RegExp(FEES.noCharges));

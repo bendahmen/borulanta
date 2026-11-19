@@ -13,7 +13,7 @@ const METRICS = {
   squad_size: { series: [{ column: 'rolling_squad_size', colour: 'var(--green)' }] },
 };
 
-// `labels` is wording.plot_labels.season_form. The key is only for more than one line.
+// `labels` is SEASON_FORM_LABELS in labels.js. The key is only for more than one line.
 export function formMetric(metric, labels) {
   const known = METRICS[metric];
   if (!known) throw new Error(`Season form has no metric called ${metric}.`);

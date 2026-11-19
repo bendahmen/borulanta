@@ -87,7 +87,7 @@
     gap: 6px;
   }
 
-  /* 380 px tall once there is the width for it, 260 px on a phone. */
+  /* More height on a wider screen, where there is room for it. */
   @media (min-width: 768px) {
     .slot {
       height: 23.75rem;

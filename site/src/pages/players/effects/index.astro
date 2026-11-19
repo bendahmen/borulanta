@@ -55,13 +55,21 @@ const attackDefenceAxes = {
   x: 'Goals scored: coefficient',
   y: 'Goals conceded: coefficient, sign flipped',
 };
-const coefficientAxes = (describe) =>
-  Object.fromEntries(Object.entries(outcomeLabels).map(([outcome, label]) => [outcome, { x: null, y: describe(label) }]));
 const plotLabels = {
   attack_defence: { ols: attackDefenceAxes, ridge: attackDefenceAxes },
   coefficient: {
-    ols: coefficientAxes((label) => `${label} coefficient with 95% confidence interval`),
-    ridge: coefficientAxes((label) => `${label}: deviation from the average player, shrunk`),
+    ols: {
+      points: { x: null, y: 'Points coefficient with 95% confidence interval' },
+      goals_scored: { x: null, y: 'Goals scored coefficient with 95% confidence interval' },
+      goals_conceded: { x: null, y: 'Goals conceded coefficient with 95% confidence interval' },
+      goal_difference: { x: null, y: 'Goal difference coefficient with 95% confidence interval' },
+    },
+    ridge: {
+      points: { x: null, y: 'Points: deviation from the average player, shrunk' },
+      goals_scored: { x: null, y: 'Goals scored: deviation from the average player, shrunk' },
+      goals_conceded: { x: null, y: 'Goals conceded: deviation from the average player, shrunk' },
+      goal_difference: { x: null, y: 'Goal difference: deviation from the average player, shrunk' },
+    },
   },
 };
 ---

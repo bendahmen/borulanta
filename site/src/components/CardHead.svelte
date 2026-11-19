@@ -1,5 +1,5 @@
 <script>
-  // The tag, title and subtitle come from wording.json and are shown as exported.
+  // The tag, title and subtitle are shown as given. A null subtitle draws nothing.
   let { card, id = undefined } = $props();
 </script>
 

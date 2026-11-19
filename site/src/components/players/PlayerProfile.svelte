@@ -11,7 +11,7 @@
 
   let { profile, matches, cards, note = null } = $props();
 
-  // The note is R's wording to go with a table above, so a page with no table has no card head.
+  // The note goes with a table above, so a page with no table has no card head.
   const playerCard = $derived(note === null ? null : { ...cards.player, subtitle: note });
   const withWithoutCard = $derived({ ...cards.with_without, subtitle: profile?.differential_note ?? null });
 </script>
