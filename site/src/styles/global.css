@@ -82,7 +82,7 @@
     --ink: #ebf0ec;
     --ink-muted: #abbac2;
 
-    /* APP_COLOURS are too dark to read here, so these are their lighter partners. */
+    /* The light theme's colours are too dark to read here, so these are their lighter partners. */
     --blue: #8bb9fd;
     --blue-soft: #1b3356;
     --green: #73d885;

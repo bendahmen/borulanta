@@ -45,11 +45,11 @@ test('the first rows, or all of them', () => {
   assert.deepEqual(firstRows([1], 2, false), [1]);
 });
 
-test('Every result shows the 10 rows of a page of match_table()', () => {
+test('Every result shows 10 rows until asked for all', () => {
   assert.equal(FIRST_RESULTS, 10);
 });
 
-test('Scorers shows the 15 rows of a page of scorer_display_table()', () => {
+test('Scorers shows 15 rows until asked for all', () => {
   assert.equal(FIRST_SCORERS, 15);
 });
 

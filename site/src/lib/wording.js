@@ -8,7 +8,7 @@ import { formatDate } from './dates.js';
 const MIDDLE_DOT = ' · ';
 
 // 1st, 2nd, 3rd, 4th, ... 11th, 12th, 13th, 21st.
-export function ordinal(n) {
+export function withOrdinalSuffix(n) {
   const tens = n % 100;
   const suffix = tens >= 11 && tens <= 13 ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] ?? 'th');
   return `${n}${suffix}`;
@@ -88,7 +88,7 @@ export function staleFixtureNote(scrapedOn) {
 // "4th of 9 · 11 points from 9", or null when the table does not list us.
 export function leaguePosition(position) {
   if (!position) return null;
-  return `${ordinal(position.position)} of ${position.teams}${MIDDLE_DOT}${position.points} points from ${position.played}`;
+  return `${withOrdinalSuffix(position.position)} of ${position.teams}${MIDDLE_DOT}${position.points} points from ${position.played}`;
 }
 
 // The standings' subtitle, dated because the table ages between syncs. Null with no table.

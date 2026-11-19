@@ -1,8 +1,8 @@
 // Every date on the site, written from R's ISO string in one of the six ways R wrote them,
 // with R's own pattern as the name. The string is split by hand and the names are written
 // out, with no Intl and no Date: Node's en-GB gives "Wed, 09 Sept 2026" where R gives
-// "Wed 09 Sep 2026", and a Date would bring the time zone into a calendar date. Inlined by
-// moduleToInline() wherever a script needs it, so keep it plain.
+// "Wed 09 Sep 2026", and a Date would bring the time zone into a calendar date. Every date is
+// written at build time or by an island, so no inline script carries this.
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];

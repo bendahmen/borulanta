@@ -6,7 +6,7 @@ import { formMetric, formPoints } from '../src/lib/season-form.js';
 
 const columns = (metric) => formMetric(metric, labels).series.map((line) => line.column);
 
-test('each metric draws the rolling columns season_form_plot() draws', () => {
+test('each metric draws its rolling columns', () => {
   assert.deepEqual(columns('points'), ['rolling_points']);
   assert.deepEqual(columns('goals'), ['rolling_goals_scored', 'rolling_goals_conceded']);
   assert.deepEqual(columns('goal_difference'), ['rolling_goal_difference']);

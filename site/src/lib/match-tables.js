@@ -25,7 +25,10 @@ export function everyResultColumns(card, words) {
       key: 'outcome',
       label: headings.outcome,
       value: (row) => resultBadge(row.points),
-      html: (row) => `<span class="${escapeHtml(badgeClass(resultBadge(row.points)))}">${escapeHtml(resultBadge(row.points))}</span>`,
+      html: (row) => {
+        const badge = resultBadge(row.points);
+        return `<span class="${escapeHtml(badgeClass(badge))}">${escapeHtml(badge)}</span>`;
+      },
     },
     {
       key: 'page',

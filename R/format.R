@@ -37,7 +37,8 @@ format_rate <- function(rate) {
 
 #' The with-and-without gap, unsigned and always to two places, as in "0.40 points a match".
 format_gap <- function(gap) {
-  if_else(is.na(gap), NA_character_, format(round(abs(gap), 2), nsmall = 2))
+  # formatC() rather than format(), which pads a vector to its widest member.
+  if_else(is.na(gap), NA_character_, formatC(round(abs(gap), 2), format = "f", digits = 2))
 }
 
 #' A player's turnout as a whole percentage, with R's rounding: 12.5% shows as 12%.

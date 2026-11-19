@@ -911,7 +911,10 @@ test_that("season_span() gives each season its first and last match, or none", {
 test_that("the display strings round as R does and keep a missing value missing", {
   expect_equal(format_rate(c(0.5, 2 / 3, 3, NA)), c("0.5", "0.67", "3", NA))
   # Always two places, and the sign is in the words around it.
-  expect_equal(format_gap(c(-0.4, 1 / 3, 0, NA)), c("0.40", "0.33", "0.00", NA))
+  expect_equal(format_gap(c(-0.4, 1 / 3, 0, 12.345, NA)), c("0.40", "0.33", "0.00", "12.35", NA))
+  # As format(round(abs(x), 2), nsmall = 2) gives it, one value at a time.
+  gaps <- c(-0.947, 0.005, 1.5, -2)
+  expect_equal(format_gap(gaps), map_chr(gaps, ~ format(round(abs(.x), 2), nsmall = 2)))
   # R's round() takes a tie to the even number, so 12.5% shows as 12%.
   expect_equal(format_turnout(c(0.125, 3 / 7, 1, NA)), c("12%", "43%", "100%", NA))
 })

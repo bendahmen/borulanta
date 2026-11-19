@@ -19,7 +19,7 @@ import {
   matchDetails,
   matchMetaLine,
   matchSummaryNote,
-  ordinal,
+  withOrdinalSuffix,
   pickerSeasons,
   regressionExplanation,
   resultBadge,
@@ -32,7 +32,7 @@ import {
 const read = (path) => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
 
 test('ordinals, the teens included', () => {
-  const shown = [1, 2, 3, 4, 11, 12, 13, 21, 22, 23, 101, 111, 112].map(ordinal);
+  const shown = [1, 2, 3, 4, 11, 12, 13, 21, 22, 23, 101, 111, 112].map(withOrdinalSuffix);
   assert.deepEqual(shown, ['1st', '2nd', '3rd', '4th', '11th', '12th', '13th', '21st', '22nd', '23rd', '101st', '111th', '112th']);
 });
 

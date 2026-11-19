@@ -76,7 +76,7 @@ test('ties on Turnout stay in R order, in both directions', () => {
 
 const many = roster(...Array.from({ length: 20 }, (_, index) => `P${index}`));
 
-test('the table shows as many as attendance_table() pages at, until asked for all', () => {
+test('the roster shows 15 rows until asked for all', () => {
   assert.equal(FIRST_ROSTER, 15);
   assert.equal(shownRoster(many, 'P0', false).length, 15);
   assert.equal(shownRoster(many, 'P0', true).length, 20);

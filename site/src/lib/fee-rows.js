@@ -1,10 +1,9 @@
 // Only these strings reach the browser. fees.json is 385 KB, mostly overviews.
-import { formatDate } from './dates.js';
-import { tableDate } from './wording.js';
-
 //
 // A signing with no match yet is on the picker and not in balances, so overviews
 // is the fallback. Both come from R: this reads the balance and never computes it.
+import { formatDate } from './dates.js';
+import { tableDate } from './wording.js';
 
 export function balanceState(balance) {
   if (balance > 0) return 'owed';
