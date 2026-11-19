@@ -5,10 +5,9 @@ import '../styles/data-table.css';
 
 import league from '../generated/league.json';
 import meta from '../generated/meta.json';
-import wording from '../generated/wording.json';
 import { tableHtml } from '../lib/data-table.js';
 import { leagueWindow } from '../lib/home-tables.js';
-import { HOME } from '../lib/labels.js';
+import { HOME, LEAGUE_CARDS } from '../lib/labels.js';
 import { leagueColumns } from '../lib/league-table.js';
 import CardHead from './CardHead.svelte';
 
@@ -16,7 +15,7 @@ const rows = leagueWindow(league.rows, meta.our_team);
 const table = tableHtml({
   className: 'dt-league dt-tight',
   caption: HOME.league.title,
-  columns: leagueColumns(wording.league_cards.headings),
+  columns: leagueColumns(LEAGUE_CARDS.headings),
   rows,
   rowClass: (row) => (row.team === meta.our_team ? 'is-us' : ''),
   rowAttributes: (row) => (row.team === meta.our_team ? { 'aria-current': 'true' } : {}),

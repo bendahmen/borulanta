@@ -8,10 +8,9 @@ import MatchSummary from '../../components/MatchSummary.astro';
 import fees from '../../generated/fees.json';
 import matches from '../../generated/matches.json';
 import meta from '../../generated/meta.json';
-import wording from '../../generated/wording.json';
 import Base from '../../layouts/Base.astro';
 import { tableHtml } from '../../lib/data-table.js';
-import { MATCHES } from '../../lib/labels.js';
+import { MATCHES, MATCHES_CARDS } from '../../lib/labels.js';
 import { matchHref } from '../../lib/match-data.js';
 import { matchDescription, matchPages, matchTitle } from '../../lib/match-pages.js';
 import { lineupColumns } from '../../lib/match-tables.js';
@@ -28,7 +27,7 @@ export function getStaticPaths() {
 }
 
 const { match, lineup, previous, next } = Astro.props.page;
-const card = wording.matches_cards.match_detail;
+const card = MATCHES_CARDS.match_detail;
 const heading = { before: meta.our_team, after: match.opponent };
 const table = tableHtml({
   className: 'dt-lineup dt-tight',

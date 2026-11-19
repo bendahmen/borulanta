@@ -87,7 +87,7 @@
     gap: 6px;
   }
 
-  /* The height Shiny gives its plot. */
+  /* 380 px tall once there is the width for it, 260 px on a phone. */
   @media (min-width: 768px) {
     .slot {
       height: 23.75rem;

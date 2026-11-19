@@ -6,14 +6,13 @@ import vm from 'node:vm';
 import { balanceColumns, balanceRowClass, balanceState, feeBreakdown } from '../src/lib/fee-rows.js';
 import { chargeColumns, chargesHtml, feeFile, FIRST_CHARGES, moreChargesLabel, paymentColumns, paymentsHtml } from '../src/lib/fee-history.js';
 import { moduleToInline, scriptSafeJson } from '../src/lib/inline.js';
-import { FEE_STATUS, FEES } from '../src/lib/labels.js';
+import { EVERYONE_CARD, FEE_HISTORY_CARDS as cards, FEE_STATUS, FEES } from '../src/lib/labels.js';
 
 const read = (path) => JSON.parse(readFileSync(new URL(path, import.meta.url)));
 const fees = read('../src/generated/fees.json');
-const { fee_cards: cards } = read('../src/generated/wording.json');
 const count = (html, pattern) => (html.match(pattern) ?? []).length;
 
-const words = { ...FEES, noPayments: fees.empty.payments };
+const words = FEES;
 
 test('the balance picks the state, and only the sign of it is read', () => {
   assert.equal(balanceState(0.01), 'owed');
@@ -25,14 +24,14 @@ test('the balance picks the state, and only the sign of it is read', () => {
 });
 
 test('Everyone says in words what the row says in colour, and only where it says something', () => {
-  const [player] = balanceColumns(cards.everyone.headings, FEE_STATUS);
+  const [player] = balanceColumns(EVERYONE_CARD.headings, FEE_STATUS);
   assert.equal(player.cue({ balance: 9.5 }), FEE_STATUS.owed);
   assert.equal(player.cue({ balance: -2 }), FEE_STATUS.credit);
   assert.equal(player.cue({ balance: 0 }), '');
 });
 
 test('Everyone keeps all five of balance_table()s columns, and a phone keeps Player and Balance', () => {
-  const columns = balanceColumns(cards.everyone.headings, FEE_STATUS);
+  const columns = balanceColumns(EVERYONE_CARD.headings, FEE_STATUS);
   assert.deepEqual(columns.map((column) => column.label), ['Player', 'Charges', 'Payments', 'Last payment', 'Balance']);
   assert.deepEqual(columns.filter((column) => !column.folds).map((column) => column.label), ['Player', 'Balance']);
   const [row] = fees.balances;
@@ -41,7 +40,7 @@ test('Everyone keeps all five of balance_table()s columns, and a phone keeps Pla
   ]);
 });
 
-test('the charges keep all seven columns in Shiny\'s order, and a phone keeps three', () => {
+test('the charges keep all seven columns in their order, and a phone keeps three', () => {
   const columns = chargeColumns(cards.charges.headings, cards.charges.played);
   assert.deepEqual(columns.map((column) => column.label), [
     'Date', 'Season', 'Result', 'Played?', 'Squad size', 'Charge', 'Explanation',
@@ -87,7 +86,7 @@ test('the first twelve charges show and the rest wait for the button, as the pag
 
 test('nothing to show says so, in R\'s words for payments', () => {
   const empty = { match_charges: [], payment_history: [] };
-  assert.match(paymentsHtml(empty, cards.payments, words), new RegExp(fees.empty.payments));
+  assert.match(paymentsHtml(empty, cards.payments, words), new RegExp(FEES.noPayments));
   assert.match(chargesHtml(empty, cards.charges, words), new RegExp(FEES.noCharges));
   assert.doesNotMatch(paymentsHtml(empty, cards.payments, words), /<table/);
 });
@@ -125,5 +124,5 @@ test('the three sources run together as a classic script', () => {
   assert.doesNotMatch(inline, /<\/script/i);
   const context = {};
   vm.runInNewContext(`${inline}\nthis.result = paymentsHtml(${scriptSafeJson({ payment_history: [] })}, {}, ${scriptSafeJson(words)});`, context);
-  assert.match(context.result, new RegExp(fees.empty.payments));
+  assert.match(context.result, new RegExp(FEES.noPayments));
 });

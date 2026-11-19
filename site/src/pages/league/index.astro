@@ -7,23 +7,23 @@ import CardHead from '../../components/CardHead.svelte';
 import fixtures from '../../generated/fixtures.json';
 import league from '../../generated/league.json';
 import meta from '../../generated/meta.json';
-import wording from '../../generated/wording.json';
 import Base from '../../layouts/Base.astro';
 import { tableHtml } from '../../lib/data-table.js';
 import dates from '../../lib/fixture-dates.js?raw';
 import { moduleToInline } from '../../lib/inline.js';
-import { NO_SCRIPT, PAGES } from '../../lib/labels.js';
+import { LEAGUE_CARDS, NO_SCRIPT, PAGES } from '../../lib/labels.js';
 import { leagueColumns, runInColumns } from '../../lib/league-table.js';
 import runIn from '../../lib/run-in.js?raw';
 
 const page = PAGES.league;
-const cards = wording.league_cards;
+const cards = LEAGUE_CARDS;
+const standingsCard = { ...cards.standings, subtitle: league.subtitle };
 const hasStandings = league.rows.length > 0;
 const hasFixtures = fixtures.fixtures.length > 0;
 
 const standings = tableHtml({
   className: 'dt-league dt-tight',
-  caption: league.title,
+  caption: cards.standings.title,
   columns: leagueColumns(cards.headings),
   rows: league.rows,
   rowClass: (row) => (row.team === meta.our_team ? 'is-us' : ''),
@@ -51,13 +51,13 @@ mountRunIn(document.getElementById("run-in"));}());`;
       {
         hasStandings ? (
           <>
-            <CardHead id="standings-title" card={{ tag: league.tag, title: league.title, subtitle: league.subtitle }} />
+            <CardHead id="standings-title" card={standingsCard} />
             <Fragment set:html={standings} />
           </>
         ) : (
           <>
-            <h2 id="standings-tag" class="tag">{league.tag}</h2>
-            <p class="dt-empty">{league.empty}</p>
+            <h2 id="standings-tag" class="tag">{cards.standings.tag}</h2>
+            <p class="dt-empty">{cards.standings.empty}</p>
           </>
         )
       }
@@ -66,7 +66,7 @@ mountRunIn(document.getElementById("run-in"));}());`;
     <section id="run-in" class="card" aria-labelledby="run-in-title">
       <CardHead id="run-in-title" card={cards.run_in} />
       {hasFixtures && <Fragment set:html={runInTable} />}
-      <p class="dt-empty" data-run-in="empty" hidden={hasFixtures}>{fixtures.run_in_empty}</p>
+      <p class="dt-empty" data-run-in="empty" hidden={hasFixtures}>{cards.run_in.empty}</p>
       <noscript>
         <style is:inline>.dt-run-in tr[hidden] { display: table-row !important; }</style>
         {hasFixtures && <p class="no-script">{NO_SCRIPT.fixtures}</p>}

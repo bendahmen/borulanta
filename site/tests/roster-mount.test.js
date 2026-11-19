@@ -8,7 +8,7 @@ import vm from 'node:vm';
 import { render } from 'svelte/server';
 
 import { tapPicksRow } from '../src/lib/data-table.js';
-import { MATCHES, NAV, PLAYERS } from '../src/lib/labels.js';
+import { EMPTY_STATES, MATCHES, MATCHES_CARDS as matchCards, NAV, PLAYERS, PLAYERS_CARDS as cards } from '../src/lib/labels.js';
 import { everyResultColumns } from '../src/lib/match-tables.js';
 import { FIRST_ROSTER, ROSTER_SORT, createRosterSelection, findProfile, pickPlayers, playerPageView, rosterView } from '../src/lib/player-data.js';
 import { rosterColumns } from '../src/lib/player-tables.js';
@@ -22,7 +22,6 @@ const { default: RosterPage } = await import('../src/components/players/RosterPa
 const { default: PlayerPage } = await import('../src/components/players/PlayerPage.svelte');
 
 const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8');
-const { players_cards: cards, matches_cards: matchCards } = JSON.parse(read('../src/generated/wording.json'));
 const meta = JSON.parse(read('../src/generated/meta.json'));
 const seasonFile = (id) => JSON.parse(read(`../public/data/seasons/${id}.json`));
 
@@ -345,7 +344,7 @@ test('with no profile yet, the cards wait with their headings and no figures', (
 // ---- The pages, in the state they paint before the file arrives ----
 
 test('Roster paints the picker and the card headings, and no row or figure', () => {
-  const { body } = render(RosterPage, { props: { seasons: meta.seasons, noMatches: meta.empty_states.no_matches, cards } });
+  const { body } = render(RosterPage, { props: { seasons: meta.seasons, noMatches: EMPTY_STATES.no_matches, cards } });
   assert.equal(body.split('data-season-tick').length - 1, meta.seasons.length);
   assert.ok(body.includes(cards.who_turns_up.title));
   assert.ok(body.includes(cards.with_without.title));
@@ -354,7 +353,7 @@ test('Roster paints the picker and the card headings, and no row or figure', () 
 });
 
 test('a player page paints the picker and no figures, and no other player', () => {
-  const { body } = render(PlayerPage, { props: { seasons: meta.seasons, player: 'Oleg', noMatches: meta.empty_states.no_matches, cards } });
+  const { body } = render(PlayerPage, { props: { seasons: meta.seasons, player: 'Oleg', noMatches: EMPTY_STATES.no_matches, cards } });
   assert.equal(body.split('data-season-tick').length - 1, meta.seasons.length);
   assert.ok(!body.includes('class="tile'));
   assert.ok(!body.includes(cards.player.note_after_name));
@@ -420,7 +419,7 @@ test('a redirect keeps the ticks and the hash, and goes where it is told', () =>
 });
 
 for (const [section, path] of [['players', '../src/pages/players/index.astro'], ['matches', '../src/pages/matches/index.astro']]) {
-  test(`/${section}/ redirects through that script, to the tab Shiny opens on`, () => {
+  test(`/${section}/ redirects through that script, to the tab's first view`, () => {
     const source = read(path);
     assert.match(source, /script = redirectScript\(target\)/);
     assert.match(source, new RegExp(`tab\\.id === '${section}'`));
@@ -429,7 +428,7 @@ for (const [section, path] of [['players', '../src/pages/players/index.astro'], 
   });
 }
 
-test('the tabs open where Shiny does', () => {
+test('Players opens on Effects and Matches on Trends', () => {
   assert.equal(NAV.find((tab) => tab.id === 'players').href, '/players/effects/');
   assert.equal(NAV.find((tab) => tab.id === 'matches').href, '/matches/trends/');
 });

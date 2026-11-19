@@ -4,12 +4,14 @@ import { MATCHES } from '../lib/labels.js';
 import { matchHref } from '../lib/match-data.js';
 import MatchSummary from './MatchSummary.astro';
 
+const tag = 'Last match';
+const empty = 'No matches recorded yet.';
 const played = home.last_match;
 // A match dated before the first season has no page. See export_match_pages() in R.
 const href = played?.season_label ? matchHref(played.date) : null;
 ---
 <section class="card last" aria-labelledby="last-match-tag">
-  <h2 id="last-match-tag" class="tag">{home.last_match_tag}</h2>
+  <h2 id="last-match-tag" class="tag">{tag}</h2>
   {
     played ? (
       <>
@@ -23,7 +25,7 @@ const href = played?.season_label ? matchHref(played.date) : null;
         )}
       </>
     ) : (
-      <p class="empty">{home.last_match_empty}</p>
+      <p class="empty">{empty}</p>
     )
   }
 </section>

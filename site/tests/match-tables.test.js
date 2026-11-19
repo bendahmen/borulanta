@@ -1,12 +1,10 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { tableHtml } from '../src/lib/data-table.js';
-import { MATCHES } from '../src/lib/labels.js';
+import { MATCHES, MATCHES_CARDS as cards } from '../src/lib/labels.js';
 import { badgeClass, everyResultColumns, lineupColumns, opponentColumns, scorerColumns } from '../src/lib/match-tables.js';
 
-const { matches_cards: cards } = JSON.parse(readFileSync(new URL('../src/generated/wording.json', import.meta.url)));
 const labels = (columns) => columns.map((column) => column.label);
 
 test('the headings and their order are R tables', () => {

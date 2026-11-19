@@ -4,6 +4,7 @@ import { test } from 'node:test';
 
 import { cellHtml, escapeHtml, headingHtml, moreRowsLabel, tableHtml } from '../src/lib/data-table.js';
 import { moduleToInline } from '../src/lib/inline.js';
+import { LEAGUE_CARDS } from '../src/lib/labels.js';
 import { leagueColumns, runInColumns } from '../src/lib/league-table.js';
 
 const read = (path) => JSON.parse(readFileSync(new URL(path, import.meta.url)));
@@ -76,11 +77,10 @@ test('row classes, row attributes and the cue reach the row', () => {
 
 test('the league table draws every figure R exported, and picks out only our row', () => {
   const league = read('../src/generated/league.json');
-  const wording = read('../src/generated/wording.json');
   const { our_team: ourTeam } = read('../src/generated/meta.json');
   const html = tableHtml({
-    caption: league.title,
-    columns: leagueColumns(wording.league_cards.headings),
+    caption: LEAGUE_CARDS.standings.title,
+    columns: leagueColumns(LEAGUE_CARDS.headings),
     rows: league.rows,
     rowClass: (row) => (row.team === ourTeam ? 'is-us' : ''),
   });
@@ -97,10 +97,9 @@ test('the league table draws every figure R exported, and picks out only our row
 });
 
 test('an opponent the standings do not carry keeps its row with the league column empty', () => {
-  const wording = read('../src/generated/wording.json');
   const html = tableHtml({
     caption: 'c',
-    columns: runInColumns(wording.league_cards.run_in.headings),
+    columns: runInColumns(LEAGUE_CARDS.run_in.headings),
     rows: [{ date_short: '11 Nov 2026', opponent: 'Newcomers FC', position: null }],
   });
   assert.match(html, /Newcomers FC/);

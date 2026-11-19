@@ -2,20 +2,79 @@
 import EffectsPage from '../../../components/effects/EffectsPage.svelte';
 import SeasonTicksScript from '../../../components/SeasonTicksScript.astro';
 import meta from '../../../generated/meta.json';
-import wording from '../../../generated/wording.json';
 import Players from '../../../layouts/Players.astro';
-import { NO_SCRIPT, PAGES } from '../../../lib/labels.js';
+import { EMPTY_STATES, NO_SCRIPT, PAGES } from '../../../lib/labels.js';
+
+const outcomeLabels = {
+  points: 'Points',
+  goals_scored: 'Goals scored',
+  goals_conceded: 'Goals conceded',
+  goal_difference: 'Goal difference',
+};
+
+const estimatorControl = {
+  legend: 'Estimates',
+  options: [
+    { value: 'ols', label: 'Raw (OLS)' },
+    { value: 'ridge', label: 'Shrunk toward the average player (ridge)' },
+  ],
+};
+
+// A null subtitle is either no subtitle or one written from the data: the player_effects one
+// is regression.<estimator>.note in each season file.
+const cards = {
+  attack_defence: {
+    tag: 'Visualise',
+    title: 'Attack and defence',
+    subtitle: 'Top right is more goals scored and fewer conceded, holding the rest of the lineup fixed.',
+    picker_label: null,
+  },
+  coefficient_plot: {
+    tag: 'Visualise',
+    title: 'Coefficient plot',
+    subtitle: null,
+    picker_label: 'Outcome',
+  },
+  player_effects: {
+    tag: 'Player effects',
+    title: 'Player by player',
+    subtitle: null,
+    picker_label: null,
+  },
+  method: {
+    tag: 'Method',
+    title: 'How to read the player effects',
+    subtitle: null,
+    picker_label: null,
+  },
+};
+
+// What the two regression plots call their axes. The coefficient plot's players go unlabelled,
+// and its outcome axis is drawn along the bottom.
+const attackDefenceAxes = {
+  x: 'Goals scored: coefficient',
+  y: 'Goals conceded: coefficient, sign flipped',
+};
+const coefficientAxes = (describe) =>
+  Object.fromEntries(Object.entries(outcomeLabels).map(([outcome, label]) => [outcome, { x: null, y: describe(label) }]));
+const plotLabels = {
+  attack_defence: { ols: attackDefenceAxes, ridge: attackDefenceAxes },
+  coefficient: {
+    ols: coefficientAxes((label) => `${label} coefficient with 95% confidence interval`),
+    ridge: coefficientAxes((label) => `${label}: deviation from the average player, shrunk`),
+  },
+};
 ---
 <Players view="effects">
   <h1 class="visually-hidden">{PAGES.effects.title}</h1>
   <EffectsPage
     client:load
     seasons={meta.seasons}
-    emptyStates={{ no_matches: meta.empty_states.no_matches, no_regression: meta.empty_states.no_regression }}
-    outcomeLabels={meta.outcome_labels}
-    estimatorControl={wording.estimator_control}
-    cards={wording.effects_cards}
-    plotLabels={{ attack_defence: wording.plot_labels.attack_defence, coefficient: wording.plot_labels.coefficient }}
+    emptyStates={{ no_matches: EMPTY_STATES.no_matches, no_regression: EMPTY_STATES.no_regression }}
+    {outcomeLabels}
+    {estimatorControl}
+    {cards}
+    {plotLabels}
   />
   <SeasonTicksScript />
   <noscript>

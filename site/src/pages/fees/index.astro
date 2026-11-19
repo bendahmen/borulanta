@@ -5,20 +5,18 @@
 // come first: did my transfer land is the question Settle up raises.
 import CardHead from '../../components/CardHead.svelte';
 import FeeCard from '../../components/FeeCard.astro';
-import fees from '../../generated/fees.json';
-import wording from '../../generated/wording.json';
 import Fees from '../../layouts/Fees.astro';
 import tableSource from '../../lib/data-table.js?raw';
 import historySource from '../../lib/fee-history.js?raw';
 import { moduleToInline, scriptSafeJson } from '../../lib/inline.js';
-import { FEES, NO_SCRIPT } from '../../lib/labels.js';
+import { FEE_HISTORY_CARDS, FEES, NO_SCRIPT } from '../../lib/labels.js';
 import loaderSource from '../../lib/subset-loader.js?raw';
 
-const { payments, charges } = wording.fee_cards;
+const { payments, charges } = FEE_HISTORY_CARDS;
 const data = {
   payments: { title: payments.title, headings: payments.headings },
   charges: { title: charges.title, headings: charges.headings, played: charges.played },
-  words: { ...FEES, noPayments: fees.empty.payments },
+  words: FEES,
 };
 const script = `(function(){${moduleToInline(tableSource)}
 ${moduleToInline(loaderSource)}

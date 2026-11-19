@@ -22,8 +22,8 @@ export function firstRows(rows, first, showingAll) {
 export const matchHref = (date) => `/matches/${date}/`;
 
 // `matches` come newest first. Falling back to the first row, rather than to nothing, keeps
-// the card filled on arrival and when the ticks move on, as selected_match_date() in app.R:
-// an empty card under a full table reads as a fault.
+// the card filled on arrival and when the ticks move on: an empty card under a full table
+// reads as a fault.
 export function selectedMatchDate(matches, picked) {
   if (matches.some((match) => match.date === picked)) return picked;
   return matches[0]?.date ?? null;

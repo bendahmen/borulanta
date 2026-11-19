@@ -1,13 +1,11 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { cellHtml, tableHtml } from '../src/lib/data-table.js';
-import { PLAYERS } from '../src/lib/labels.js';
+import { PLAYERS, PLAYERS_CARDS as cards } from '../src/lib/labels.js';
 import { withWithoutRows } from '../src/lib/player-data.js';
 import { rosterColumns, withWithoutColumns } from '../src/lib/player-tables.js';
 
-const { players_cards: cards } = JSON.parse(readFileSync(new URL('../src/generated/wording.json', import.meta.url)));
 const labels = (columns) => columns.map((column) => column.label);
 const shownBy = (columns, row) => Object.fromEntries(columns.map((column) => [column.key, column.value(row)]));
 

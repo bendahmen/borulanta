@@ -12500,9 +12500,5 @@
         }
       ]
     }
-  ],
-  "empty": {
-    "balances": "Nobody has been charged anything yet.",
-    "payments": "No payments recorded yet."
-  }
+  ]
 }

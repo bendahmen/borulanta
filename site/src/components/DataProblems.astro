@@ -2,13 +2,14 @@
 // Quiet by design, and absent when there is nothing wrong: data_health_banner() in R/cards.R.
 import meta from '../generated/meta.json';
 
+const title = 'Data check';
 const problems = meta.problems ?? [];
 ---
 {
   problems.length > 0 && (
     <div class="wrap">
-      <aside class="data-health" aria-label={meta.problems_title}>
-        <p class="title">{meta.problems_title}</p>
+      <aside class="data-health" aria-label={title}>
+        <p class="title">{title}</p>
         <ul>
           {problems.map((problem) => (
             <li>{problem}</li>

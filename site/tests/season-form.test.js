@@ -1,11 +1,9 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
+import { MATCHES_CARDS, SEASON_FORM_LABELS as labels } from '../src/lib/labels.js';
 import { formMetric, formPoints } from '../src/lib/season-form.js';
 
-const wording = JSON.parse(readFileSync(new URL('../src/generated/wording.json', import.meta.url)));
-const labels = wording.plot_labels.season_form;
 const columns = (metric) => formMetric(metric, labels).series.map((line) => line.column);
 
 test('each metric draws the rolling columns season_form_plot() draws', () => {
@@ -15,8 +13,8 @@ test('each metric draws the rolling columns season_form_plot() draws', () => {
   assert.deepEqual(columns('squad_size'), ['rolling_squad_size']);
 });
 
-test('every metric R offers has its lines, and the axis label R gives it', () => {
-  const offered = wording.matches_cards.season_form.metrics;
+test('every metric offered has its lines and its axis label', () => {
+  const offered = MATCHES_CARDS.season_form.metrics;
   assert.equal(offered.length, 4);
   for (const { value } of offered) {
     assert.equal(formMetric(value, labels).yLabel, labels[value].y);

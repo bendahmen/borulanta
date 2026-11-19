@@ -4,16 +4,15 @@
 import CardHead from '../../../components/CardHead.svelte';
 import StatTiles from '../../../components/StatTiles.astro';
 import fees from '../../../generated/fees.json';
-import wording from '../../../generated/wording.json';
 import Fees from '../../../layouts/Fees.astro';
 import { tableHtml } from '../../../lib/data-table.js';
 import { balanceColumns, balanceRowClass } from '../../../lib/fee-rows.js';
-import { FEE_STATUS } from '../../../lib/labels.js';
+import { EVERYONE_CARD, FEE_STATUS } from '../../../lib/labels.js';
 
-const card = wording.fee_cards.everyone;
+const card = EVERYONE_CARD;
 const { totals } = fees;
 
-// In the order all_player_balances() returns. Shiny has no sorting here either.
+// In the order all_player_balances() returns, with no sorting.
 const table = tableHtml({
   className: 'dt-balances',
   caption: card.title,
@@ -32,6 +31,6 @@ const table = tableHtml({
         { label: card.tiles.settled, value: totals.settled },
       ]}
     />
-    {fees.balances.length > 0 ? <Fragment set:html={table} /> : <p class="dt-empty">{fees.empty.balances}</p>}
+    {fees.balances.length > 0 ? <Fragment set:html={table} /> : <p class="dt-empty">{card.empty}</p>}
   </section>
 </Fees>

@@ -1,16 +1,14 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { FIRST_CHARGES, mountFeeHistory } from '../src/lib/fee-history.js';
-import { FEES } from '../src/lib/labels.js';
+import { FEE_HISTORY_CARDS as cards, FEES } from '../src/lib/labels.js';
 import { fakeElement, fakeSelect, fakeWindow, settle } from './helpers/fake-dom.js';
 
-const { fee_cards: cards } = JSON.parse(readFileSync(new URL('../src/generated/wording.json', import.meta.url)));
 const data = {
   payments: { title: cards.payments.title, headings: cards.payments.headings },
   charges: { title: cards.charges.title, headings: cards.charges.headings, played: cards.charges.played },
-  words: { ...FEES, noPayments: 'No payments recorded yet.' },
+  words: FEES,
 };
 
 // `paid` shows up in the payments table and `each` in the charges table, so a test can say

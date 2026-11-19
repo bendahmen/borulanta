@@ -6,6 +6,7 @@ import vm from 'node:vm';
 
 import { daysBetween, londonDate, upcomingFixtures } from '../src/lib/fixture-dates.js';
 import { moduleToInline, scriptSafeJson } from '../src/lib/inline.js';
+import { NEXT_MATCH } from '../src/lib/labels.js';
 import { isStale, nextMatchView, whenWord } from '../src/lib/next-match.js';
 
 const wording = {
@@ -150,24 +151,24 @@ test('a missing opponent or kickoff degrades as the R card does', () => {
 test('a run over the real fixtures.json with a pinned today', (t) => {
   const real = JSON.parse(readFileSync(new URL('../src/generated/fixtures.json', import.meta.url)));
   if (real.fixtures.length === 0) return t.skip('no fixtures on file');
-  const realData = { ...real, stale_days: 8 };
+  const realData = { ...real, stale_days: 8, wording: NEXT_MATCH };
   const [first] = real.fixtures;
   const last = real.fixtures.at(-1);
 
   const onTheDay = nextMatchView(realData, first.date);
-  assert.equal(onTheDay.when, real.wording.tonight);
+  assert.equal(onTheDay.when, NEXT_MATCH.tonight);
   assert.equal(onTheDay.opponent, first.opponent);
   assert.equal(onTheDay.dateLabel, first.date_label);
   assert.equal(onTheDay.kickoffPitch, first.kickoff_pitch);
 
   const dayBefore = new Date(`${first.date}T12:00:00Z`);
   dayBefore.setUTCDate(dayBefore.getUTCDate() - 1);
-  assert.equal(nextMatchView(realData, dayBefore.toISOString().slice(0, 10)).when, real.wording.tomorrow);
+  assert.equal(nextMatchView(realData, dayBefore.toISOString().slice(0, 10)).when, NEXT_MATCH.tomorrow);
 
   const dayAfterLast = new Date(`${last.date}T12:00:00Z`);
   dayAfterLast.setUTCDate(dayAfterLast.getUTCDate() + 1);
   assert.deepEqual(nextMatchView(realData, dayAfterLast.toISOString().slice(0, 10)), {
-    empty: real.wording.no_fixtures_left,
+    empty: NEXT_MATCH.no_fixtures_left,
   });
 });
 

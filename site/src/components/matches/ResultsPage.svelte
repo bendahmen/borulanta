@@ -38,7 +38,7 @@
     }),
   );
 
-  // A change of ticks falls back to the newest match, as a new table does in Shiny.
+  // A change of ticks falls back to the newest match, as any new table starts from its top row.
   function changeTick(id, checked) {
     picked = null;
     showingAll = false;

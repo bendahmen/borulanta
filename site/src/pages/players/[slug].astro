@@ -8,9 +8,8 @@ import PlayerPage from '../../components/players/PlayerPage.svelte';
 import SeasonTicksScript from '../../components/SeasonTicksScript.astro';
 import fees from '../../generated/fees.json';
 import meta from '../../generated/meta.json';
-import wording from '../../generated/wording.json';
 import Base from '../../layouts/Base.astro';
-import { NO_SCRIPT, PLAYERS } from '../../lib/labels.js';
+import { EMPTY_STATES, NO_SCRIPT, PLAYERS, PLAYERS_CARDS } from '../../lib/labels.js';
 import { playerPages } from '../../lib/player-pages.js';
 import { readSeasonFile } from '../../lib/season-files.js';
 
@@ -28,8 +27,8 @@ export function getStaticPaths() {
 
 const { player } = Astro.props;
 // Only what this page shows. The note about a table above belongs on Roster.
-const { tag, appearances_title, strip_key } = wording.players_cards.player;
-const cards = { player: { tag, appearances_title, strip_key }, with_without: wording.players_cards.with_without };
+const { tag, appearances_title, strip_key } = PLAYERS_CARDS.player;
+const cards = { player: { tag, appearances_title, strip_key }, with_without: PLAYERS_CARDS.with_without };
 ---
 <Base title={player} description={PLAYERS.description(player)} current="players">
   <a class="back" href="/players/roster/">
@@ -40,7 +39,7 @@ const cards = { player: { tag, appearances_title, strip_key }, with_without: wor
     <p class="tag">{tag}</p>
     <h1>{player}</h1>
   </div>
-  <PlayerPage client:load seasons={meta.seasons} player={player} noMatches={meta.empty_states.no_matches} cards={cards} />
+  <PlayerPage client:load seasons={meta.seasons} player={player} noMatches={EMPTY_STATES.no_matches} cards={cards} />
   <SeasonTicksScript />
   <noscript>
     <style is:inline>astro-island { display: none; }</style>

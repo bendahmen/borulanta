@@ -4,13 +4,12 @@ import '../../../styles/data-table.css';
 import RosterPage from '../../../components/players/RosterPage.svelte';
 import SeasonTicksScript from '../../../components/SeasonTicksScript.astro';
 import meta from '../../../generated/meta.json';
-import wording from '../../../generated/wording.json';
 import Players from '../../../layouts/Players.astro';
-import { NO_SCRIPT, PAGES } from '../../../lib/labels.js';
+import { EMPTY_STATES, NO_SCRIPT, PAGES, PLAYERS_CARDS } from '../../../lib/labels.js';
 ---
 <Players view="roster">
   <h1 class="visually-hidden">{PAGES.roster.title}</h1>
-  <RosterPage client:load seasons={meta.seasons} noMatches={meta.empty_states.no_matches} cards={wording.players_cards} />
+  <RosterPage client:load seasons={meta.seasons} noMatches={EMPTY_STATES.no_matches} cards={PLAYERS_CARDS} />
   <SeasonTicksScript />
   <noscript>
     <style is:inline>astro-island { display: none; }</style>

@@ -5,11 +5,11 @@
 import fixtures from '../generated/fixtures.json';
 import meta from '../generated/meta.json';
 import { moduleToInline, scriptSafeJson } from '../lib/inline.js';
-import { NO_SCRIPT } from '../lib/labels.js';
+import { NEXT_MATCH, NO_SCRIPT } from '../lib/labels.js';
 import dates from '../lib/fixture-dates.js?raw';
 import source from '../lib/next-match.js?raw';
 
-const { wording } = fixtures;
+const wording = NEXT_MATCH;
 const data = {
   fixtures: fixtures.fixtures.map(({ date, date_label, opponent, kickoff_pitch }) => ({
     date,

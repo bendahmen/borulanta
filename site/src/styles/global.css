@@ -38,9 +38,8 @@
   size-adjust: 78%;
 }
 
-/* Hex rather than the oklch in www/borulanta.css, of which these are the sRGB
-   values: an unsupported colour function would leave a token empty, and blue,
-   green and amber are APP_COLOURS in R/format.R. */
+/* Hex rather than oklch, because an unsupported colour function would leave a
+   token empty. */
 :root {
   color-scheme: light dark;
 

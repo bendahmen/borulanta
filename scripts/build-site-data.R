@@ -7,8 +7,9 @@
 #   site/public/data/seasons/*.json  one file per season combination, fetched when ticks change
 #
 # It adds no statistics, no fee arithmetic and no formatting. Numbers and strings
-# come from R/, and wording comes out of the tags R/cards.R builds, so there is
-# one copy of each. See docs/static-site-migration.md.
+# come from R/, and the wording that depends on the data comes out of the tags
+# R/cards.R builds, so there is one copy of each. Fixed wording belongs to the
+# site. See docs/static-site-migration.md.
 #
 #   Rscript scripts/build-site-data.R
 #
@@ -56,23 +57,6 @@ JSON_SIGNIFICANT_DIGITS <- 10L
 # browser does the filtering on the Europe/London date. A static build would
 # otherwise freeze the answer on the day it ran.
 FAR_PAST <- as.Date("1900-01-01")
-
-# These live only in app.R, as literals inside the ui and the server, so they
-# cannot be called for. The tests read app.R and fail if the wording there moves.
-APP_EMPTY_STATES <- list(
-  no_matches = "No matches in the selected seasons yet.",
-  no_regression = paste(
-    "Not enough matches in the selected seasons to",
-    "estimate player effects. Tick more seasons."
-  ),
-  no_opponent = paste(
-    "No match in the selected seasons has its opponent on file.",
-    "They start with the sync."
-  )
-)
-
-# app.R pastes the player's name in front of this, in output$profile_player_note.
-APP_PLAYER_NOTE_AFTER_NAME <- ". Pick another row above to change who this is about."
 
 # Pulling wording out of tags ----
 
@@ -141,25 +125,9 @@ stat_tiles <- function(x, family = "match-detail") {
   })
 }
 
-#' The options of the one select under a tag, as value and label. selectInput() writes
-#' them as a single string of HTML rather than as tags.
-select_options <- function(x) {
-  select <- htmltools::tagQuery(x)$find("select")$selectedTags()[[1]]
-  html <- paste(unlist(lapply(select$children, as.character)), collapse = "")
-  found <- regmatches(html, gregexpr("<option value=\"[^\"]*\"[^>]*>[^<]*</option>", html))[[1]]
-  map(found, function(option) {
-    list(
-      value = sub("^<option value=\"([^\"]*)\".*$", "\\1", option),
-      label = sub("^<option[^>]*>([^<]*)</option>$", "\\1", option)
-    )
-  })
-}
-
 # R/tables.R is "the only place display naming happens", so its strings and its
 # rounding are read off the frame a widget was built from rather than repeated.
 table_column <- function(widget, column) widget$x$data[[column]]
-
-empty_table_wording <- function(widget) widget$x$options$language$emptyTable
 
 iso_date <- function(date) format(date, "%Y-%m-%d")
 
@@ -419,28 +387,21 @@ data_hash <- function(data_dir) {
 
 export_meta <- function(data, data_dir) {
   freshness <- freshness_note(data$matches, data$league_table)
-  no_scorers <- scorer_table(data$events[0, ], data$attendance[0, ], data$matches[0, ])
 
   list(
     data_hash = data_hash(data_dir),
     our_team = OUR_TEAM,
     min_regression_appearances = MIN_REGRESSION_APPEARANCES,
     stale_fixtures_days = STALE_FIXTURES_DAYS,
-    outcome_labels = as.list(OUTCOME_LABELS),
     # Newest first, as season_picker() shows them.
     seasons = season_span(data$seasons, data$matches) |>
       arrange(desc(start_date)) |>
       mutate(start_date = iso_date(start_date)),
     subset_files = I(map_chr(season_subsets(data$seasons$season_id), subset_file_name)),
     problems = I(data$problems),
-    problems_title = first_text(data_health_banner("x"), "data-health-title"),
     freshness = list(
       full = first_text(freshness, "freshness-full"),
       short = first_text(freshness, "freshness-short")
-    ),
-    empty_states = c(
-      APP_EMPTY_STATES,
-      list(no_scorers = empty_table_wording(scorer_display_table(no_scorers)))
     )
   )
 }
@@ -494,41 +455,13 @@ export_match_pages <- function(data) {
 }
 
 export_home <- function(data) {
-  no_matches <- last_match_card_ui(NULL, data$seasons)
   position <- tag_text(league_position_ui(data$league_table))
 
   list(
     last_match = export_last_match(data),
-    last_match_tag = first_text(no_matches, "section-tag"),
-    last_match_empty = first_text(no_matches, "empty-state"),
     # The strip holds the line and then the link to the League tab, and is
     # absent when the table does not list us.
-    league_position = if (length(position) > 0) position[[1]] else NA_character_,
-    league_link_label = if (length(position) > 1) position[[2]] else NA_character_
-  )
-}
-
-#' The words next_match_card_ui() would put around a fixture.
-#'
-#' The browser picks which to show, because which one applies depends on today.
-#' `{days}` stands for the count, so that R still owns the sentence around it.
-next_match_wording <- function() {
-  card_for <- function(days_away) {
-    fixture <- tibble(
-      date = FAR_PAST + days_away, opponent = NA_character_,
-      kickoff = NA_character_, pitch = NA_character_
-    )
-    next_match_card_ui(fixture, have_fixtures = TRUE, today = FAR_PAST)
-  }
-
-  list(
-    tag = first_text(card_for(1L), "section-tag"),
-    no_fixtures_left = first_text(next_match_card_ui(NULL, have_fixtures = TRUE), "empty-state"),
-    no_fixture_list = first_text(next_match_card_ui(NULL, have_fixtures = FALSE), "empty-state"),
-    opponent_unknown = first_text(card_for(1L), "home-opponent"),
-    tonight = first_text(card_for(0L), "home-when"),
-    tomorrow = first_text(card_for(1L), "home-when"),
-    in_days = sub("7", "{days}", first_text(card_for(7L), "home-when"), fixed = TRUE)
+    league_position = if (length(position) > 0) position[[1]] else NA_character_
   )
 }
 
@@ -546,9 +479,6 @@ export_fixtures <- function(data) {
 
   scraped_on <- data$league_table$scraped_on
   past_threshold <- if (length(scraped_on) > 0) max(scraped_on) + STALE_FIXTURES_DAYS + 1L
-  no_fixtures <- tibble(
-    date = as.Date(character()), opponent = character(), position = integer()
-  )
 
   list(
     have_fixtures = nrow(data$fixtures) > 0,
@@ -556,8 +486,6 @@ export_fixtures <- function(data) {
     # Depends on when the page was read and not on today, so it can be written
     # once. The browser shows it once scraped_on is over stale_fixtures_days old.
     stale_note = first_text(stale_fixture_note(scraped_on, past_threshold), "home-stale"),
-    wording = next_match_wording(),
-    run_in_empty = empty_table_wording(run_in_table(no_fixtures)),
     fixtures = tibble(
       date = iso_date(fixtures$date),
       date_label = format_match_date(fixtures$date),
@@ -580,14 +508,11 @@ export_fixtures <- function(data) {
 export_league <- function(data) {
   standings <- data$league_table
   card <- league_table_ui(standings)
-  no_table <- league_table_ui(standings[0, ])
 
   list(
     scraped_on = if (nrow(standings) > 0) iso_date(max(standings$scraped_on)) else NA_character_,
-    tag = first_text(no_table, "section-tag"),
-    title = first_text(card, "table-title"),
+    # Carries the scrape date, and is absent with no table.
     subtitle = first_text(card, "table-subtitle"),
-    empty = first_text(no_table, "empty-state"),
     rows = standings |> mutate(scraped_on = iso_date(scraped_on))
   )
 }
@@ -638,7 +563,6 @@ export_fees <- function(data) {
   # the other: a signing with no match yet is only on the first, and a payment from
   # somebody on no roster is only on the second.
   overview_players <- sort(union(fee_players, balances$player), method = "radix")
-  no_payments <- tibble(date = as.Date(character()), amount = numeric())
 
   list(
     fee_players = I(fee_players),
@@ -662,325 +586,7 @@ export_fees <- function(data) {
       net_display = format_fee_amount(totals$net),
       settled = totals$settled
     ),
-    overviews = map(overview_players, export_fee_overview, data = data),
-    empty = list(
-      balances = empty_table_wording(balance_table(balances[0, ])),
-      payments = empty_table_wording(payment_history_table(no_payments))
-    )
-  )
-}
-
-# Wording that depends on no data ----
-
-export_fee_panel <- function() {
-  panel <- fee_panel_ui("fee_player", "fees_owed")
-  list(
-    tag = first_text(panel, "section-tag"),
-    picker_label = first_text(panel, "control-label"),
-    balance_label = first_text(panel, "fee-label"),
-    footnote = first_text(panel, "fee-footnote")
-  )
-}
-
-#' The Monzo link is public already, on the live Home page and in R/cards.R. The
-#' bank details came off the card on 6 November 2026, so there are none to export.
-export_settle_up <- function() {
-  panel <- payment_panel_ui()
-  list(
-    tag = first_text(panel, "section-tag"),
-    copy = first_text(panel, "payment-copy"),
-    button_label = first_text(panel, "payment-button"),
-    button_url = htmltools::tagGetAttribute(
-      tags_with_class(panel, "payment-button")[[1]], "href"
-    )
-  )
-}
-
-export_estimator_control <- function() {
-  list(
-    legend = first_text(estimator_control, "control-label"),
-    options = map(tags_with_class(estimator_control, "radio-inline"), function(option) {
-      input <- htmltools::tagQuery(option)$find("input")$selectedTags()[[1]]
-      list(value = htmltools::tagGetAttribute(input, "value"), label = tag_text(option))
-    })
-  )
-}
-
-#' The headings of the cards on the Effects view, in page order.
-#'
-#' A subtitle is null where the card has none, and where the server writes it:
-#' the player_effects one is regression$<estimator>$note in each season file. The
-#' picker label is the one control a card holds, which only the coefficient plot has.
-export_effects_cards <- function() {
-  cards <- tags_with_class(player_effects_page, "table-card")
-  headings <- map(cards, function(card) {
-    list(
-      tag = first_text(card, "section-tag"),
-      title = first_text(card, "table-title"),
-      subtitle = first_text(card, "table-subtitle"),
-      picker_label = first_text(card, "control-label")
-    )
-  })
-  set_names(headings, c("attack_defence", "coefficient_plot", "player_effects", "method"))
-}
-
-#' What the two regression plots call their axes.
-#'
-#' The labels depend on no number, only on whether the estimator has intervals, so
-#' one row per outcome stands in for the results and a window with no fit is no
-#' obstacle. Under coord_flip() the coefficient plot's y label is the axis drawn
-#' along the bottom, and its x is the players, which it leaves unlabelled.
-export_plot_labels <- function() {
-  stand_in <- function(estimator) {
-    uncertainty <- if (estimator == "ridge") NA_real_ else 0
-    tibble(
-      player = "x", outcome = REGRESSION_OUTCOMES, estimate = 0,
-      std_error = uncertainty, conf_low = uncertainty, conf_high = uncertainty,
-      p_value = uncertainty, appearances = 1L
-    )
-  }
-  axes <- function(plot) list(x = plot$labels$x, y = plot$labels$y)
-  estimators <- set_names(c("ols", "ridge"))
-  outcomes <- set_names(REGRESSION_OUTCOMES)
-  # One value per series, so that a series' name can be read off by its value below.
-  form_stand_in <- tibble(
-    date = FAR_PAST, rolling_points = 0, rolling_goals_scored = 1, rolling_goals_conceded = 2,
-    rolling_goal_difference = 0, rolling_squad_size = 0
-  )
-  metrics <- map_chr(select_options(season_form_card), "value") |> set_names()
-  goals_plot <- season_form_plot(form_stand_in, "goals")
-  series_name <- function(column) goals_plot$data$metric[goals_plot$data$value == form_stand_in[[column]]]
-
-  list(
-    attack_defence = map(estimators, ~ axes(attack_defence_plot(stand_in(.x)))),
-    coefficient = map(estimators, function(estimator) {
-      map(outcomes, ~ axes(coefficient_plot(stand_in(estimator), .x)))
-    }),
-    season_form = c(
-      map(metrics, ~ axes(season_form_plot(form_stand_in, .x))),
-      # The key on the one metric with two lines, named by the column each line draws.
-      list(series = list(
-        rolling_goals_scored = series_name("rolling_goals_scored"),
-        rolling_goals_conceded = series_name("rolling_goals_conceded")
-      ))
-    )
-  )
-}
-
-#' What a DT widget calls its columns, named by what each one holds.
-table_headings <- function(widget, keys) {
-  as.list(set_names(names(widget$x$data), keys))
-}
-
-#' The heading of a card. `subtitle_class` is for the one card that writes its own.
-card_wording <- function(card, subtitle_class = "table-subtitle") {
-  list(
-    tag = first_text(card, "section-tag"),
-    title = first_text(card, "table-title"),
-    subtitle = first_text(card, subtitle_class)
-  )
-}
-
-tile_labels <- function(tiles, keys) {
-  set_names(map(stat_tiles(tiles, "fee-overview"), "label"), keys)
-}
-
-#' The headings and wording of the Fees cards. The tables are built on stand-ins with
-#' no rows, as export_plot_labels() does, because their headings depend on no number.
-export_fee_cards <- function() {
-  no_balances <- tibble(
-    player = character(), charges = numeric(), payments = numeric(),
-    last_payment = as.Date(character()), balance = numeric()
-  )
-  no_payments <- tibble(date = as.Date(character()), amount = numeric())
-  one_of_each <- tibble(
-    date = as.Date(c("2026-01-01", "2026-01-02")), season = "x", result = "x",
-    played = c(TRUE, FALSE), squad_size = 0L, charge = 0, explanation = "x"
-  )
-  charge_table <- match_charge_table(one_of_each)
-  history <- tags_with_class(fee_history_panel, "table-card")
-
-  list(
-    summary_tiles = tile_labels(
-      fee_overview_summary(list(total_charges = 0, total_payments = 0)),
-      c("charges", "payments")
-    ),
-    payments = c(
-      card_wording(history[[1]]),
-      list(headings = table_headings(payment_history_table(no_payments), c("date", "payment")))
-    ),
-    charges = c(
-      card_wording(history[[2]], "fee-history-note"),
-      list(
-        headings = table_headings(charge_table, c(
-          "date", "season", "result", "played", "squad_size", "charge", "explanation"
-        )),
-        played = as.list(set_names(table_column(charge_table, "Played?"), c("yes", "no")))
-      )
-    ),
-    everyone = c(
-      card_wording(everyone_panel),
-      list(
-        tiles = tile_labels(
-          balance_totals_ui(list(outstanding = 0, credit = 0, settled = 0L)),
-          c("outstanding", "credit", "settled")
-        ),
-        headings = table_headings(balance_table(no_balances), c(
-          "player", "charges", "payments", "last_payment", "balance"
-        ))
-      )
-    )
-  )
-}
-
-#' The table headings on the League tab, and the run-in's heading. The league table's
-#' own heading is in league.json, because its subtitle depends on the scrape date.
-export_league_cards <- function() {
-  no_standings <- tibble(
-    position = integer(), team = character(), played = integer(), won = integer(),
-    drawn = integer(), lost = integer(), goal_difference = integer(), points = integer()
-  )
-  no_fixtures <- tibble(
-    date = as.Date(character()), opponent = character(), position = integer()
-  )
-
-  list(
-    headings = table_headings(league_table_table(no_standings), c(
-      "position", "team", "played", "won", "drawn", "lost", "goal_difference", "points"
-    )),
-    run_in = c(
-      card_wording(run_in_card),
-      list(headings = table_headings(run_in_table(no_fixtures), c("date", "opponent", "position")))
-    )
-  )
-}
-
-#' The headings and wording of the Matches cards. As with Fees, the tables are built on
-#' stand-ins with no rows, because their headings depend on no number. One row where a
-#' string has to come from a value: the mark for a match with no opponent, and the label
-#' on the result tile.
-export_matches_cards <- function() {
-  no_matches <- tibble(
-    date = as.Date(character()), opponent = character(), result = character(),
-    goals_for = integer(), goals_against = integer()
-  )
-  no_lineup <- tibble(
-    player = character(), season_appearances = integer(), attendance_rate = numeric()
-  )
-  no_scorers <- tibble(
-    player = character(), goals = integer(), mom = integer(), appearances = integer(),
-    goals_per_appearance = numeric()
-  )
-  no_opponent <- tibble(
-    date = FAR_PAST, opponent = NA_character_, result = "0-0", goals_for = 0L,
-    goals_against = 0L, points = 0L
-  )
-
-  list(
-    season_form = c(
-      card_wording(season_form_card),
-      list(
-        metric_label = first_text(season_form_card, "control-label"),
-        metrics = select_options(season_form_card)
-      )
-    ),
-    scorers = c(
-      # The subtitle is the coverage line, which is in each season file as scorers$note.
-      card_wording(scorer_card),
-      list(headings = table_headings(scorer_display_table(no_scorers), c(
-        "player", "goals", "mom", "appearances", "goals_per_game"
-      )))
-    ),
-    head_to_head = c(
-      card_wording(opponent_record_card),
-      list(headings = table_headings(
-        opponent_record_table(opponent_record(tibble(opponent = character()))),
-        c(
-          "opponent", "played", "won", "drawn", "lost", "goals_for", "goals_against",
-          "goal_difference", "points_per_match"
-        )
-      ))
-    ),
-    every_result = c(
-      card_wording(every_result_card),
-      list(
-        headings = table_headings(match_table(no_matches), c(
-          "date", "opponent", "result", "outcome"
-        )),
-        no_opponent = table_column(match_table(no_opponent), "Opponent")
-      )
-    ),
-    match_detail = c(
-      card_wording(match_detail_card),
-      list(
-        result_label = first_text(match_summary_ui(no_opponent), "match-detail-label"),
-        lineup_title = first_text(match_detail_card, "match-lineup-title"),
-        headings = table_headings(match_lineup_table(no_lineup), c(
-          "player", "season_appearances", "turnout"
-        ))
-      )
-    )
-  )
-}
-
-#' The wording of Players > Roster and the player pages. The two tables are built on stand-ins
-#' with no rows, as above. The strip's key is read off its plot, whose rows depend on no number.
-export_players_cards <- function() {
-  no_roster <- tibble(
-    player = character(), attendance_rate = numeric(), avg_points = numeric(),
-    avg_goals_scored = numeric(), avg_goals_conceded = numeric()
-  )
-  no_record <- tibble(
-    played = 0L, won = 0L, drawn = 0L, lost = 0L, goals_for = 0L, goals_against = 0L,
-    points_per_match = NA_real_
-  )
-  both_sides <- with_without_table(list(present = no_record, absent = no_record))
-  strip_key <- appearance_timeline_plot(list(
-    timeline = tibble(date = FAR_PAST, points = 0L, played = TRUE)
-  ))$scales$get_scales("fill")$labels
-  cards <- tags_with_class(player_page, "table-card")
-
-  list(
-    who_turns_up = c(
-      card_wording(cards[[1]]),
-      # The table's sixth column is the class it marks its top three with, never shown.
-      list(headings = table_headings(attendance_table(no_roster), c(
-        "player", "turnout", "avg_points", "avg_goals_scored", "avg_goals_conceded", "rank_class"
-      ))[1:5])
-    ),
-    # The subtitle is the player's name and this note, which only app.R writes.
-    player = c(
-      card_wording(cards[[2]]),
-      list(
-        note_after_name = APP_PLAYER_NOTE_AFTER_NAME,
-        appearances_title = first_text(cards[[2]], "match-lineup-title"),
-        strip_key = list(played = strip_key[["TRUE"]], missed = strip_key[["FALSE"]])
-      )
-    ),
-    # The subtitle is the note in each player's profile.
-    with_without = c(
-      card_wording(cards[[3]]),
-      list(
-        headings = table_headings(both_sides, c(
-          "side", "played", "won", "drawn", "lost", "goals_for", "goals_against", "points_per_match"
-        )),
-        sides = as.list(set_names(table_column(both_sides, " "), c("played", "missed")))
-      )
-    )
-  )
-}
-
-export_wording <- function() {
-  list(
-    fee_panel = export_fee_panel(),
-    settle_up = export_settle_up(),
-    estimator_control = export_estimator_control(),
-    effects_cards = export_effects_cards(),
-    plot_labels = export_plot_labels(),
-    fee_cards = export_fee_cards(),
-    league_cards = export_league_cards(),
-    matches_cards = export_matches_cards(),
-    players_cards = export_players_cards()
+    overviews = map(overview_players, export_fee_overview, data = data)
   )
 }
 
@@ -1127,8 +733,7 @@ build_site_data <- function(data_dir = here::here("data"), out_root = here::here
     fixtures.json = to_json(export_fixtures(data)),
     league.json = to_json(export_league(data)),
     fees.json = to_json(export_fees(data)),
-    matches.json = to_json(export_match_pages(data)),
-    wording.json = to_json(export_wording())
+    matches.json = to_json(export_match_pages(data))
   )
 
   seasons_folder <- file.path(out_root, "public", "data", "seasons")

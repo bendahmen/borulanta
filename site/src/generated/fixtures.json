@@ -2,16 +2,6 @@
   "have_fixtures": true,
   "scraped_on": "2026-11-17",
   "stale_note": "The fixture list was last read on 17 Nov, so this may be out of date.",
-  "wording": {
-    "tag": "Next match",
-    "no_fixtures_left": "No fixtures left on the league page. Run the sync once the new season is up.",
-    "no_fixture_list": "No fixture list yet — run the sync to pull one in.",
-    "opponent_unknown": "Opponent to be confirmed",
-    "tonight": "Tonight",
-    "tomorrow": "Tomorrow",
-    "in_days": "In {days} days"
-  },
-  "run_in_empty": "No fixtures left on the league page.",
   "fixtures": [
     {
       "date": "2026-11-18",

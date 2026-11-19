@@ -1,12 +1,14 @@
 ---
 import home from '../generated/home.json';
+
+const linkLabel = 'League table and run-in';
 ---
 {
   home.league_position && (
     <a class="card league" href="/league/">
       <span class="position">{home.league_position}</span>
       <span class="link">
-        {home.league_link_label}
+        {linkLabel}
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
           <path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
