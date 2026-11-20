@@ -1,26 +1,26 @@
 # Borulanta
 
-Shiny app tracking fees, results and attendance for the Wednesday football game.
+Static site tracking fees, results and attendance for the Wednesday football game.
+R works out every number from the CSVs and writes JSON, and an Astro site renders it.
 
 ## Layout
 
 ```
-app.R                   the ui, the server, and nothing else
 R/seasons.R             season definitions and filtering
 R/fees.R                fee rule sets and the charge engine
 R/analysis.R            match/player statistics (season-agnostic)
 R/data.R                CSV loading, season tagging, validation
-R/format.R              money, dates, badges — shared scraps of presentation
-R/plots.R               every ggplot, each taking an already-filtered frame
-R/tables.R              every DT, and the only place display naming happens
-R/cards.R               the bslib cards the ui is assembled from
-R/_disable_autoload.R   stops Shiny sourcing R/ before app.R runs; see below
+R/format.R              money and rounded figures, as the strings the site shows
 R/scrape.R              reading the league page
 R/sync.R                reconciling a scrape with the files
-scripts/                the sync runner, its commit-and-push wrapper, the manifest writer,
-                        and the static site's export and publish routine
-manifest.json           what Connect Cloud installs and ships; generated, not hand-edited
-tests/testthat/         parser, sync, table and picker tests
+scripts/                the sync runner, its commit-and-push wrapper, the export that
+                        writes the site's JSON, and the publish routine
+site/                   the Astro site, with Svelte for the parts that change on the page
+site/src/generated/     ⤷ exported JSON for the pages with no season picker
+site/public/data/seasons/ ⤷ one exported file per combination of seasons
+site/tests/             ⤷ the site's tests, run with `npm test` in `site/`
+tests/testthat/         parser, sync, statistics and export tests
+docs/adr/               why the site is built the way it is
 data/                   the source of truth, all hand-editable CSVs
 data/fixtures.csv       ⤷ except these two, which the sync replaces wholesale
 data/league_table.csv   ⤷ and which describe only the current league season
@@ -28,27 +28,23 @@ data/league_results.csv ⤷ and this one, every league result, which the sync ac
 data/archive/           frozen ledgers for closed seasons
 ```
 
-The presentation layer is in `R/` rather than in `app.R` so it can be tested
-the same way the statistics are: a plot builder takes a frame and returns a
-plot, a table builder takes a frame and returns a widget, and neither knows
-that Shiny exists. What is left in `app.R` is the two things that genuinely
-have to be there — how the cards are arranged into tabs, and what is wired to
-what.
+The two halves split the work along one line. R computes every number: the
+charges, the balances, the statistics and the regressions. `scripts/build-site-data.R`
+sources `R/` and writes what the site needs, and adds no statistics of its own. Where
+the site shows a figure rounded or as money, R writes the string beside the value, so
+the site sorts on the value, shows the string and never rounds. Every word on the page
+belongs to the site, and so does formatting dates. The only text R writes is data: the
+data check messages and the charge explanations. `docs/adr/` records why.
 
-**`R/_disable_autoload.R` has to ship, and has to exist.** Shiny sources every
-file in `R/` automatically before a line of `app.R` runs, which is before its
-`library()` calls: `R/cards.R` builds its cards at load time and cannot see
-bslib yet. That file's presence turns the autoloading off. `app.R` sources all
-of `R/` itself, in an order that matters — `R/seasons.R` needs
-`parse_match_date()` from `R/fees.R` — and always did, which is why the
-autoloading went unnoticed for so long. It was quietly sourcing every file a
-second time, harmlessly, back when they only defined functions.
+There is no backend. The site is static files, built from the committed JSON, so the
+host needs Node and nothing else. The one piece of logic written twice is the date:
+which fixtures are still to come, for the next match and the run-in, is worked out in
+the browser on each visit, on the Europe/London date, because a build would freeze it.
 
 ## Weekly routine
 
 A week has three steps, and their order matters. All three run in the main folder,
 `projects/borulanta` on `main`, and the sync and the publish refuse any other branch.
-Until Shiny is retired, every push of `main` redeploys it.
 
 First, after a game, run the sync:
 
@@ -57,7 +53,7 @@ bash scripts/sync-and-commit.sh
 ```
 
 That reads the league page and records the result, the opponent and the
-goalscorers. It commits and pushes `main`, and Shiny follows a minute or two later.
+goalscorers. It commits and pushes `main`, but the site does not change until the publish.
 
 Second, type the attendance and commit it on `main`.
 **Attendance is the only thing left by hand** — one row per player
@@ -76,11 +72,8 @@ Payments arrive on any day, so they sit outside that order. Add the row to
 the sync and the attendance waits for the attendance, because a publish stops while a
 match has none.
 
-The `borulanta-site` folder is no longer used, and goes at Stage 7 of
-`docs/static-site-migration.md`.
-
-A match is not charged until its attendance is in: the sync pushes it live
-straight away, and an empty squad would bill the absent core for the whole fee.
+A match is not charged until its attendance is in, because an empty squad
+would bill the absent core for the whole fee.
 
 Nothing else needs touching: the season is worked out from the date, and the
 sync will not write a result it is not sure about.
@@ -133,9 +126,8 @@ It writes its JSON to a temporary folder, so the committed JSON is never touched
 commits and pushes nothing. It also lists the local commits waiting, and says whether a
 publish would push them.
 
-**A CSV committed without a publish leaves the site on old numbers.** Shiny updates as
-soon as `main` is pushed. The site does not: the push changes nothing in `site/`, so
-Cloudflare builds nothing and the site stays on the last publish. A build that does run
+**A CSV committed without a publish leaves the site on old numbers.** Pushing it is
+not enough: the push changes nothing in `site/`, so Cloudflare builds nothing and the site stays on the last publish. A build that does run
 fails if the `data_hash` in the JSON no longer matches the CSVs, and the previous
 version stays live. The site can be stale but not wrong, and publishing fixes it.
 
@@ -366,8 +358,7 @@ table, player page or scorers line.
 A row is matched on all three columns. If the page later corrects the minute or
 the name, the goal goes back to the player until the row is fixed, and the data
 check names the row. It also names a row that matches more than one goal, all of
-which are credited to nobody. With nothing to list, keep the file with its header
-rather than delete it, because `manifest.json` lists it.
+which are credited to nobody. With nothing to list, keep the file with its header.
 
 The other way round, a goal the page gives to nobody of ours or to the wrong
 player, goes in `data/credited_goals.csv`: `date`, `minute` and `player` as
@@ -383,10 +374,9 @@ there and what they did, and our league position in one line. Under those sit
 the Fee check and Settle up cards. The league table and run-in have their own
 tab, because together they pushed the fee cards 1,500px down the page.
 
-The Fee check card is on both Home and Fees. Shiny needs a unique id per input,
-so the card is built by a function rather than stored, and the two pickers get
-different ids; the server keeps them on the same person, so switching tabs never
-shows you somebody else's balance.
+The Fee check card is on both Home and Fees. Both read one name, remembered in
+the browser, so switching tabs never shows you somebody else's balance, and a
+returning player lands on their own.
 
 Like the Fees tab, and for the same reason, the home page **ignores the season
 picker**. What just happened and what is next are not per-season questions.
@@ -396,11 +386,11 @@ arrived with the sync, so nothing played before it existed has any of them —
 each is dropped from the card rather than rendered blank, because a line reading
 `Scorers: —` on every match in the archive is worse than no line at all.
 
-**The live app is only as fresh as the last deploy.** The CSVs are bundled into
-the deployment, so a fixture list synced and committed on the Mac does not reach
-the deployed app until it is redeployed. The results tabs have always had this
-property and it did not much matter; a countdown to the next match is the first
-thing on the site that looks wrong when it is stale.
+**The site is only as fresh as the last publish.** The numbers are built into
+the pages, so a fixture list synced and committed on the Mac does not reach the
+site until it is published. The results pages have always had this property and
+it did not much matter; a countdown to the next match is the first thing on the
+site that looks wrong when it is stale.
 
 So the page says how old it is. Under the strapline sits the date of the last
 result on file and the date the league page was last read — provenance, stated
@@ -408,43 +398,41 @@ quietly, on every visit. The phone layout keeps only the second of those, which
 is the one the countdown depends on, because the hero is held to a fixed height
 there. And when the league page has not been read for more than a match week,
 the next-match card says so outright: the countdown is computed from today, so
-it goes on being confident long after it has stopped being right.
+it goes on being confident long after it has stopped being right. Both the
+countdown and that warning are worked out in the browser when the page is read,
+not when it was built, so they move on with the date between publishes.
 
 ## Deploying
 
-The app runs on Posit Connect Cloud, published from this repository rather than
-from the Mac: **a push to `main` redeploys it.** So `scripts/sync-and-commit.sh`
-now closes its own loop — it syncs, commits, pushes, and the site follows a
-minute or two later without anyone opening the publisher.
+The site runs on Cloudflare, built from this repository rather than from the
+Mac: **a push to `main` that changes `site/` rebuilds it**, which in practice
+means a publish. Cloudflare runs `npm run build` in `site/` and serves `dist/` as
+static files, with no Worker script; `site/wrangler.jsonc` says so, and a missing
+page gets the site's own 404.
 
 Nothing about that contradicts the sync not being scheduled. That is blocked
-because a hosted runner cannot fetch the league page, and a deploy never looks
+because a hosted runner cannot fetch the league page, and a build never looks
 at the league page at all — only at this repository. They are unrelated
 problems, and only one of them is closed.
 
-`manifest.json` is what makes it work: it tells Connect Cloud which R version
-and which package versions to install, and which files to ship. Regenerate it
-whenever `renv.lock` changes, and commit the two together:
+**The build needs no R.** The JSON it renders is committed, so the host needs
+Node and nothing else. The Node version is pinned in `site/.nvmrc` and in
+`engines` in `site/package.json`, and Cloudflare builds with the same one. R runs
+only on the Mac, with its packages pinned in `renv.lock` and activated by the
+`.Rprofile`, so run the export and the sync from the project root.
 
-```
-Rscript scripts/write-manifest.R
-```
+**A build fails rather than publish old numbers.** Before it builds anything it
+recomputes `data_hash` from the CSVs, and stops if the JSON was exported from
+something else. A failed build leaves the previous version live.
 
-Nothing checks that the two agree. A lockfile updated without a matching
-manifest deploys the packages the manifest last remembered, which is a
-divergence that shows up as an app behaving like an older checkout rather than
-as an error.
+The site is public, as the repository is, but asks not to be found: every page
+carries `noindex` and `robots.txt` disallows everything.
 
-`renv/` and the `.Rprofile` that activates it are deliberately kept **out** of
-the bundle. On Connect the packages come from the manifest, and an activated
-renv would point `.libPaths()` at a project library that does not exist there,
-hiding every one of them. Locally that `.Rprofile` is exactly what we want,
-which is why it stays in the repository and out of the deployment.
-
-`renv.lock` itself does ship, though nothing reads it at run time. Its presence
-in the file list is what makes `writeManifest()` pin every version from the
-lockfile instead of scanning the code and resolving against whatever is
-installed on the machine that generated it.
+**Install the site's packages with `bash scripts/site-setup.sh`**, not `npm ci`
+alone. It first marks `site/node_modules` and the build folders with Dropbox's
+ignore flag, because the packages alone are over ten thousand files. The flag
+belongs to the folder, so deleting the folder loses it; `npm run dev` and
+`npm run build` mark them again first, and `--check` says whether they are.
 
 ## Seasons
 
@@ -477,8 +465,10 @@ zeros.
 Home, Fees and League do not show the tick boxes. They used to sit in the header
 on every tab, dimmed and captioned where they did nothing, and that explanation
 was most of what the landing tab's header said. Sitting under the tab bar, the
-boxes appear with the content they change. `SEASON_SCOPED_TABS` in `app.R` is the
-list, and it is the only place the answer is written down.
+boxes appear with the content they change. A page takes them by drawing
+`SeasonPicker.svelte`, which only the Matches and Players pages do. The ticks also
+go in the URL, so a link shares the seasons it was looking at, and are remembered
+for the next visit.
 
 The Fees, League and Home tabs deliberately ignore the picker; Fees always
 covers all time. A
@@ -624,13 +614,6 @@ arriving here usually lands on you, and on whoever turns up most where they did
 not. The two do not track each other afterwards: they are answering different
 questions and are not always offering the same names.
 
-The opening row is given to the table rather than sent to it afterwards through
-a `dataTableProxy`. A proxy message can arrive before the table it is addressed
-to exists and then never fire again, because nothing has changed to make it;
-seeded at render, the highlighted row and the page below it agree by
-construction. The same goes for the match picker on the Matches tab, which
-opens on the newest result.
-
 ## Statistics, continued
 
 ### Two estimators
@@ -677,29 +660,29 @@ in attendance and every other statistic.
 
 ## Tables
 
-Two things about the DTs are worth knowing, because both were live bugs and
-both fail silently rather than loudly.
+The tables are written by hand rather than taken from a library, and three
+things about them are worth knowing.
 
-**A table with `dom = "t"` draws no pager, so its page length is the only thing
-between the data and a silent truncation.** DT's default is 10. The lineup card
-was on that default and the biggest squad on file is exactly 10, so the
-eleventh player to turn up would have vanished with nothing on screen to say
-so. `every_row()` in `R/tables.R` is the page length for anything that shows
-everything, and `tests/testthat/test-tables.R` holds it there.
+**A table never formats a number.** Each cell shows R's display string, and a
+table that sorts does so on the exported value beside it, so the site never
+parses or rounds what it shows.
 
-**A card body does not grow to fit its table unless it is told to.** bslib
-gives it `overflow: auto`, which sets the flex item's automatic minimum size to
-zero and so lets it shrink below its own content; the card settles on an
-arbitrary height — 437px, in practice — and scrolls the rest out of sight
-*inside* a page that is already scrolling. Every result put 2784px of table in
-that box. The stylesheet restores `overflow: visible` on every `.table-card`
-body, which restores the minimum size with it, and that alone is the fix.
-Nothing in the stylesheet can touch the flex properties: bslib writes
-`flex: 1 1 auto` as an inline style on every card body.
+**A table fits a phone without sideways scrolling.** The main columns stay, and
+the rest fold under the row and show when it is opened. A row that opens is a
+`<details>`, so it needs no script. `site/src/lib/data-table.js` is the one copy
+of the markup, which the build and the browser both draw from;
+`site/src/components/DataTable.svelte` is the version for a table the page
+changes in place, by sorting it or picking a row, with the same classes.
+
+**A long table says how long it is.** Results, scorers, the roster and the
+charges show their first rows and a button that names the whole count, such as
+"Show all 25", rather than cutting the rest off with nothing on screen to say
+so. On the roster, the picked player's row shows even when it falls below the
+cut, because the page under the table names them.
 
 ## Data checks
 
-`validate_app_data()` runs at startup and warns about attendance on a date with
+`validate_app_data()` runs in the export and warns about attendance on a date with
 no match, a match with no attendance yet, unknown players, rows dated before the first season, players who
 appeared without being on that season's roster, events on a date with no
 match, goals that do not add up to the scoreline they belong to, a row of
@@ -710,8 +693,15 @@ one matters because a partial event list looks exactly like a complete one to
 anything that counts it.
 
 It warns, as it always did, and it now returns what it found as well. The
-warnings go to the console or the deployment log, which is where nobody reads
-them; the returned vector is put on the page, above the tabs, whenever it is not
-empty. These are notes to whoever keeps the CSVs rather than errors a reader can
-act on, so the panel is quiet and is absent entirely when there is nothing
-wrong.
+warnings go to the console, which is where nobody reads them; the export writes
+the returned vector into the JSON, and every page shows it above its content
+whenever it is not empty. These are notes to whoever keeps the CSVs rather than
+errors a reader can act on, so the panel is quiet and is absent entirely when
+there is nothing wrong.
+
+Two problems stop the export instead: a match date on file twice, and a player
+down twice for one night. Both make the fees wrong, the first by charging that
+night's squad again and the second by changing everybody's share. So the export
+names the rows and the file to fix, and writes nothing. The JSON on file then
+no longer matches the CSVs, so a build fails and the last good version stays
+live. Last week's numbers are better than a wrong balance under a quiet note.
