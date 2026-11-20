@@ -14,7 +14,7 @@ R/format.R              money and rounded figures, as the strings the site shows
 R/scrape.R              reading the league page
 R/sync.R                reconciling a scrape with the files
 scripts/                the sync runner, its commit-and-push wrapper, the export that
-                        writes the site's JSON, and the publish routine
+                        writes the site's JSON, the publish routine and the site's setup
 site/                   the Astro site, with Svelte for the parts that change on the page
 site/src/generated/     ⤷ exported JSON for the pages with no season picker
 site/public/data/seasons/ ⤷ one exported file per combination of seasons
@@ -29,17 +29,18 @@ data/archive/           frozen ledgers for closed seasons
 ```
 
 The two halves split the work along one line. R computes every number: the
-charges, the balances, the statistics and the regressions. `scripts/build-site-data.R`
-sources `R/` and writes what the site needs, and adds no statistics of its own. Where
-the site shows a figure rounded or as money, R writes the string beside the value, so
-the site sorts on the value, shows the string and never rounds. Every word on the page
-belongs to the site, and so does formatting dates. The only text R writes is data: the
-data check messages and the charge explanations. `docs/adr/` records why.
+charges, the balances, the statistics and the regressions.
+`scripts/build-site-data.R` sources `R/` and writes what the site needs, and adds
+no statistics of its own. Where the site shows a figure rounded or as money, R
+writes the string beside the value, and the site sorts on the value and shows
+the string. Every word on the page belongs to the site, and so does formatting
+dates. The only text R writes is data: the data check messages and the charge
+explanations. `docs/adr/` records why.
 
-There is no backend. The site is static files, built from the committed JSON, so the
-host needs Node and nothing else. The one piece of logic written twice is the date:
-which fixtures are still to come, for the next match and the run-in, is worked out in
-the browser on each visit, on the Europe/London date, because a build would freeze it.
+There is no backend. The site is static files, built from the committed JSON.
+The one piece of logic written twice is the date: which fixtures are still to
+come, for the next match and the run-in, is worked out in the browser on each
+visit, on the Europe/London date, because a build would freeze it.
 
 ## Weekly routine
 
@@ -127,7 +128,8 @@ commits and pushes nothing. It also lists the local commits waiting, and says wh
 publish would push them.
 
 **A CSV committed without a publish leaves the site on old numbers.** Pushing it is
-not enough: the push changes nothing in `site/`, so Cloudflare builds nothing and the site stays on the last publish. A build that does run
+not enough: the push changes nothing in `site/`, so Cloudflare builds nothing and
+the site stays on the last publish. A build that does run
 fails if the `data_hash` in the JSON no longer matches the CSVs, and the previous
 version stays live. The site can be stale but not wrong, and publishing fixes it.
 
@@ -368,23 +370,21 @@ Rows are matched and checked the same way as in `uncredited_goals.csv`.
 
 ## The home page
 
-The tab the app opens on, and the only one that answers a question in the
-present tense: the next fixture with a countdown, the last result with who was
-there and what they did, and our league position in one line. Under those sit
-the Fee check and Settle up cards. The league table and run-in have their own
-tab, because together they pushed the fee cards 1,500px down the page.
+The page the site opens on, and the only one that answers a question in the
+present tense: the next fixture with a countdown, where we sit in the league,
+and who is scoring. The league table and run-in have their own page. The Fee
+check is on Fees, which remembers the name it was last given in the browser, so
+a returning player lands on their own balance.
 
-The Fee check card is on both Home and Fees. Both read one name, remembered in
-the browser, so switching tabs never shows you somebody else's balance, and a
-returning player lands on their own.
+Like Fees, and for the same reason, the home page **ignores the season
+picker**. What is next and where we sit are not per-season questions. The player
+table pools every season, because the goal-difference coefficient in it needs
+more matches than one season gives.
 
-Like the Fees tab, and for the same reason, the home page **ignores the season
-picker**. What just happened and what is next are not per-season questions.
-
-Both cards degrade rather than break. Opponent, scorers and man of the match all
-arrived with the sync, so nothing played before it existed has any of them —
-each is dropped from the card rather than rendered blank, because a line reading
-`Scorers: —` on every match in the archive is worse than no line at all.
+A match's own page degrades rather than breaks. Opponent, scorers and man of the
+match all arrived with the sync, so nothing played before it existed has any of
+them — each is dropped from the page rather than rendered blank, because a line
+reading `Scorers: —` on every match in the archive is worse than no line at all.
 
 **The site is only as fresh as the last publish.** The numbers are built into
 the pages, so a fixture list synced and committed on the Mac does not reach the
@@ -431,7 +431,7 @@ carries `noindex` and `robots.txt` disallows everything.
 **Install the site's packages with `bash scripts/site-setup.sh`**, not `npm ci`
 alone. It first marks `site/node_modules` and the build folders with Dropbox's
 ignore flag, because the packages alone are over ten thousand files. The flag
-belongs to the folder, so deleting the folder loses it; `npm run dev` and
+belongs to the folder, so deleting the folder loses it. `npm run dev` and
 `npm run build` mark them again first, and `--check` says whether they are.
 
 ## Seasons
@@ -663,14 +663,16 @@ in attendance and every other statistic.
 The tables are written by hand rather than taken from a library, and three
 things about them are worth knowing.
 
-**A table never formats a number.** Each cell shows R's display string, and a
-table that sorts does so on the exported value beside it, so the site never
-parses or rounds what it shows.
+**A table almost never formats a number.** Each cell shows R's display string,
+and a table that sorts does so on the exported value beside it. The one
+exception is the Turnout column, which `site/src/lib/turnout.js` rounds in the
+browser. It rounds a tie up, as the tables always have, so a turnout of 12.5%
+shows as 13% in a row and as 12% in the headline tile, which is R's.
 
 **A table fits a phone without sideways scrolling.** The main columns stay, and
 the rest fold under the row and show when it is opened. A row that opens is a
 `<details>`, so it needs no script. `site/src/lib/data-table.js` is the one copy
-of the markup, which the build and the browser both draw from;
+of the markup, which the build and the browser both draw from.
 `site/src/components/DataTable.svelte` is the version for a table the page
 changes in place, by sorting it or picking a row, with the same classes.
 
@@ -692,16 +694,14 @@ and our own row going missing from the league table. That last
 one matters because a partial event list looks exactly like a complete one to
 anything that counts it.
 
-It warns, as it always did, and it now returns what it found as well. The
-warnings go to the console, which is where nobody reads them; the export writes
-the returned vector into the JSON, and every page shows it above its content
-whenever it is not empty. These are notes to whoever keeps the CSVs rather than
+It warns, and it returns what it found as well. The export catches the warnings
+and prints the returned vector once, as the data problems it is sending to the
+banner. It also writes that vector into the JSON, and every page shows it above
+its content whenever it is not empty. These are notes to whoever keeps the CSVs rather than
 errors a reader can act on, so the panel is quiet and is absent entirely when
 there is nothing wrong.
 
 Two problems stop the export instead: a match date on file twice, and a player
-down twice for one night. Both make the fees wrong, the first by charging that
+down twice for one night. Both make the charges wrong, the first by charging that
 night's squad again and the second by changing everybody's share. So the export
-names the rows and the file to fix, and writes nothing. The JSON on file then
-no longer matches the CSVs, so a build fails and the last good version stays
-live. Last week's numbers are better than a wrong balance under a quiet note.
+names the rows and the file to fix, and writes nothing. Last week's numbers are better than a wrong balance under a quiet note.
