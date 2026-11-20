@@ -1,0 +1,7 @@
+# R formats values and the site writes the words, with dates formatted in JS
+
+Decided on 18 November 2026, so that the export no longer depended on Shiny's presentation code. R exports each value, and beside it a `*_display` string for money, regression estimates, the three rounded columns (goals per game, points per match by opponent, points per match played and missed), the with-and-without gap and the headline turnout. The site sorts on the value, shows the string and never rounds, because R and JavaScript round differently: R rounds a turnout of 12.5% to 12% and `Math.round` gives 13%. The formatters are small named functions in `R/format.R`, apart from `format_estimate()`, which sits beside `player_regression_table()` in `R/analysis.R`.
+
+Dates are the exception. R exports them as ISO strings, and `site/src/lib/dates.js` formats them in R's six formats. It splits the string by hand and uses hand-written English names, with no `Intl`, because Node's en-GB gives `Wed, 09 Sept 2026` where R gives `Wed 09 Sep 2026`. Its unit test checks every date on file against R's output.
+
+Every other word on the page belongs to the site: labels, headings, empty states, small composed strings such as the ordinal and the scorer list, and the sentences that depend on the data, which use R's display strings for the values inside them. R keeps two kinds of text, because they are data. First, the `validate_app_data()` messages, which the export's stop rule matches on (see ADR 0004). Second, the charge explanations, which closed seasons' ledgers already store.
