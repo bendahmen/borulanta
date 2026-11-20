@@ -85,6 +85,19 @@ test_that("the run-in is what is left to play, with the standings attached", {
   expect_equal(left$points, 4L)
 })
 
+test_that("a fixture dated today is still to come", {
+  # The game is in the evening and the page is read during the day.
+  fixtures <- tibble(
+    date = as.Date("2026-01-14"), opponent = "Finessin FC",
+    dl_match_id = "2", season_id = "s1"
+  )
+
+  left <- run_in(fixtures, result("2026-01-07", "Ball FC", 1L, 0L), empty_standings(),
+                 today = as.Date("2026-01-14"))
+
+  expect_equal(left$date, as.Date("2026-01-14"))
+})
+
 test_that("an opponent missing from the standings keeps its fixture", {
   # Dropping it would silently shorten the run-in.
   fixtures <- tibble(

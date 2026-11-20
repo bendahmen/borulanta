@@ -73,80 +73,6 @@ test_that("no matches at all gives NULL rather than an error", {
                                  empty_events()))
 })
 
-# Next fixture ----
-
-fixtures_for <- function(dates, opponents) {
-  tibble(date = as.Date(dates), opponent = opponents, dl_match_id = NA_character_)
-}
-
-test_that("the next fixture is the soonest one still to come", {
-  fixtures <- fixtures_for(
-    c("2026-09-09", "2026-09-16", "2026-09-30"),
-    c("Shamrock Posers", "Brother Man FC", "Ball FC")
-  )
-  played <- matches_for("2026-09-09", 4, 2)
-
-  # 09 Sep has been played, so the next one is the 16th even though the
-  # fixture list still carries the 9th until the next sync replaces it.
-  fixture <- next_fixture(fixtures, played, today = as.Date("2026-09-10"))
-  expect_equal(fixture$date, as.Date("2026-09-16"))
-  expect_equal(fixture$opponent, "Brother Man FC")
-})
-
-test_that("a fixture today is still to come", {
-  # The sync draws the line the same way: the page is read during the day and
-  # the game is in the evening.
-  fixtures <- fixtures_for("2026-09-09", "Shamrock Posers")
-
-  fixture <- next_fixture(fixtures, matches_for(character(), integer(), integer()),
-                          today = as.Date("2026-09-09"))
-  expect_equal(fixture$date, as.Date("2026-09-09"))
-})
-
-test_that("a stale fixture list does not offer a match already played", {
-  # Between a match finishing and the next sync, the fixture file still lists
-  # it. Without the result check the home page would call it the next match.
-  fixtures <- fixtures_for("2026-09-09", "Shamrock Posers")
-  played <- matches_for("2026-09-09", 4, 2)
-
-  expect_null(next_fixture(fixtures, played, today = as.Date("2026-09-09")))
-})
-
-test_that("an empty or exhausted fixture list gives NULL", {
-  expect_null(next_fixture(fixtures_for(character(), character()),
-                           matches_for(character(), integer(), integer())))
-  expect_null(next_fixture(fixtures_for("2026-09-09", "Shamrock Posers"),
-                           matches_for(character(), integer(), integer()),
-                           today = as.Date("2026-12-01")))
-})
-
-# Season record ----
-
-test_that("the record counts wins, draws, losses and goals", {
-  matches <- matches_for(
-    c("2026-08-05", "2026-08-12", "2026-08-19"),
-    c(6, 2, 1), c(2, 2, 3)
-  )
-
-  record <- season_record(matches)
-  expect_equal(record$played, 3L)
-  expect_equal(record$won, 1L)
-  expect_equal(record$drawn, 1L)
-  expect_equal(record$lost, 1L)
-  expect_equal(record$goals_for, 9L)
-  expect_equal(record$goals_against, 7L)
-  expect_equal(record$goal_difference, 2L)
-  expect_equal(record$points, 4)
-})
-
-test_that("a season with no matches is all zeroes, not no rows", {
-  record <- season_record(matches_for(character(), integer(), integer()))
-
-  expect_equal(nrow(record), 1L)
-  expect_equal(record$played, 0L)
-  expect_equal(record$points, 0)
-})
-
 # Snapshot files ----
 
 test_that("the fixture snapshot keeps every fixture and drops the scores", {
@@ -236,28 +162,4 @@ test_that("a missing snapshot file reads as empty rather than failing", {
   expect_equal(nrow(read_fixture_file(missing)), 0L)
   expect_equal(nrow(read_league_table_file(missing)), 0L)
   expect_s3_class(read_fixture_file(missing)$date, "Date")
-  expect_null(next_fixture(read_fixture_file(missing),
-                           matches_for(character(), integer(), integer())))
-})
-
-# League position ----
-
-test_that("the league strip states our position and is absent without us", {
-  standings <- tibble(
-    position = 1:3, team = c("Ball FC", OUR_TEAM, "Rovers"),
-    played = 7L, points = c(19L, 12L, 3L)
-  )
-  expect_match(
-    as.character(league_position_ui(standings)), "2nd of 3 \u00b7 12 points from 7",
-    fixed = TRUE
-  )
-  expect_null(league_position_ui(filter(standings, team != OUR_TEAM)))
-  expect_null(league_position_ui(standings[0, ]))
-})
-
-test_that("ordinals handle the teens", {
-  expect_equal(
-    purrr::map_chr(c(1, 2, 3, 4, 11, 12, 13, 21), ordinal),
-    c("1st", "2nd", "3rd", "4th", "11th", "12th", "13th", "21st")
-  )
 })

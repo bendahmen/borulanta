@@ -65,7 +65,7 @@ read_subset <- function(ids) {
   read_exported("public", "data", "seasons", paste0(paste(ids, collapse = "-"), ".json"))
 }
 
-# As app.R's scoped().
+# The season-scoped tables the statistics read, filtered to the ticked seasons.
 scoped_like_app <- function(ids) {
   list(
     matches = filter_season(app_data$matches, ids),
@@ -329,7 +329,7 @@ test_that("to_json keeps arrays as arrays and small numbers as numbers", {
 
 # Scoping ----
 
-test_that("a subset filters every table the way app.R's scoped() does", {
+test_that("a subset filters every season-scoped table to its seasons", {
   # Not visible through the statistics alone: scorer_table() and player_profile()
   # filter events to the covered dates themselves, so most windows would come out
   # the same with events left unscoped.
@@ -619,7 +619,7 @@ test_that("every balance equals all_player_balances() to the penny", {
   ), "balances")
 })
 
-# The Everyone table and the Home picker read the first and Shiny's card reads the second.
+# The Everyone table and the Home picker read the first and FeeCard reads the second.
 # One rounds before subtracting and the other after, so a half-penny can part them.
 test_that("all_player_balances() and player_fee_overview() give every player one balance", {
   balances <- all_player_balances(app_data$charges, app_data$payments)
@@ -688,7 +688,7 @@ test_that("each player's charges and payments equal player_fee_overview()", {
   }
 })
 
-test_that("fee_players is what app.R offers", {
+test_that("fee_players is everyone on any season's roster", {
   fees <- read_generated("fees")
   expected <- app_data$rosters |> pull(player) |> unique() |> sort()
   expect_equal(unlist(fees$fee_players), expected)

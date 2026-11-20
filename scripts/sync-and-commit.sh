@@ -19,7 +19,7 @@ cd "$repo" || exit 1
 export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 
 # The commit below lands on whatever branch is checked out, and only main reaches
-# Shiny and the site.
+# the site.
 branch="$(git branch --show-current)"
 if [ "$branch" != "main" ]; then
   echo "FAILED: this checkout is on '${branch:-a detached HEAD}', and the sync runs on main only."

@@ -1,9 +1,7 @@
 # Data loading ----
 #
 # Read every CSV once at startup, parse dates, tag each row with its season and
-# check the obvious ways the files can drift out of step with each other. Loaded
-# at app level rather than inside server(), so the work is done once per process
-# rather than once per visitor.
+# check the obvious ways the files can drift out of step with each other.
 
 # Who we are on the league site, and so which row of the league table is ours.
 # It lives here rather than in R/scrape.R because the app reads it and never
@@ -38,7 +36,7 @@ EVENT_COLUMNS <- readr::cols(
 # The two snapshot files the sync replaces wholesale each run. Neither is part
 # of the permanent record, and neither exists on a fresh clone until the first
 # sync — so both are read tolerantly and both come back empty rather than
-# stopping the app from starting.
+# stopping the export.
 
 FIXTURE_COLUMNS <- readr::cols(
   date = readr::col_character(),

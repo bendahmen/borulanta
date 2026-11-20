@@ -61,7 +61,7 @@ fee_strings <- function(amounts) {
 
 # Season-scoped: one file per combination ----
 
-#' The filter app.R's scoped() applies.
+#' Every season-scoped table, filtered to the ticked seasons.
 scope_to_seasons <- function(data, season_ids) {
   list(
     matches = filter_season(data$matches, season_ids),
@@ -116,8 +116,8 @@ export_regression <- function(scope, strength, estimator) {
   results <- muffle_glmnet_folds(
     player_regression_results(scope$attendance, scope$matches, strength, estimator = estimator)
   )
-  # The site shows the player effects only with a fit, as app.R req()s one, and
-  # player_regression_table() cannot pivot an empty frame.
+  # The site shows the player effects only with a fit, and player_regression_table()
+  # cannot pivot an empty frame.
   has_regression <- nrow(results) > 0
   coverage <- opponent_coverage(scope$matches, strength)
 
@@ -218,7 +218,7 @@ export_profile <- function(player, scope) {
 export_subset <- function(data, season_ids) {
   scope <- scope_to_seasons(data, season_ids)
   form <- season_form_data(scope$attendance, scope$matches)
-  # app.R's roster_list() is the list of people who have a page in this window.
+  # The people who have a page in this window.
   attendance_list <- create_attendance_list(scope$attendance, scope$matches)
 
   list(
@@ -448,7 +448,7 @@ export_fee_overview <- function(player, data) {
 export_fees <- function(data) {
   balances <- all_player_balances(data$charges, data$payments)
   totals <- balance_totals(balances)
-  # As app.R's fee_players(): on any season's roster.
+  # Everyone on any season's roster.
   fee_players <- data$rosters |>
     pull(player) |>
     unique() |>
@@ -489,9 +489,8 @@ export_fees <- function(data) {
 # Every problem validate_app_data() lists goes in the site's banner except these two,
 # which stop the export, because both make fees wrong: a match date on file twice
 # charges that night's squad again, and a player down twice for one night changes
-# everybody's share of the fee in any season the rules still price. Shiny carries on
-# and shows them in its banner, but correct fees come first, and last week's files are
-# better than a wrong balance under a quiet note.
+# everybody's share of the fee in any season the rules still price. Correct fees come
+# first, and last week's files are better than a wrong balance under a quiet note.
 #
 # The answer is read from what validate_app_data() returns, so there is one duplicate
 # check. Each name is the start of its wording in R/data.R and each value is the file

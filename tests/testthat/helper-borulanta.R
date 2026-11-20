@@ -5,20 +5,12 @@ suppressPackageStartupMessages({
   library(stringr)
   library(purrr)
   library(rvest)
-  library(ggplot2)
-  # The presentation layer below needs these: R/cards.R builds bslib cards at
-  # load time, and R/tables.R returns DT widgets.
-  library(shiny)
-  library(bslib)
-  library(DT)
 })
 
-# Same order as app.R, and for the same reasons: R/fees.R defines
-# parse_match_date(), which R/seasons.R needs at load time, and the
-# presentation files read constants out of the data layer.
+# R/fees.R first: it defines parse_match_date(), which R/seasons.R needs at load
+# time.
 for (file in c(
-  "fees.R", "seasons.R", "analysis.R", "data.R", "scrape.R", "sync.R",
-  "format.R", "plots.R", "tables.R", "cards.R"
+  "fees.R", "seasons.R", "analysis.R", "data.R", "scrape.R", "sync.R", "format.R"
 )) {
   source(here::here("R", file))
 }

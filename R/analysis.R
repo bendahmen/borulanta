@@ -277,16 +277,9 @@ opponent_coverage <- function(matches, strength = NULL) {
 # of 3 this excludes exactly the players the previous hard-coded list did.
 MIN_REGRESSION_APPEARANCES <- 3L
 
-# What each regression outcome is called on the page: the outcome picker, the
-# coefficient plot's axis and the table's column headings all read this.
-OUTCOME_LABELS <- c(
-  points = "Points",
-  goals_scored = "Goals scored",
-  goals_conceded = "Goals conceded",
-  goal_difference = "Goal difference"
-)
-
-REGRESSION_OUTCOMES <- names(OUTCOME_LABELS)
+# The four outcomes each player's effect is estimated on, in the order the site
+# shows them. The site names them.
+REGRESSION_OUTCOMES <- c("points", "goals_scored", "goals_conceded", "goal_difference")
 
 # Shrinkage ----
 #
@@ -525,12 +518,9 @@ player_regression_table <- function(regression_results) {
     arrange(desc(Appearances), Player)
 }
 
-# The columns above, paired: the one you see and the one it sorts on.
-REGRESSION_TABLE_COLUMNS <- setNames(paste0("sort_", REGRESSION_OUTCOMES), REGRESSION_OUTCOMES)
-
 # The home page ----
 #
-# Three summaries of where things stand right now. Unlike everything above,
+# Two summaries of where things stand right now. Unlike everything above,
 # these are deliberately not scoped by the season picker: the home page answers
 # "what just happened and what is next", and a question phrased in the present
 # tense does not take a season argument. They are still pure functions of what
@@ -580,8 +570,7 @@ last_match_summary <- function(matches, attendance, events) {
   )
 }
 
-#' Fixtures still to come, soonest first. Shared by the next-match card and the
-#' run-in, so the two cannot disagree about what is left.
+#' Fixtures still to come, soonest first. The run-in is built on this.
 #'
 #' Two things are filtered out, not one. A fixture in the past is obviously
 #' gone; so is a fixture whose date already carries a result, which is what a
@@ -595,16 +584,6 @@ upcoming_fixtures <- function(fixtures, matches, today = Sys.Date()) {
   fixtures |>
     filter(date >= today, !date %in% matches$date) |>
     arrange(date)
-}
-
-#' The next fixture we are down to play, or NULL if the list has run out.
-next_fixture <- function(fixtures, matches, today = Sys.Date()) {
-  upcoming <- upcoming_fixtures(fixtures, matches, today)
-
-  if (nrow(upcoming) == 0) {
-    return(NULL)
-  }
-  upcoming |> slice(1)
 }
 
 # One player at a time ----
@@ -744,23 +723,4 @@ run_in <- function(fixtures, matches, league_table, today = Sys.Date()) {
   upcoming |>
     select(date, opponent) |>
     left_join(standings, by = c("opponent" = "team"))
-}
-
-#' Played, won, drawn, lost and goals over whatever matches are handed in.
-#'
-#' Always one row, zeroes included, so a caller can print it without checking
-#' whether a season has started.
-season_record <- function(matches) {
-  outcomes <- match_outcomes(matches)
-
-  tibble(
-    played = nrow(outcomes),
-    won = sum(outcomes$points == 3),
-    drawn = sum(outcomes$points == 1),
-    lost = sum(outcomes$points == 0),
-    goals_for = sum(outcomes$goals_scored),
-    goals_against = sum(outcomes$goals_conceded),
-    goal_difference = goals_for - goals_against,
-    points = sum(outcomes$points)
-  )
 }
