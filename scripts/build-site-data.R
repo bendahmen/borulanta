@@ -10,7 +10,7 @@
 # strings, and a *_display string beside each figure the site shows rounded or as
 # money, made by the formatters in R/. Every word on the page belongs to the site,
 # apart from the validate_app_data() messages and the charge explanations, which are
-# data. See "Numbers on the page" in docs/static-site-migration.md.
+# data. See docs/adr/0003-r-formats-values-site-writes-words.md.
 #
 #   Rscript scripts/build-site-data.R
 #
