@@ -85,7 +85,7 @@ test_that("a listed guest's goal is credited to nobody, and Daniel keeps his own
     player_profile("Daniel", data$attendance, data$matches, data$events)$goals, 1L
   )
   expect_equal(
-    last_match_summary(data$matches, data$attendance, data$events)$scorers,
+    match_summary(data$matches, data$attendance, data$events)$scorers,
     tibble(player = c("Ben", "Daniel"), goals = 1L)
   )
 })

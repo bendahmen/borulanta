@@ -1,5 +1,5 @@
-# The home page: what just happened, what is next, and the two snapshot files
-# those answers are read out of.
+# A match's summary, what is next, and the two snapshot files the fixtures and
+# the league table are read out of.
 
 matches_for <- function(dates, goals_for, goals_against, opponent = NA_character_) {
   tibble(
@@ -12,9 +12,9 @@ matches_for <- function(dates, goals_for, goals_against, opponent = NA_character
     with_result()
 }
 
-# Last match ----
+# Match summary ----
 
-test_that("the last match is the latest one, whatever order the file is in", {
+test_that("the summary is of the latest match, whatever order the file is in", {
   matches <- matches_for(
     c("2026-08-05", "2026-08-19", "2026-08-12"), c(6, 5, 10), c(2, 3, 6)
   ) |>
@@ -24,7 +24,7 @@ test_that("the last match is the latest one, whatever order the file is in", {
     player = c("Ben", "Vitto", "Ben")
   )
 
-  summary <- last_match_summary(matches, attendance, empty_events())
+  summary <- match_summary(matches, attendance, empty_events())
 
   expect_equal(summary$match$date, as.Date("2026-08-19"))
   expect_equal(summary$match$result, "5-3")
@@ -44,7 +44,7 @@ test_that("scorers are tallied per player and the opposition's are left out", {
     player = c("Ben", "Ben", "Vitto", "Someone Else", "Ben")
   )
 
-  summary <- last_match_summary(matches, tibble(date = as.Date("2026-08-19"), player = "Ben"), events)
+  summary <- match_summary(matches, tibble(date = as.Date("2026-08-19"), player = "Ben"), events)
 
   # A hat-trick reads as one line with a tally, not three identical lines.
   expect_equal(summary$scorers$player, c("Ben", "Vitto"))
@@ -58,7 +58,7 @@ test_that("a match with no events recorded still summarises", {
   # is the common case rather than an edge one.
   matches <- matches_for("2026-08-19", 5, 3) |> mutate(season_id = "s2")
 
-  summary <- last_match_summary(
+  summary <- match_summary(
     matches, tibble(date = as.Date("2026-08-19"), player = "Ben"), empty_events()
   )
 
@@ -68,9 +68,9 @@ test_that("a match with no events recorded still summarises", {
 })
 
 test_that("no matches at all gives NULL rather than an error", {
-  expect_null(last_match_summary(matches_for(character(), integer(), integer()),
-                                 tibble(date = as.Date(character()), player = character()),
-                                 empty_events()))
+  expect_null(match_summary(matches_for(character(), integer(), integer()),
+                            tibble(date = as.Date(character()), player = character()),
+                            empty_events()))
 })
 
 # Snapshot files ----

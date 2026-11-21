@@ -518,22 +518,23 @@ player_regression_table <- function(regression_results) {
     arrange(desc(Appearances), Player)
 }
 
-# The home page ----
+# One match, and what is next ----
 #
-# Two summaries of where things stand right now. Unlike everything above,
-# these are deliberately not scoped by the season picker: the home page answers
-# "what just happened and what is next", and a question phrased in the present
-# tense does not take a season argument. They are still pure functions of what
-# they are handed, so a caller that wants a season can filter first.
+# Unlike everything above, these are not scoped by the season picker. A match
+# page is about its own night, and the fixtures still to come feed the home
+# page's countdown and the run-in, which are present-tense questions with no
+# season argument. They are still pure functions of what they are handed, so a
+# caller that wants a season can filter first.
 
-#' The most recent match played, with who was there and what they did.
+#' The latest of the matches it is handed, with who was there and what they did.
+#' A match page hands it that one match.
 #'
 #' Returns NULL when there is no match at all, which is a real state on a fresh
 #' season rather than an error. `scorers` and `mom` come from the event log,
 #' which is thin for anything predating the sync and empty for everything
 #' before it existed — so both come back empty rather than absent, and the
 #' caller renders what it has.
-last_match_summary <- function(matches, attendance, events) {
+match_summary <- function(matches, attendance, events) {
   if (nrow(matches) == 0) {
     return(NULL)
   }

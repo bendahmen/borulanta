@@ -28,7 +28,7 @@ export const NEXT_MATCH = {
   in_days: 'In {days} days',
 };
 
-// The League tab's two cards. The standings' subtitle depends on the scrape date, so it is
+// The League page's two cards. The standings' subtitle depends on the scrape date, so it is
 // leagueSubtitle() in wording.js. Home's snippet uses the same headings.
 export const LEAGUE_CARDS = {
   standings: {

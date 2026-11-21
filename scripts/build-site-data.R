@@ -329,7 +329,7 @@ export_match_summary <- function(summary, seasons) {
     opponent = played$opponent,
     season_label = seasons$label[match(played$season_id, seasons$season_id)],
     squad_size = summary$squad_size,
-    # In the order last_match_summary() gives them, which is the order they are listed.
+    # In the order match_summary() gives them, which is the order they are listed.
     scorers = summary$scorers |> select(player, goals),
     man_of_the_match = summary$mom
   )
@@ -337,14 +337,14 @@ export_match_summary <- function(summary, seasons) {
 
 #' What each match page says, newest first, for /matches/<date>/.
 #'
-#' Each page is about its own night, so last_match_summary() is given that match alone.
+#' Each page is about its own night, so match_summary() is given that match alone.
 #' A match dated before the first season is in no season file and no tick's table.
 #' It stays a note in the banner and gets no page.
 export_match_pages <- function(data) {
   played <- data$matches |> filter(!is.na(season_id))
 
   map(as.character(sort(played$date, decreasing = TRUE)), function(selected_date) {
-    summary <- last_match_summary(
+    summary <- match_summary(
       played |> filter(date == as.Date(selected_date)), data$attendance, data$events
     )
     c(list(season_id = summary$match$season_id), export_match_summary(summary, data$seasons))

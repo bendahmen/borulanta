@@ -619,7 +619,7 @@ test_that("every balance equals all_player_balances() to the penny", {
   ), "balances")
 })
 
-# The Everyone table and the Home picker read the first and FeeCard reads the second.
+# Fees > Everyone and FeeCard's balance read the first, and FeeCard's breakdown the second.
 # One rounds before subtracting and the other after, so a half-penny can part them.
 test_that("all_player_balances() and player_fee_overview() give every player one balance", {
   balances <- all_player_balances(app_data$charges, app_data$payments)
@@ -1227,14 +1227,14 @@ test_that("a fresh checkout with nothing played and no snapshots still exports",
   expect_equal(fees$totals$credit, 10)
 })
 
-test_that("each match page is what the last match would be on that night", {
+test_that("each match page is the summary of that night's match", {
   rows <- read_generated("matches")
   played <- app_data$matches |> filter(!is.na(season_id))
 
   expect_equal(strings_of(rows, "date"), format(sort(played$date, decreasing = TRUE), "%Y-%m-%d"))
 
   for (row in rows) {
-    summary <- last_match_summary(
+    summary <- match_summary(
       played |> filter(date == as.Date(row$date)), app_data$attendance, app_data$events
     )
     expect_setequal(names(row), c(
@@ -1278,7 +1278,7 @@ test_that("a match page drops what its match does not have", {
     data <- app_data
     data$events <- data$events |> filter(!(date == last_date & event_type %in% types))
     newest <- round_trip(export_match_pages(data))[[1]]
-    summary <- last_match_summary(
+    summary <- match_summary(
       data$matches |> filter(date == last_date), data$attendance, data$events
     )
 
