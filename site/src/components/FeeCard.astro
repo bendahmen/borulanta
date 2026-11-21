@@ -1,8 +1,8 @@
 ---
 // "What do I owe" and "how do I pay" are one question, so this is one card.
 // Only these strings reach the page: fees.json stays at build time. `breakdown` adds what
-// the balance is the difference of, as Fees has and Home does not, and the address of
-// each player's file. They sit on the option, so they change with the choice.
+// the balance is the difference of, and the address of each player's file. They sit on the
+// option, so they change with the choice.
 import fees from '../generated/fees.json';
 import { feeBreakdown, feeRows } from '../lib/fee-rows.js';
 import { moduleToInline } from '../lib/inline.js';

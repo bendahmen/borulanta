@@ -529,11 +529,10 @@ player_regression_table <- function(regression_results) {
 #' The latest of the matches it is handed, with who was there and what they did.
 #' A match page hands it that one match.
 #'
-#' Returns NULL when there is no match at all, which is a real state on a fresh
-#' season rather than an error. `scorers` and `mom` come from the event log,
-#' which is thin for anything predating the sync and empty for everything
-#' before it existed — so both come back empty rather than absent, and the
-#' caller renders what it has.
+#' Returns NULL when it is handed no match, rather than failing. `scorers` and
+#' `mom` come from the event log, which is complete only for a covered match and
+#' empty before the sync. So a match with nothing on file still has both, as no
+#' rows of `scorers` and an NA `mom`, and the caller renders what it has.
 match_summary <- function(matches, attendance, events) {
   if (nrow(matches) == 0) {
     return(NULL)
@@ -693,9 +692,9 @@ STALE_FIXTURES_DAYS <- 8L
 #' The fixtures still to come, with what the table says about who we are facing.
 #'
 #' Deliberately not season-scoped. Fixtures and the standings both describe the
-#' current league season only — they are wiped and rebuilt on the site when it
-#' rolls over — so scoping them by a fee season would be filtering one thing by
-#' the boundaries of another.
+#' current league season only, and the league's site wipes and rebuilds them when
+#' it rolls over. Scoping them by a fee season would be filtering one thing by the
+#' boundaries of another.
 #'
 #' An opponent the standings do not carry keeps its row with the league columns
 #' empty. The fixture is still a fixture, and dropping it would silently
