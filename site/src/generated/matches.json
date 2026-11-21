@@ -1,6 +1,30 @@
 [
   {
     "season_id": "s3",
+    "date": "2026-11-18",
+    "result": "5-3",
+    "points": 3,
+    "opponent": "Brother Man FC",
+    "season_label": "Season 3",
+    "squad_size": 6,
+    "scorers": [
+      {
+        "player": "Emiliano",
+        "goals": 2
+      },
+      {
+        "player": "Daniel",
+        "goals": 1
+      },
+      {
+        "player": "Torge",
+        "goals": 1
+      }
+    ],
+    "man_of_the_match": null
+  },
+  {
+    "season_id": "s3",
     "date": "2026-11-11",
     "result": "3-4",
     "points": 0,

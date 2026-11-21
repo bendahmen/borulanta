@@ -1,5 +1,5 @@
 {
-  "data_hash": "4978f2a06a3d928fc27d0284783597f1bce579a2731fac51b313c5e33788238b",
+  "data_hash": "2ad41e68167aea084ffc05cfcd0c73950af246a5f6520a7a3c59494ae1cb4b46",
   "our_team": "Borulanta",
   "min_regression_appearances": 3,
   "stale_fixtures_days": 8,
@@ -9,7 +9,7 @@
       "label": "Season 3",
       "start_date": "2026-09-09",
       "first_match": "2026-09-09",
-      "last_match": "2026-11-11"
+      "last_match": "2026-11-18"
     },
     {
       "season_id": "s2",
@@ -29,7 +29,7 @@
   "subset_files": ["s1.json", "s2.json", "s3.json", "s1-s2.json", "s1-s3.json", "s2-s3.json", "s1-s2-s3.json"],
   "problems": [],
   "freshness": {
-    "last_result": "2026-11-11",
-    "scraped_on": "2026-11-17"
+    "last_result": "2026-11-18",
+    "scraped_on": "2026-11-21"
   }
 }

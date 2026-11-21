@@ -1,25 +1,15 @@
 {
   "have_fixtures": true,
-  "scraped_on": "2026-11-17",
+  "scraped_on": "2026-11-21",
   "fixtures": [
-    {
-      "date": "2026-11-18",
-      "opponent": "Brother Man FC",
-      "kickoff": "20:00",
-      "pitch": "Front Pitch",
-      "position": 9,
-      "played": 8,
-      "goal_difference": -30,
-      "points": 4
-    },
     {
       "date": "2026-12-02",
       "opponent": "Ball FC",
       "kickoff": "19:00",
       "pitch": "Pitch 1",
       "position": 8,
-      "played": 9,
-      "goal_difference": -16,
+      "played": 10,
+      "goal_difference": -20,
       "points": 7
     },
     {
@@ -28,18 +18,18 @@
       "kickoff": "19:40",
       "pitch": "Pitch 1",
       "position": 3,
-      "played": 9,
-      "goal_difference": 17,
-      "points": 14
+      "played": 10,
+      "goal_difference": 19,
+      "points": 17
     },
     {
       "date": "2026-12-16",
       "opponent": "Dynamo Mickey CF",
       "kickoff": "20:00",
       "pitch": "Front Pitch",
-      "position": 5,
-      "played": 9,
-      "goal_difference": -4,
+      "position": 6,
+      "played": 10,
+      "goal_difference": -6,
       "points": 11
     },
     {
@@ -47,7 +37,7 @@
       "opponent": "Foireann Peile",
       "kickoff": "20:20",
       "pitch": "Pitch 1",
-      "position": 7,
+      "position": 5,
       "played": 9,
       "goal_difference": -5,
       "points": 11
@@ -58,18 +48,18 @@
       "kickoff": "20:20",
       "pitch": "Pitch 1",
       "position": 1,
-      "played": 9,
-      "goal_difference": 27,
-      "points": 25
+      "played": 10,
+      "goal_difference": 29,
+      "points": 28
     },
     {
       "date": "2027-01-20",
       "opponent": "Saffron Rangers",
       "kickoff": "20:00",
       "pitch": "Front Pitch",
-      "position": 6,
-      "played": 9,
-      "goal_difference": -4,
+      "position": 7,
+      "played": 10,
+      "goal_difference": -6,
       "points": 11
     }
   ]
