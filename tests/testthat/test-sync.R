@@ -320,6 +320,22 @@ test_that("a man of the match entered by hand survives the next sync", {
   expect_equal(mom$player, "Vitto")
 })
 
+test_that("an unplaceable man of the match already entered by hand is not reported again", {
+  # Once a person has answered, asking again every Wednesday is noise. The name
+  # on file need not match the page's, since the page's first name may be one
+  # the name map has not caught.
+  scraped <- with_mom(NA_character_, "Ciaran", date = "2026-06-10", goals_for = 1)
+  once <- run(scraped)
+  by_hand <- once$events |> add_row(
+    date = as.Date("2026-06-10"), dl_match_id = "900", team = "us",
+    minute = NA_integer_, event_type = "mom", player = "Vitto"
+  )
+
+  twice <- run(scraped, matches = once$matches, events = by_hand)
+
+  expect_equal(nrow(twice$report$unattributed_mom), 0)
+})
+
 test_that("a correction on the site takes effect on the next run", {
   first <- run(fixture(
     "2026-06-10", goals_for = 1, goals_against = 0,

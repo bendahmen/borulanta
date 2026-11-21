@@ -92,9 +92,11 @@ sync_results <- function(fixtures, matches, events, seasons, name_map,
              goal_events != goals_for + goals_against),
     # A man of the match nobody scored, so nothing on the page says which team
     # won it. Reported rather than guessed at. Whatever the file already holds
-    # for that date is left alone, so an answer entered by hand survives.
+    # for that date is left alone, so an answer entered by hand survives, and a
+    # date that already has one is not reported again.
     unattributed_mom = scraped_events(recorded) |>
       filter(event_type == "mom", is.na(team)) |>
+      anti_join(events |> filter(event_type == "mom"), by = "date") |>
       left_join(recorded |> select(date, opponent), by = "date") |>
       select(date, opponent, player)
   )
