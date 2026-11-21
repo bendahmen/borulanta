@@ -317,11 +317,11 @@ The index is centred within season so 0 is an average opponent. That is also
 the value a match takes when its opponent is not on file — every match from
 before the sync existed — together with an indicator saying so, which lets
 those matches keep their own level. Seasons for this purpose are the fee
-seasons in `seasons.csv`, which are the windows the app scopes a regression to.
+seasons in `seasons.csv`, which are the windows the season picker scopes a regression to.
 
 ### Opponents
 
-Two views are built on the opponent, on different tabs. **Head to head**, on
+Two views are built on the opponent, on different pages. **Head to head**, on
 Matches, is our record against each side, ranked on points per match rather
 than total points because we have met some of them twice as often as others and
 the totals would rank on that instead of on how the games went. Matches from
@@ -331,12 +331,12 @@ them describes nobody. A window made only of those says so instead of showing
 an empty table.
 
 **Run-in** is every fixture still to come with where that side sits in the
-standings, and it is on the **League tab**, with the league table it is made
+standings, and it is on the **League** page, with the league table it is made
 of. It sat on Matches once and had to excuse itself in its own
 subtitle for ignoring the season picker, which is the tell that it was in the
 wrong place: the fixture list and the standings describe the current *league*
 season, which is not a fee season and has no business being filtered by one —
-the same reason the snapshot files exist at all. On the League tab nothing takes
+the same reason the snapshot files exist at all. On League nothing takes
 the picker, so there is nothing to excuse, and Matches is now uniformly
 season-scoped. An opponent the standings do not carry keeps
 its row with those columns empty, because the fixture is still a fixture and
@@ -349,7 +349,7 @@ and exist only so a goal tally reconciles with the score. An unmapped name is
 left as it came and reported, so adding the mapping and re-running fixes it.
 
 Some goals count for the team and for no player. The page lists an own goal by
-the other side as `Og`, and the app credits a goal under `Og`, `O.G.` or `Own
+the other side as `Og`, and R attributes a goal under `Og`, `O.G.` or `Own
 goal`, ignoring case, to nobody. A goal by a guest who shares a first name with
 one of ours goes in `data/uncredited_goals.csv`, one row per goal: `date`,
 `minute` and `player` as `match_events.csv` has them, and a `reason`. Both stay in
@@ -456,28 +456,28 @@ from the matches played rather than from the nominal boundaries.
 | `status` | `open` or `closed`, for reference |
 
 Every match, attendance row and payment is tagged with its season at load time.
-The tick boxes under the tab bar scope **Matches and Players**,
+The tick boxes under the sub-navigation scope **Matches and Players**,
 and any combination can be in scope at once — tick one season, a few, or all of
 them to pool them. Every season starts ticked, so the default view is all-time.
-Ticking nothing puts nothing in scope, and each tab says so rather than showing
+Ticking nothing puts nothing in scope, and each page says so rather than showing
 zeros.
 
-Home, Fees and League do not show the tick boxes. They used to sit in the header
-on every tab, dimmed and captioned where they did nothing, and that explanation
-was most of what the landing tab's header said. Sitting under the tab bar, the
-boxes appear with the content they change. A page takes them by drawing
+Home, Fees and League do not show the tick boxes. In the Shiny app they sat in
+the header on every tab, dimmed and captioned where they did nothing, and that
+explanation was most of what the landing tab's header said. Under the
+sub-navigation, the boxes appear with the content they change. A page takes them by drawing
 `SeasonPicker.svelte`, which only the Matches and Players pages do. The ticks also
 go in the URL, so a link shares the seasons it was looking at, and are remembered
 for the next visit.
 
-The Fees, League and Home tabs deliberately ignore the picker; Fees always
+The Fees, League and Home pages deliberately ignore the picker; Fees always
 covers all time. A
 balance is a running total, not a per-season statistic: people settle up when
 they settle up, not season by season, so scoping payments by date would show a
 debt in one season and the mirror-image credit in the next even when everyone is
 square. The charge table carries a season column instead.
 
-The Fees tab shows everyone's balance as well as your own, because "who owes
+Fees shows everyone's balance as well as your own, because "who owes
 me" is the question the person collecting the money actually has and the picker
 made you click through the whole roster to answer it. That table lists anyone
 with a charge or a payment on file rather than the current roster —
@@ -505,7 +505,7 @@ moving in or out of the core is one cell, not a schema change.
 `data/players.csv` is now just the list of names — the identity table. Its
 `guest` column marks people who played without being charged: they are listed
 so their goals and man-of-the-match awards are recognised, but they have no
-attendance or roster rows. Nothing in the app reads the column; it records why
+attendance or roster rows. Nothing in R or the site reads the column; it records why
 a name has no attendance.
 
 ## Fee rules
@@ -551,7 +551,7 @@ When a season is settled, freeze it so its charges survive the rules retiring:
    the filename must match the id, so season `s3` needs `charges_s3.csv`.
 3. Set that season's `fee_rules` to `archived` and `status` to `closed`.
 
-From then on the app reads the frozen ledger instead of repricing, so old
+From then on R reads the frozen ledger instead of repricing, so old
 balances stay exactly as they were even after the rule code is deleted. Seasons
 1 and 2 are already archived this way, in `data/archive/charges_s1.csv` and
 `charges_s2.csv`. Write charges at full precision — the ledger is the record,
@@ -579,13 +579,13 @@ stamps on everything it writes. Keying on whether it has any event on file
 would be wrong in the direction that matters: a synced goalless draw with no
 man of the match has no events and is nonetheless completely recorded.
 
-## The Players tab
+## The Players pages
 
 Two sub-views, Roster and Effects, opening on Effects. On Roster, **Who turns up** is the whole roster —
 turnout, points per match, goals for and against — and the page under it is one
 row of that table opened up.
 
-They used to be separate tabs, which made two destinations out of one question
+In the Shiny app they were separate tabs, which made two destinations out of one question
 and left the player page with a dropdown for a picker. Now the table *is* the
 picker: click a row, read the player. The card below names whoever is selected,
 so the two never disagree about who is being shown.

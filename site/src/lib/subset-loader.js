@@ -3,7 +3,7 @@
 // the ticks have moved on is reported as stale rather than shown. Fees uses it too, for
 // the chosen player's file, with `pick` keeping everything.
 
-// The Effects page uses only these. The rest of a season's file is for the Stage 3 pages.
+// The Effects page uses only these. The other Matches and Players pages pass their own pick.
 const pickRegression = ({ has_matches, regression }) => ({ has_matches, regression });
 
 export function createSubsetLoader(fetchFile, pick = pickRegression) {
