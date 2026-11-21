@@ -23,7 +23,7 @@ suppressPackageStartupMessages({
 
 source("R/fees.R") # parse_match_date(), which seasons.R needs at load time
 source("R/seasons.R")
-source("R/data.R") # the file readers, shared with the app so types cannot drift
+source("R/data.R") # the file readers, shared with the export so types cannot drift
 source("R/scrape.R")
 source("R/sync.R")
 

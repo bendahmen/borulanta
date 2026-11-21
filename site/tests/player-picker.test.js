@@ -67,7 +67,7 @@ test('a signing with no match yet falls back to overviews, and a gap fails the b
   assert.throws(() => feeRows({ ...fees, overviews: [] }, words), /no balance for New/);
 });
 
-// The card as FeeCard.astro writes it with `breakdown`: a slot per data attribute.
+// The card as FeeCard.astro writes it: a slot per data attribute.
 function mountCard(t, saved) {
   const { win } = fakeWindow(t);
   const stored = new Map(saved ? [['borulanta.player', saved]] : []);

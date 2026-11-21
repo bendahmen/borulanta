@@ -99,7 +99,7 @@ player_summary <- function(attendance, matches) {
 
 #' Turnout and how those nights went, one row per player, best turnout first.
 #'
-#' The rate stays a proportion here and is scaled where it is displayed; the
+#' The rate stays a proportion here and is scaled where it is displayed. The
 #' rounding is display too, but it happens here because the sort above depends
 #' on the unrounded rate and nothing downstream should have to know that.
 create_attendance_list <- function(attendance, matches) {
@@ -143,7 +143,7 @@ event_coverage <- function(matches) {
 #' Everyone who appeared in a covered match is listed, scorer or not: a
 #' leaderboard that drops the players on nought is not the squad. A player with
 #' events but no attendance row is listed too, on no appearances, rather than
-#' having their goals quietly left out of the tally — that is a data problem
+#' having their goals quietly left out of the tally. That is a data problem
 #' validate_app_data() reports, and a total that no longer reconciles with the
 #' scorelines would otherwise be the only sign of it.
 scorer_table <- function(events, attendance, matches) {
@@ -185,9 +185,9 @@ scorer_table <- function(events, attendance, matches) {
 #
 # The player regressions below compare matches with one another, and a match
 # against the league's best side is not the same test as one against its worst.
-# Opponent fixed effects are out of reach — eight other teams, each met about
-# twice a season, on a design that already spends a column per player — so the
-# opponent enters as one number: its goal difference per game over the season,
+# Opponent fixed effects are out of reach, with eight other teams each met about
+# twice a season, on a design that already spends a column per player. So the
+# opponent enters as one number, its goal difference per game over the season,
 # measured on its matches against everybody except us.
 #
 # Leaving our own matches out matters. Our result is a seventh of an opponent's
@@ -197,18 +197,18 @@ scorer_table <- function(events, attendance, matches) {
 # not to forecast, and a table two weeks into a season says nearly nothing.
 #
 # The index is centred within season so that 0 is an average opponent. That is
-# also the value a match takes when its opponent is not on file — every match
-# from before the sync existed — alongside an indicator saying so, which lets
-# those matches keep their own level instead of forcing it through the player
+# also the value a match takes when its opponent is not on file, which is every
+# match from before the sync existed. An indicator says so, which lets those
+# matches keep their own level instead of forcing it through the player
 # indicators. The strength coefficient is identified only off matches whose
 # opponent is known, so the old matches cost it nothing either way.
 
 #' Goal difference per game against third parties, one row per season and team.
 #'
 #' Seasons are the fee seasons from seasons.csv rather than the league's own:
-#' they are the windows the app scopes a regression to, and the league's season
-#' is not recorded anywhere. A team that met nobody but us in a season has no
-#' row, and a result outside every season is ignored.
+#' they are the windows the season picker scopes a regression to, and the
+#' league's season is not recorded anywhere. A team that met nobody but us in a
+#' season has no row, and a result outside every season is ignored.
 opponent_strength <- function(league_results, seasons, team = OUR_TEAM) {
   if (nrow(league_results) == 0) {
     return(tibble(
@@ -289,7 +289,8 @@ REGRESSION_OUTCOMES <- c("points", "goals_scored", "goals_conceded", "goal_diffe
 # every estimate toward the middle by an amount inversely proportional to how
 # much is known about that player: three appearances move a long way, thirty
 # barely move. It is the same fix, for the same reason, as regularised adjusted
-# plus-minus in basketball — collinear lineups, thin data per player.
+# plus-minus in basketball, where lineups are collinear and each player's data
+# is thin.
 #
 # Three settings matter and are easy to get wrong.
 #
@@ -320,8 +321,8 @@ ridge_coefficients <- function(formula, data, penalised) {
   design <- design[, colnames(design) != "(Intercept)", drop = FALSE]
   response <- data[[all.vars(formula)[[1]]]]
 
-  # cv.glmnet picks lambda by k-fold CV, which is random; at n in the dozens it
-  # would otherwise move between page loads on identical data.
+  # cv.glmnet picks lambda by k-fold CV, which is random. At n in the dozens it
+  # would otherwise move between exports of identical data.
   # Ten folds over a single short season leaves one or two matches in each,
   # which cv.glmnet complains about and which makes the chosen penalty mostly
   # noise. Keep at least three matches per fold, and at least three folds.
@@ -344,9 +345,9 @@ ridge_coefficients <- function(formula, data, penalised) {
 
 #' Match-level regressions of each outcome on player indicators.
 #'
-#' `strength` is the table from `opponent_strength()`; when it is given,
+#' `strength` is the table from `opponent_strength()`. When it is given,
 #' `matches` must carry a `season_id`. Only the player coefficients are
-#' returned — the opponent controls are there to be conditioned on, not read.
+#' returned. The opponent controls are there to be conditioned on, not read.
 #'
 #' `estimator` picks OLS or ridge. The two report different quantities and the
 #' display says which: without an intercept an OLS coefficient is a player's
@@ -381,8 +382,8 @@ player_regression_results <- function(attendance, matches, strength = NULL,
 
   # With no more matches than regressors the design matrix has no residual
   # degrees of freedom, so OLS has nothing to estimate. Ridge is defined either
-  # way — the penalty is what buys the identification back — so the guard only
-  # applies to the fit that needs it.
+  # way, since the penalty is what buys the identification back. So the guard
+  # only applies to the fit that needs it.
   if (length(player_names) == 0) {
     return(empty_results())
   }
@@ -393,8 +394,8 @@ player_regression_results <- function(attendance, matches, strength = NULL,
   if (estimator == "ridge") {
     # A player who turned out for every match in the window has an indicator
     # that never varies, so nothing separates them from the intercept. OLS
-    # aliases such a column and reports NA; glmnet refuses the whole fit. Drop
-    # them from the design rather than lose the other players with them — being
+    # aliases such a column and reports NA, and glmnet refuses the whole fit. Drop
+    # them from the design rather than lose the other players with them. Being
     # ever-present is a plausible thing to be in a single short season.
     varies <- vapply(
       player_names,
@@ -452,8 +453,9 @@ player_regression_results <- function(attendance, matches, strength = NULL,
 #' A control with no variation in the window is left out rather than handed to
 #' lm() to alias: the strength index needs at least two different measured
 #' values, and the unobserved indicator needs both observed and unobserved
-#' matches. A window with no opponent on file — every one before the sync
-#' existed — gets neither, and the regression is exactly the one it always was.
+#' matches. A window with no opponent on file, which is every window from before
+#' the sync existed, gets neither, and the regression is exactly the one it always
+#' was.
 opponent_controls <- function(contribution_data) {
   observed <- contribution_data$opponent_unobserved == 0L
   controls <- character()
@@ -573,7 +575,7 @@ match_summary <- function(matches, attendance, events) {
 #' Fixtures still to come, soonest first. The run-in is built on this.
 #'
 #' Two things are filtered out, not one. A fixture in the past is obviously
-#' gone; so is a fixture whose date already carries a result, which is what a
+#' gone. So is a fixture whose date already carries a result, which is what a
 #' fixture list looks like between a match being played and the next sync
 #' replacing the file. Without that second filter the home page would spend
 #' every Wednesday evening offering that afternoon's game as the one to come.
@@ -588,7 +590,7 @@ upcoming_fixtures <- function(fixtures, matches, today = Sys.Date()) {
 
 # One player at a time ----
 
-#' Everything the app knows about one player, over the matches in scope.
+#' Everything we know about one player, over the matches in scope.
 #'
 #' The with/without comparison is the reason this exists rather than a filtered
 #' row of the attendance table. It is also the number most likely to be

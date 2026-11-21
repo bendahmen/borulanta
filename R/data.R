@@ -4,9 +4,9 @@
 # check the obvious ways the files can drift out of step with each other.
 
 # Who we are on the league site, and so which row of the league table is ours.
-# It lives here rather than in R/scrape.R because the app reads it and never
-# loads the scraper — sourcing that would pull rvest and httr into a process
-# that only ever reads CSVs.
+# It lives here rather than in R/scrape.R because the export reads it and never
+# loads the scraper. Sourcing that would pull rvest and httr into a process that
+# only ever reads CSVs.
 OUR_TEAM <- "Borulanta"
 
 # Column types ----

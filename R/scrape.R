@@ -11,9 +11,9 @@
 
 DREAMLEAGUES_URL <- "https://dreamleagues.co.uk/leagues/shoreditch-weds-7-a-side"
 
-# OUR_TEAM is defined in R/data.R, which both the app and the sync load and this
-# file does not: the app needs to know which row of the league table is ours
-# without dragging in a scraper it never runs.
+# OUR_TEAM is defined in R/data.R, which both the export and the sync load and
+# this file does not: the export needs to know which row of the league table is
+# ours without dragging in a scraper it never runs.
 
 # Identify honestly rather than borrowing a browser's string. The site's
 # robots.txt allows the default user agent; this is one page a week.
