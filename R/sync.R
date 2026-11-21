@@ -1,6 +1,6 @@
 # Syncing the scrape into the data files ----
 #
-# The scrape is a view of one league season; the data files are the permanent
+# The scrape is a view of one league season. The data files are the permanent
 # record of every season. Reconciling them is mostly a matter of refusing to do
 # things, because the two ways this can go wrong are both silent:
 #
@@ -13,17 +13,17 @@
 #     with a fresh set of fixture ids. A sync that keyed on those ids, or that
 #     treated absence from the page as deletion, would quietly eat the history.
 #
-# So: matches are keyed on their date, which is unique across every season and
-# is already what attendance joins on; nothing is ever deleted; a season that
-# has been closed is untouchable; and anything ambiguous is reported for a
+# So matches are keyed on their date, which is unique across every season and
+# is already what attendance joins on. Nothing is ever deleted, a season that
+# has been closed is untouchable, and anything ambiguous is reported for a
 # human rather than resolved by guessing.
 
 #' Which event kinds the sync considers its own.
 #'
 #' Rows of these kinds are rewritten from the site for any date it accepts, so
 #' fixing a name mapping and re-running repairs history. Anything else in
-#' match_events.csv — hand-recorded assists, say — is left alone. So is a man of
-#' the match the page would not let us attribute; see `settled_event_kinds()`.
+#' match_events.csv, such as hand-recorded assists, is left alone. So is a man of
+#' the match the page would not let us attribute (see `settled_event_kinds()`).
 SYNCED_EVENT_TYPES <- c("goal", "mom")
 
 #' Reconcile scraped fixtures against the existing files.
@@ -41,7 +41,7 @@ SYNCED_EVENT_TYPES <- c("goal", "mom")
 sync_results <- function(fixtures, matches, events, seasons, name_map,
                          today = Sys.Date()) {
   # A CSV does not remember what its columns were. An empty match_events.csv
-  # reads back as six character columns; once it has rows, `minute` is numeric
+  # reads back as six character columns. Once it has rows, `minute` is numeric
   # and an all-digit `dl_match_id` is numeric too, while the scrape produces an
   # integer minute and a character id. Pinning the types here rather than
   # trusting the caller is what stops the first write, and every write after
@@ -91,7 +91,7 @@ sync_results <- function(fixtures, matches, events, seasons, name_map,
       filter(disposition == "playable", goal_events > 0,
              goal_events != goals_for + goals_against),
     # A man of the match nobody scored, so nothing on the page says which team
-    # won it. Reported rather than guessed at; whatever the file already holds
+    # won it. Reported rather than guessed at. Whatever the file already holds
     # for that date is left alone, so an answer entered by hand survives.
     unattributed_mom = scraped_events(recorded) |>
       filter(event_type == "mom", is.na(team)) |>
@@ -234,10 +234,10 @@ fixture_disposition <- function(date, goals_for, goals_against, goal_events,
 #' Both directions of "the page says 0 : 0 and we know better". If a person has
 #' confirmed a real goalless draw, the ambiguity is gone and the fixture becomes
 #' ordinary, so its opponent can be filled in and its man of the match recorded.
-#' If we hold some other result and the page has gone back to its default — a
-#' correction being re-entered, most likely — there is nothing to do and nothing
-#' worth saying; without this it would be reported as awaiting a scoreline every
-#' Friday for the rest of the season.
+#' Sometimes we hold some other result and the page has gone back to its
+#' default, most likely because a correction is being re-entered. Then there is
+#' nothing to do and nothing worth saying. Without this it would be reported as
+#' awaiting a scoreline every Friday for the rest of the season.
 resolve_pending_against_file <- function(classified, matches) {
   recorded <- matches |>
     filter(!is.na(goals_for), !is.na(goals_against))
@@ -282,7 +282,7 @@ decide_against_existing <- function(playable, matches) {
         # the same date would charge everybody twice.
         !on_file ~ "new",
         # The score we hold and the score on the site disagree. Either could be
-        # right — a late correction, or a fat finger — so say so and change
+        # right (a late correction, or a fat finger), so say so and change
         # nothing. Overwriting a settled result unprompted is how a scraper
         # silently rewrites the past.
         #
@@ -299,7 +299,7 @@ decide_against_existing <- function(playable, matches) {
 
 # Writing ----
 
-#' Append new matches and fill blanks on existing ones; never delete or reorder.
+#' Append new matches and fill blanks on existing ones. Never delete or reorder.
 apply_match_changes <- function(matches, writing) {
   if (nrow(writing) == 0) {
     return(matches)
@@ -358,7 +358,7 @@ scraped_events <- function(accepted) {
 #'
 #' A man of the match is settled only when we could tell whose it was. The page
 #' does not say, so an award that cannot be placed against the goal list leaves
-#' whatever is on file alone — which is what makes hand-entering one stick
+#' whatever is on file alone. That is what makes hand-entering one stick
 #' across the next sync instead of being wiped every week.
 settled_event_kinds <- function(accepted, scraped) {
   bind_rows(
@@ -376,13 +376,13 @@ settled_event_kinds <- function(accepted, scraped) {
 #' correction on the site, or a newly added name mapping, take effect on a
 #' re-run instead of appending a second copy. Event kinds the sync does not
 #' produce, kinds the page did not settle, and dates it did not accept are left
-#' exactly as they are — right down to their order, since a file nobody is
+#' exactly as they are, right down to their order, since a file nobody is
 #' changing should come back identical rather than merely equivalent.
 #'
 #' Only our own side is written. The page carries the opposition's scorers too
 #' and the reconciliation reads them, but they are nobody we field, they share
-#' first names with people we do field, and every count in the app is a count of
-#' our own players — so they are not part of the record.
+#' first names with people we do field, and every count we make is a count of
+#' our own players. So they are not part of the record.
 apply_event_changes <- function(events, accepted, name_map) {
   if (nrow(accepted) == 0) {
     return(events)
@@ -404,9 +404,9 @@ apply_event_changes <- function(events, accepted, name_map) {
 
 #' Translate the site's first names into our player names.
 #'
-#' The site records "Felix"; the roster says whatever we call him. Only our own
-#' events reach this, so a name is ours by construction rather than by looking
-#' like one of ours. An unmapped name is left as it came, so nothing is lost and
+#' The site records "Felix", and the roster says whatever we call him. Only our
+#' own events reach this, so a name is ours by construction rather than by
+#' looking like one of ours. An unmapped name is left as it came, so nothing is lost and
 #' the sync has something to report.
 map_player_names <- function(player, name_map) {
   if (is.null(name_map) || nrow(name_map) == 0) {
@@ -435,7 +435,7 @@ empty_report <- function() {
 # Snapshots ----
 #
 # Two files that are not part of the permanent record: the fixture list and the
-# league table. Everything above this point exists to protect history — never
+# league table. Everything above this point exists to protect history: never
 # delete, never touch a closed season, never overwrite a score we already hold.
 # None of that applies here, because neither file is history. Both describe the
 # current league season only, both are wiped and rebuilt on the site when it
@@ -452,19 +452,19 @@ empty_report <- function() {
 #'
 #' @param fixtures our fixtures from `our_fixtures()`, played and unplayed alike
 #' @param league_table from `parse_league_table()`
-#' @param scraped_on the date the page was fetched, recorded so the app can say
-#'   how stale the standings are — they age between syncs, and a table nobody
-#'   can date is a table nobody can distrust
+#' @param scraped_on the date the page was fetched, recorded so our site can say
+#'   how stale the standings are. They age between syncs, and a table
+#'   nobody can date is a table nobody can distrust
 #' @param recorded dates that already carry a result, dropped from the fixture
 #'   list. The page keeps a fixture up all season with the score written into
-#'   it; once the result is in matches.csv the fixture is history, and leaving
-#'   it here would have every sync write a file the app then has to filter and
-#'   validate_app_data() reports as stale.
+#'   it. Once the result is in matches.csv the fixture is history, and leaving
+#'   it here would have every sync write a file the export then has to filter
+#'   and validate_app_data() reports as stale.
 snapshot_tables <- function(fixtures, league_table, scraped_on = Sys.Date(),
                             recorded = as.Date(character())) {
   list(
     # No score here, deliberately. matches.csv is the only source of truth for
-    # results; this is a list of dates and who we are down to play on them.
+    # results, and this is a list of dates and who we are down to play on them.
     fixtures = fixtures |>
       as_fixture_table() |>
       filter(!date %in% recorded) |>
@@ -489,10 +489,10 @@ write_snapshot_files <- function(snapshot, fixture_path, table_path) {
 # League results ----
 #
 # Every result in the league, not just ours. The page carries all of them and
-# the scrape parses all of them; until this file existed everything but our own
+# the scrape parses all of them. Until this file existed everything but our own
 # fixtures was thrown away. They are kept so that an opponent's strength can be
-# measured from how it fared against everyone else — see `opponent_strength()`
-# in R/analysis.R.
+# measured from how it fared against everyone else (see `opponent_strength()` in
+# R/analysis.R).
 #
 # Unlike the two snapshots above, this is history: the page is wiped when the
 # league season rolls over, so a result that has dropped off it has to survive
@@ -512,7 +512,7 @@ write_snapshot_files <- function(snapshot, fixture_path, table_path) {
 #' about either side's strength anyway.
 #'
 #' A fixture is keyed on its date and the two teams. A score that has changed on
-#' the site since it was recorded is taken as a correction and applied; one that
+#' the site since it was recorded is taken as a correction and applied. One that
 #' has gone back to 0 : 0 fails the played test and leaves the file alone.
 #'
 #' @param all_fixtures from `parse_fixtures()`, the whole league, events nested

@@ -95,7 +95,10 @@ describe(
   c("date", "opponent", "existing_for", "existing_against", "goals_for", "goals_against")
 )
 describe(
-  "Awaiting a scoreline — 0-0 with no goals logged, so unplayed, cancelled, or a real goalless draw",
+  paste(
+    "Awaiting a scoreline — 0-0 with no goals logged, so unplayed, cancelled,",
+    "or a real goalless draw"
+  ),
   report$pending, c("date", "opponent")
 )
 describe(

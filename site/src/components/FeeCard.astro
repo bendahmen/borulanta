@@ -24,7 +24,11 @@ const settle = {
   button_label: 'Pay via Monzo',
   button_url: 'https://monzo.me/benjamindahmen8?h=Njfjz9',
 };
-const rows = feeRows(fees, FEE_STATUS);
+// The breakdown rides on the row, so each player's overview is looked up once.
+const rows = feeRows(fees, FEE_STATUS).map((row) => ({
+  ...row,
+  ...feeBreakdown(fees, row.player),
+}));
 const slugs = playerSlugs(fees.overviews.map((overview) => overview.player));
 const tiles = { charges: 'Match charges', payments: 'Payments recorded' };
 const script = `(function(){${moduleToInline(source)}
@@ -46,8 +50,8 @@ mountPlayerPicker(document.getElementById("fee-check"),function(){return localSt
                 data-status={row.status}
                 data-owed={row.owed ? '1' : '0'}
                 data-slug={slugs.get(row.player)}
-                data-charges={feeBreakdown(fees, row.player).charges}
-                data-payments={feeBreakdown(fees, row.player).payments}
+                data-charges={row.charges}
+                data-payments={row.payments}
               >
                 {row.player}
               </option>

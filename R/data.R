@@ -35,7 +35,7 @@ EVENT_COLUMNS <- readr::cols(
 
 # The two snapshot files the sync replaces wholesale each run. Neither is part
 # of the permanent record, and neither exists on a fresh clone until the first
-# sync — so both are read tolerantly and both come back empty rather than
+# sync. So both are read tolerantly and both come back empty rather than
 # stopping the export.
 
 FIXTURE_COLUMNS <- readr::cols(
@@ -259,7 +259,7 @@ credit_to_player <- function(events, credited) {
 #' Add the "4-5" display string derived from the two goal columns.
 #'
 #' Scores are stored as two integers because that is what they are and what the
-#' sync writes; the hyphenated form only ever exists to be printed, so it is
+#' sync writes. The hyphenated form only ever exists to be printed, so it is
 #' derived once here rather than parsed back out of a string wherever it is
 #' shown.
 with_result <- function(matches) {
@@ -300,17 +300,16 @@ load_app_data <- function(dir = "data") {
     mutate(date = parse_match_date(date)) |>
     with_season(seasons)
 
-  # Fixtures are season-tagged so the home page can say which season the next
-  # match falls in; the league table is not, because its season is the league's
-  # own and has nothing to do with the fee seasons the rest of the app counts in.
   fixtures <- read_fixture_file(path("fixtures.csv")) |>
     with_season(seasons) |>
     arrange(date)
 
+  # Not season-tagged, because its season is the league's own and has nothing to
+  # do with the fee seasons everything else counts in.
   league_table <- read_league_table_file(path("league_table.csv"))
 
   # Season-tagged inside opponent_strength(), which is where the tagging is
-  # explained; here it is just the file.
+  # explained. Here it is just the file.
   league_results <- read_league_result_file(path("league_results.csv"))
 
   data <- list(
@@ -337,8 +336,8 @@ load_app_data <- function(dir = "data") {
 #' Warn loudly about data that will silently produce wrong numbers.
 #'
 #' The problems are returned as well as warned about. A warning reaches the
-#' console or the deployment log, which is exactly where nobody looks; the
-#' returned vector is what the app puts on the page.
+#' console or the deployment log, which is exactly where nobody looks. The
+#' returned vector is what the export hands the site's banner.
 validate_app_data <- function(data) {
   problems <- character()
   complain <- function(problem, offenders) {
@@ -407,9 +406,9 @@ validate_app_data <- function(data) {
     "match events for an unknown player",
     setdiff(na.omit(data$events$player), data$players$player)
   )
-  # The file holds our own events and nothing else — the sync drops the
+  # The file holds our own events and nothing else. The sync drops the
   # opposition's, and their first names collide with ours often enough that a
-  # stray row would be counted as one of ours by every tally in the app rather
+  # stray row would be counted as one of ours by every tally on the site rather
   # than showing up as an error anywhere.
   complain(
     "match events for a team other than ours",
@@ -472,8 +471,8 @@ validate_app_data <- function(data) {
     "fixtures dated on a match already recorded — the fixture list is stale",
     format(intersect(data$fixtures$date, data$matches$date), "%d/%m/%Y")
   )
-  # Not fatal — the table is only context — but if we have dropped out of it
-  # the page has changed shape or we have been renamed on the site.
+  # Not fatal, since the table is only context. But if we have dropped out of
+  # it, the page has changed shape or we have been renamed on the league site.
   if (nrow(data$league_table) > 0 && !OUR_TEAM %in% data$league_table$team) {
     complain("missing from data/league_table.csv", OUR_TEAM)
   }
