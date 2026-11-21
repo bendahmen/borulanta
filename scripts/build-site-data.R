@@ -318,7 +318,7 @@ export_meta <- function(data, data_dir) {
   )
 }
 
-#' What the last-match card shows about one summary, each absent where we hold nothing.
+#' What a match page shows about one summary, each absent where we hold nothing.
 export_match_summary <- function(summary, seasons) {
   played <- summary$match
 
@@ -335,15 +335,7 @@ export_match_summary <- function(summary, seasons) {
   )
 }
 
-export_last_match <- function(data) {
-  summary <- last_match_summary(data$matches, data$attendance, data$events)
-  if (is.null(summary)) {
-    return(NULL)
-  }
-  export_match_summary(summary, data$seasons)
-}
-
-#' What the last-match card would say about every match, newest first, for /matches/<date>/.
+#' What each match page says, newest first, for /matches/<date>/.
 #'
 #' Each page is about its own night, so last_match_summary() is given that match alone.
 #' A match dated before the first season is in no season file and no tick's table.
@@ -357,23 +349,6 @@ export_match_pages <- function(data) {
     )
     c(list(season_id = summary$match$season_id), export_match_summary(summary, data$seasons))
   })
-}
-
-#' Our row of the table and the team count, or NA when the table does not list us
-#' exactly once, as the League tab says why.
-export_league_position <- function(league_table) {
-  us <- league_table[league_table$team == OUR_TEAM, ]
-  if (nrow(us) != 1) {
-    return(NA)
-  }
-  list(position = us$position, teams = nrow(league_table), points = us$points, played = us$played)
-}
-
-export_home <- function(data) {
-  list(
-    last_match = export_last_match(data),
-    league_position = export_league_position(data$league_table)
-  )
 }
 
 #' Every unplayed fixture, whatever today is, with its standings columns.
@@ -622,7 +597,6 @@ build_site_data <- function(data_dir = here::here("data"), out_root = here::here
   meta <- export_meta(data, data_dir)
   generated_documents <- list(
     meta.json = to_json(meta),
-    home.json = to_json(export_home(data)),
     fixtures.json = to_json(export_fixtures(data)),
     league.json = to_json(export_league(data)),
     fees.json = to_json(export_fees(data)),

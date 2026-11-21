@@ -7,13 +7,6 @@ import { formatDate } from './dates.js';
 
 const MIDDLE_DOT = ' · ';
 
-// 1st, 2nd, 3rd, 4th, ... 11th, 12th, 13th, 21st.
-export function withOrdinalSuffix(n) {
-  const tens = n % 100;
-  const suffix = tens >= 11 && tens <= 13 ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] ?? 'th');
-  return `${n}${suffix}`;
-}
-
 // A comma list that reads like a sentence, with a tally where there is one: "Ada (2), Ben".
 export function listedScorers(scorers) {
   return scorers.map(({ player, goals }) => (goals > 1 ? `${player} (${goals})` : player)).join(', ');
@@ -83,12 +76,6 @@ export function freshnessNote({ last_result, scraped_on }) {
 export function staleFixtureNote(scrapedOn) {
   if (!scrapedOn) return null;
   return `The fixture list was last read on ${formatDate(scrapedOn, '%d %b')}, so this may be out of date.`;
-}
-
-// "4th of 9 · 11 points from 9", or null when the table does not list us.
-export function leaguePosition(position) {
-  if (!position) return null;
-  return `${withOrdinalSuffix(position.position)} of ${position.teams}${MIDDLE_DOT}${position.points} points from ${position.played}`;
 }
 
 // The standings' subtitle, dated because the table ages between syncs. Null with no table.

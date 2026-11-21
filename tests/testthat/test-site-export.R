@@ -245,7 +245,7 @@ test_that("every combination of seasons has a file and nothing else does", {
   expect_setequal(
     list.files(file.path(run_one, "site", "src", "generated")),
     c(
-      "meta.json", "home.json", "fixtures.json", "league.json", "fees.json", "matches.json"
+      "meta.json", "fixtures.json", "league.json", "fees.json", "matches.json"
     )
   )
 })
@@ -790,73 +790,7 @@ test_that("the fixtures carry the scrape date the browser judges staleness by", 
   expect_null(round_trip(export_fixtures(none))$scraped_on)
 })
 
-# Home, league and meta ----
-
-# The card drops what a match does not have, so the site has to be told what is
-# missing: a week with no man of the match, or no goals on file, is an ordinary week.
-expect_home_is_the_summary <- function(home, data) {
-  summary <- last_match_summary(data$matches, data$attendance, data$events)
-  played <- summary$match
-  last <- home$last_match
-
-  expect_setequal(names(last), c(
-    "date", "result", "points", "opponent", "season_label", "squad_size", "scorers",
-    "man_of_the_match"
-  ))
-  expect_equal(last$date, format(played$date, "%Y-%m-%d"))
-  expect_equal(last$result, played$result)
-  expect_equal(last$points, played$points)
-  expect_equal(last$opponent, if (!is.na(played$opponent)) played$opponent)
-  expect_equal(
-    last$season_label,
-    data$seasons$label[match(played$season_id, data$seasons$season_id)]
-  )
-  expect_equal(last$squad_size, summary$squad_size)
-  expect_rows(last$scorers, summary$scorers, "last match scorers")
-  expect_equal(last$man_of_the_match, if (!is.na(summary$mom)) summary$mom)
-}
-
-test_that("home is the last match and our row of the table", {
-  home <- read_generated("home")
-  expect_setequal(names(home), c("last_match", "league_position"))
-  expect_home_is_the_summary(home, app_data)
-
-  us <- app_data$league_table |> filter(team == OUR_TEAM)
-  expect_equal(home$league_position, list(
-    position = us$position, teams = nrow(app_data$league_table), points = us$points,
-    played = us$played
-  ))
-})
-
-test_that("home drops what the last match does not have", {
-  last_date <- max(app_data$matches$date)
-
-  for (types in list("mom", "goal", c("goal", "mom"))) {
-    data <- app_data
-    data$events <- data$events |> filter(!(date == last_date & event_type %in% types))
-    home <- round_trip(export_home(data))
-
-    expect_home_is_the_summary(home, data)
-    if ("mom" %in% types) expect_null(home$last_match$man_of_the_match)
-    if ("goal" %in% types) expect_length(home$last_match$scorers, 0)
-  }
-})
-
-test_that("the league position follows the table", {
-  data <- app_data
-  data$league_table <- tibble(
-    position = 1:3, team = c("Rovers", OUR_TEAM, "City"), played = c(4L, 4L, 3L),
-    points = c(10L, 9L, 1L), scraped_on = as.Date("2031-03-01")
-  )
-  expect_equal(
-    export_home(data)$league_position,
-    list(position = 2L, teams = 3L, points = 9L, played = 4L)
-  )
-
-  # Absent when the table does not list us, as the card is.
-  data$league_table <- data$league_table[-2, ]
-  expect_null(round_trip(export_home(data))$league_position)
-})
+# League and meta ----
 
 test_that("league rows and the scrape date come from the table", {
   league <- read_generated("league")
@@ -1268,10 +1202,7 @@ test_that("a fresh checkout with nothing played and no snapshots still exports",
     )
   }
 
-  home <- read("home")
-  expect_true("last_match" %in% names(home))
-  expect_null(home$last_match)
-  expect_null(home$league_position)
+  expect_length(read("matches"), 0)
 
   fixtures <- read("fixtures")
   expect_false(fixtures$have_fixtures)
@@ -1336,11 +1267,33 @@ test_that("each match page is what the last match would be on that night", {
       expect_equal(row$man_of_the_match, summary$mom)
     }
   }
+})
 
-  # The newest is the match Home shows, field for field.
-  home_last <- read_generated("home")$last_match
-  rows[[1]]$season_id <- NULL
-  expect_equal(rows[[1]], home_last)
+# The page drops what a match does not have, so the site has to be told what is
+# missing: a week with no man of the match, or no goals on file, is an ordinary week.
+test_that("a match page drops what its match does not have", {
+  last_date <- max(app_data$matches$date)
+
+  for (types in list("mom", "goal", c("goal", "mom"))) {
+    data <- app_data
+    data$events <- data$events |> filter(!(date == last_date & event_type %in% types))
+    newest <- round_trip(export_match_pages(data))[[1]]
+    summary <- last_match_summary(
+      data$matches |> filter(date == last_date), data$attendance, data$events
+    )
+
+    expect_setequal(names(newest), c(
+      "season_id", "date", "result", "points", "opponent", "season_label", "squad_size",
+      "scorers", "man_of_the_match"
+    ))
+    expect_equal(newest$date, format(last_date, "%Y-%m-%d"))
+    expect_equal(newest$result, summary$match$result)
+    expect_equal(newest$squad_size, summary$squad_size)
+    expect_rows(newest$scorers, summary$scorers, paste(types, collapse = " "))
+    expect_equal(newest$man_of_the_match, if (!is.na(summary$mom)) summary$mom)
+    if ("mom" %in% types) expect_null(newest$man_of_the_match)
+    if ("goal" %in% types) expect_length(newest$scorers, 0)
+  }
 })
 
 test_that("every match page's lineup has its entry in that match's own season file", {
@@ -1377,13 +1330,13 @@ test_that("a synced match with no attendance yet has its page, with nobody in th
   expect_length(details[[1]]$lineup, 0)
 })
 
-test_that("a last match with no opponent or events has none of them", {
+test_that("a match page with no opponent or events has none of them", {
   data_dir <- write_tiny_data()
   out <- withr::local_tempdir()
   build_site_data(data_dir, out)
   last <- jsonlite::fromJSON(
-    file.path(out, "src", "generated", "home.json"), simplifyVector = FALSE
-  )$last_match
+    file.path(out, "src", "generated", "matches.json"), simplifyVector = FALSE
+  )[[1]]
 
   expect_equal(last$result, "2-2")
   expect_equal(last$points, 1)

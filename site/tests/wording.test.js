@@ -13,13 +13,11 @@ import {
   freshnessNote,
   headlineTiles,
   kickoffPitch,
-  leaguePosition,
   leagueSubtitle,
   listedScorers,
   matchDetails,
   matchMetaLine,
   matchSummaryNote,
-  withOrdinalSuffix,
   pickerSeasons,
   regressionExplanation,
   resultBadge,
@@ -30,16 +28,6 @@ import {
 } from '../src/lib/wording.js';
 
 const read = (path) => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
-
-test('ordinals, the teens included', () => {
-  const shown = [1, 2, 3, 4, 11, 12, 13, 21, 22, 23, 101, 111, 112].map(withOrdinalSuffix);
-  assert.deepEqual(shown, ['1st', '2nd', '3rd', '4th', '11th', '12th', '13th', '21st', '22nd', '23rd', '101st', '111th', '112th']);
-});
-
-test('the league position line, or none when the table does not list us', () => {
-  assert.equal(leaguePosition({ position: 2, teams: 9, points: 11, played: 9 }), '2nd of 9 · 11 points from 9');
-  assert.equal(leaguePosition(null), null);
-});
 
 test('scorers are listed with a tally only where there is one', () => {
   assert.equal(listedScorers([{ player: 'Daniel', goals: 2 }, { player: 'Elia', goals: 1 }]), 'Daniel (2), Elia');
@@ -197,7 +185,6 @@ test('"To pay" for a balance owed and "In credit" for one in hand, from R\'s bal
 // On the real files, so that a field the wording reads but the export dropped fails here.
 test('every sentence on the real files has its values in place', () => {
   const meta = read('../src/generated/meta.json');
-  const home = read('../src/generated/home.json');
   for (const season of pickerSeasons(meta.seasons)) assert.match(season.span, /^(from )?[A-Z][a-z]{2}/, season.season_id);
   for (const file of meta.subset_files) {
     const subset = read(`../public/data/seasons/${file}`);
@@ -212,5 +199,7 @@ test('every sentence on the real files has its values in place', () => {
     }
     for (const match of subset.matches) assert.doesNotMatch(matchSummaryNote(match), /undefined|null/, match.date);
   }
-  if (home.last_match) assert.doesNotMatch([matchMetaLine(home.last_match), ...matchDetails(home.last_match).map((d) => d.value)].join(' '), /undefined|null/);
+  for (const played of read('../src/generated/matches.json')) {
+    assert.doesNotMatch([matchMetaLine(played), ...matchDetails(played).map((d) => d.value)].join(' '), /undefined|null/, played.date);
+  }
 });

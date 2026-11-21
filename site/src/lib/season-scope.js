@@ -1,6 +1,6 @@
 // What a season-scoped page does with its ticks: which seasons are ticked, keeping the URL
 // and storage in step, and loading the file for them. The page draws whatever this reports.
-// The picker is the same on Players > Effects, Matches > Results and Matches > Trends.
+// The picker is the same on Results, Trends, Roster, Effects and each player's own page.
 import {
   cleanTicks,
   formatTicks,
